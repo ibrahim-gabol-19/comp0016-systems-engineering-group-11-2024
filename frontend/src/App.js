@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Router } from "react-router-dom"; // Import BrowserRouter
+import Header from "./components/Header";
+import Home from "./components/Home";
+
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -16,13 +20,23 @@ const App = () => {
 
   return (
     <div>
-      <h1>Items List</h1>
+      
+    
+    <Router>
+      <div className="bg-rose-100 text-black min-h-screen">
+        <Header />
+        <h1></h1>
       <ul>
         {items.map(item => (
           <li key={item.id}>{item.name} - {item.description}</li>
         ))}
       </ul>
+       
+      </div>
+    </Router>
     </div>
+
+  
   );
 };
 
