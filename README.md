@@ -6,7 +6,7 @@
 
 ## Frontend Development Setup
 - `cd frontend`
-- `npm install tailwind-css`
+- `npm install tailwindcss`
 - `npm install react-router-dom`
 - `npm install`
 - `npm start`
