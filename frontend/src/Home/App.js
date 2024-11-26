@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router } from "react-router-dom"; // Import BrowserRouter
-import Header from "./components/Header";
-import Home from "./components/Home";
+import Header from "../components/Header";
+import Home from "../components/Home";
 
 
 const App = () => {
