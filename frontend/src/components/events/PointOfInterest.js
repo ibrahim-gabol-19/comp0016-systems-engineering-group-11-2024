@@ -45,7 +45,7 @@ const PointOfInterest = () => {
   return (
     <div className="max-w-6xl mx-auto mt-10 flex border rounded-lg shadow-lg overflow-hidden">
       {/* Sidebar */}
-      <div className="w-1/4 bg-gray-100">
+      <div className="w-1/4 bg-gray-100 flex flex-col justify-center">
         <ul className="space-y-1">
           {categories.map((category) => (
             <li
