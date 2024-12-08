@@ -85,9 +85,11 @@ const Calendar = () => {
           </h2>
         </div>
       </div>
-
       {/* Weekly Calendar */}
-      <div className="grid grid-cols-7 gap-4 bg-gray-100 rounded-lg p-6 shadow-lg">
+      <div
+        className="grid grid-cols-7 gap-4 bg-gray-100 rounded-lg p-6 shadow-lg"
+        style={{ height: "350px" }} // Fixed height
+      >
         {daysOfWeek.map((day) => {
           const dayKey = day.format("YYYY-MM-DD");
           const isToday = today.isSame(day, "day");
@@ -99,16 +101,14 @@ const Calendar = () => {
               className={`border rounded-lg shadow p-4 flex flex-col ${
                 isToday && highlightToday ? "bg-blue-200" : "bg-white"
               }`}
+              style={{ height: "100%" }} // Take the full height of the grid cell
             >
               <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
-              <p className="text-sm text-center text-gray-500">
-                {day.format("DD MMM")}
-              </p>
+              <p className="text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
 
               <div
-                className={`flex-grow mt-4 space-y-2 ${
-                  dayEvents.length > 3 ? "max-h-[300px] overflow-y-auto" : ""
-                }`}
+                className={`flex-grow mt-4 space-y-2 overflow-y-auto`}
+                style={{ maxHeight: "200px" }} // Limit content height
               >
                 {dayEvents.length > 0 ? (
                   dayEvents.map((event, index) => (
@@ -118,7 +118,10 @@ const Calendar = () => {
                       onClick={() => openEventDetails(event)}
                     >
                       <p className="font-semibold">{event.time}</p>
-                      <p className="font-semibold text-sm line-clamp-2 overflow-hidden" title={event.title}>
+                      <p
+                        className="font-semibold text-sm line-clamp-2 overflow-hidden"
+                        title={event.title}
+                      >
                         {event.title}
                       </p>
                     </div>
