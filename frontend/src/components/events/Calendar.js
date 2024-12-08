@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEventPosition, setSelectedEventPosition] = useState(null);
 
   // Fake event data
   const events = {
@@ -48,13 +49,30 @@ const Calendar = () => {
     setHighlightToday(true); 
     setTimeout(() => setHighlightToday(false), 2000);
   };
+
+  const openEventDetails = (eventData, e) => {
+    const container = e.target.closest('.overflow-y-auto'); // Get the scrollable container
+    const containerRect = container.getBoundingClientRect(); // Get container's position
+    const eventRect = e.target.getBoundingClientRect(); // Get the event's position
+    const containerScrollTop = container ? container.scrollTop : 0; // Get container's scroll position
   
-  const openEventDetails = (event) => {
-    setSelectedEvent(event);
+    // Calculate the event's top position relative to the container and scroll
+    const top = eventRect.top - containerRect.top + containerScrollTop;
+    const left = eventRect.left + window.scrollX; // Get event's left position relative to page
+  
+    setSelectedEvent(eventData); // Store selected event data
+    setSelectedEventPosition({
+      top: top, // Set the calculated top position
+      left: left, // Set the left position of the event
+    });
   };
+  
+  
+  
 
   const closeEventDetails = () => {
     setSelectedEvent(null);
+    setSelectedEventPosition(null);
   };
 
   return (
@@ -115,7 +133,7 @@ const Calendar = () => {
                     <div
                       key={index}
                       className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 cursor-pointer w-full"
-                      onClick={() => openEventDetails(event)}
+                      onClick={(e) => openEventDetails(event, e)}
                     >
                       <p className="font-semibold">{event.time}</p>
                       <p
@@ -136,27 +154,28 @@ const Calendar = () => {
       </div>
 
       {/* Event Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-2">{selectedEvent.title}</h3>
-            <p className="text-gray-700">
-              <strong>Time:</strong> {selectedEvent.time}
-            </p>
-            <p className="text-gray-700 mt-2">
-              <strong>Description:</strong> {selectedEvent.description}
-            </p>
-            <div className="mt-4 text-right">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                onClick={closeEventDetails}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+{selectedEvent && selectedEventPosition && (
+  <div
+    className="absolute bg-white border shadow-lg rounded-lg p-4 z-10"
+    style={{
+      top: selectedEventPosition.top + "px", // Position based on event's top value
+      left: selectedEventPosition.left + "px", // Position based on event's left value
+      width: "200px", // Fixed width for the modal
+    }}
+  >
+    <h3 className="text-lg font-bold">{selectedEvent.title}</h3>
+    <p className="text-sm text-gray-500">{selectedEvent.time}</p>
+    <p className="text-gray-700 mt-2">{selectedEvent.description}</p>
+    <button
+      className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+      onClick={closeEventDetails}
+    >
+      Close
+    </button>
+  </div>
+)}
+
+
     </div>
   );
 };
