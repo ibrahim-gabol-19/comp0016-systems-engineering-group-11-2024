@@ -67,15 +67,19 @@ const PointOfInterest = () => {
       <div className="w-3/4 bg-white p-6">
         <h3 className="text-xl font-bold mb-4">{selectedCategory}</h3>
         <div
-          className="grid grid-cols-2 gap-6 max-h-[600px] overflow-y-auto"
-          style={{ overflowY: "auto" }} // This ensures scrolling when there are many events
+          className="grid grid-cols-2 gap-6 overflow-y-auto"
+          style={{
+            height: "525px", // Fixed height for the grid container
+            overflowY: "auto", // Enable scrolling
+            alignContent: "start", // Prevent stretching when fewer events exist
+          }}
         >
-          {poiEvents[selectedCategory]?.map((event, index) => (
+        {poiEvents[selectedCategory]?.map((event, index) => (
             <div
               key={index}
               className="bg-blue-100 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
               onClick={() => openEventDetails(event)}
-              style={{ minHeight: "250px" }} // Ensuring card consistency
+              style={{ minHeight: "250px", maxHeight: "250px" }} // Prevent stretching
             >
               {event.image && (
                 <img
