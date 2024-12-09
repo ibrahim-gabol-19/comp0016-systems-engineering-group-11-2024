@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
+import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem'; 
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -26,7 +27,7 @@ const App = () => {
         <div className="pt-20">
           {/* Define routes inside the Router using Routes */}
           <Routes>
-
+          <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
             {/* You can add more routes here */}
           </Routes>
 
