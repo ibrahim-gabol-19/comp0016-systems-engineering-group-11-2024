@@ -13,19 +13,54 @@ const Table = () => {
 
   const sampleData = {
     Forum: [
-      { title: "Big Ben", openTimes: "9:00 AM - 6:00 PM", description: "Iconic clock tower located in London.", image: "https://via.placeholder.com/150" },
-      { title: "Tower of London", openTimes: "10:00 AM - 5:30 PM", description: "Historic castle on the River Thames.", image: "https://via.placeholder.com/150" },
-      { title: "London Eye", openTimes: "10:00 AM - 8:00 PM", description: "Famous observation wheel offering panoramic views.", image: "https://via.placeholder.com/150" },
-      { title: "The Shard", openTimes: "9:00 AM - 10:00 PM", description: "Tallest building in London with an observation deck.", image: "https://via.placeholder.com/150" },
+      {
+        title: "Big Ben",
+        openTimes: "9:00 AM - 6:00 PM",
+        description: "Iconic clock tower located in London.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "Tower of London",
+        openTimes: "10:00 AM - 5:30 PM",
+        description: "Historic castle on the River Thames.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "London Eye",
+        openTimes: "10:00 AM - 8:00 PM",
+        description: "Famous observation wheel offering panoramic views.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "The Shard",
+        openTimes: "9:00 AM - 10:00 PM",
+        description: "Tallest building in London with an observation deck.",
+        image: "https://via.placeholder.com/150",
+      },
     ],
     Reporting: [
-      { title: "British Museum", openTimes: "10:00 AM - 6:00 PM", description: "Explore world history and culture.", image: "https://via.placeholder.com/150" },
+      {
+        title: "British Museum",
+        openTimes: "10:00 AM - 6:00 PM",
+        description: "Explore world history and culture.",
+        image: "https://via.placeholder.com/150",
+      },
     ],
     Events: [
-      { title: "Hyde Park", openTimes: "Open 24 hours", description: "Relax in one of London's largest parks.", image: "https://via.placeholder.com/150" },
+      {
+        title: "Hyde Park",
+        openTimes: "Open 24 hours",
+        description: "Relax in one of London's largest parks.",
+        image: "https://via.placeholder.com/150",
+      },
     ],
     News: [
-      { title: "Camden Market", openTimes: "10:00 AM - 7:00 PM", description: "Browse eclectic shops and food stalls.", image: "https://via.placeholder.com/150" },
+      {
+        title: "Camden Market",
+        openTimes: "10:00 AM - 7:00 PM",
+        description: "Browse eclectic shops and food stalls.",
+        image: "https://via.placeholder.com/150",
+      },
     ],
   };
 
@@ -61,7 +96,6 @@ const Table = () => {
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
   });
-  
 
   const handleFileUploadClick = () => {
     if (fileInputRef.current) {
@@ -107,7 +141,9 @@ const Table = () => {
 
       {/* Main Content */}
       <div className="w-5/6 bg-white p-6 overflow-auto">
-        <h3 className="text-2xl font-bold mb-4 text-gray-800">{selectedCategory}</h3>
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">
+          {selectedCategory}
+        </h3>
         <div
           className="grid grid-cols-3 gap-8 overflow-y-auto"
           style={{
@@ -144,8 +180,12 @@ const Table = () => {
                 />
               )}
               <div className="p-4 flex flex-col justify-between h-1/2">
-                <h4 className="font-bold text-lg text-gray-800 truncate">{event.title}</h4>
-                <p className="text-sm text-gray-600 truncate">{event.openTimes}</p>
+                <h4 className="font-bold text-lg text-gray-800 truncate">
+                  {event.title}
+                </h4>
+                <p className="text-sm text-gray-600 truncate">
+                  {event.openTimes}
+                </p>
                 <p className="text-sm text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-2">
                   {event.description}
                 </p>
@@ -155,25 +195,24 @@ const Table = () => {
         </div>
         {/* Upload Button */}
         <button
-  className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-full transition-colors text-center ${
-    selectedCategory === "Upload"
-      ? "bg-white text-gray-600 border-2 border-gray-600"
-      : "bg-white text-gray-600 border-2 border-gray-600 hover:bg-gray-100"
-  }`}
-  onClick={handleFileUploadClick}
-
->
-  Upload Files
-</button>
-
-
+          className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-full transition-colors text-center ${
+            selectedCategory === "Upload"
+              ? "bg-white text-gray-600 border-2 border-gray-600"
+              : "bg-white text-gray-600 border-2 border-gray-600 hover:bg-gray-100"
+          }`}
+          onClick={handleFileUploadClick}
+        >
+          Upload Files
+        </button>
       </div>
 
       {/* Event Modal */}
       {selectedEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">{selectedEvent.title}</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              {selectedEvent.title}
+            </h3>
             <img
               src={selectedEvent.image}
               alt={selectedEvent.title}
