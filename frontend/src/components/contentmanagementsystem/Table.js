@@ -155,11 +155,18 @@ const Table = () => {
         </div>
         {/* Upload Button */}
         <button
-          className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition"
-          onClick={handleFileUploadClick}
-        >
-          Upload Files
-        </button>
+  className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-full transition-colors text-center ${
+    selectedCategory === "Upload"
+      ? "bg-white text-gray-600 border-2 border-gray-600"
+      : "bg-white text-gray-600 border-2 border-gray-600 hover:bg-gray-100"
+  }`}
+  onClick={handleFileUploadClick}
+
+>
+  Upload Files
+</button>
+
+
       </div>
 
       {/* Event Modal */}
