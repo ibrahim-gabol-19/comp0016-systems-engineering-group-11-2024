@@ -76,11 +76,11 @@ const Calendar = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10">
+    <div className="max-w-6xxl mx-auto mt-10">
       {/* Navigation */}
       <div className="flex justify-between items-center mb-4">
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2 bg-white text-green-500 border outline rounded-lg hover:bg-green-500 hover:text-white bold"
           onClick={handleToday}
         >
           Today
@@ -105,7 +105,7 @@ const Calendar = () => {
       </div>
       {/* Weekly Calendar */}
       <div
-        className="grid grid-cols-7 gap-4 bg-gray-100 rounded-lg p-6 shadow-lg"
+        className="grid grid-cols-7 gap-4 bg-gray-100 rounded-lg p-6"
         style={{ height: "350px" }} // Fixed height
       >
         {daysOfWeek.map((day) => {
@@ -117,7 +117,7 @@ const Calendar = () => {
             <div
               key={dayKey}
               className={`border rounded-lg shadow p-4 flex flex-col ${
-                isToday && highlightToday ? "bg-blue-200" : "bg-white"
+                isToday && highlightToday ? "bg-green-200" : "bg-white"
               }`}
               style={{ height: "100%" }} // Take the full height of the grid cell
             >
@@ -132,7 +132,7 @@ const Calendar = () => {
                   dayEvents.map((event, index) => (
                     <div
                       key={index}
-                      className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 cursor-pointer w-full"
+                      className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
                       onClick={(e) => openEventDetails(event, e)}
                     >
                       <p className="font-semibold">{event.time}</p>

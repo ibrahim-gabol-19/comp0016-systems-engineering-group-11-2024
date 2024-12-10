@@ -19,7 +19,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className="bg-rose-100 text-black min-h-screen">
+      <div className="bg-gray-100 text-black min-h-screen">
         {/* Header stays fixed */}
         <Header />
 

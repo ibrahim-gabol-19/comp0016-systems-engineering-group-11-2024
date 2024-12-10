@@ -43,16 +43,16 @@ const PointOfInterest = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 flex border rounded-lg shadow-lg overflow-hidden">
+    <div className="max-w-6xxl mx-auto mt-10 flex ">
       {/* Sidebar */}
-      <div className="w-1/4 bg-gray-100 flex flex-col justify-center">
+      <div className="w-1/6 bg-gray flex flex-col justify-center">
         <ul className="space-y-1">
           {categories.map((category) => (
             <li
               key={category}
               className={`p-4 text-center font-bold cursor-pointer ${
                 selectedCategory === category
-                  ? "bg-white text-blue-600 border-r-4 border-blue-600"
+                  ? "bg-white text-green-600 border-r-4 border-green-600"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() => handleCategoryClick(category)}
@@ -64,10 +64,10 @@ const PointOfInterest = () => {
       </div>
 
       {/* Main Content */}
-      <div className="w-3/4 bg-white p-6">
+      <div className="w-5/6 bg-white p-6 rounded-xl">
         <h3 className="text-xl font-bold mb-4">{selectedCategory}</h3>
         <div
-          className="grid grid-cols-2 gap-6 overflow-y-auto"
+          className="grid grid-cols-3 gap-6 overflow-y-auto"
           style={{
             height: "525px", // Fixed height for the grid container
             overflowY: "auto", // Enable scrolling
@@ -77,7 +77,7 @@ const PointOfInterest = () => {
         {poiEvents[selectedCategory]?.map((event, index) => (
             <div
               key={index}
-              className="bg-blue-100 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
+              className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
               onClick={() => openEventDetails(event)}
               style={{ minHeight: "250px", maxHeight: "250px" }} // Prevent stretching
             >
