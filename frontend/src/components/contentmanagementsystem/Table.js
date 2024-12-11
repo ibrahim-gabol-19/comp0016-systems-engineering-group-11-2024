@@ -128,7 +128,7 @@ const Table = () => {
               key={category}
               className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
                 selectedCategory === category
-                  ? "bg-white border-r-4 "
+                  ? "bg-green-200 border-r-4 "
                   : "bg-gray-200 hover:bg-gray-300"
               } rounded-r-3xl`}
               onClick={() => handleCategoryClick(category)}
@@ -153,7 +153,7 @@ const Table = () => {
         >
           {/* Add New Card */}
           <div
-            className="flex items-center justify-center rounded-3xl bg-gray-200 cursor-pointer"
+            className="flex items-center justify-center rounded-3xl bg-green-100 cursor-pointer"
             onClick={handleAddCard}
             style={{ height: "300px" }}
           >
@@ -167,7 +167,7 @@ const Table = () => {
               className={`rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform ${
                 selectedCardIndex === index
                   ? "bg-white border-2 border-gray-600"
-                  : "bg-gray-50"
+                  : "bg-green-200"
               }`}
               onClick={() => handleCardClick(index, event)}
               style={{ height: "300px" }}
@@ -196,10 +196,10 @@ const Table = () => {
 
         {/* Upload Button */}
         <button
-          className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-half transition-colors text-center ${
+          className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-colors text-center ${
             selectedCategory === "Upload"
               ? "bg-white text-gray-600  "
-              : "bg-white text-gray-600  hover:text-green-4lib00"
+              : "bg-green-200 text-gray-600   hover:bg-green-300"
           }`}
           onClick={handleFileUploadClick}
         >
