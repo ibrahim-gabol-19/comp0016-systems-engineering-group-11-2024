@@ -6,8 +6,8 @@ const Table = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [isDragging, setIsDragging] = useState(false); // State to track drag activity
-  const fileInputRef = useRef(null); // Ref for file input element
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
 
   const categories = ["Forum", "Reporting", "Events", "News"];
 
@@ -106,7 +106,7 @@ const Table = () => {
   return (
     <div
       {...getRootProps()}
-      className="max-w-screen-2xl mx-auto mt-10 flex border-2 border-gray-700 rounded-3xl shadow-lg overflow-hidden relative"
+      className="w-screen h-screen flex overflow-hidden"
     >
       <input {...getInputProps()} ref={fileInputRef} />
       {/* Drag-and-drop overlay */}
@@ -121,16 +121,16 @@ const Table = () => {
       </div>
 
       {/* Sidebar */}
-      <div className="w-1/6 bg-gray-100 flex flex-col">
+      <div className="w-1/6 bg-gray-200 flex flex-col text-black shadow-lg">
         <ul className="space-y-2 py-4">
           {categories.map((category) => (
             <li
               key={category}
-              className={`p-4 text-center font-semibold cursor-pointer rounded-full transition-colors ${
+              className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
                 selectedCategory === category
-                  ? "bg-white text-gray-600 border-2 border-gray-600"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+                  ? "bg-white border-r-4 "
+                  : "bg-gray-200 hover:bg-gray-300"
+              } rounded-r-3xl`}
               onClick={() => handleCategoryClick(category)}
             >
               {category}
@@ -140,8 +140,8 @@ const Table = () => {
       </div>
 
       {/* Main Content */}
-      <div className="w-5/6 bg-white p-6 overflow-auto">
-        <h3 className="text-2xl font-bold mb-4 text-gray-800">
+      <div className="w-5/6 bg-gray p-6 overflow-auto">
+        <h3 className="text-3xl font-bold mb-4 text-gray-800">
           {selectedCategory}
         </h3>
         <div
@@ -193,12 +193,13 @@ const Table = () => {
             </div>
           ))}
         </div>
+
         {/* Upload Button */}
         <button
-          className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-full transition-colors text-center ${
+          className={`mt-6 px-6 py-2 font-semibold cursor-pointer rounded-half transition-colors text-center ${
             selectedCategory === "Upload"
-              ? "bg-white text-gray-600 border-2 border-gray-600"
-              : "bg-white text-gray-600 border-2 border-gray-600 hover:bg-gray-100"
+              ? "bg-white text-gray-600  "
+              : "bg-white text-gray-600  hover:text-green-4lib00"
           }`}
           onClick={handleFileUploadClick}
         >
