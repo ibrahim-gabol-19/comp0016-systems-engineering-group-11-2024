@@ -32,7 +32,7 @@ const navList = [
 
 const Header = () => {
   return (
-    <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-transparent z-10">
+    <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100 z-10">
       <a
         href="#"
         className="text-3xl font-extrabold text-green-500 hover:scale-110 transition duration-500 flex items-center "
