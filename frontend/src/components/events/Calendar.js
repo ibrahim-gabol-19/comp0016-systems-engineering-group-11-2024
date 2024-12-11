@@ -123,7 +123,7 @@ const Calendar = () => {
               style={{ height: "100%" }} // Take the full height of the grid cell
             >
               <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
-              <p className="text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
+              <p className="font-bold text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
 
               <div
                 className={`flex-grow mt-4 space-y-2 overflow-y-auto`}
@@ -136,13 +136,13 @@ const Calendar = () => {
                       className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
                       onClick={(e) => openEventDetails(event, e)}
                     >
-                      <p className="font-semibold">{event.time}</p>
                       <p
-                        className="font-semibold text-sm line-clamp-2 overflow-hidden"
+                        className="font-semibold text-md line-clamp-2 overflow-hidden"
                         title={event.title}
                       >
                         {event.title}
                       </p>
+                      <p className="text-sm text-gray-600">{event.time}</p>
                     </div>
                   ))
                 ) : (
