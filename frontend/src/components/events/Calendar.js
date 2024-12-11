@@ -31,7 +31,7 @@ const Calendar = () => {
 
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
-  const startOfWeek = currentWeek.startOf("week").add(1, "day"); // Adjusting for Monday start
+  const startOfWeek = currentWeek.startOf("week").add(1, "day");
   const daysOfWeek = Array.from({ length: 7 }, (_, index) =>
     startOfWeek.add(index, "day")
   );
@@ -79,34 +79,35 @@ const Calendar = () => {
     <div className="max-w-6xxl mx-auto mt-10">
       {/* Navigation */}
       <div className="flex justify-between items-center mb-4">
-        <button
-          className="px-4 py-2 bg-white text-green-500 border outline rounded-lg hover:bg-green-500 hover:text-white bold"
-          onClick={handleToday}
-        >
-          Today
-        </button>
-        <div className="flex items-center space-x-4">
+        <h2 className="text-2xl font-bold px-6">
+          Week of {startOfWeek.format("DD MMM YYYY")}
+        </h2>
+        <div className="flex items-center space-x-4 px-6">
           <button
-            className="text-gray-600 text-xl hover:text-gray-800 focus:outline-none font-bold"
+            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"
             onClick={handlePrevWeek}
           >
             &lt;
           </button>
           <button
-            className="text-gray-600 text-xl hover:text-gray-800 focus:outline-none font-bold"
+          className="px-4 py-2 bg-white text-green-500 outline rounded-lg hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500"
+          // className="px-4 py-2 bg-green-500 text-white outline rounded-lg hover:scale-110 transition duration-500"
+          onClick={handleToday}
+        >
+          Today
+        </button>
+          <button
+            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"
             onClick={handleNextWeek}
           >
             &gt;
           </button>
-          <h2 className="text-2xl font-bold">
-            Week of {startOfWeek.format("DD MMM YYYY")}
-          </h2>
         </div>
       </div>
       {/* Weekly Calendar */}
       <div
-        className="grid grid-cols-7 gap-4 bg-gray-100 rounded-lg p-6"
-        style={{ height: "350px" }} // Fixed height
+        className="grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6"
+        style={{ height: "400px" }} // Fixed height
       >
         {daysOfWeek.map((day) => {
           const dayKey = day.format("YYYY-MM-DD");
@@ -126,7 +127,7 @@ const Calendar = () => {
 
               <div
                 className={`flex-grow mt-4 space-y-2 overflow-y-auto`}
-                style={{ maxHeight: "200px" }} // Limit content height
+                style={{ maxHeight: "300px" }} // Limit content height
               >
                 {dayEvents.length > 0 ? (
                   dayEvents.map((event, index) => (
