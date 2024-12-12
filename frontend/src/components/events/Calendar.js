@@ -79,9 +79,12 @@ const Calendar = () => {
     <div className="max-w-6xxl mx-auto mt-10">
       {/* Navigation */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold px-6">
-          Week of {startOfWeek.format("DD MMM YYYY")}
-        </h2>
+        <div className="text-center">
+          <p className="text-2xl font-bold px-6">Weekly Events</p>
+          <h2 className="text-md">
+            Week of {startOfWeek.format("DD MMM YYYY")}
+          </h2>
+        </div>
         <div className="flex items-center space-x-4 px-6">
           <button
             className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"

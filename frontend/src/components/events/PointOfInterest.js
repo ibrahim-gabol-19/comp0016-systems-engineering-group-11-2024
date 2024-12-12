@@ -43,7 +43,9 @@ const PointOfInterest = () => {
   };
 
   return (
-    <div className="max-w-6xxl mx-auto mt-10 flex ">
+    <div className="max-w-6xxl mx-auto mt-14">
+      <h2 className="text-2xl font-bold px-6 mb-8">Points of Interest</h2>
+      <div className="flex">
       {/* Sidebar */}
       <div className="w-1/6 bg-gray flex flex-col justify-top">
         <ul className="space-y-3">
@@ -127,6 +129,7 @@ const PointOfInterest = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

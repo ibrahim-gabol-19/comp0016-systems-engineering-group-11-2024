@@ -6,10 +6,12 @@ import PointOfInterest from '../../components/events/PointOfInterest';
 const Events = () => {
     return (
         <div>
-            <title className="font-bold text-3xl flex text-center">Events</title>
+            <div className="flex justify-center">
+                <title className="px-5 font-bold text-3xl flex text-center">Events</title>
+            </div> 
             <Calendar/>
             <PointOfInterest/>
-        </div> 
+        </div>
       );
 };
 
