@@ -2,17 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 /* MapFilter Main Container */
+
+
 .map-filter {
   width: 300px;
   padding: 20px;
   background-color: #f9f9f9;
-  border: 2px solid black; /* Keep all borders black */
-  border-radius: 10px;
+  border-radius: 10px; /* Keeps rounded corners */
+  font-family: "Roboto", sans-serif;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  font-family: "Roboto", sans-serif; /* Changed font to Roboto */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
 }
+
+/* Hover Effect */
+.map-filter:hover {
+  transform: scale(1.05); /* Scales the container to 105% */
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); /* Enhances shadow on hover */
+}
+
   
 /* Search Bar with Icon */
 .search-map-container {
