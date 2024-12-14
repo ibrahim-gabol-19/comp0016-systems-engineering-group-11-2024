@@ -3,8 +3,7 @@ import { useDropzone } from "react-dropzone";
 
 const Table = () => {
   const [selectedCategory, setSelectedCategory] = useState("Forum");
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedCardIndex, setSelectedCardIndex] = useState(null);
+  const [selectedCards, setSelectedCards] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
@@ -66,16 +65,15 @@ const Table = () => {
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    setSelectedCardIndex(null);
+    setSelectedCards([]);
   };
 
-  const handleCardClick = (index, event) => {
-    setSelectedCardIndex(index);
-    setSelectedEvent(event);
-  };
-
-  const closeEventDetails = () => {
-    setSelectedEvent(null);
+  const toggleCardSelection = (index) => {
+    setSelectedCards((prevSelected) =>
+      prevSelected.includes(index)
+        ? prevSelected.filter((i) => i !== index)
+        : [...prevSelected, index]
+    );
   };
 
   const handleAddCard = () => {
@@ -106,8 +104,50 @@ const Table = () => {
   return (
     <div
       {...getRootProps()}
-      className="w-screen h-screen flex overflow-hidden"
+      className="w-screen h-screen flex overflow-hidden relative"
     >
+      {selectedCards.length > 0 && (
+        <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10">
+          <span>{selectedCards.length} card(s) selected</span>
+          <div>
+            <button
+              className="mr-4 px-4 py-2 bg-red-500 rounded-lg"
+              onClick={() => {
+                alert("Delete action triggered");
+              }}
+            >
+              Delete
+            </button>
+            <button
+              className="mr-4 px-4 py-2 bg-yellow-500 rounded-lg"
+              onClick={() => {
+                alert("Star action triggered");
+              }}
+            >
+              Star
+            </button>
+            <button
+              className="mr-4 px-4 py-2 bg-green-500 rounded-lg"
+              onClick={() => {
+                // Select all cards
+                const allCards = sampleData[selectedCategory]?.map(
+                  (_, index) => index
+                );
+                setSelectedCards(allCards);
+              }}
+            >
+              Select All
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-500 rounded-lg"
+              onClick={() => setSelectedCards([])} // Deselect all cards
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       <input {...getInputProps()} ref={fileInputRef} />
       {/* Drag-and-drop overlay */}
       <div
@@ -140,10 +180,7 @@ const Table = () => {
       </div>
 
       {/* Main Content */}
-      <div className="w-5/6 bg-gray p-6 overflow-auto">
-        <h3 className="text-3xl font-bold mb-4 text-gray-800">
-          {selectedCategory}
-        </h3>
+      <div className="w-5/6 bg-gray pl-6 overflow-auto">
         <div
           className="grid grid-cols-3 gap-8 overflow-y-auto"
           style={{
@@ -164,12 +201,11 @@ const Table = () => {
           {sampleData[selectedCategory]?.map((event, index) => (
             <div
               key={index}
-              className={`rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform ${
-                selectedCardIndex === index
-                  ? "bg-white border-2 border-gray-600"
+              className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform ${
+                selectedCards.includes(index)
+                  ? "border-4 border-gray-600"
                   : "bg-green-200"
               }`}
-              onClick={() => handleCardClick(index, event)}
               style={{ height: "300px" }}
             >
               {event.image && (
@@ -190,6 +226,16 @@ const Table = () => {
                   {event.description}
                 </p>
               </div>
+
+              {/* Checkmark Button */}
+              <button
+                className={`absolute bottom-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
+                  selectedCards.includes(index) ? "opacity-100" : "opacity-50"
+                } group-hover:opacity-100 transition-opacity`}
+                onClick={() => toggleCardSelection(index)}
+              >
+                ✓
+              </button>
             </div>
           ))}
         </div>
@@ -206,36 +252,6 @@ const Table = () => {
           Upload Files
         </button>
       </div>
-
-      {/* Event Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-3xl shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">
-              {selectedEvent.title}
-            </h3>
-            <img
-              src={selectedEvent.image}
-              alt={selectedEvent.title}
-              className="w-full h-48 object-cover rounded-3xl mb-4"
-            />
-            <p className="text-gray-700">
-              <strong>Open Times:</strong> {selectedEvent.openTimes}
-            </p>
-            <p className="text-gray-700 mt-2">
-              <strong>Description:</strong> {selectedEvent.description}
-            </p>
-            <div className="mt-4 text-right">
-              <button
-                className="px-6 py-2 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600 transition"
-                onClick={closeEventDetails}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
