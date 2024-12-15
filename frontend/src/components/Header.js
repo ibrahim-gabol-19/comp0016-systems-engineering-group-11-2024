@@ -29,7 +29,7 @@ const navList = [
     path: "/news", 
   },
   {
-    id: 5,
+    id: 6,
     data: "Manage",
     path: "/contentmanagementsystem", 
   },

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem'; 
-
+import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
 const App = () => {
   const [items, setItems] = useState([]);
 
@@ -28,7 +28,7 @@ const App = () => {
           {/* Define routes inside the Router using Routes */}
           <Routes>
           <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
-            {/* You can add more routes here */}
+          <Route path="contentmanagementsystem/details/:category/:index" element={<DetailedPage />} />            {/* You can add more routes here */}
           </Routes>
 
           <h1>Item List</h1>

@@ -1,5 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
+
 
 const Table = () => {
   const [selectedCategory, setSelectedCategory] = useState("Forum");
@@ -9,6 +12,8 @@ const Table = () => {
   const fileInputRef = useRef(null);
 
   const categories = ["Forum", "Reporting", "Events", "News"];
+
+  const navigate = useNavigate();
 
   const sampleData = {
     Forum: [
@@ -67,6 +72,10 @@ const Table = () => {
     setSelectedCategory(category);
     setSelectedCards([]);
   };
+
+  const handleCardClick = (index) => {
+    navigate(`/contentmanagementsystem/details/${selectedCategory}/${index}`);    
+  }
 
   const toggleCardSelection = (index) => {
     setSelectedCards((prevSelected) =>
@@ -203,11 +212,12 @@ const Table = () => {
               key={index}
               className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform ${
                 selectedCards.includes(index)
-                  ? "border-4 border-gray-600"
-                  : "bg-green-200"
+                  ? "border-4 border-green-500 bg-gray-100 "
+                  : " bg-gray-100 "
               }`}
               style={{ height: "300px" }}
-            >
+              onClick={() => handleCardClick(index)}
+              >
               {event.image && (
                 <img
                   src={event.image}
