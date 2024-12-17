@@ -8,24 +8,21 @@ const Calendar = () => {
 
   // Fake event data
   const events = {
-    "2024-12-01": [
-      { time: "10:00 AM", title: "Team Meeting", description: "Discuss project roadmap." },
+    "2024-12-16": [
+      { time: "10:00 AM", title: "Guided Tour", description: "Description given here." },
     ],
-    "2024-12-02": [
-      { time: "1:00 PM", title: "Lunch with Client", description: "Meeting with a key client at Cafe X." },
-      { time: "3:00 PM", title: "Project Review", description: "Review milestones and deliverables." },
+    "2024-12-17": [
+      { time: "1:00 PM", title: "Community Lunch", description: "Join neighbours and local residents at Cafe X for a community lunch and networking." },
+      { time: "3:00 PM", title: "Park Renovation Volunteering", description: "Collaborate with volunteers to plan milestones for the park improvement project." },
     ],
-    "2024-12-05": [
-      { time: "9:00 AM", title: "Doctor's Appointment", description: "Routine health check-up." },
+    "2024-12-19": [
+      { time: "9:00 AM", title: "Health Awareness Session", description: "Learn about wellness tips and resources available at the community health centre." },
     ],
-    "2024-12-06": [
-      { time: "8:00 AM", title: "Breakfast with John", description: "Catch up with John over breakfast." },
-      { time: "12:00 PM", title: "Client Call", description: "Discuss new project details." },
-      { time: "3:00 PM", title: "Team Lunch", description: "Weekly lunch with the team." },
-      { time: "6:00 PM", title: "Evening Walk", description: "Relaxing walk in the park." },
-      { time: "6:00 PM", title: "Evening Walk", description: "Relaxing walk in the park." },
-      { time: "6:00 PM", title: "Evening Walk", description: "Relaxing walk in the park." },
-      { time: "6:00 PM", title: "Evening Walk", description: "Relaxing walk in the park." },
+    "2024-12-20": [
+      { time: "8:00 AM", title: "Community Breakfast Meetup", description: "Start your morning with coffee and conversation at the town square cafe." },
+      { time: "12:00 PM", title: "Virtual Workshop: Growing Your Garden", description: "Learn gardening tips and tricks from local experts in this interactive online session." },
+      { time: "3:00 PM", title: "Neighbourhood Potluck", description: "Bring a dish to share and enjoy a community meal with fellow residents." },
+      { time: "6:00 PM", title: "Evening Nature Walk", description: "Join the local walking group for a stroll through the park, guided by an environmentalist." },
     ],
   };
 
@@ -93,8 +90,7 @@ const Calendar = () => {
             &lt;
           </button>
           <button
-          className="px-4 py-2 bg-white text-green-500 outline rounded-lg hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500"
-          // className="px-4 py-2 bg-green-500 text-white outline rounded-lg hover:scale-110 transition duration-500"
+          className="px-4 py-2 bg-white font-bold text-green-500 outline rounded-lg hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500"
           onClick={handleToday}
         >
           Today
