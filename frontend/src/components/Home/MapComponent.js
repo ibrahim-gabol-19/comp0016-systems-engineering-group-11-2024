@@ -56,7 +56,7 @@ const MapComponent = ({ filters, dates }) => {
         style={{ width: "100%", height: "500px" }}
         maxBounds={ukBounds} // Restrict map movement to UK
         maxBoundsViscosity={1.0} // Ensures map stays within bounds
-        minZoom={5} // Set minimum zoom level to allow zooming in further
+        minZoom={8} // Set minimum zoom level to allow zooming in further
         maxZoom={12} // Set maximum zoom level to zoom in further
       >
         <TileLayer

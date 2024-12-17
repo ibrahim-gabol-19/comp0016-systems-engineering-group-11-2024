@@ -31,11 +31,11 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
   };
 
   return (
-    <div className="w-[300px] p-5 bg-[#f9f9f9] rounded-lg font-sans flex flex-col gap-5 shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+    <div className="h-[530px] w-[300px] mt-6 p-5 bg-[#f9f9f9] rounded-lg font-sans flex flex-col gap-5 shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
       {/* Filter Section */}
       <div className="flex flex-col gap-2.5">
         <h3 className="text-lg font-semibold text-gray-900">Filter By</h3>
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <label className="flex items-center mt-5 gap-2 text-sm font-medium text-gray-700">
           <input
             type="checkbox"
             name="volunteering"
@@ -45,7 +45,7 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
           />
           Volunteering 🙌
         </label>
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <label className="flex items-center mt-3 gap-2 text-sm font-medium text-gray-700">
           <input
             type="checkbox"
             name="events"
@@ -55,7 +55,7 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
           />
           Events 📍
         </label>
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <label className="flex items-center mt-3 gap-2 text-sm font-medium text-gray-700">
           <input
             type="checkbox"
             name="news"
@@ -65,7 +65,7 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
           />
           News 📰
         </label>
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <label className="flex items-center mt-3 gap-2 text-sm font-medium text-gray-700">
           <input
             type="checkbox"
             name="issues"
@@ -78,19 +78,19 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
       </div>
 
       {/* Dates Section */}
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5 mt-10">
         <h3 className="text-lg font-semibold text-gray-900">Dates</h3>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm mt-5 font-medium text-gray-700">
           From:{" "}
           <input
             type="date"
             name="from"
             value={dates.from}
             onChange={handleDateChange}
-            className="w-full py-1.5 px-3 border border-gray-300 rounded-md text-sm"
+            className="w-full mt- py-1.5 px-3 border border-gray-300 rounded-md text-sm"
           />
         </label>
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm mt-5 font-medium text-gray-700">
           To:{" "}
           <input
             type="date"
