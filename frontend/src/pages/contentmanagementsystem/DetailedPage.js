@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import Editor from "../../components/contentmanagementsystem/Editor";
+import Quill, { Delta } from "quill";
 
 const DetailedPage = () => {
-  const { category, index } = useParams(); // Extract category and index
+  const quillRef = useRef(); // Ref for the Quill container
+  const { category, index } = useParams();
+
   const sampleData = {
     Forum: [
       {
@@ -56,19 +60,37 @@ const DetailedPage = () => {
     ],
   };
 
-
   const cardData = sampleData[category]?.[index];
 
   if (!cardData) {
     return <div>Card not found</div>;
   }
 
+  // Create a Delta object for the default content
+  const defaultValue = new Delta()
+    .insert(`${cardData.title}\n\n`, { bold:true, header: 1 }) // Insert a header for the title
+    .insert(`${cardData.openTimes}\n\n`, { header: 2 }) // Insert a header for the open times
+    .insert(`${cardData.description}\n`, { header: 2 }) // Insert a header for the description
+
+  // Check if there's an image to insert
+  if (cardData.image) {
+    defaultValue.insert({ image: cardData.image }); // Add image
+  }
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">{cardData.title}</h1>
-      <p className="text-gray-600">{cardData.openTimes}</p>
-      <p className="mt-4">{cardData.description}</p>
-      {cardData.image && <img src={cardData.image} alt={cardData.title} />}
+    <div>
+      {/* Quill Editor with default content from sample data */}
+      <Editor
+        ref={quillRef}
+        defaultValue={defaultValue}
+      />
+      {/* Card Details */}
+      <div className="p-6">
+        <h1 className="text-3xl font-bold">{cardData.title}</h1>
+        <p className="text-gray-600">{cardData.openTimes}</p>
+        <p className="mt-4">{cardData.description}</p>
+        {cardData.image && <img src={cardData.image} alt={cardData.title} />}
+      </div>
     </div>
   );
 };
