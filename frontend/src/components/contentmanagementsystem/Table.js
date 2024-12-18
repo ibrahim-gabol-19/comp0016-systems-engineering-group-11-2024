@@ -1,8 +1,12 @@
 import React, { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  redirect,
+} from "react-router-dom";
 
 const Table = () => {
   const [selectedCategory, setSelectedCategory] = useState("Forum");
@@ -74,8 +78,8 @@ const Table = () => {
   };
 
   const handleCardClick = (index) => {
-    navigate(`/contentmanagementsystem/details/${selectedCategory}/${index}`);    
-  }
+    navigate(`/contentmanagementsystem/details/${selectedCategory}/${index}`);
+  };
 
   const toggleCardSelection = (index) => {
     setSelectedCards((prevSelected) =>
@@ -217,7 +221,7 @@ const Table = () => {
               }`}
               style={{ height: "300px" }}
               onClick={() => handleCardClick(index)}
-              >
+            >
               {event.image && (
                 <img
                   src={event.image}
@@ -239,10 +243,13 @@ const Table = () => {
 
               {/* Checkmark Button */}
               <button
-                className={`absolute bottom-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
+                className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
                   selectedCards.includes(index) ? "opacity-100" : "opacity-50"
                 } group-hover:opacity-100 transition-opacity`}
-                onClick={() => toggleCardSelection(index)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the click event from triggering the card click
+                  toggleCardSelection(index);
+                }}
               >
                 ✓
               </button>
