@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 const FeaturedEvents = () => {
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
   // Placeholder data for Featured Events
   const featuredEvents = [
     {
@@ -25,12 +23,9 @@ const FeaturedEvents = () => {
     },
   ];
 
-  const openEventDetails = (event) => {
-    setSelectedEvent(event);
-  };
-
-  const closeEventDetails = () => {
-    setSelectedEvent(null);
+  // Handle click on a featured event
+  const handleEventClick = (event) => {
+    alert(`Redirecting to detailed page for: ${event.title}`);
   };
 
   return (
@@ -41,7 +36,7 @@ const FeaturedEvents = () => {
           <div
             key={index}
             className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-            onClick={() => openEventDetails(event)}
+            onClick={() => handleEventClick(event)}
           >
             {event.image && (
               <img
@@ -60,34 +55,6 @@ const FeaturedEvents = () => {
           </div>
         ))}
       </div>
-
-      {/* Event Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-2">{selectedEvent.title}</h3>
-            <img
-              src={selectedEvent.image}
-              alt={selectedEvent.title}
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <p className="text-gray-700">
-              <strong>Open Times:</strong> {selectedEvent.openTimes}
-            </p>
-            <p className="text-gray-700 mt-2">
-              <strong>Description:</strong> {selectedEvent.description}
-            </p>
-            <div className="mt-4 text-right">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                onClick={closeEventDetails}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

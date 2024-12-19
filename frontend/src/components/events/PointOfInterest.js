@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 const PointOfInterest = () => {
   const [selectedCategory, setSelectedCategory] = useState("Museums");
-  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const categories = ["Landmarks", "Museums", "Parks", "Other"];
 
@@ -35,100 +34,68 @@ const PointOfInterest = () => {
   };
 
   const openEventDetails = (event) => {
-    setSelectedEvent(event);
-  };
-
-  const closeEventDetails = () => {
-    setSelectedEvent(null);
+    alert(`Redirecting to detailed page for: ${event.title}`);
   };
 
   return (
     <div className="max-w-6xxl mx-auto mt-14">
       <h2 className="text-2xl font-bold px-6 mb-8">Points of Interest</h2>
       <div className="flex">
-      {/* Sidebar */}
-      <div className="w-1/6 bg-white flex flex-col justify-top">
-        <ul className="space-y-3">
-          {categories.map((category) => (
-            <li
-              key={category}
-              className={`p-4 text-center font-bold cursor-pointer ${
-                selectedCategory === category
-                  ? "bg-gray-200 text-green-600 border-r-4 border-green-600"
-                  : "bg-white text-gray-600 hover:bg-gray-200"
-              }`}
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className="w-5/6 bg-white p-6 rounded-xl">
-        <h3 className="text-xl font-bold mb-4">{selectedCategory}</h3>
-        <div
-          className="grid grid-cols-3 gap-6 overflow-y-auto"
-          style={{
-            height: "525px", // Fixed height for the grid container
-            overflowY: "auto", // Enable scrolling
-            alignContent: "start", // Prevent stretching when fewer events exist
-          }}
-        >
-        {poiEvents[selectedCategory]?.map((event, index) => (
-            <div
-              key={index}
-              className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-              onClick={() => openEventDetails(event)}
-              style={{ minHeight: "250px", maxHeight: "250px" }} // Prevent stretching
-            >
-              {event.image && (
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-32 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h4 className="font-bold text-lg">{event.title}</h4>
-                <p className="text-sm text-gray-600">{event.openTimes}</p>
-                <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                  {event.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Event Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-2">{selectedEvent.title}</h3>
-            <img
-              src={selectedEvent.image}
-              alt={selectedEvent.title}
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <p className="text-gray-700">
-              <strong>Open Times:</strong> {selectedEvent.openTimes}
-            </p>
-            <p className="text-gray-700 mt-2">
-              <strong>Description:</strong> {selectedEvent.description}
-            </p>
-            <div className="mt-4 text-right">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                onClick={closeEventDetails}
+        {/* Sidebar */}
+        <div className="w-1/6 bg-white flex flex-col justify-top">
+          <ul className="space-y-3">
+            {categories.map((category) => (
+              <li
+                key={category}
+                className={`p-4 text-center font-bold cursor-pointer ${
+                  selectedCategory === category
+                    ? "bg-gray-200 text-green-600 border-r-4 border-green-600"
+                    : "bg-white text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={() => handleCategoryClick(category)}
               >
-                Close
-              </button>
-            </div>
+                {category}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Main Content */}
+        <div className="w-5/6 bg-white p-6 rounded-xl">
+          <h3 className="text-xl font-bold mb-4">{selectedCategory}</h3>
+          <div
+            className="grid grid-cols-3 gap-6 overflow-y-auto"
+            style={{
+              height: "525px",
+              overflowY: "auto",
+              alignContent: "start",
+            }}
+          >
+            {poiEvents[selectedCategory]?.map((event, index) => (
+              <div
+                key={index}
+                className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
+                onClick={() => openEventDetails(event)}
+                style={{ minHeight: "250px", maxHeight: "250px" }}
+              >
+                {event.image && (
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full h-32 object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  <h4 className="font-bold text-lg">{event.title}</h4>
+                  <p className="text-sm text-gray-600">{event.openTimes}</p>
+                  <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                    {event.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
       </div>
     </div>
   );
