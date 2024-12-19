@@ -10,7 +10,7 @@ const Events = () => {
             <div className="flex justify-center">
                 <title className="px-5 font-bold text-3xl flex text-center">Events</title>
             </div> 
-            {/* <FeaturedEvents/> */}
+            <FeaturedEvents/>
             <Calendar/>
             <PointOfInterest/>
         </div>

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 const FeaturedEvents = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
 
+  // Placeholder data for Featured Events
   const featuredEvents = [
     {
       title: "Tech Conference 2024",
@@ -23,18 +23,6 @@ const FeaturedEvents = () => {
       description: "Enjoy live music performances from top artists.",
       image: "https://via.placeholder.com/150",
     },
-    {
-      title: "Art Exhibition",
-      openTimes: "10:00 AM - 6:00 PM",
-      description: "Explore stunning artworks from renowned artists.",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      title: "Fitness Workshop",
-      openTimes: "7:00 AM - 3:00 PM",
-      description: "Learn the best fitness practices for a healthier life.",
-      image: "https://via.placeholder.com/150",
-    },
   ];
 
   const openEventDetails = (event) => {
@@ -45,70 +33,32 @@ const FeaturedEvents = () => {
     setSelectedEvent(null);
   };
 
-  const handleNext = () => {
-    setScrollPosition((prev) => Math.min(prev + 3, featuredEvents.length - 3));
-  };
-
-  const handlePrev = () => {
-    setScrollPosition((prev) => Math.max(prev - 3, 0));
-  };
-
   return (
-    <div className="max-w-6xxl mx-auto mt-14 relative">
+    <div className="max-w-6xl mx-auto mt-14">
       <h2 className="text-2xl font-bold px-6 mb-8">Featured Events</h2>
-      <div className="overflow-hidden relative">
-        {/* Event List */}
-        <div
-          className="flex transition-transform duration-500"
-          style={{
-            transform: `translateX(-${scrollPosition * 33.33}%)`,
-          }}
-        >
-          {featuredEvents.map((event, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-1/3 px-2"
-              onClick={() => openEventDetails(event)}
-            >
-              <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer">
-                {event.image && (
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-32 object-cover"
-                  />
-                )}
-                <div className="p-4">
-                  <h4 className="font-bold text-lg">{event.title}</h4>
-                  <p className="text-sm text-gray-600">{event.openTimes}</p>
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                    {event.description}
-                  </p>
-                </div>
-              </div>
+      <div className="grid grid-cols-3 rows-1 gap-6">
+        {featuredEvents.map((event, index) => (
+          <div
+            key={index}
+            className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
+            onClick={() => openEventDetails(event)}
+          >
+            {event.image && (
+              <img
+                src={event.image}
+                alt={event.title}
+                className="w-full h-32 object-cover"
+              />
+            )}
+            <div className="p-4">
+              <h4 className="font-bold text-lg">{event.title}</h4>
+              <p className="text-sm text-gray-600">{event.openTimes}</p>
+              <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                {event.description}
+              </p>
             </div>
-          ))}
-        </div>
-
-        {/* Left Button */}
-        {scrollPosition > 0 && (
-          <button
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white font-bold text-green-500 outline rounded-lg px-4 py-2 hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500 z-10"
-            onClick={handlePrev}
-          >
-            &lt;
-          </button>
-        )}
-
-        {/* Right Button */}
-        {scrollPosition < featuredEvents.length - 3 && (
-          <button
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white font-bold text-green-500 outline rounded-lg px-4 py-2 hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500 z-10"
-            onClick={handleNext}
-          >
-            &gt;
-          </button>
-        )}
+          </div>
+        ))}
       </div>
 
       {/* Event Modal */}

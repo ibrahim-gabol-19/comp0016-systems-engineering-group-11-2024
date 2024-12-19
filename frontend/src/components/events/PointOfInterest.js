@@ -47,15 +47,15 @@ const PointOfInterest = () => {
       <h2 className="text-2xl font-bold px-6 mb-8">Points of Interest</h2>
       <div className="flex">
       {/* Sidebar */}
-      <div className="w-1/6 bg-gray flex flex-col justify-top">
+      <div className="w-1/6 bg-white flex flex-col justify-top">
         <ul className="space-y-3">
           {categories.map((category) => (
             <li
               key={category}
               className={`p-4 text-center font-bold cursor-pointer ${
                 selectedCategory === category
-                  ? "bg-white text-green-600 border-r-4 border-green-600"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-gray-200 text-green-600 border-r-4 border-green-600"
+                  : "bg-white text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() => handleCategoryClick(category)}
             >
