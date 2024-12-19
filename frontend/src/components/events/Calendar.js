@@ -46,24 +46,17 @@ const Calendar = () => {
     setHighlightToday(true); 
     setTimeout(() => setHighlightToday(false), 2000);
   };
-
   const openEventDetails = (eventData, e) => {
-    const container = e.target.closest('.overflow-y-auto'); // Get the scrollable container
-    const containerRect = container.getBoundingClientRect(); // Get container's position
     const eventRect = e.target.getBoundingClientRect(); // Get the event's position
-    const containerScrollTop = container ? container.scrollTop : 0; // Get container's scroll position
+    const topPosition = eventRect.top + window.scrollY + 50; // Adjusted Y offset
+    const leftPosition = eventRect.left + window.scrollX; // Keep X-axis unchanged
   
-    // Calculate the event's top position relative to the container and scroll
-    const top = eventRect.top - containerRect.top + containerScrollTop;
-    const left = eventRect.left + window.scrollX; // Get event's left position relative to page
-  
-    setSelectedEvent(eventData); // Store selected event data
+    setSelectedEvent(eventData);
     setSelectedEventPosition({
-      top: top, // Set the calculated top position
-      left: left, // Set the left position of the event
+      top: topPosition, // Use adjusted top
+      left: leftPosition,
     });
   };
-  
   
   
 
@@ -154,28 +147,39 @@ const Calendar = () => {
       </div>
 
       {/* Event Modal */}
-{selectedEvent && selectedEventPosition && (
-  <div
-    className="absolute bg-white border shadow-lg rounded-lg p-4 z-10"
-    style={{
-      top: selectedEventPosition.top + "px", // Position based on event's top value
-      left: selectedEventPosition.left + "px", // Position based on event's left value
-      width: "200px", // Fixed width for the modal
-    }}
-  >
-    <h3 className="text-lg font-bold">{selectedEvent.title}</h3>
-    <p className="text-sm text-gray-500">{selectedEvent.time}</p>
-    <p className="text-gray-700 mt-2">{selectedEvent.description}</p>
-    <button
-      className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-      onClick={closeEventDetails}
-    >
-      Close
-    </button>
-  </div>
-)}
+      {selectedEvent && selectedEventPosition && (
+        <div
+          className="absolute bg-white border shadow-lg rounded-lg p-4 z-10"
+          style={{
+            top: `${selectedEventPosition.top}px`, // Use dynamically calculated top position
+            left: `${selectedEventPosition.left}px`, // Use dynamically calculated left position
+            width: "250px",
+          }}
+        >
+          {/* Close Button */}
+          <button
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            onClick={closeEventDetails}
+          >
+            &#10005;
+          </button>
 
+          {/* Event Details */}
+          <div className="text-center">
+            <h3 className="text-lg font-bold mb-2">{selectedEvent.title}</h3>
+            <p className="text-sm text-gray-500 mb-4">{selectedEvent.time}</p>
+            <p className="text-gray-700 mb-6">{selectedEvent.description}</p>
+          </div>
 
+          {/* More Info Button */}
+          <button
+            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+            onClick={() => alert("Redirecting to event details...")} // Replace with functionality
+          >
+            More info
+          </button>
+        </div>
+      )}
     </div>
   );
 };
