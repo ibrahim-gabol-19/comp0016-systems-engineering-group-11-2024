@@ -10,11 +10,11 @@ const EventButton = () => {
 
   return (
     <button
-      className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600 font-semibold
-                 hover:bg-green-200 hover:text-green-700 hover:shadow-lg transition-all duration-200"
+      className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-600 font-semibold
+                 hover:bg-red-200 hover:text-red-700 hover:shadow-lg transition-all duration-200"
       onClick={handleClick} // Handle click event
     >
-      <span >📍</span> {/* Location emoji */}
+      <span>📍</span> {/* Location emoji */}
       Event
     </button>
   );
