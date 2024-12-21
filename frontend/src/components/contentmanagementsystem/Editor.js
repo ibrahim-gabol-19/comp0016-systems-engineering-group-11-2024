@@ -29,10 +29,20 @@ const Editor = forwardRef(
       const Font = Quill.import("formats/font");
       Quill.register(Font, true);
 
+      // Toolbar options
+      const toolbarOptions = [
+        ["bold", "italic", "underline", "strike"], // toggled buttons
+        ["blockquote", "code-block"],
+        ["link", "image", "video"],
+      ];
+
       // Initialize Quill
       const quill = new Quill(editorContainer, {
         theme: "snow",
         placeholder: "Compose an epic...",
+        modules: {
+          toolbar: toolbarOptions,
+        },
       });
 
       // Quill Editor Styles
@@ -41,13 +51,11 @@ const Editor = forwardRef(
       quill.root.style.lineHeight = "1.5"; // Set line height for readability
 
       // Set minimum and maximum height for the editor container
-      quill.root.style.minHeight = "500px";  // Minimum height for the editor
-      quill.root.style.maxHeight = "500px";  // Maximum height for the editor
-      quill.root.style.overflowY = "auto";  // Enable vertical scrolling when content exceeds max height
-      
+      quill.root.style.minHeight = "500px"; // Minimum height for the editor
+      quill.root.style.maxHeight = "500px"; // Maximum height for the editor
+      quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
 
-      
-      // Quill Toolbar Styles 
+      // Quill Toolbar Styles
       const toolbar = container.querySelector(".ql-toolbar");
       if (toolbar) {
         toolbar.style.fontFamily = "system-ui";
