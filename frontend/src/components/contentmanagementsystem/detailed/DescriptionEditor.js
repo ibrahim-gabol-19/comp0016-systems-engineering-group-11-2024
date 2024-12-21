@@ -3,7 +3,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
 // Editor is an uncontrolled React component
-const MainEditor = forwardRef(
+const DescriptionEditor = forwardRef(
   ({ readOnly, defaultValue, onTextChange, onSelectionChange }, ref) => {
     const containerRef = useRef(null);
     const defaultValueRef = useRef(defaultValue);
@@ -88,6 +88,6 @@ const MainEditor = forwardRef(
   }
 );
 
-MainEditor.displayName = "MainEditor";
+DescriptionEditor.displayName = "DescriptionEditor";
 
-export default MainEditor;
+export default DescriptionEditor;

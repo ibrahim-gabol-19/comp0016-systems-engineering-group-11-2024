@@ -3,11 +3,12 @@ import React, { useRef, useState } from "react";
 import CompulsoryOneLineEditor from "../../components/contentmanagementsystem/detailed/CompulsoryOneLineEditor";
 import Date from "../../components/contentmanagementsystem/detailed/Date";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import Description from "../../components/contentmanagementsystem/detailed/Description";
+import DescriptionEditor from "../../components/contentmanagementsystem/detailed/DescriptionEditor";
 
 import { useParams } from "react-router-dom";
 import Editor from "../../components/contentmanagementsystem/detailed/Editor";
 import Quill, { Delta } from "quill";
+import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 
 const DetailedArticlePage = () => {
   const quillRef = useRef(); // Ref for the Quill container
@@ -62,7 +63,10 @@ const DetailedArticlePage = () => {
         <CompulsoryOneLineEditor 
         ref={quillRefAuthor}/>
         <Date/>
-        <Description />
+        <DescriptionEditor
+        ref={quillRefDescription} />
+        <MainEditor
+        ref={quillRefMain} />
       </div>
       {/* Toggle between edit and preview */}
       <div className="p-6">
