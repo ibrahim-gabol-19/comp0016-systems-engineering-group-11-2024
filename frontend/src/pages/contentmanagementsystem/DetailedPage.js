@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import Editor from "../../components/contentmanagementsystem/Editor";
+import Editor from "../../components/contentmanagementsystem/detailed/Editor";
 import Quill, { Delta } from "quill";
 
 const DetailedPage = () => {
@@ -99,7 +99,7 @@ const DetailedPage = () => {
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
           <div>
-            <div className="w-1/2 h-4/5">
+            <div className="">
               <Editor
                 ref={quillRef}
                 defaultValue={defaultValue}
@@ -109,8 +109,8 @@ const DetailedPage = () => {
                 }}
               />
             </div>
-            <div>
-            <Editor
+            <div className=" ">
+              <Editor
                 ref={quillRefTitle}
                 style={{
                   width: "100%", // Ensure the editor takes up the full width of its container
@@ -118,6 +118,7 @@ const DetailedPage = () => {
                 }}
               />
             </div>
+              
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">
