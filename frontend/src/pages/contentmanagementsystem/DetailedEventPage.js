@@ -3,8 +3,6 @@ import Table from "../../components/contentmanagementsystem/Table";
 
 
 const DetailedEventPage = () => {
-  // State to track the selected content type
-  const [selectedContent, setSelectedContent] = useState("News");
 
   return (
     <div>

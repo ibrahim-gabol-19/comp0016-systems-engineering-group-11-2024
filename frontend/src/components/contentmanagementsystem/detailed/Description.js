@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 
 
-const Date = () => {
+const Description = () => {
 
 
   return (
@@ -12,4 +12,4 @@ const Date = () => {
   );
 };
 
-export default Date;
+export default Description;

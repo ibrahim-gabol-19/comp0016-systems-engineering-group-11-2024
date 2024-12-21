@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 const Table = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Forum");
+  const [selectedCategory, setSelectedCategory] = useState("Articles");
   const [selectedCards, setSelectedCards] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
