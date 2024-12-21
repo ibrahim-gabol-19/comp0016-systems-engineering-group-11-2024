@@ -5,6 +5,7 @@ import Quill, { Delta } from "quill";
 
 const DetailedPage = () => {
   const quillRef = useRef(); // Ref for the Quill container
+  const quillRefTitle = useRef();
   const { category, index } = useParams();
   const [isEditing, setIsEditing] = useState(true); // State to toggle between edit and preview mode
 
@@ -88,9 +89,7 @@ const DetailedPage = () => {
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
         {/* Non-functional save button */}
-        <button
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button className="bg-green-500 text-white px-4 py-2 rounded">
           Save
         </button>
       </div>
@@ -99,15 +98,26 @@ const DetailedPage = () => {
       <div className="w-screen h-screen flex justify-center items-center overflow-hidden relative">
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
-          <div className="w-1/2 h-4/5">
+          <div>
+            <div className="w-1/2 h-4/5">
+              <Editor
+                ref={quillRef}
+                defaultValue={defaultValue}
+                style={{
+                  width: "100%", // Ensure the editor takes up the full width of its container
+                  height: "100%", // Ensure the editor takes up the full height of its container
+                }}
+              />
+            </div>
+            <div>
             <Editor
-              ref={quillRef}
-              defaultValue={defaultValue}
-              style={{
-                width: "100%", // Ensure the editor takes up the full width of its container
-                height: "100%", // Ensure the editor takes up the full height of its container
-              }}
-            />
+                ref={quillRefTitle}
+                style={{
+                  width: "100%", // Ensure the editor takes up the full width of its container
+                  height: "100%", // Ensure the editor takes up the full height of its container
+                }}
+              />
+            </div>
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">
@@ -115,7 +125,9 @@ const DetailedPage = () => {
             <h1 className="text-3xl font-bold">{cardData.title}</h1>
             <p className="">{cardData.openTimes}</p>
             <p className="mt-4">{cardData.description}</p>
-            {cardData.image && <img src={cardData.image} alt={cardData.title} />}
+            {cardData.image && (
+              <img src={cardData.image} alt={cardData.title} />
+            )}
           </div>
         )}
       </div>
