@@ -1,9 +1,8 @@
 import React, { useRef, useState } from "react";
 
-import CompulsoryOneLineEditor from "../../components/contentmanagementsystem/detailed/CompulsoryOneLineEditor";
-import Date from "../../components/contentmanagementsystem/detailed/Date";
+import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import DescriptionEditor from "../../components/contentmanagementsystem/detailed/DescriptionEditor";
 
 import { useParams } from "react-router-dom";
 import Editor from "../../components/contentmanagementsystem/detailed/Editor";
@@ -17,8 +16,9 @@ const DetailedArticlePage = () => {
   const quillRefDescription = useRef();
   const quillRefMain = useRef();
 
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const category = "Articles";
-  const [isEditing, setIsEditing] = useState(true); 
+  const [isEditing, setIsEditing] = useState(true);
 
   //     - News: Title, Main Image, Author, Date, Description, How long to read, Table of Contents
   const sampleData = {
@@ -52,21 +52,13 @@ const DetailedArticlePage = () => {
     return <div>Card not found</div>;
   }
 
+  const handleFilesUploaded = (acceptedFiles) => {
+    setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+  };
   return (
     <div>
       <div>
         <h1>ArticlePage</h1>
-
-        <CompulsoryOneLineEditor
-        ref={quillRefTitle} />
-        <MainImage />
-        <CompulsoryOneLineEditor 
-        ref={quillRefAuthor}/>
-        <Date/>
-        <DescriptionEditor
-        ref={quillRefDescription} />
-        <MainEditor
-        ref={quillRefMain} />
       </div>
       {/* Toggle between edit and preview */}
       <div className="p-6">
@@ -83,29 +75,20 @@ const DetailedArticlePage = () => {
       </div>
 
       {/* Full-screen container */}
-      <div className="w-screen h-screen flex justify-center items-center overflow-hidden relative">
+      <div className=" flex justify-center items-center overflow-hidden relative">
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
           <div>
-            <div className="">
-              <Editor
-                ref={quillRef}
-                defaultValue={defaultValue}
-                style={{
-                  width: "100%", // Ensure the editor takes up the full width of its container
-                  height: "100%", // Ensure the editor takes up the full height of its container
-                }}
-              />
-            </div>
-            <div className=" ">
-              <Editor
-                ref={quillRefTitle}
-                style={{
-                  width: "100%", // Ensure the editor takes up the full width of its container
-                  height: "100%", // Ensure the editor takes up the full height of its container
-                }}
-              />
-            </div>
+            <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" />
+            {/* File Upload */}
+            <MainImage onFilesUploaded={handleFilesUploaded} />
+            <NoToolbarEditor ref={quillRefAuthor} placeholderText="Author" />
+            <DateTime />
+            <NoToolbarEditor
+              ref={quillRefDescription}
+              placeholderText="Description"
+            />
+            <MainEditor ref={quillRefMain} placeholderText="Main Content" />
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">

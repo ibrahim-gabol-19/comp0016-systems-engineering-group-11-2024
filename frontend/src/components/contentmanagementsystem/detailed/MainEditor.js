@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 
 // Editor is an uncontrolled React component
 const MainEditor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange }, ref) => {
+  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
     const containerRef = useRef(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
@@ -31,7 +31,8 @@ const MainEditor = forwardRef(
 
       // Toolbar options
       const toolbarOptions = [
-        ["bold", "italic", "underline", "strike"], // toggled buttons
+        [{ header: [1, 2, 3, false] }], 
+        ["bold", "italic", "underline", "strike"],
         ["blockquote", "code-block"],
         ["link", "image", "video"],
       ];
@@ -39,7 +40,7 @@ const MainEditor = forwardRef(
       // Initialize Quill
       const quill = new Quill(editorContainer, {
         theme: "snow",
-        placeholder: "Compose an epic...",
+        placeholder: placeholderText,
         modules: {
           toolbar: toolbarOptions,
         },
