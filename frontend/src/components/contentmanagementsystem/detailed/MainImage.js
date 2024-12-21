@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 
 const MainImage = ({ onFilesUploaded }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [previewImage, setPreviewImage] = useState(null); // State to store the image preview
   const fileInputRef = useRef(null);
 
@@ -24,7 +25,11 @@ const MainImage = ({ onFilesUploaded }) => {
   };
 
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
+    onDrop: (acceptedFiles) => {
+      setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+      setIsDragging(false); // Reset dragging state
+      alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
+    },
     maxFiles: 1, // Only allow one file to be uploaded
     accept: "image/*", // Only accept image files
     onDragEnter: () => setIsDragging(true),
@@ -58,7 +63,7 @@ const MainImage = ({ onFilesUploaded }) => {
         className="px-6 py-2 font-bold text-white bg-green-500 rounded-lg"
         onClick={handleFileUploadClick}
       >
-        Upload Files
+        Upload Image
       </button>
 
       {/* Image preview */}
