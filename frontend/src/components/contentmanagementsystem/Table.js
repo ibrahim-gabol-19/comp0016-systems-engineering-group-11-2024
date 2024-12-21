@@ -15,7 +15,7 @@ const Table = () => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
 
-  const categories = ["Forum", "Reporting", "Events", "News"];
+  const categories = ["Articles", "Events", "Forum", "Reporting"];
 
   const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ const Table = () => {
         image: "https://via.placeholder.com/150",
       },
     ],
-    News: [
+    Articles: [
       {
         title: "Camden Market",
         openTimes: "10:00 AM - 7:00 PM",
@@ -78,7 +78,7 @@ const Table = () => {
   };
 
   const handleCardClick = (index) => {
-    navigate(`/contentmanagementsystem/details/${selectedCategory}/${index}`);
+    navigate(`/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${index}`);
   };
 
   const toggleCardSelection = (index) => {

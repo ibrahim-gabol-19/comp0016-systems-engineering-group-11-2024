@@ -4,6 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem'; 
 import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
+import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
+import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
+
+
 const App = () => {
   const [items, setItems] = useState([]);
 
@@ -27,8 +31,10 @@ const App = () => {
         <div className="pt-20">
           {/* Define routes inside the Router using Routes */}
           <Routes>
-          <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
-          <Route path="contentmanagementsystem/details/:category/:index" element={<DetailedPage />} />            {/* You can add more routes here */}
+            <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
+            <Route path="contentmanagementsystem/details/articles/:index" element={<DetailedArticlePage />} />
+            <Route path="contentmanagementsystem/details/events/:index" element={<DetailedEventPage />} />
+
           </Routes>
 
           <h1>Item List</h1>
