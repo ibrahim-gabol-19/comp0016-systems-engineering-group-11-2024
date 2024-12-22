@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "../components/Header";
+import SearchBar from "../components/Home/SearchBar"; // Import the SearchBar component
 import ForYouCard from "../components/Home/ForYouCard";
 import NewsPage from "../components/News/NewsPage";
 import EventsPage from "../components/Events/EventsPage";
@@ -45,8 +46,12 @@ const App = () => {
   return (
     <div>
       <Router>
-        <div className="bg-rose-100 text-black min-h-screen">
+        <div className="bg-gray-100 text-black min-h-screen"> {/* Updated background color to gray-100 */}
           <Header />
+          {/* Add SearchBar component below the Header */}
+          <div className="container mx-auto px-4 py-4">
+            <SearchBar />
+          </div>
           <div className="container mx-auto px-0 py-8"> {/* Removed max-width */}
             <div className="flex flex-col md:flex-row gap-6"> {/* Flex layout for full width */}
               <div className="w-full md:w-4/5"> {/* MapComponent takes 4/5th of the width */}
@@ -59,17 +64,6 @@ const App = () => {
                 />
               </div>
             </div>
-
-            {/* Display list of items */}
-            <h1 className="text-2xl font-bold my-6">Items List</h1>
-            <ul className="list-disc list-inside">
-              {items.map((item) => (
-                <li key={item.id} className="mb-2">
-                  <span className="font-semibold">{item.name}</span> -{" "}
-                  {item.description}
-                </li>
-              ))}
-            </ul>
           </div>
 
           <Routes>
@@ -84,3 +78,6 @@ const App = () => {
 };
 
 export default App;
+
+
+
