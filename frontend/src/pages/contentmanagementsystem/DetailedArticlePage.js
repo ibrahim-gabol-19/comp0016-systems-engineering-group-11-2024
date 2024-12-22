@@ -83,10 +83,6 @@ const DetailedArticlePage = () => {
             {/* File Upload */}
             <MainImage onFilesUploaded={handleFilesUploaded} />
             <NoToolbarEditor ref={quillRefAuthor} placeholderText="Author" />
-            <NoToolbarEditor
-              ref={quillRefDescription}
-              placeholderText="Description"
-            />
             <MainEditor ref={quillRefMain} placeholderText="Main Content" />
           </div>
         ) : (

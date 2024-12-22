@@ -81,14 +81,15 @@ const DetailedEventPage = () => {
           <div>
             <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" />
             {/* File Upload */}
-            <MainImage onFilesUploaded={handleFilesUploaded} />
-            <NoToolbarEditor ref={quillRefAuthor} placeholderText="Location" />
             <DateTime />
             <NoToolbarEditor
               ref={quillRefDescription}
               placeholderText="Description"
             />
-            <MainEditor ref={quillRefMain} placeholderText="Main Content" />
+
+            <MainImage onFilesUploaded={handleFilesUploaded} />
+            
+            <NoToolbarEditor ref={quillRefAuthor} placeholderText="Location" />
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">
