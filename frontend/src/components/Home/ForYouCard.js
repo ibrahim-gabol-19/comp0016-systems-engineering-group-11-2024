@@ -35,7 +35,7 @@ const ForYouCard = () => {
         {cards.map((card, index) => (
           <div
             key={index}
-            className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105 relative"
+            className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
           >
             {/* Media Section */}
             {card.media && (
@@ -70,14 +70,22 @@ const ForYouCard = () => {
                 {card.comment}
               </p>
 
-              {/* Thumbs-up and Thumbs-down positioned at bottom right */}
-              <div className="absolute bottom-4 right-4 flex space-x-2">
-                <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
-                  <FaThumbsUp className="text-xl" />
+              {/* Reply and Thumbs-Up/Down in the Same Line */}
+              <div className="flex items-center justify-between mt-3">
+                {/* Reply Button */}
+                <button className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105">
+                  Reply
                 </button>
-                <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
-                  <FaThumbsDown className="text-xl" />
-                </button>
+
+                {/* Thumbs-Up and Thumbs-Down */}
+                <div className="flex space-x-2">
+                  <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
+                    <FaThumbsUp className="text-xl" />
+                  </button>
+                  <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
+                    <FaThumbsDown className="text-xl" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
