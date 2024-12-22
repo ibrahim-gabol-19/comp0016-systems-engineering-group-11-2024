@@ -1,8 +1,7 @@
 import React from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
-import VolunteeringButton from "./VolunteeringButton"; // Import the new VolunteeringButton
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"; // Import FontAwesome icons
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const ForYouCard = () => {
   const cards = [
@@ -11,93 +10,81 @@ const ForYouCard = () => {
       tag: "News",
       content: "Lorem ipsum dolor sit amet, sapien commodo?",
       comment: "Ajurn hal!",
-      media: "https://via.placeholder.com/150",
+      media: "https://via.placeholder.com/300x200", // Media image URL
     },
     {
       name: "John Doe",
       tag: "Event",
       content: "Lorem ipsum dolor sit amet, sapien commodo?",
       comment: "Ajurn hal!",
-      media: "https://via.placeholder.com/150",
+      media: "https://via.placeholder.com/300x200",
     },
     {
       name: "Emily Smith",
-      tag: "Volunteering",
+      tag: "Event",
       content: "Join us in making a difference in the community! 🌍",
       comment: "It's a rewarding experience!",
-      media: "https://via.placeholder.com/150",
+      media: "https://via.placeholder.com/300x200",
     },
   ];
 
   return (
-    <div className="p-6 font-sans flex justify-center">
-      <div className="w-full max-w-6xl">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">For You</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-xl rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-2xl"
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-6">
+    <div className="p-6 font-sans">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">For You</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105 relative"
+          >
+            {/* Media Section */}
+            {card.media && (
+              <img
+                src={card.media}
+                alt="Media content"
+                className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            )}
+
+            {/* Content Section */}
+            <div className="p-4 flex-1">
+              <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                  <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-4xl font-semibold text-gray-700">
-                      {card.name[0]}
-                    </span>
+                  <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3 group-hover:bg-gray-500 transition-colors duration-300">
+                    {card.name[0]}
                   </div>
-                  <span className="ml-4 font-semibold text-gray-800 text-xl">
+                  <p className="font-semibold text-lg text-gray-800 group-hover:text-gray-900 transition-colors duration-300">
                     {card.name}
-                  </span>
+                  </p>
                 </div>
-                <div>
-                  {card.tag === "News" ? (
-                    <NewsButton />
-                  ) : card.tag === "Event" ? (
-                    <EventButton />
-                  ) : (
-                    <VolunteeringButton />
-                  )}
-                </div>
+                {card.tag === "News" ? (
+                  <NewsButton />
+                ) : card.tag === "Event" ? (
+                  <EventButton />
+                ) : null}
               </div>
+              <p className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                {card.content}
+              </p>
+              <p className="text-gray-500 text-sm mt-2 italic group-hover:text-gray-700 transition-colors duration-300">
+                {card.comment}
+              </p>
 
-              {/* Content */}
-              <div className="mb-6">
-                <p className="text-gray-700 text-lg">{card.content}</p>
-                <p className="text-gray-500 text-sm mt-2 italic">{card.comment}</p>
-                {card.media && (
-                  <img
-                    src={card.media}
-                    alt="Media content"
-                    className="mt-4 w-full h-48 object-cover rounded-lg"
-                  />
-                )}
-              </div>
-
-              {/* Footer */}
-              <div className="flex justify-between items-center text-sm">
-                <button className="text-blue-600 hover:text-blue-700 font-medium transform transition-all duration-200 hover:scale-110 py-2 px-4 rounded-lg">
-                  Reply
+              {/* Thumbs-up and Thumbs-down positioned at bottom right */}
+              <div className="absolute bottom-4 right-4 flex space-x-2">
+                <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
+                  <FaThumbsUp className="text-xl" />
                 </button>
-                <div className="flex space-x-4 text-gray-500">
-                  <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-2 rounded-full hover:bg-gray-100">
-                    <FaThumbsUp className="text-xl" />
-                  </button>
-                  <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-2 rounded-full hover:bg-gray-100">
-                    <FaThumbsDown className="text-xl" />
-                  </button>
-                </div>
+                <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
+                  <FaThumbsDown className="text-xl" />
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
 export default ForYouCard;
-
-
-
