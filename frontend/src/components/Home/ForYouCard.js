@@ -1,6 +1,7 @@
 import React from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
+import VolunteeringButton from "./VolunteeringButton";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const ForYouCard = () => {
@@ -8,20 +9,20 @@ const ForYouCard = () => {
     {
       name: "Jane Doe",
       tag: "News",
-      content: "Lorem ipsum dolor sit amet, sapien commodo?",
-      comment: "Ajurn hal!",
+      content: "Green Inc are proud to launch their first prototype!  😁",
+      comment: "Awesome news!",
       media: "https://via.placeholder.com/300x200", // Media image URL
     },
     {
       name: "John Doe",
       tag: "Event",
-      content: "Lorem ipsum dolor sit amet, sapien commodo?",
-      comment: "Ajurn hal!",
+      content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
+      comment: "Sounds interesting!",
       media: "https://via.placeholder.com/300x200",
     },
     {
       name: "Emily Smith",
-      tag: "Event",
+      tag: "Volunteering",
       content: "Join us in making a difference in the community! 🌍",
       comment: "It's a rewarding experience!",
       media: "https://via.placeholder.com/300x200",
@@ -61,6 +62,8 @@ const ForYouCard = () => {
                   <NewsButton />
                 ) : card.tag === "Event" ? (
                   <EventButton />
+                ) : card.tag === "Volunteering" ? (
+                  <VolunteeringButton />
                 ) : null}
               </div>
               <p className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
@@ -96,3 +99,4 @@ const ForYouCard = () => {
 };
 
 export default ForYouCard;
+
