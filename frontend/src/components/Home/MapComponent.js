@@ -57,7 +57,7 @@ const MapComponent = ({ filters, dates }) => {
         maxBounds={ukBounds} // Restrict map movement to UK
         maxBoundsViscosity={1.0} // Ensures map stays within bounds
         minZoom={8} // Set minimum zoom level to allow zooming in further
-        maxZoom={12} // Set maximum zoom level to zoom in further
+        maxZoom={15} // Set maximum zoom level to zoom in further
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

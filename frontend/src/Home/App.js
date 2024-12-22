@@ -6,8 +6,8 @@ import ForYouCard from "../components/Home/ForYouCard";
 import NewsPage from "../components/News/NewsPage";
 import EventsPage from "../components/Events/EventsPage";
 import Home from "../components/Home";
-import MapFilter from "../components/Home/MapFilter"; // MapFilter only for filters and dates
-import MapComponent from "../components/Home/MapComponent"; // MapComponent outside of MapFilter
+import MapFilter from "../components/Home/MapFilter";
+import MapComponent from "../components/Home/MapComponent";
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -24,7 +24,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/items/") // Your API endpoint
+      .get("http://localhost:8000/api/items/")
       .then((response) => {
         console.log("Fetched Items:", response.data);
         setItems(response.data);
@@ -47,15 +47,12 @@ const App = () => {
       <Router>
         <div className="bg-rose-100 text-black min-h-screen">
           <Header />
-          <div className="container mx-auto px-4 py-8">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-full md:w-2/3">
-                {/* Pass filters and dates as props to MapComponent */}
+          <div className="container mx-auto px-0 py-8"> {/* Removed max-width */}
+            <div className="flex flex-col md:flex-row gap-6"> {/* Flex layout for full width */}
+              <div className="w-full md:w-4/5"> {/* MapComponent takes 4/5th of the width */}
                 <MapComponent filters={filters} dates={dates} />
               </div>
-
-              <div className="w-full md:w-1/3 md:ml-4">
-                {/* Pass filter changes and dates changes to MapFilter */}
+              <div className="w-full md:w-1/5"> {/* MapFilter takes 1/5th */}
                 <MapFilter
                   onFilterChange={handleFilterChange}
                   onDateChange={handleDateChange}
@@ -64,7 +61,7 @@ const App = () => {
             </div>
 
             {/* Display list of items */}
-            <h1 className="text-2xl font-bold mb-4">Items List</h1>
+            <h1 className="text-2xl font-bold my-6">Items List</h1>
             <ul className="list-disc list-inside">
               {items.map((item) => (
                 <li key={item.id} className="mb-2">
