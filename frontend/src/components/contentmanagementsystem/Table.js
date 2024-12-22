@@ -13,6 +13,7 @@ const Table = () => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
 
   const categories = ["Articles", "Events", "Forum", "Reporting"];
@@ -91,10 +92,17 @@ const Table = () => {
     );
   };
 
-  const handleAddCard = () => {
-    alert("Add new card functionality triggered!");
+  const handleAddCardClicked = () => {
+    setIsAddingCard(!isAddingCard);
   };
 
+  const handleManualClicked = () => {
+    navigate(
+      `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
+        sampleData[selectedCategory].length + 1
+      }`
+    );
+  };
   const onDrop = (acceptedFiles) => {
     setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
     alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
@@ -121,6 +129,7 @@ const Table = () => {
       {...getRootProps()}
       className="w-screen h-screen flex overflow-hidden relative"
     >
+      {/*Selection Top Bar*/}
       {selectedCards.length > 0 && (
         <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10">
           <span>{selectedCards.length} card(s) selected</span>
@@ -206,28 +215,44 @@ const Table = () => {
           {/* Add New Card */}
           <div
             className="flex items-center justify-center rounded-3xl bg-green-100 cursor-pointer group"
-            onClick={handleAddCard}
+            onClick={handleAddCardClicked}
             style={{ height: "300px" }}
           >
-            <div className="text-gray-600 text-4xl font-bold">+</div>
+            <div
+              className={`text-gray-600 text-4xl font-bold ${
+                isAddingCard ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              +
+            </div>
 
             {/* Manual Button */}
             <button
-              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center opacity-0 group-hover:opacity-100 ${
+              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center ${
+                isAddingCard ? "opacity-100" : "opacity-0"
+              } ${
                 selectedCategory === "Upload"
                   ? "bg-white text-gray-600"
                   : "bg-green-200 text-gray-600 hover:bg-green-300"
               }`}
               onClick={(e) => {
                 e.stopPropagation(); // Prevent the click event from triggering the card click
-                
+                handleManualClicked();
+              }}
+              disabled={!isAddingCard} // Disable the button if isAddingCard is false
+              style={{
+                pointerEvents: isAddingCard ? "auto" : "none", // Prevent interaction when not adding
+                opacity: isAddingCard ? 1 : 0, // Make the button appear disabled
               }}
             >
               Manual
             </button>
+
             {/* Upload Button */}
             <button
-              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center opacity-0 group-hover:opacity-100 ${
+              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center ${
+                isAddingCard ? "opacity-100" : "opacity-0"
+              } ${
                 selectedCategory === "Upload"
                   ? "bg-white text-gray-600"
                   : "bg-green-200 text-gray-600 hover:bg-green-300"
@@ -235,6 +260,11 @@ const Table = () => {
               onClick={(e) => {
                 e.stopPropagation(); // Prevent the click event from triggering the card click
                 handleFileUploadClick();
+              }}
+              disabled={!isAddingCard} // Disable the button if isAddingCard is false
+              style={{
+                pointerEvents: isAddingCard ? "auto" : "none", // Prevent interaction when not adding
+                opacity: isAddingCard ? 1 : 0, // Make the button appear disabled
               }}
             >
               Upload Files
