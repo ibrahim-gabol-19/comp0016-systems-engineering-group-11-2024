@@ -78,7 +78,9 @@ const Table = () => {
   };
 
   const handleCardClick = (index) => {
-    navigate(`/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${index}`);
+    navigate(
+      `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${index}`
+    );
   };
 
   const toggleCardSelection = (index) => {
@@ -203,24 +205,57 @@ const Table = () => {
         >
           {/* Add New Card */}
           <div
-            className="flex items-center justify-center rounded-3xl bg-green-100 cursor-pointer"
+            className="flex items-center justify-center rounded-3xl bg-green-100 cursor-pointer group"
             onClick={handleAddCard}
             style={{ height: "300px" }}
           >
             <div className="text-gray-600 text-4xl font-bold">+</div>
+
+            {/* Manual Button */}
+            <button
+              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center opacity-0 group-hover:opacity-100 ${
+                selectedCategory === "Upload"
+                  ? "bg-white text-gray-600"
+                  : "bg-green-200 text-gray-600 hover:bg-green-300"
+              }`}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the click event from triggering the card click
+                
+              }}
+            >
+              Manual
+            </button>
+            {/* Upload Button */}
+            <button
+              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center opacity-0 group-hover:opacity-100 ${
+                selectedCategory === "Upload"
+                  ? "bg-white text-gray-600"
+                  : "bg-green-200 text-gray-600 hover:bg-green-300"
+              }`}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the click event from triggering the card click
+                handleFileUploadClick();
+              }}
+            >
+              Upload Files
+            </button>
           </div>
 
           {/* Existing Cards */}
           {sampleData[selectedCategory]?.map((event, index) => (
             <div
               key={index}
-              className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform ${
+              className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform group ${
                 selectedCards.includes(index)
                   ? "border-4 border-green-500 bg-gray-100 "
-                  : " bg-gray-100 "
+                  : "bg-gray-100 "
               }`}
               style={{ height: "300px" }}
-              onClick={() => handleCardClick(index)}
+              onClick={() => {
+                if (selectedCards.length == 0) {
+                  handleCardClick(index);
+                } else toggleCardSelection(index);
+              }}
             >
               {event.image && (
                 <img
@@ -243,7 +278,7 @@ const Table = () => {
 
               {/* Checkmark Button */}
               <button
-                className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
+                className={`absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
                   selectedCards.includes(index) ? "opacity-100" : "opacity-50"
                 } group-hover:opacity-100 transition-opacity`}
                 onClick={(e) => {
@@ -253,21 +288,19 @@ const Table = () => {
               >
                 ✓
               </button>
+
+              {/* Cross Button */}
+              <button
+                className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the click event from triggering the card click
+                }}
+              >
+                X
+              </button>
             </div>
           ))}
         </div>
-
-        {/* Upload Button */}
-        <button
-          className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-colors text-center ${
-            selectedCategory === "Upload"
-              ? "bg-white text-gray-600  "
-              : "bg-green-200 text-gray-600   hover:bg-green-300"
-          }`}
-          onClick={handleFileUploadClick}
-        >
-          Upload Files
-        </button>
       </div>
     </div>
   );
