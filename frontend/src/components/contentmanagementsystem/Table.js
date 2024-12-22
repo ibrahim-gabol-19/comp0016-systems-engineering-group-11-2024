@@ -309,7 +309,7 @@ const Table = () => {
               {/* Checkmark Button */}
               <button
                 className={`absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
-                  selectedCards.includes(index) ? "opacity-100" : "opacity-50"
+                  selectedCards.includes(index) ? "opacity-100" : "opacity-0"
                 } group-hover:opacity-100 transition-opacity`}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent the click event from triggering the card click
@@ -327,6 +327,15 @@ const Table = () => {
                 }}
               >
                 X
+              </button>
+              {/* Star Button */}
+              <button
+                className={`absolute bottom-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the click event from triggering the card click
+                }}
+              >
+                ★
               </button>
             </div>
           ))}
