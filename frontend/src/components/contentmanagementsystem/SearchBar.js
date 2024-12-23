@@ -4,11 +4,11 @@ const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="">
+    <div className="basis-5/6 ">
      
 
       {/* Search Bar */}
-      <div className="relative w-full max-w-4xl">
+      <div className="relative w-full ">
         <input
           type="text"
           placeholder={isFocused ? "" : "Search"}
