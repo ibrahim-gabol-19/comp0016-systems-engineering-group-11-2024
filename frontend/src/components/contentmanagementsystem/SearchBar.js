@@ -4,7 +4,7 @@ const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="basis-5/6 ">
+    <div className="basis-4/12 ">
      
 
       {/* Search Bar */}
@@ -12,9 +12,9 @@ const SearchBar = () => {
         <input
           type="text"
           placeholder={isFocused ? "" : "Search"}
-          className={`transition-all duration-300 ease-in-out  pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            isFocused ? "h-12" : "h-12 "
-          } w-full`}
+          className={` transition-all duration-300 ease-in-out  pr-48 pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            isFocused ? "h-12 w-3/4" : "h-12 w-1/2"
+          }`}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
