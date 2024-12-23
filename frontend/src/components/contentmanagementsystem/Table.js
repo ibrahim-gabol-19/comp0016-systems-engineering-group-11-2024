@@ -1,12 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  redirect,
-} from "react-router-dom";
+import SelectTopBar from "./SelectTopBar";
+import DefaultTopBar from "./DefaultTopBar";
 
 const Table = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
@@ -124,52 +120,43 @@ const Table = () => {
     }
   };
 
+  // Define the functions that will be passed to TopBar as props
+  const handleDelete = () => {
+    alert("Delete action triggered");
+  };
+
+  const handleStar = () => {
+    alert("Star action triggered");
+  };
+
+  const handleSelectAll = () => {
+    const allCards = sampleData[selectedCategory]?.map((_, index) => index);
+    setSelectedCards(allCards);
+  };
+
+  const handleCancel = () => {
+    setSelectedCards([]); // Deselect all cards
+  };
+
   return (
     <div
       {...getRootProps()}
       className="w-screen h-screen flex overflow-hidden relative"
     >
-      {/*Selection Top Bar*/}
-      {selectedCards.length > 0 && (
-        <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10">
-          <span>{selectedCards.length} card(s) selected</span>
-          <div>
-            <button
-              className="mr-4 px-4 py-2 bg-red-500 rounded-lg"
-              onClick={() => {
-                alert("Delete action triggered");
-              }}
-            >
-              Delete
-            </button>
-            <button
-              className="mr-4 px-4 py-2 bg-yellow-500 rounded-lg"
-              onClick={() => {
-                alert("Star action triggered");
-              }}
-            >
-              Star
-            </button>
-            <button
-              className="mr-4 px-4 py-2 bg-green-500 rounded-lg"
-              onClick={() => {
-                // Select all cards
-                const allCards = sampleData[selectedCategory]?.map(
-                  (_, index) => index
-                );
-                setSelectedCards(allCards);
-              }}
-            >
-              Select All
-            </button>
-            <button
-              className="px-4 py-2 bg-gray-500 rounded-lg"
-              onClick={() => setSelectedCards([])} // Deselect all cards
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+      {/* Selection Top Bar */}
+      {selectedCards.length > 0 ? (
+        <SelectTopBar
+          selectedCards={selectedCards}
+          onDelete={handleDelete}
+          onStar={handleStar}
+          onSelectAll={handleSelectAll}
+          onCancel={handleCancel}
+        />
+      ) : (
+        <DefaultTopBar
+          onManual={handleManualClicked}
+          onUpload={handleFileUploadClick}
+        />
       )}
 
       <input {...getInputProps()} ref={fileInputRef} />
