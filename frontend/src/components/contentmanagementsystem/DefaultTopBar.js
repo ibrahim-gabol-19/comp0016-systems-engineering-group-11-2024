@@ -9,8 +9,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
   };
 
   return (
-    <div className="bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10">
-      <div>
+    <div className="bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10 relative">
         <SearchBar />
         {/* New Button to toggle dropdown */}
         <button
@@ -22,7 +21,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
 
         {/* Dropdown list, visible when isDropdownOpen is true */}
         {isDropdownOpen && (
-          <div className="absolute bg-gray-700 py-2 px-4 mt-2 rounded-lg shadow-lg">
+          <div className="absolute bg-gray-700 py-2 px-4 mt-2 rounded-lg shadow-lg z-20">
             <button
               className="block w-full text-left px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg mb-2"
               onClick={onManual}
@@ -37,7 +36,6 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
             </button>
           </div>
         )}
-      </div>
     </div>
   );
 };

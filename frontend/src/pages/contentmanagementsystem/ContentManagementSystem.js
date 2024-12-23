@@ -1,13 +1,14 @@
 import React, { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
-import SelectTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
-
+import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
   const [selectedCards, setSelectedCards] = useState([]);
+  const [starredCards, setStarredCards] = useState([]);
+
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false);
@@ -73,6 +74,7 @@ const ContentManagementSystem = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setSelectedCards([]);
+    setStarredCards([]);
   };
 
   const handleCardClick = (index) => {
@@ -86,6 +88,13 @@ const ContentManagementSystem = () => {
       prevSelected.includes(index)
         ? prevSelected.filter((i) => i !== index)
         : [...prevSelected, index]
+    );
+  };
+  const toggleStarSelection = (index) => {
+    setStarredCards((prevStarred) =>
+      prevStarred.includes(index)
+        ? prevStarred.filter((i) => i !== index)
+        : [...prevStarred, index]
     );
   };
 
@@ -127,9 +136,10 @@ const ContentManagementSystem = () => {
   };
 
   const handleStar = () => {
-    alert("Star action triggered");
+    const allCards = selectedCards?.map((_, index) => index);
+    allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
   };
-
+  
   const handleSelectAll = () => {
     const allCards = sampleData[selectedCategory]?.map((_, index) => index);
     setSelectedCards(allCards);
@@ -141,8 +151,8 @@ const ContentManagementSystem = () => {
 
   return (
     <div>
-  {/* Selection Top Bar */}
-  {selectedCards.length > 0 ? (
+      {/* Selection Top Bar */}
+      {selectedCards.length > 0 ? (
         <SelectTopBar
           selectedCards={selectedCards}
           onDelete={handleDelete}
@@ -156,124 +166,124 @@ const ContentManagementSystem = () => {
           onUpload={handleFileUploadClick}
         />
       )}
-    <div
-      {...getRootProps()}
-      className="w-screen h-screen flex overflow-hidden relative"
-    >
-    
-      <input {...getInputProps()} ref={fileInputRef} />
-      {/* Drag-and-drop overlay */}
       <div
-        className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
-          isDragging ? "opacity-100" : "opacity-0"
-        }`}
+        {...getRootProps()}
+        className="w-screen h-screen flex overflow-hidden relative"
       >
-        <p className="text-gray-500 font-semibold text-center">
-          Drag and drop files here to upload
-        </p>
-      </div>
-
-      {/* Sidebar */}
-      <div className="w-1/6 bg-gray-200 flex flex-col text-black shadow-lg">
-        <ul className="space-y-2 py-4">
-          {categories.map((category) => (
-            <li
-              key={category}
-              className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
-                selectedCategory === category
-                  ? "bg-green-200 border-r-4 "
-                  : "bg-gray-200 hover:bg-gray-300"
-              } rounded-r-3xl`}
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className="w-5/6 bg-gray pl-6 overflow-auto">
+        <input {...getInputProps()} ref={fileInputRef} />
+        {/* Drag-and-drop overlay */}
         <div
-          className="grid grid-cols-3 gap-8 overflow-y-auto"
-          style={{
-            height: "700px",
-            alignContent: "start",
-          }}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
+            isDragging ? "opacity-100" : "opacity-0"
+          }`}
         >
-          
+          <p className="text-gray-500 font-semibold text-center">
+            Drag and drop files here to upload
+          </p>
+        </div>
 
-          {/* Existing Cards */}
-          {sampleData[selectedCategory]?.map((event, index) => (
-            <div
-              key={index}
-              className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform group ${
-                selectedCards.includes(index)
-                  ? "border-4 border-green-500 bg-gray-100 "
-                  : "bg-gray-100 "
-              }`}
-              style={{ height: "300px" }}
-              onClick={() => {
-                if (selectedCards.length == 0) {
-                  handleCardClick(index);
-                } else toggleCardSelection(index);
-              }}
-            >
-              {event.image && (
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-1/2 object-cover rounded-t-3xl"
-                />
-              )}
-              <div className="p-4 flex flex-col justify-between h-1/2">
-                <h4 className="font-bold text-lg text-gray-800 truncate">
-                  {event.title}
-                </h4>
-                <p className="text-sm text-gray-600 truncate">
-                  {event.openTimes}
-                </p>
-                <p className="text-sm text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-2">
-                  {event.description}
-                </p>
+        {/* Sidebar */}
+        <div className="w-1/6 bg-gray-200 flex flex-col text-black shadow-lg">
+          <ul className="space-y-2 py-4">
+            {categories.map((category) => (
+              <li
+                key={category}
+                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
+                  selectedCategory === category
+                    ? "bg-green-200 border-r-4 "
+                    : "bg-gray-200 hover:bg-gray-300"
+                } rounded-r-3xl`}
+                onClick={() => handleCategoryClick(category)}
+              >
+                {category}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Main Content */}
+        <div className="w-5/6 bg-gray pl-6 overflow-auto">
+          <div
+            className="grid grid-cols-3 gap-8 overflow-y-auto"
+            style={{
+              height: "700px",
+              alignContent: "start",
+            }}
+          >
+            {/* Existing Cards */}
+            {sampleData[selectedCategory]?.map((event, index) => (
+              <div
+                key={index}
+                className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform group ${
+                  selectedCards.includes(index)
+                    ? "border-4 border-green-500 bg-gray-100 "
+                    : "bg-gray-100 "
+                }`}
+                style={{ height: "300px" }}
+                onClick={() => {
+                  if (selectedCards.length == 0) {
+                    handleCardClick(index);
+                  } else toggleCardSelection(index);
+                }}
+              >
+                {event.image && (
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full h-1/2 object-cover rounded-t-3xl"
+                  />
+                )}
+                <div className="p-4 flex flex-col justify-between h-1/2">
+                  <h4 className="font-bold text-lg text-gray-800 truncate">
+                    {event.title}
+                  </h4>
+                  <p className="text-sm text-gray-600 truncate">
+                    {event.openTimes}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-2">
+                    {event.description}
+                  </p>
+                </div>
+
+                {/* Checkmark Button */}
+                <button
+                  className={`absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
+                    selectedCards.includes(index) ? "opacity-100" : "opacity-0"
+                  } group-hover:opacity-100 transition-opacity`}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent the click event from triggering the card click
+                    toggleCardSelection(index);
+                  }}
+                >
+                  ✓
+                </button>
+
+                {/* Cross Button */}
+                <button
+                  className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent the click event from triggering the card click
+                  }}
+                >
+                  X
+                </button>
+                {/* Star Button */}
+                <button
+                  className={`absolute bottom-2   left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
+                    starredCards.includes(index) ? "opacity-100" : "opacity-0"
+                  } group-hover:opacity-100 transition-opacity`}                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent the click event from triggering the card click
+                    toggleStarSelection(index);
+
+                  }}
+                >
+                  ★
+                </button>
               </div>
-
-              {/* Checkmark Button */}
-              <button
-                className={`absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
-                  selectedCards.includes(index) ? "opacity-100" : "opacity-0"
-                } group-hover:opacity-100 transition-opacity`}
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent the click event from triggering the card click
-                  toggleCardSelection(index);
-                }}
-              >
-                ✓
-              </button>
-
-              {/* Cross Button */}
-              <button
-                className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent the click event from triggering the card click
-                }}
-              >
-                X
-              </button>
-              {/* Star Button */}
-              <button
-                className={`absolute bottom-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent the click event from triggering the card click
-                }}
-              >
-                ★
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

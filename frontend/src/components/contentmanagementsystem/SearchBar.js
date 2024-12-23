@@ -4,20 +4,16 @@ const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="flex flex-col items-center w-full mt-8">
-      {/* Header with AI Logo and Title */}
-      <div className="flex items-center justify-center mb-4">
-        {/* <img src={aiLogo} alt="AI Logo" className="w-10 h-10 mr-3" /> */}
-        <h1 className="text-3xl font-bold text-gray-800">Ask AI</h1>
-      </div>
+    <div className="">
+     
 
       {/* Search Bar */}
       <div className="relative w-full max-w-4xl">
         <input
           type="text"
-          placeholder={isFocused ? "" : "When is the next volunteering event?"}
-          className={`transition-all duration-300 ease-in-out p-4 pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            isFocused ? "h-36" : "h-12"
+          placeholder={isFocused ? "" : "Search"}
+          className={`transition-all duration-300 ease-in-out  pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            isFocused ? "h-12" : "h-12 "
           } w-full`}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
