@@ -218,16 +218,19 @@ const ContentManagementSystem = () => {
   // Define the functions that will be passed to TopBar as props
   const handleDelete = () => {
     alert("Delete action triggered");
+    handleCancel();
   };
 
   const handleStar = () => {
     const allCards = selectedCards?.map((_, index) => index);
     allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
+    handleCancel();
   };
   
   const handleSelectAll = () => {
     const allCards = sampleData[selectedCategory]?.map((_, index) => index);
     setSelectedCards(allCards);
+
   };
 
   const handleCancel = () => {
