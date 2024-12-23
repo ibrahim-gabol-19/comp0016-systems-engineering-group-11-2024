@@ -140,12 +140,9 @@ const ContentManagementSystem = () => {
   };
 
   return (
-    <div
-      {...getRootProps()}
-      className="w-screen h-screen flex overflow-hidden relative"
-    >
-      {/* Selection Top Bar */}
-      {selectedCards.length > 0 ? (
+    <div>
+  {/* Selection Top Bar */}
+  {selectedCards.length > 0 ? (
         <SelectTopBar
           selectedCards={selectedCards}
           onDelete={handleDelete}
@@ -159,7 +156,11 @@ const ContentManagementSystem = () => {
           onUpload={handleFileUploadClick}
         />
       )}
-
+    <div
+      {...getRootProps()}
+      className="w-screen h-screen flex overflow-hidden relative"
+    >
+    
       <input {...getInputProps()} ref={fileInputRef} />
       {/* Drag-and-drop overlay */}
       <div
@@ -200,64 +201,7 @@ const ContentManagementSystem = () => {
             alignContent: "start",
           }}
         >
-          {/* Add New Card */}
-          <div
-            className="flex items-center justify-center rounded-3xl bg-green-100 cursor-pointer group"
-            onClick={handleAddCardClicked}
-            style={{ height: "300px" }}
-          >
-            <div
-              className={`text-gray-600 text-4xl font-bold ${
-                isAddingCard ? "opacity-0" : "opacity-100"
-              }`}
-            >
-              +
-            </div>
-
-            {/* Manual Button */}
-            <button
-              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center ${
-                isAddingCard ? "opacity-100" : "opacity-0"
-              } ${
-                selectedCategory === "Upload"
-                  ? "bg-white text-gray-600"
-                  : "bg-green-200 text-gray-600 hover:bg-green-300"
-              }`}
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent the click event from triggering the card click
-                handleManualClicked();
-              }}
-              disabled={!isAddingCard} // Disable the button if isAddingCard is false
-              style={{
-                pointerEvents: isAddingCard ? "auto" : "none", // Prevent interaction when not adding
-                opacity: isAddingCard ? 1 : 0, // Make the button appear disabled
-              }}
-            >
-              Manual
-            </button>
-
-            {/* Upload Button */}
-            <button
-              className={`mt-6 px-6 py-2 font-bold cursor-pointer rounded-half transition-opacity text-center ${
-                isAddingCard ? "opacity-100" : "opacity-0"
-              } ${
-                selectedCategory === "Upload"
-                  ? "bg-white text-gray-600"
-                  : "bg-green-200 text-gray-600 hover:bg-green-300"
-              }`}
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent the click event from triggering the card click
-                handleFileUploadClick();
-              }}
-              disabled={!isAddingCard} // Disable the button if isAddingCard is false
-              style={{
-                pointerEvents: isAddingCard ? "auto" : "none", // Prevent interaction when not adding
-                opacity: isAddingCard ? 1 : 0, // Make the button appear disabled
-              }}
-            >
-              Upload Files
-            </button>
-          </div>
+          
 
           {/* Existing Cards */}
           {sampleData[selectedCategory]?.map((event, index) => (
@@ -329,6 +273,7 @@ const ContentManagementSystem = () => {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 };
