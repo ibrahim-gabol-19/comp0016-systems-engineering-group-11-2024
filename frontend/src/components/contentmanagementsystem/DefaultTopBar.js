@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SearchBar from "./SearchBar"
 
 const DefaultTopBar = ({ onManual, onUpload }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -10,6 +11,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
   return (
     <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10">
       <div>
+        <SearchBar/>
         {/* New Button to toggle dropdown */}
         <button
           className="mr-4 px-4 py-2 bg-blue-500 rounded-lg"
