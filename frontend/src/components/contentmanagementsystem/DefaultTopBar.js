@@ -29,7 +29,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
             d="M12 4.5v15m7.5-7.5h-15"
           />
         </svg>
-        New Event
+        New
       </button>
       <div className="basis-3/12"></div>
 
@@ -37,22 +37,24 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
       <div className="basis-3/12"></div>
 
       {/* Dropdown list, visible when isDropdownOpen is true */}
-      {isDropdownOpen && (
-        <div className="absolute bg-gray-200 py-2 px-14 mt-2 rounded-lg shadow-lg z-20 top-full left-8 w-full max-w-xs">
-          <button
-            className="justify-center w-full py-3 bg-white font-bold text-green-500  rounded-lg  active:bg-green-100 hover:outline transition duration-500 active:duration-100 mb-2"
-            onClick={onManual}
-          >
-            Manual
-          </button>
-          <button
-            className="justify-center w-full py-3 bg-white font-bold text-green-500  rounded-lg  hover:outline active:bg-green-100 transition duration-500 active:duration-100"
-            onClick={onUpload}
-          >
-            Upload
-          </button>
-        </div>
-      )}
+      <div
+        className={`absolute bg-gray-200 py-2 px-14 mt-2 rounded-lg shadow-lg z-20 left-8 w-full max-w-xs top-full transition-all duration-300  ${
+          isDropdownOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <button
+          className="justify-center w-full py-3 bg-white font-bold text-green-500  rounded-lg  active:bg-green-100 hover:outline transition duration-500 active:duration-100 mb-2"
+          onClick={onManual}
+        >
+          Manual
+        </button>
+        <button
+          className="justify-center w-full py-3 bg-white font-bold text-green-500  rounded-lg  hover:outline active:bg-green-100 transition duration-500 active:duration-100"
+          onClick={onUpload}
+        >
+          Upload
+        </button>
+      </div>
     </div>
   );
 };
