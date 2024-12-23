@@ -23,7 +23,7 @@ const ContentManagementSystem = () => {
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
-        description: "Iconic clock tower located in London.",
+        description: "Iconic clock tower located in London lorem ipdsum and this becomes that beckend frontend hahahah yes it does.. and this is even more.",
         image: "https://via.placeholder.com/150",
       },
       {
@@ -318,17 +318,17 @@ const ContentManagementSystem = () => {
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-1/2 object-cover rounded-t-3xl"
+                    className="w-full h-1/2 object-cover rounded-t-3xl "
                   />
                 )}
-                <div className="p-4 flex flex-col justify-between h-1/2">
-                  <h4 className="font-bold text-lg text-gray-800 truncate">
+                <div className="p-4 flex flex-col h-1/2 text-center">
+                  <h2 className="font-bold text-xl text-gray-800 truncate">
                     {event.title}
-                  </h4>
-                  <p className="text-sm text-gray-600 truncate">
+                  </h2>
+                  <p className="text-sm text-gray-400z truncate">
                     {event.openTimes}
                   </p>
-                  <p className="text-sm text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-2">
+                  <p className="text-base text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-3">
                     {event.description}
                   </p>
                 </div>
