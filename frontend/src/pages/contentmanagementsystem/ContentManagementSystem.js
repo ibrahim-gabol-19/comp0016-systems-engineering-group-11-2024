@@ -235,7 +235,7 @@ const ContentManagementSystem = () => {
   };
 
   return (
-    <div>
+    <div className="h-[calc(100vh-146px)]">
       {/* Selection Top Bar */}
       {selectedCards.length > 0 ? (
         <SelectTopBar
@@ -253,7 +253,7 @@ const ContentManagementSystem = () => {
       )}
       <div
         {...getRootProps()}
-        className="w-screen h-screen flex overflow-hidden relative"
+        className="w-screen h-full flex overflow-hidden relative"
       >
         <input {...getInputProps()} ref={fileInputRef} />
         {/* Drag-and-drop overlay */}
@@ -291,7 +291,6 @@ const ContentManagementSystem = () => {
           <div
             className="grid grid-cols-3 gap-8 overflow-y-auto"
             style={{
-              height: "700px",
               alignContent: "start",
             }}
           >
