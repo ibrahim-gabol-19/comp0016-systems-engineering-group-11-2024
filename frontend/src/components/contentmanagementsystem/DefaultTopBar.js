@@ -9,7 +9,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
   };
 
   return (
-    <div className="bg-gray-800 text-white py-2 px-4 flex justify-between items-center z-10 relative">
+    <div className="bg-gray text-white py-2 px-4 flex justify-between items-center z-10 relative">
         <SearchBar />
         {/* New Button to toggle dropdown */}
         <button
