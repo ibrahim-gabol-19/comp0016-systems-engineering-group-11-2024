@@ -271,16 +271,17 @@ const ContentManagementSystem = () => {
         </div>
 
         {/* Sidebar */}
-        <div className="w-1/6 bg-gray-200 flex flex-col text-black shadow-lg">
+        {/* <div className="h-[530px] w-[300px] mt-6 p-5 bg-[#f9f9f9] rounded-lg font-sans flex flex-col gap-5 shadow-md"> */}
+        <div className="w-1/6 bg-[#f9f9f9]  flex flex-col text-black shadow-lg">
           <ul className="space-y-2 py-4">
             {categories.map((category) => (
               <li
                 key={category}
                 className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
                   selectedCategory === category
-                    ? "bg-green-200 border-r-4 "
-                    : "bg-gray-200 hover:bg-gray-300"
-                } rounded-r-3xl`}
+                    ? "bg-gray-200 text-green-600 border-r-4 border-green-500 "
+                    : " text-gray-600 hover:bg-gray-200"
+                }`}
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}
@@ -290,7 +291,7 @@ const ContentManagementSystem = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 bg-gray pl-6 overflow-auto">
+        <div className="w-5/6 bg-white pl-6 overflow-auto">
           <div
             className="grid grid-cols-3 gap-8 overflow-y-auto"
             style={{

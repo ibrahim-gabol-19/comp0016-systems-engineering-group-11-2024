@@ -9,7 +9,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
   };
 
   return (
-    <div className="pb-2 text-white flex flex-row justify-center items-center z-10 relative">
+    <div className="pb-2 text-white border-b-2  flex flex-row justify-center items-center z-10 relative">
       {/* New Button to toggle dropdown */}
       <button
         className="justify-center basis-1/6 flex flex-row py-3 max-w-80 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-500"
