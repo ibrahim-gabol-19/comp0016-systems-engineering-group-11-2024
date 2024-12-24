@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 const MapFilter = ({ onFilterChange, onDateChange }) => {
   const [filters, setFilters] = useState({
-    volunteering: false,
-    events: false,
-    news: false,
-    issues: false,
+    volunteering: true,
+    events: true,
+    news: true,
+    issues: true,
   });
   const [dates, setDates] = useState({
     from: "",

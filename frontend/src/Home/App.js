@@ -13,10 +13,10 @@ import MapComponent from "../components/Home/MapComponent";
 const App = () => {
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
-    volunteering: false,
-    events: false,
-    news: false,
-    issues: false,
+    volunteering: true,
+    events: true,
+    news: true,
+    issues: true,
   });
   const [dates, setDates] = useState({
     from: "",
