@@ -8,7 +8,7 @@ const SelectTopBar = ({
   onCancel,
 }) => {
   return (
-    <div className="pb-2 text-black flex flex-row w-full justify-between items-center z-10 relative">
+    <div className="pb-2 text-black flex border-b-2  flex-row w-full justify-between items-center z-10 relative">
       {/* Cancel button */}
       <button
         className="max-w-12 flex flex-row justify-center basis-1/12 ml-4 mr-4 py-3 bg-gray-500 font-bold text-white rounded-lg hover:bg-gray-400 active:bg-gray-300 transition active:duration-100 duration-500 "
@@ -29,13 +29,14 @@ const SelectTopBar = ({
           />
         </svg>
       </button>
+      <div className=" basis-1/12 " />
 
       {/* Selected cards count */}
-      <span className="basis-2/12 ml-12 mr-96 font-semibold text-base">
+      <span className="basis-2/12  ml-36 mr-96 font-semibold text-xl">
         {selectedCards.length} card(s) selected
       </span>
 
-      <div className=" basis-6/12 " />
+      <div className=" basis-5/12 " />
       {/* Action buttons */}
       {/* <div className="basis-3/12 flex space-x-4"> */}
 
