@@ -4,7 +4,7 @@ import Calendar from '../../components/events/Calendar';
 import PointOfInterest from '../../components/events/PointOfInterest';
 import FeaturedEvents from '../../components/events/FeaturedEvents';
 
-const Events = () => {
+const EventsPage = () => {
     return (
         <div>
             <div className="flex justify-center">
@@ -17,4 +17,4 @@ const Events = () => {
       );
 };
 
-export default Events;
+export default EventsPage;
