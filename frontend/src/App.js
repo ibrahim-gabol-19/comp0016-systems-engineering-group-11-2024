@@ -5,6 +5,12 @@ import Header from "./components/Header";
 import HomePage from "./pages/home/HomePage";
 // import NewsPage from "./pages/news/NewsPage";
 import EventsPage from "./pages/events/EventsPage";
+import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem';
+import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
+import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
+import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
+
+
 const App = () => {
   return (
     <div>
@@ -16,6 +22,9 @@ const App = () => {
               <Route path="/" element={<HomePage />} />
               {/* <Route path="/news" element={<NewsPage />} /> */}
               <Route path="/events" element={<EventsPage />} />
+              <Route path="contentmanagementsystem/details/articles/:index" element={<DetailedArticlePage />} />
+              <Route path="contentmanagementsystem/details/events/:index" element={<DetailedEventPage />} />
+
             </Routes>
           </div>
         </div>

@@ -28,6 +28,11 @@ const navList = [
     data: "News",
     path: "/news", 
   },
+  {
+    id: 6,
+    data: "Manage",
+    path: "/contentmanagementsystem", 
+  },
 ];
 
 const Header = () => {
