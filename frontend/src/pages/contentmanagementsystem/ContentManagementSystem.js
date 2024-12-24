@@ -23,111 +23,112 @@ const ContentManagementSystem = () => {
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
-        description: "Iconic clock tower located in London lorem ipdsum and this becomes that beckend frontend hahahah yes it does.. and this is even more.",
-        image: "https://via.placeholder.com/150",
+        description:
+          "Iconic clock tower located in London lorem ipdsum and this becomes that beckend frontend hahahah yes it does.. and this is even more.",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/10",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/200",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "Big Ben",
         openTimes: "9:00 AM - 6:00 PM",
         description: "Iconic clock tower located in London.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
-      
+
       {
         title: "Tower of London",
         openTimes: "10:00 AM - 5:30 PM",
         description: "Historic castle on the River Thames.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "London Eye",
         openTimes: "10:00 AM - 8:00 PM",
         description: "Famous observation wheel offering panoramic views.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
       {
         title: "The Shard",
         openTimes: "9:00 AM - 10:00 PM",
         description: "Tallest building in London with an observation deck.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
     ],
     Reporting: [
@@ -135,7 +136,7 @@ const ContentManagementSystem = () => {
         title: "British Museum",
         openTimes: "10:00 AM - 6:00 PM",
         description: "Explore world history and culture.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
     ],
     Events: [
@@ -143,7 +144,7 @@ const ContentManagementSystem = () => {
         title: "Hyde Park",
         openTimes: "Open 24 hours",
         description: "Relax in one of London's largest parks.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
     ],
     Articles: [
@@ -151,7 +152,7 @@ const ContentManagementSystem = () => {
         title: "Camden Market",
         openTimes: "10:00 AM - 7:00 PM",
         description: "Browse eclectic shops and food stalls.",
-        image: "https://via.placeholder.com/150",
+        image: "https://picsum.photos/150",
       },
     ],
   };
@@ -226,11 +227,10 @@ const ContentManagementSystem = () => {
     allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
     handleCancel();
   };
-  
+
   const handleSelectAll = () => {
     const allCards = sampleData[selectedCategory]?.map((_, index) => index);
     setSelectedCards(allCards);
-
   };
 
   const handleCancel = () => {
@@ -302,29 +302,29 @@ const ContentManagementSystem = () => {
             {sampleData[selectedCategory]?.map((event, index) => (
               <div
                 key={index}
-                className={`relative rounded-3xl overflow-hidden shadow-lg cursor-pointer transition-transform group ${
-                  selectedCards.includes(index)
-                    ? "border-4 border-green-500 bg-gray-100 "
-                    : "bg-white  "
+                className={`relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-all duration-300 group ${
+                  selectedCards.includes(index) ? "bg-green-100 " : "bg-white "
                 }`}
                 style={{ height: "300px" }}
                 onClick={() => {
-                  if (selectedCards.length == 0) {
+                  if (selectedCards.length === 0) {
                     handleCardClick(index);
-                  } else toggleCardSelection(index);
+                  } else {
+                    toggleCardSelection(index);
+                  }
                 }}
               >
                 {event.image && (
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-1/2 object-cover rounded-t-3xl  "
+                    className="w-full h-1/2 object-cover rounded-lg  "
                   />
                 )}
                 <div className="p-2 flex flex-col h-1/2 text-center">
-                  <h2 className="font-bold text-xxl text-gray-800 truncate">
+                  <h1 className="font-bold text-2xl text-gray-800 truncate">
                     {event.title}
-                  </h2>
+                  </h1>
                   <p className="text-sm text-gray-500 truncate">
                     {event.openTimes}
                   </p>
@@ -359,10 +359,10 @@ const ContentManagementSystem = () => {
                 <button
                   className={`absolute bottom-2   left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
                     starredCards.includes(index) ? "opacity-100" : "opacity-0"
-                  } group-hover:opacity-100 transition-opacity`}                  onClick={(e) => {
+                  } group-hover:opacity-100 transition-opacity`}
+                  onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
                     toggleStarSelection(index);
-
                   }}
                 >
                   ★

@@ -11,7 +11,7 @@ const SelectTopBar = ({
     <div className="pb-2 text-black flex flex-row w-full justify-between items-center z-10 relative">
       {/* Cancel button */}
       <button
-        className="max-w-12 flex flex-row justify-center basis-1/12 ml-3 mr-3 py-3 bg-gray-500 font-bold text-white rounded-lg hover:bg-gray-400 active:bg-gray-300 transition active:duration-100 duration-500 "
+        className="max-w-12 flex flex-row justify-center basis-1/12 ml-4 mr-4 py-3 bg-gray-500 font-bold text-white rounded-lg hover:bg-gray-400 active:bg-gray-300 transition active:duration-100 duration-500 "
         onClick={onCancel}
       >
         <svg
@@ -83,7 +83,7 @@ const SelectTopBar = ({
 
       {/* Select All button */}
       <button
-        className="max-w-12 flex ml-4 justify-center  basis-1/12  py-3 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:duration-100 active:bg-green-300 transition duration-500   "
+        className="max-w-12 flex ml-4 mr-4 justify-center  basis-1/12  py-3 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:duration-100 active:bg-green-300 transition duration-500   "
         onClick={onSelectAll}
       >
         <svg
