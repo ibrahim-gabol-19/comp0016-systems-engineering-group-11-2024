@@ -57,9 +57,6 @@ const DetailedArticlePage = () => {
   };
   return (
     <div>
-      <div>
-        <h1>ArticlePage</h1>
-      </div>
       {/* Toggle between edit and preview */}
       <div className="p-6">
         <button
@@ -78,12 +75,20 @@ const DetailedArticlePage = () => {
       <div className=" flex justify-center items-center overflow-hidden relative">
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
-          <div>
-            <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" />
-            {/* File Upload */}
-            <MainImage onFilesUploaded={handleFilesUploaded} />
-            <NoToolbarEditor ref={quillRefAuthor} placeholderText="Author" />
-            <MainEditor ref={quillRefMain} placeholderText="Main Content" />
+          <div className="w-screen h-full flex overflow-hidden relative">
+            <div className="w-5/6">
+              <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" fontSize="80px"/>
+              {/* File Upload */}
+              <MainImage onFilesUploaded={handleFilesUploaded} />
+              <MainEditor ref={quillRefMain} placeholderText="Main Content" />
+            </div>
+            <div className="w-1/6 ">
+              <NoToolbarEditor ref={quillRefAuthor} placeholderText="Author" fontSize="16px"/>
+              <NoToolbarEditor
+                ref={quillRefAuthor}
+                placeholderText="Location"
+              />
+            </div>
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">

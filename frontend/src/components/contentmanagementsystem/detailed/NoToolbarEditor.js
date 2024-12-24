@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 
 // Editor is an uncontrolled React component
 const NoToolbarEditor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText}, ref) => {
+  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize}, ref) => {
     const containerRef = useRef(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
@@ -42,14 +42,14 @@ const NoToolbarEditor = forwardRef(
 
       // Quill Editor Styles
       quill.root.style.fontFamily = "system-ui";
-      quill.root.style.fontSize = "16px"; // Set default font size for normal text (equivalent to p)
+      quill.root.style.fontSize = fontSize; // Set default font size for normal text (equivalent to p)
       quill.root.style.lineHeight = "1.5"; // Set line height for readability
 
       // Set minimum and maximum height for the editor container
-      quill.root.style.minHeight = "500px"; // Minimum height for the editor
-      quill.root.style.maxHeight = "500px"; // Maximum height for the editor
+      quill.root.style.height = "120px"; // Minimum height for the editor
+      
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
-
+      quill.root.style.width = "600px"
       // Quill Toolbar Styles
       const toolbar = container.querySelector(".ql-toolbar");
       if (toolbar) {
