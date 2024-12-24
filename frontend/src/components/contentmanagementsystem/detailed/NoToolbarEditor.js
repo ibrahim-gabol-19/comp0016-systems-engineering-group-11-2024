@@ -46,10 +46,10 @@ const NoToolbarEditor = forwardRef(
       quill.root.style.lineHeight = "1.5"; // Set line height for readability
 
       // Set minimum and maximum height for the editor container
-      quill.root.style.height = "120px"; // Minimum height for the editor
+      quill.root.style.minHeight = "30px"; // Minimum height for the editor
       
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
-      quill.root.style.width = "600px"
+      quill.root.style.overflowX = "auto";
       // Quill Toolbar Styles
       const toolbar = container.querySelector(".ql-toolbar");
       if (toolbar) {
@@ -79,7 +79,7 @@ const NoToolbarEditor = forwardRef(
       };
     }, [ref]);
 
-    return <div ref={containerRef}></div>;
+    return <div className="h-12 resize-none" ref={containerRef}></div>;
   }
 );
 

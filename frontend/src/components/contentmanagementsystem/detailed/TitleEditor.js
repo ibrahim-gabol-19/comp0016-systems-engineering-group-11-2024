@@ -3,8 +3,8 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
 // Editor is an uncontrolled React component
-const MainEditor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
+const TitleEditor = forwardRef(
+  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize}, ref) => {
     const containerRef = useRef(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
@@ -29,32 +29,29 @@ const MainEditor = forwardRef(
       const Font = Quill.import("formats/font");
       Quill.register(Font, true);
 
-      // Toolbar options
-      const toolbarOptions = [
-        [{ header: [1, 2, 3, false] }], 
-        ["bold", "italic", "underline", "strike"],
-        ["blockquote", "code-block"],
-        ["link", "image", "video"],
-      ];
-
       // Initialize Quill
       const quill = new Quill(editorContainer, {
         theme: "snow",
         placeholder: placeholderText,
         modules: {
-          toolbar: toolbarOptions,
+          toolbar: false,
         },
       });
 
       // Quill Editor Styles
       quill.root.style.fontFamily = "system-ui";
-      quill.root.style.fontSize = "16px"; // Set default font size for normal text (equivalent to p)
+      quill.root.style.fontSize = fontSize; // Set default font size for normal text (equivalent to p)
       quill.root.style.lineHeight = "1.5"; // Set line height for readability
+      quill.root.style.textAlign = "center"; // Center align the text
+
+      // Remove any italics from preview
+      quill.root.style.fontStyle = "bold"; // Remove italics
+      quill.root.style.fontWeight = "bold"
 
       // Set minimum and maximum height for the editor container
-      quill.root.style.minHeight = "900px"; // Minimum height for the editor
-      quill.root.style.maxHeight = "500px"; // Maximum height for the editor
+      quill.root.style.minHeight = "30px"; // Minimum height for the editor
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
+      quill.root.style.overflowX = "auto";
 
       // Quill Toolbar Styles
       const toolbar = container.querySelector(".ql-toolbar");
@@ -85,10 +82,10 @@ const MainEditor = forwardRef(
       };
     }, [ref]);
 
-    return <div ref={containerRef}></div>;
+    return <div className="h-32 resize-none" ref={containerRef}></div>;
   }
 );
 
-MainEditor.displayName = "MainEditor";
+TitleEditor.displayName = "TitleEditor";
 
-export default MainEditor;
+export default TitleEditor;

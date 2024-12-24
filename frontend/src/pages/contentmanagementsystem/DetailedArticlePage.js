@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import Editor from "../../components/contentmanagementsystem/detailed/Editor";
 import Quill, { Delta } from "quill";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
+import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
+
 
 const DetailedArticlePage = () => {
   const quillRef = useRef(); // Ref for the Quill container
@@ -76,18 +78,28 @@ const DetailedArticlePage = () => {
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
           <div className="w-screen h-full flex overflow-hidden relative">
-            <div className="w-5/6">
-              <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" fontSize="80px"/>
-              {/* File Upload */}
-              <MainImage onFilesUploaded={handleFilesUploaded} />
+            <div className="w-5/6 px-72">
+              <TitleEditor
+                ref={quillRefTitle}
+                placeholderText="Title"
+                fontSize="60px"
+              />
+              
               <MainEditor ref={quillRefMain} placeholderText="Main Content" />
             </div>
-            <div className="w-1/6 ">
-              <NoToolbarEditor ref={quillRefAuthor} placeholderText="Author" fontSize="16px"/>
+            <div className="w-1/6 px-16 ">
+              <NoToolbarEditor
+                ref={quillRefAuthor}
+                placeholderText="Author"
+                fontSize="16px"
+              />
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Location"
+                fontSize="16px"
               />
+              {/* File Upload */}
+              <MainImage onFilesUploaded={handleFilesUploaded} />
             </div>
           </div>
         ) : (
