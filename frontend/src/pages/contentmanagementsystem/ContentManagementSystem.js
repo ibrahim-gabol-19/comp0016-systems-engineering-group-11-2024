@@ -291,9 +291,9 @@ const ContentManagementSystem = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 bg-white pl-6 overflow-auto">
+        <div className="w-5/6 bg-white pl-6 overflow-auto  ">
           <div
-            className="grid grid-cols-3 gap-8 overflow-y-auto"
+            className="grid grid-cols-4 gap-8 overflow-y-auto "
             style={{
               alignContent: "start",
             }}
@@ -302,10 +302,10 @@ const ContentManagementSystem = () => {
             {sampleData[selectedCategory]?.map((event, index) => (
               <div
                 key={index}
-                className={`relative rounded-3xl overflow-hidden shadow-md cursor-pointer transition-transform group ${
+                className={`relative rounded-3xl overflow-hidden shadow-lg cursor-pointer transition-transform group ${
                   selectedCards.includes(index)
                     ? "border-4 border-green-500 bg-gray-100 "
-                    : "bg-gray-100 "
+                    : "bg-white  "
                 }`}
                 style={{ height: "300px" }}
                 onClick={() => {
@@ -318,17 +318,17 @@ const ContentManagementSystem = () => {
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-1/2 object-cover rounded-t-3xl "
+                    className="w-full h-1/2 object-cover rounded-t-3xl  "
                   />
                 )}
-                <div className="p-4 flex flex-col h-1/2 text-center">
-                  <h2 className="font-bold text-xl text-gray-800 truncate">
+                <div className="p-2 flex flex-col h-1/2 text-center">
+                  <h2 className="font-bold text-xxl text-gray-800 truncate">
                     {event.title}
                   </h2>
-                  <p className="text-sm text-gray-400z truncate">
+                  <p className="text-sm text-gray-500 truncate">
                     {event.openTimes}
                   </p>
-                  <p className="text-base text-gray-500 mt-2 overflow-hidden text-ellipsis line-clamp-3">
+                  <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
                     {event.description}
                   </p>
                 </div>

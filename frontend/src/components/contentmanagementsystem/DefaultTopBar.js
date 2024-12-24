@@ -38,14 +38,14 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
 
       {/* Dropdown list, visible when isDropdownOpen is true */}
       <div
-        className={`absolute flex bg-gray-200 py-2 px-14 mt-2 rounded-lg shadow-lg z-20 left-8 w-full max-w-xs top-full transition-all duration-200 ${
+        className={`absolute bg-gray-200 py-2 px-14 mt-2 rounded-lg shadow-lg z-20 left-8 w-full max-w-xs top-full transition-all duration-200 ${
           isDropdownOpen
             ? "max-h-40 opacity-100 pointer-events-auto"
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
         <button
-          className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg active:bg-green-100 hover:outline transition duration-500 active:duration-100 mb-2"
+          className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100 mb-2"
           onClick={onManual}
         >
           <svg
@@ -65,7 +65,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
           Create
         </button>
         <button
-          className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg hover:outline active:bg-green-100 transition duration-500 active:duration-100"
+          className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100"
           onClick={onUpload}
         >
           <svg
