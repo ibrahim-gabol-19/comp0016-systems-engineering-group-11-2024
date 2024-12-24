@@ -302,8 +302,8 @@ const ContentManagementSystem = () => {
             {sampleData[selectedCategory]?.map((event, index) => (
               <div
                 key={index}
-                className={`relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-all duration-300 group ${
-                  selectedCards.includes(index) ? "bg-green-100 " : "bg-white "
+                className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${
+                  selectedCards.includes(index) ? "bg-green-100 border border-transparent border-8" : "bg-white "
                 }`}
                 style={{ height: "300px" }}
                 onClick={() => {
@@ -335,8 +335,8 @@ const ContentManagementSystem = () => {
 
                 {/* Checkmark Button */}
                 <button
-                  className={`absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
-                    selectedCards.includes(index) ? "opacity-100" : "opacity-0"
+                  className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
+                    selectedCards.includes(index) ? "opacity-100 bg-gray-600 font-bold text-white " : "opacity-60"
                   } group-hover:opacity-100 transition-opacity`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
@@ -348,7 +348,7 @@ const ContentManagementSystem = () => {
 
                 {/* Cross Button */}
                 <button
-                  className={`absolute top-2 right-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
+                  className={`absolute -top-1 -right-2 w-8 h-8 bg-white shadow-lg text-red-400 text-xl font-bold rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
                   }}
@@ -357,8 +357,8 @@ const ContentManagementSystem = () => {
                 </button>
                 {/* Star Button */}
                 <button
-                  className={`absolute bottom-2   left-2 w-6 h-6 bg-gray-700 text-white rounded-full flex items-center justify-center ${
-                    starredCards.includes(index) ? "opacity-100" : "opacity-0"
+                  className={`absolute top-24 left-2 text-4xl font-bold text-white rounded-full flex items-center justify-center ${
+                    starredCards.includes(index) ? "opacity-100 text-yellow-300" : "opacity-0"
                   } group-hover:opacity-100 transition-opacity`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
