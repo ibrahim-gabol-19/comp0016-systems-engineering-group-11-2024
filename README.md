@@ -10,5 +10,6 @@
 - `npm install tailwindcss`
 - `npm install tailwind`
 - `npm install react-router-dom`
+- `npm install dayjs`
 - `npm install`
 - `npm start`
