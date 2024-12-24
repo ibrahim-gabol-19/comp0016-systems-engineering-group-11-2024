@@ -82,7 +82,7 @@ const TitleEditor = forwardRef(
       };
     }, [ref]);
 
-    return <div className="h-32 resize-none" ref={containerRef}></div>;
+    return <div className="h-32 resize-none " ref={containerRef}></div>;
   }
 );
 

@@ -53,7 +53,7 @@ const MainEditor = forwardRef(
 
       // Set minimum and maximum height for the editor container
       quill.root.style.minHeight = "900px"; // Minimum height for the editor
-      quill.root.style.maxHeight = "500px"; // Maximum height for the editor
+      quill.root.style.maxHeight = "900px"; // Maximum height for the editor
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
 
       // Quill Toolbar Styles
@@ -85,7 +85,7 @@ const MainEditor = forwardRef(
       };
     }, [ref]);
 
-    return <div ref={containerRef}></div>;
+    return <div className="pt-8" ref={containerRef}></div>;
   }
 );
 
