@@ -7,6 +7,9 @@ const SearchBar = () => {
   const [modelReply, setModelReply] = useState("");
   const [loading, setLoading] = useState(false);
   const [engine, setEngine] = useState(null);
+  const [userQuery, setUserQuery] = useState("");
+  const [searchResult, setSearchResult] = useState("");
+
   const templateSearchResult = `{
     "news": [
       {
@@ -35,11 +38,14 @@ const SearchBar = () => {
     ]
   }`;
 
-  const handleSubmit = (userQuery, searchResult) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();  // Prevents page reload or navigation
+
     if (engine) {
-      getReply(userQuery, searchResult);
+      getReply(userQuery, searchResult);  // Trigger your getReply function
     }
   };
+
 
   useEffect(() => {
     const initModel = async () => {
@@ -75,6 +81,7 @@ const SearchBar = () => {
 
     if (!engine) {
       console.log("Model is still loading...");
+      setModelReply("Here is what I found:");
       return; // Exit if the engine is not ready
     }
 
@@ -90,7 +97,6 @@ const SearchBar = () => {
         
         Be polite, professional, and ensure responses are concise and user-friendly. 
 
-        Provide up to three bullet points, one for each search result.
         
         Here are the search results:
         ${searchResult}`,
@@ -104,15 +110,15 @@ const SearchBar = () => {
         temperature: 1,
         stream: true,
       });
-      
+
       let reply = "";
       for await (const chunk of chunks) {
         reply += chunk.choices[0]?.delta.content || "";
-        setModelReply(reply); 
-        console.log(reply); 
+        setModelReply(reply);
+        console.log(reply);
 
         if (chunk.usage) {
-          console.log(chunk.usage); 
+          console.log(chunk.usage);
         }
       }
 
@@ -138,15 +144,22 @@ const SearchBar = () => {
       </div>
       {/* Search Bar */}
       <div className="relative w-full max-w-4xl">
-        <input
-          type="text"
-          placeholder={isFocused ? "" : "When is the next volunteering event?"}
-          className={`transition-all duration-300 ease-in-out p-4 pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            isFocused ? "h-36" : "h-12"
-          } w-full`}
-          onFocus={() => {setIsFocused(true); handleSubmit("THis month's news?")}}
-          onBlur={() => setIsFocused(false)}
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder={
+              isFocused ? "" : "When is the next volunteering event?"
+            }
+            className={`transition-all duration-300 ease-in-out p-4 pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              isFocused ? "h-36" : "h-12"
+            } w-full`}
+            value={userQuery} 
+            onChange={(e) => setUserQuery(e.target.value)} 
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+        </form>
+
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
