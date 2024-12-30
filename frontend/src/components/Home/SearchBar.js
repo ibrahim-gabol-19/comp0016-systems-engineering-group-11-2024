@@ -72,7 +72,7 @@ const SearchBar = () => {
   const getReply = async (userQuery, searchResult) => {
     // Because Search has not been implemented yet, I am using template JSON
     searchResult = templateSearchResult;
-    
+
     if (!engine) {
       console.log("Model is still loading...");
       return; // Exit if the engine is not ready
@@ -99,12 +99,28 @@ const SearchBar = () => {
     ];
 
     try {
-      const reply = await engine.chat.completions.create({
+      const chunks = await engine.chat.completions.create({
         messages,
+        temperature: 1,
+        stream: true,
       });
+      
+      let reply = "";
+      for await (const chunk of chunks) {
+        reply += chunk.choices[0]?.delta.content || "";
+        setModelReply(reply); 
+        console.log(reply); 
 
-      setModelReply(reply.choices[0].message);
-      console.log(reply.choices[0].message);
+        if (chunk.usage) {
+          console.log(chunk.usage); 
+        }
+      }
+
+      const fullReply = await engine.getMessage();
+      console.log(fullReply); // Log the complete message if necessary
+
+      setModelReply(fullReply);
+      console.log(fullReply);
     } catch (error) {
       console.error("Error during chat completion:", error);
     }
@@ -118,7 +134,7 @@ const SearchBar = () => {
         <h1 className="text-3xl font-bold text-gray-800">Ask AI</h1>
       </div>
       <div>
-        <p>Reply: {modelReply.content}</p>
+        <p>Reply: {modelReply}</p>
       </div>
       {/* Search Bar */}
       <div className="relative w-full max-w-4xl">
