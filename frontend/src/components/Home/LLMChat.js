@@ -13,12 +13,7 @@ const LLMChat = () => {
         "description": "GreenEarth Inc. has introduced a new citywide recycling initiative aimed at reducing waste and promoting sustainability.",
         "published": "24 Dec 2024"
       },
-      {
-        "title": "Tree Planting Campaign Success",
-        "description": "Over 500 trees were planted in the local park as part of our green initiative to combat deforestation.",
-        "published": "20 Dec 2024"
-      }
-    ],
+     ],
     "events": [
       {
         "title": "Community Trash Pickup",
@@ -31,19 +26,11 @@ const LLMChat = () => {
       {
         "title": "GreenEarth Social Gathering",
         "description": "A casual get-together for employees and local residents to discuss sustainability efforts and enjoy a fun evening of eco-friendly activities.",
-        "date": "5 Jan 2025",
+        "date": "26 Dec 2024",
         "time": "6:00 PM",
         "location": "GreenEarth HQ, 123 Sustainability Road",
         "contact": "events@greenearthinc.com"
       },
-      {
-        "title": "Eco-Friendly DIY Workshop",
-        "description": "A hands-on workshop where you can learn how to create eco-friendly products at home using sustainable materials.",
-        "date": "10 Jan 2025",
-        "time": "2:00 PM",
-        "location": "GreenEarth Community Center",
-        "contact": "workshops@greenearthinc.com"
-      }
     ]
   }`;
 
@@ -77,28 +64,33 @@ const LLMChat = () => {
 
   const getReply = async (userQuery, searchResult) => {
     // Because Search has not been implemented yet, I am using template JSON
-    engine.resetChat()
     searchResult = templateSearchResult;
     if (!engine) {
+
       console.log("Model is still loading...");
       return; // Exit if the engine is not ready
     }
+
+    await engine.resetChat()
 
     // Define the messages for the chat
     const messages = [
       {
         role: "system",
-        content: `You are an AI assistant for GreenEarth Inc., a company dedicated to sustainability and environmental preservation. Your task is to assist visitors on the website by providing relevant information quickly and accurately. When someone asks a question, tell them about the relevant information.. Be polite, informative, and helpful. Answer questions related to GreenEarth Inc.'s events, news, atmosphere.
+        content: `You are an AI assistant chatbot for GreenEarth Inc., a company focused on sustainability and environmental conservation.
+    
+        Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
+        
+        Be polite, professional, and ensure responses are concise and user-friendly. 
 
-        Remember to keep your responses concise, user-friendly, and relevant to their needs.
+        Provide up to three bullet points, one for each search result.
         
-        Please ensure you are polite and helpful at all times.
-        
-        This is the search result:
+        Here are the search results:
         ${searchResult}`,
       },
       { role: "user", content: userQuery },
     ];
+    
 
     try {
       const reply = await engine.chat.completions.create({
@@ -107,15 +99,14 @@ const LLMChat = () => {
 
       setModelReply(reply.choices[0].message);
       console.log(reply.choices[0].message);
-      console.log(messages)
     } catch (error) {
       console.error("Error during chat completion:", error);
     }
   };
 
-  const handleClick = () => {
+  const handleClick = (userQuery, searchResult) => {
     if (engine) {
-      getReply("What's coming up? And how many messages have I sent?");
+      getReply(userQuery, searchResult);
     }
   };
 
