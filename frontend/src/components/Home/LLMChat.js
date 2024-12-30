@@ -110,19 +110,19 @@ const LLMChat = () => {
     }
   };
 
-  return (
-    <div>
-      {loading ? (
-        <p>Loading model...</p>
-      ) : (
-        <div>
-          <p>Reply: {modelReply.content}</p>
-          <button onClick={handleClick}> Button </button>
-          {/* You can trigger getReply() based on user input */}
-        </div>
-      )}
-    </div>
-  );
+  // return (
+  //   <div>
+  //     {loading ? (
+  //       <p>Loading model...</p>
+  //     ) : (
+  //       <div>
+  //         <p>Reply: {modelReply.content}</p>
+  //         <button onClick={handleClick}> Button </button>
+  //         {/* You can trigger getReply() based on user input */}
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 };
 
 export default LLMChat;

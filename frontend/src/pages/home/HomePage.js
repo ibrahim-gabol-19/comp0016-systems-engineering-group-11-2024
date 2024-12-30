@@ -4,7 +4,6 @@ import SearchBar from "../../components/Home/SearchBar"; // Import the SearchBar
 import ForYouCard from "../../components/Home/ForYouCard";
 import MapFilter from "../../components/Home/MapFilter";
 import MapComponent from "../../components/Home/MapComponent";
-import LLMChat from "../../components/Home/LLMChat";
 
 
 const HomePage = () => {
@@ -29,7 +28,6 @@ const HomePage = () => {
   return (
     <div>
       {/* Add SearchBar component below the Header */}
-      <LLMChat/>
       <div className="container mx-auto px-4 py-4">
         <SearchBar />
       </div>
