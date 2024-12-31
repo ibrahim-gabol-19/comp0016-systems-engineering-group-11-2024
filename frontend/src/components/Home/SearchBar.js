@@ -42,7 +42,11 @@ const SearchBar = () => {
     e.preventDefault();  // Prevents page reload or navigation
 
     if (engine) {
+      console.log("Triggered!")
       getReply(userQuery, searchResult);  // Trigger your getReply function
+    }
+    else {
+      setModelReply("Here is what I found.")
     }
   };
 
