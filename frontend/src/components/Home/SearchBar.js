@@ -8,6 +8,7 @@ const SearchBar = () => {
   const [loading, setLoading] = useState(false);
   const [engine, setEngine] = useState(null);
   const [userQuery, setUserQuery] = useState("");
+  const [fullUserQuery, setFullUserQuery] = useState("");
   const [searchResult, setSearchResult] = useState("");
   const [messages, setMessages] = useState([]);
 
@@ -52,6 +53,8 @@ const SearchBar = () => {
     } else {
       setModelReply("Here is what I found.");
     }
+
+    setFullUserQuery(userQuery);
   };
 
   useEffect(() => {
@@ -154,10 +157,16 @@ const SearchBar = () => {
         <p>Reply: {modelReply}</p>
       </div>
 
-      <div className=" h-96 w-full rounded-3xl bg-white border border-gray-300 flex flex-col ">
+      <div
+        className={` text-sm w-full rounded-3xl bg-white border border-gray-300 flex flex-col  transition-all duration-200  ${
+          fullUserQuery == ""
+            ? "max-h-0 opacity-0 pointer-events-none"
+            : "h-96 max-h-96 opacity-100 pointer-events-auto"
+        }  `}
+      >
         <div className="bg-green-500 w-3/4 h-1/6 ml-auto justify-end flex">
           <div className="w-5/6 h-full text-wrap truncate ">
-            <p>{userQuery}</p>
+            <p> {fullUserQuery}</p>
           </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
