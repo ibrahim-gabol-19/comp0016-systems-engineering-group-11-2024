@@ -49,12 +49,12 @@ const SearchBar = () => {
     if (engine) {
       getReply(userQuery, searchResult);
       setMessages([...messages, { text: userQuery, sender: "user" }]);
-      setUserQuery("");
     } else {
       setModelReply("Here is what I found.");
     }
 
     setFullUserQuery(userQuery);
+    setUserQuery("");
   };
 
   useEffect(() => {
@@ -63,7 +63,6 @@ const SearchBar = () => {
 
       const initProgressCallback = (progress) => {
         console.log("Model Loading Progress:", progress);
-        setModelReply("Model Loading Progress:" + progress.text);
       };
 
       try {
@@ -183,7 +182,13 @@ const SearchBar = () => {
             />
           </svg>
         </div>
-        <div className="h-5/6">
+        <div
+          className={`h-5/6 transition-all duration-200  ${
+            modelReply == ""
+              ? " opacity-0 pointer-events-none"
+              : "opacity-100 pointer-events-auto"
+          }  `}
+        >
           <div className="w-3/4 h-1/2 bg-green-100 flex ">
             {templateSearchResult.news.map((newsItem, index) => (
               <div key={index} className="w-1/3 h-full bg-yellow-300">
@@ -207,7 +212,7 @@ const SearchBar = () => {
               </div>
             ))}
           </div>
-          <div className="w-3/4 h-1/2 bg-blue-500 flex ">
+          <div className={`w-3/4 h-1/2 bg-blue-500 flex`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
