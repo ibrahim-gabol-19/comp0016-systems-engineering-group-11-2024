@@ -20,7 +20,14 @@ const DetailedEventPage = () => {
   const category = "Articles";
   const [isEditing, setIsEditing] = useState(true);
 
-  //     - Events: Title, Main Image, Location, Map embedding, About, Date, Time, Contact
+  // State for PDF extraction
+  const [pdfFile, setPdfFile] = useState(null);
+  const [extractedData, setExtractedData] = useState(null);
+
+  // Ref for hidden file input
+  const hiddenFileInput = useRef(null);
+
+  // Events: Title, Main Image, Location, Map embedding, About, Date, Time, Contact
   const sampleData = {
     Articles: [
       {
@@ -55,6 +62,26 @@ const DetailedEventPage = () => {
   const handleFilesUploaded = (acceptedFiles) => {
     setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   };
+
+  // Handler for Extract From PDF button click
+  const handleExtractFromPDFClick = () => {
+    hiddenFileInput.current.click();
+  };
+
+  // Handler for PDF file selection
+  const handlePDFUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setPdfFile(file);
+      // You can add additional actions here, such as uploading the file to the backend
+      console.log("PDF file selected:", file.name);
+      // Example: Set extracted data if you have a mock or placeholder
+      // setExtractedData(mockExtractedData);
+    } else {
+      alert("Please select a valid PDF file.");
+    }
+  };
+
   return (
     <div>
       <div>
@@ -72,10 +99,35 @@ const DetailedEventPage = () => {
         <button className="bg-green-500 text-white px-4 py-2 rounded">
           Save
         </button>
+        {/* Extract From PDF Button */}
+        <button
+          onClick={handleExtractFromPDFClick}
+          className="bg-purple-500 text-white px-4 py-2 rounded ml-4"
+        >
+          Extract From PDF
+        </button>
+        {/* Hidden File Input */}
+        <input
+          type="file"
+          accept="application/pdf"
+          ref={hiddenFileInput}
+          onChange={handlePDFUpload}
+          style={{ display: "none" }}
+        />
       </div>
 
+      {/* Display selected PDF file name */}
+      {pdfFile && (
+        <div className="p-6">
+          <p>
+            <strong>Selected PDF:</strong> {pdfFile.name}
+          </p>
+          {/* You can add more UI elements here to show extracted data once available */}
+        </div>
+      )}
+
       {/* Full-screen container */}
-      <div className=" flex justify-center items-center overflow-hidden relative">
+      <div className="flex justify-center items-center overflow-hidden relative">
         {/* Conditionally render either editor or preview */}
         {isEditing ? (
           <div>
@@ -88,7 +140,7 @@ const DetailedEventPage = () => {
             />
 
             <MainImage onFilesUploaded={handleFilesUploaded} />
-            
+
             <NoToolbarEditor ref={quillRefAuthor} placeholderText="Location" />
           </div>
         ) : (
@@ -108,3 +160,6 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
+
+
+
