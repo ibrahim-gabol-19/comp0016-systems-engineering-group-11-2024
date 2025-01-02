@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import aiLogo from "../../assets/ai_icon.png";
 import { CreateMLCEngine, MLCEngine } from "@mlc-ai/web-llm";
+import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
+
 
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -12,6 +14,7 @@ const SearchBar = () => {
   const [searchResult, setSearchResult] = useState("");
   const [messages, setMessages] = useState([]);
 
+  
   const templateSearchResult = {
     news: [
       {
@@ -58,6 +61,7 @@ const SearchBar = () => {
   };
 
   useEffect(() => {
+  
     const initModel = async () => {
       setLoading(true);
 
@@ -67,12 +71,10 @@ const SearchBar = () => {
 
       try {
         // Create the engine and load the model
-        const createdEngine = await CreateMLCEngine(
-          "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-          {
-            initProgressCallback,
-          }
-        );
+        const createdEngine = await CreateWebWorkerMLCEngine(
+          new Worker(new URL("../.././workers/worker.js", import.meta.url), { type: "module" }),
+          "Llama-3.2-1B-Instruct-q4f16_1-MLC"
+      );
 
         setEngine(createdEngine); // Store the engine in the state
       } catch (error) {
