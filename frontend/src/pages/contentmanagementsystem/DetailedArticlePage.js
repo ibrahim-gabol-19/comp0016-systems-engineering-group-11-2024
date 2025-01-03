@@ -119,6 +119,7 @@ const DetailedArticlePage = () => {
             <h1 className="text-3xl font-bold text-center">{title}</h1>
             <p className="text-xl mt-4 text-center">{author}</p>
             <p className="mt-4 text-center">{description}</p>
+            <p className="mt-4 text-center">{mainContent}</p>
             <div className="mt-6 flex justify-center">
               {uploadedFiles.length > 0 && uploadedFiles.map((file, index) => (
                 <div key={index} className="text-center">
