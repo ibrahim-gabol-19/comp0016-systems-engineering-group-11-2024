@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import { useParams } from "react-router-dom";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import axios from 'axios'; // Import axios for API calls
@@ -13,6 +12,10 @@ const DetailedArticlePage = () => {
   const quillRefDescription = useRef();
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store uploaded files (only one file)
   const [isEditing, setIsEditing] = useState(true); // Toggle between editing and preview mode
+  const [title, setTitle] = useState(""); // Store title content
+  const [mainContent, setMainContent] = useState(""); // Store main content
+  const [author, setAuthor] = useState(""); // Store author content
+  const [description, setDescription] = useState(""); // Store description content
 
   // Handles file upload and ensures only one file is uploaded
   const handleFilesUploaded = (acceptedFiles) => {
@@ -23,26 +26,14 @@ const DetailedArticlePage = () => {
     setUploadedFiles([acceptedFiles[0]]); // Keep only the first uploaded file
   };
 
+  // Update the state when content changes
+  const updateEditorContent = (editorRef, setter) => {
+    setter(editorRef.current.root.innerText.trim());
+  };
+
   // Saves the content and uploaded files
   const handleSave = async () => {
     console.log("Save button clicked");
-
-    const titleEditor = quillRefTitle.current;
-    const mainEditor = quillRefMain.current;
-    const authorEditor = quillRefAuthor.current;
-    const descriptionEditor = quillRefDescription.current;
-
-    // Access editor content using .root.innerText
-    const title = titleEditor.root.innerText.trim();
-    const mainContent = mainEditor.root.innerText.trim();
-    const author = authorEditor.root.innerText.trim();
-    const description = descriptionEditor.root.innerText.trim();
-
-    // Check if essential fields are filled
-    if (!title || !mainContent || !author || !description) {
-      alert("Please fill in all fields before saving.");
-      return;
-    }
 
     // Log content to verify data before sending
     console.log('Title:', title);
@@ -84,7 +75,16 @@ const DetailedArticlePage = () => {
       <div className="pl-6">
         {/* Toggle between edit and preview */}
         <button
-          onClick={() => setIsEditing((prev) => !prev)}
+          onClick={() => {
+            setIsEditing((prev) => !prev);
+            if (isEditing) {
+              // Update content state on toggle
+              updateEditorContent(quillRefTitle, setTitle);
+              updateEditorContent(quillRefMain, setMainContent);
+              updateEditorContent(quillRefAuthor, setAuthor);
+              updateEditorContent(quillRefDescription, setDescription);
+            }
+          }}
           className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
@@ -116,14 +116,14 @@ const DetailedArticlePage = () => {
         ) : (
           // Preview mode
           <div className="w-screen h-full justify-center overflow-auto p-4 bg-gray-100 rounded">
-            <h1 className="text-3xl font-bold">{quillRefTitle.current?.root.innerText}</h1>
-            <p className="text-xl mt-4">{quillRefAuthor.current?.root.innerText}</p>
-            <p className="mt-4">{quillRefDescription.current?.root.innerText}</p>
-            <div>
+            <h1 className="text-3xl font-bold text-center">{title}</h1>
+            <p className="text-xl mt-4 text-center">{author}</p>
+            <p className="mt-4 text-center">{description}</p>
+            <div className="mt-6 flex justify-center">
               {uploadedFiles.length > 0 && uploadedFiles.map((file, index) => (
-                <div key={index}>
+                <div key={index} className="text-center">
                   <p>{file.name}</p>
-                  <img src={URL.createObjectURL(file)} alt={file.name} className="w-1/2" />
+                  <img src={URL.createObjectURL(file)} alt={file.name} className="max-w-full h-auto" />
                 </div>
               ))}
             </div>
