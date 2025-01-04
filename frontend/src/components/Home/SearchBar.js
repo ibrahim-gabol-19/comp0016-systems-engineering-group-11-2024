@@ -205,7 +205,7 @@ const SearchBar = () => {
           </div>
           {/*AI Response*/}
           <div
-            className={`w-3/4 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
+            className={`w-3/4 max-h-2/6 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
