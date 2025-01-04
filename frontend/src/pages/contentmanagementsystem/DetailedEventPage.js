@@ -4,63 +4,83 @@ import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/N
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 
-import { useParams } from "react-router-dom";
-import Editor from "../../components/contentmanagementsystem/detailed/Editor";
-import Quill, { Delta } from "quill";
-import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
+import axios from "axios";
 
 const DetailedEventPage = () => {
-  const quillRef = useRef(); // Ref for the Quill container
   const quillRefTitle = useRef();
-  const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
-  const quillRefMain = useRef();
+  const quillRefLocation = useRef();
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const category = "Articles";
   const [isEditing, setIsEditing] = useState(true);
-
-  //     - Events: Title, Main Image, Location, Map embedding, About, Date, Time, Contact
-  const sampleData = {
-    Articles: [
-      {
-        title: "Big Ben: What is it?",
-        main_image: "Image goes here",
-        author: "Bartholomew",
-        date: "10/10/2001",
-        description: "Iconic clock tower located in London.",
-        time_to_read: "3 minutes",
-      },
-    ],
-  };
-
-  const cardData = sampleData[category]?.[0];
-  // Default Content for the editor
-  const defaultValue = new Delta();
-  defaultValue.insert(`${cardData.title}\n`, { bold: true, header: 1 });
-
-  defaultValue.insert(`${cardData.author}\n\n`, { header: 3 });
-
-  if (cardData.image) {
-    defaultValue.insert({ image: cardData.image }); // Add image
-  }
-
-  defaultValue.insert(`${cardData.date}\n`, {});
-  defaultValue.insert(`${cardData.description}\n`, {});
-
-  if (!cardData) {
-    return <div>Card not found</div>;
-  }
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
   const handleFilesUploaded = (acceptedFiles) => {
-    setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    if (acceptedFiles.length > 1) {
+      alert("Only one image can be uploaded.");
+      return;
+    }
+    setUploadedFiles([acceptedFiles[0]]);
   };
+
+  const handleSave = async () => {
+    console.log("Save button clicked");
+
+    const titleEditor = quillRefTitle.current;
+    const descriptionEditor = quillRefDescription.current;
+    const locationEditor = quillRefLocation.current;
+
+    // Access editor content using .root.innerText
+    const title = titleEditor.root.innerText.trim();
+    const description = descriptionEditor.root.innerText.trim();
+    const location = locationEditor.root.innerText.trim();
+
+    // Check if essential fields are filled
+    if (!title || !date || !time || !description || !location) {
+      alert("Please fill in all fields before saving.");
+      return;
+    }
+
+    // Log content to verify data before sending
+    console.log('Title:', title);
+    console.log('Date:', date);
+    console.log('Time:', time);
+    console.log('Description:', description);
+    console.log('Location:', location);
+
+    // Prepare the form data to be sent to the backend
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('date', date);
+    formData.append('time', time);
+    formData.append('description', description);
+    formData.append('location', location);
+
+    // Add uploaded files to formData (only one image)
+    if (uploadedFiles.length > 0) {
+      formData.append('main_image', uploadedFiles[0]); // Append the first file as 'main_image'
+    } else {
+      console.error("No image uploaded");
+    }
+
+    try {
+      // Send data to the backend API
+      const response = await axios.post('http://127.0.0.1:8000/events/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Ensure it’s form-data
+        },
+      });
+      console.log('Data saved successfully:', response.data);
+      alert("Event saved successfully!");
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert("Error saving event. Please try again.");
+    }
+  };
+
   return (
     <div>
-      <div>
-        <h1>EventPage</h1>
-      </div>
-      {/* Toggle between edit and preview */}
       <div className="p-6">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
@@ -68,38 +88,25 @@ const DetailedEventPage = () => {
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
-        {/* Non-functional save button */}
-        <button className="bg-green-500 text-white px-4 py-2 rounded">
+
+        <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">
           Save
         </button>
       </div>
 
-      {/* Full-screen container */}
-      <div className=" flex justify-center items-center overflow-hidden relative">
-        {/* Conditionally render either editor or preview */}
+      <div className="flex justify-center items-center overflow-hidden relative">
         {isEditing ? (
           <div>
             <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" />
-            {/* File Upload */}
-            <DateTime />
-            <NoToolbarEditor
-              ref={quillRefDescription}
-              placeholderText="Description"
-            />
-
+            <DateTime onDateChange={setDate} onTimeChange={setTime} />
+            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" />
             <MainImage onFilesUploaded={handleFilesUploaded} />
-            
-            <NoToolbarEditor ref={quillRefAuthor} placeholderText="Location" />
+            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" />
           </div>
         ) : (
           <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">
-            {/* Card Details (Preview Mode) */}
-            <h1 className="text-3xl font-bold">{cardData.title}</h1>
-            <p className="">{cardData.openTimes}</p>
-            <p className="mt-4">{cardData.description}</p>
-            {cardData.image && (
-              <img src={cardData.image} alt={cardData.title} />
-            )}
+            <h1 className="text-3xl font-bold">Preview Title</h1>
+            <p className="mt-4">Preview Description</p>
           </div>
         )}
       </div>
