@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+</head>
+<body>
+    <h1>Upload Event PDF</h1>
+    <form action="/api/upload/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="pdf_file">Choose PDF:</label>
+        <input type="file" id="pdf_file" name="pdf_file" accept="application/pdf">
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
