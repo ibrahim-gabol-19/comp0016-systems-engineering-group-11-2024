@@ -155,70 +155,75 @@ const SearchBar = () => {
       </div>
 
       {/*Large Chat Box*/}
-      <div
-        className={` text-sm w-full rounded-3xl bg-white border border-gray-300 flex flex-col  transition-all duration-200  ${
-          fullUserQuery == ""
-            ? "max-h-0 opacity-0 pointer-events-none"
-            : "h-96 max-h-96 opacity-100 pointer-events-auto"
-        }  `}
-      >
-        <div className="bg-green-500 w-3/4 h-1/6 ml-auto justify-end flex">
-          <div className="w-5/6 h-full text-wrap truncate ">
-            <p> {fullUserQuery}</p>
-          </div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6 w-1/6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-            />
-          </svg>
-        </div>
+      {fullUserQuery !== "" && (
         <div
-          className={`h-5/6 transition-all duration-200  ${
-            modelReply == ""
-              ? " opacity-0 pointer-events-none"
-              : "opacity-100 pointer-events-auto"
+          className={` w-full rounded-3xl bg-white border border-gray-300 flex flex-col transition-all duration-200  ${
+            fullUserQuery == ""
+              ? "max-h-0 opacity-0 pointer-events-none select-none"
+              : "h-[450px] max-h-[450px] opacity-100 pointer-events-auto select-auto"
           }  `}
         >
-          <div className="w-3/4 h-1/2 bg-green-100 flex ">
-            {templateSearchResult.news.map((newsItem, index) => (
-              <div key={index} className="w-1/3 h-full bg-yellow-300">
-                <h3 className="font-bold">{newsItem.title}</h3>
-                <p>{newsItem.description}</p>
-                <span className="text-sm">{newsItem.published}</span>
-              </div>
-            ))}
-
-            {/* Loop over events */}
-            {templateSearchResult.events.map((eventItem, index) => (
-              <div key={index} className="w-1/3 h-full bg-yellow-300">
-                <h3 className="font-bold">{eventItem.title}</h3>
-                <p>{eventItem.description}</p>
-                <div className="text-sm">
-                  <p>{eventItem.date}</p>
-                  <p>{eventItem.time}</p>
-                  <p>{eventItem.location}</p>
-                  <p>{eventItem.contact}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className={`w-3/4 h-1/2 bg-blue-500 flex`}>
+          {/*User message*/}
+          <div className=" w-3/4 max-h-1/6 ml-auto my-2 justify-end flex items-center">
+            <div className="max-w-5/6 max-h-20 px-3  text-wrap truncate rounded-full bg-green-100 ">
+              <p class="text-right  py-4 "> {fullUserQuery}</p>
+            </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6 w-1/6"
+              className="size-6 w-10 h-10 ml-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+              />
+            </svg>
+          </div>
+          {/*Cards*/}
+          <div className="w-3/4 h-2/6 my-4 mx-4 flex ">
+            {templateSearchResult.news.map((newsItem, index) => (
+              <div
+                key={index}
+                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+              >
+                <p className="font-bold">{newsItem.title}</p>
+                <span className="text-sm text-gray-500">
+                  {newsItem.published}
+                </span>
+                <p className="text-sm">{newsItem.description}</p>
+              </div>
+            ))}
+
+            {/* Loop over events */}
+            {templateSearchResult.events.map((eventItem, index) => (
+              <div
+                key={index}
+                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+              >
+                <h3 className="font-bold">{eventItem.title}</h3>
+                <p className="text-sm text-gray-500 ">
+                  {eventItem.date} | {eventItem.time}
+                </p>
+                <p className="text-sm text-gray-500">{eventItem.location}</p>
+                <p className="text-sm">{eventItem.description}</p>
+              </div>
+            ))}
+          </div>
+          {/*AI Response*/}
+          <div
+            className={`w-3/4 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6 min-w-10 min-h-10 w-10 h-10 mr-4"
             >
               <path
                 strokeLinecap="round"
@@ -226,18 +231,18 @@ const SearchBar = () => {
                 d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
               />
             </svg>
-            <div className="w-5/6 h-full text-wrap truncate ">
-              <p>{modelReply}</p>
+            <div className="max-w-5/6  px-3   rounded-full bg-blue-100 ">
+              <p class="py-4">{modelReply}</p>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <div
         className={`flex transition-all h-12 duration-300 ease-in-out rounded-full bg-white text-black border border-gray-300 items-center ${
           isFocused ? "w-8/12 outline-none ring-2 ring-blue-500" : "w-5/12"
         }`}
       >
-        <div className="w-1/12 flex justify-center items-center ">
+        <div className="w-1/12 ml-1 flex justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 text-gray-500"
@@ -254,14 +259,17 @@ const SearchBar = () => {
             />
           </svg>
         </div>
-        <div className="w-full">
-          <form onSubmit={handleSubmit} className = "w-full h-full outline-none bg-transparent text-black transition-all">
+        <div className="w-full h-full">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full h-full flex outline-none bg-transparent text-black transition-all"
+          >
             <input
               type="text"
               placeholder={
                 isFocused ? "" : "When is the next volunteering event?"
               }
-              className="w-full h-full outline-none bg-transparent text-black transition-all "
+              className="w-full h-full outline-none bg-transparent text-black transition-all"
               value={userQuery}
               onChange={(e) => setUserQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
