@@ -255,13 +255,13 @@ const SearchBar = () => {
           </svg>
         </div>
         <div className="w-full">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className = "w-full h-full outline-none bg-transparent text-black transition-all">
             <input
               type="text"
               placeholder={
                 isFocused ? "" : "When is the next volunteering event?"
               }
-              className=" w-full h-full outline-none bg-transparent text-black transition-all"
+              className="w-full h-full outline-none bg-transparent text-black transition-all "
               value={userQuery}
               onChange={(e) => setUserQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
