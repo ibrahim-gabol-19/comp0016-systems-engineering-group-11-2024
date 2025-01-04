@@ -63,10 +63,6 @@ const SearchBar = () => {
     const initModel = async () => {
       setLoading(true);
 
-      const initProgressCallback = (progress) => {
-        console.log("Model Loading Progress:", progress);
-      };
-
       try {
         // Create the engine and load the model
         const createdEngine = await CreateWebWorkerMLCEngine(
@@ -91,7 +87,6 @@ const SearchBar = () => {
   const getReply = async (userQuery, searchResult) => {
     // Because Search has not been implemented yet, I am using template JSON
     searchResult = JSON.stringify(templateSearchResult);
-    console.log(searchResult);
 
     if (!engine) {
       console.log("Model is still loading...");
@@ -129,19 +124,13 @@ const SearchBar = () => {
       for await (const chunk of chunks) {
         reply += chunk.choices[0]?.delta.content || "";
         setModelReply(reply);
-        console.log(reply);
 
-        if (chunk.usage) {
-          console.log(chunk.usage);
-        }
       }
 
       const fullReply = await engine.getMessage();
 
-      console.log(fullReply); // Log the complete message if necessary
 
       setModelReply(fullReply);
-      console.log(fullReply);
     } catch (error) {
       console.error("Error during chat completion:", error);
     }
