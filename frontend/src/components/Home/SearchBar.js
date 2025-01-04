@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import aiLogo from "../../assets/ai_icon.png";
 import { CreateMLCEngine, MLCEngine } from "@mlc-ai/web-llm";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
+import ReactMarkdown from "react-markdown";
 
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -165,8 +166,8 @@ const SearchBar = () => {
         >
           {/*User message*/}
           <div className=" w-3/4 max-h-1/6 ml-auto my-2 justify-end flex items-center">
-            <div className="max-w-5/6 max-h-20 px-3  text-wrap truncate rounded-full bg-green-100 ">
-              <p class="text-right  py-4 "> {fullUserQuery}</p>
+            <div className="max-w-5/6 max-h-20 px-3  text-wrap truncate rounded-half bg-green-100 ">
+              <p class="text-right text-sm  py-4 "> {fullUserQuery}</p>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -231,8 +232,9 @@ const SearchBar = () => {
                 d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
               />
             </svg>
-            <div className="max-w-5/6  px-3   rounded-full bg-blue-100 ">
-              <p class="py-4">{modelReply}</p>
+            <div className="max-w-5/6  px-3  text-wrap font-sm text-sm truncate rounded-half bg-blue-100 ">
+              {/* <p class="py-4">{modelReply}</p> */}
+              <ReactMarkdown class="font-sm py-4">{modelReply}</ReactMarkdown>
             </div>
           </div>
         </div>
