@@ -3,7 +3,6 @@ import aiLogo from "../../assets/ai_icon.png";
 import { CreateMLCEngine, MLCEngine } from "@mlc-ai/web-llm";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 
-
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [modelReply, setModelReply] = useState("");
@@ -14,7 +13,6 @@ const SearchBar = () => {
   const [searchResult, setSearchResult] = useState("");
   const [messages, setMessages] = useState([]);
 
-  
   const templateSearchResult = {
     news: [
       {
@@ -61,7 +59,6 @@ const SearchBar = () => {
   };
 
   useEffect(() => {
-  
     const initModel = async () => {
       setLoading(true);
 
@@ -72,9 +69,11 @@ const SearchBar = () => {
       try {
         // Create the engine and load the model
         const createdEngine = await CreateWebWorkerMLCEngine(
-          new Worker(new URL("../.././workers/worker.js", import.meta.url), { type: "module" }),
+          new Worker(new URL("../.././workers/worker.js", import.meta.url), {
+            type: "module",
+          }),
           "Llama-3.2-1B-Instruct-q4f16_1-MLC"
-      );
+        );
 
         setEngine(createdEngine); // Store the engine in the state
       } catch (error) {
@@ -154,10 +153,8 @@ const SearchBar = () => {
         <img src={aiLogo} alt="AI Logo" className="w-10 h-10 mr-3" />
         <h1 className="text-3xl font-bold text-gray-800">Ask AI</h1>
       </div>
-      <div>
-        <p>Reply: {modelReply}</p>
-      </div>
 
+      {/*Large Chat Box*/}
       <div
         className={` text-sm w-full rounded-3xl bg-white border border-gray-300 flex flex-col  transition-all duration-200  ${
           fullUserQuery == ""
@@ -235,37 +232,44 @@ const SearchBar = () => {
           </div>
         </div>
       </div>
-
-      {/* Search / Chat Input */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder={isFocused ? "" : "When is the next volunteering event?"}
-          className={`transition-all duration-300 ease-in-out p-4 pl-12 rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            isFocused ? "h-36" : "h-12"
-          } w-full`}
-          value={userQuery}
-          onChange={(e) => setUserQuery(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-        />
-      </form>
-
-      <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-gray-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M10 19a7 7 0 117-7 7 7 0 01-7 7zm0 0l-6 6"
-          />
-        </svg>
+      <div
+        className={`flex transition-all h-12 duration-300 ease-in-out rounded-full bg-white text-black border border-gray-300 items-center ${
+          isFocused ? "w-8/12 outline-none ring-2 ring-blue-500" : "w-5/12"
+        }`}
+      >
+        <div className="w-1/12 flex justify-center items-center ">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 19a7 7 0 117-7 7 7 0 01-7 7zm0 0l-6 6"
+            />
+          </svg>
+        </div>
+        <div className="w-full">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder={
+                isFocused ? "" : "When is the next volunteering event?"
+              }
+              className=" w-full h-full outline-none bg-transparent text-black transition-all"
+              value={userQuery}
+              onChange={(e) => setUserQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              aria-label="Search for volunteering events"
+            />
+          </form>
+        </div>
       </div>
     </div>
   );
