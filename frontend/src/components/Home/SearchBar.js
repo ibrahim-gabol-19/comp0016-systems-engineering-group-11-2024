@@ -161,7 +161,7 @@ const SearchBar = () => {
           className={` w-full rounded-3xl bg-white border border-gray-300 flex flex-col transition-all duration-200  ${
             fullUserQuery == ""
               ? "max-h-0 opacity-0 pointer-events-none select-none"
-              : "h-[450px] max-h-[450px] opacity-100 pointer-events-auto select-auto"
+              : "h-[650px] max-h-[650px] opacity-100 pointer-events-auto select-auto"
           }  `}
         >
           {/*User message*/}
