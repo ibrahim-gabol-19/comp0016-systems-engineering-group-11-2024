@@ -3,15 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Event</title>
+    <title>Upload Event PDF</title>
 </head>
 <body>
     <h1>Upload Event PDF</h1>
-    <form action="/api/upload/" method="post" enctype="multipart/form-data">
+    <form id="upload-event-form" action="{% url 'upload_pdf' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <label for="pdf_file">Choose PDF:</label>
-        <input type="file" id="pdf_file" name="pdf_file" accept="application/pdf">
+        <label for="pdf_file">Choose PDF File:</label>
+        <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" required>
         <button type="submit">Upload</button>
     </form>
+    <div id="result"></div>
+
+    <script>
+        const form = document.getElementById('upload-event-form');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                resultDiv.innerHTML = `
+                    <h2>Extracted Event Data:</h2>
+                    <p><strong>Title:</strong> ${data.title || 'N/A'}</p>
+                    <p><strong>Date of Event:</strong> ${data.date_of_event || 'N/A'}</p>
+                    <p><strong>Time of Event:</strong> ${data.time_of_event || 'N/A'}</p>
+                    <p><strong>Description:</strong> ${data.description || 'N/A'}</p>
+                    <p><strong>Location:</strong> ${data.location || 'N/A'}</p>
+                    <p><strong>Images:</strong></p>
+                    <ul>
+                        ${
+                            (data.images && data.images.length > 0)
+                                ? data.images.map(img => `<li><a href="/media/extracted_images/${img}" target="_blank">${img}</a></li>`).join('')
+                                : '<li>N/A</li>'
+                        }
+                    </ul>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error || 'Something went wrong.'}</p>`;
+            }
+        });
+    </script>
 </body>
 </html>
+

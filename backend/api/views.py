@@ -19,27 +19,55 @@ class ItemViewSet(ViewSet):
         return Response(items)
 
 
-def extract_event_data(pdf_path):
-    """Extract event details from the content of a PDF file."""
+def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
+    """
+    Extract event details and images from the content of a PDF file.
+    
+    Args:
+        pdf_path (str): Path to the input PDF file.
+        output_image_dir (str): Directory to save extracted images.
+
+    Returns:
+        dict: A dictionary containing extracted event details and images.
+    """
     data = {
         'title': '',
         'date_of_event': '',
         'time_of_event': '',
         'description': '',
-        'location': ''
+        'location': '',
+        'images': []
     }
 
     try:
         with fitz.open(pdf_path) as doc:
             text = ""
-            for page in doc:
+            for page_num, page in enumerate(doc, start=1):
+                # Extract text
                 text += page.get_text()
 
-        # Extract and normalise title
+                # Extract images
+                for img_index, img in enumerate(page.get_images(full=True), start=1):
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image_ext = base_image["ext"]
+
+                    # Create output directory for images
+                    os.makedirs(output_image_dir, exist_ok=True)
+                    image_filename = f"event_image_page{page_num}_{img_index}.{image_ext}"
+                    image_path = os.path.join(output_image_dir, image_filename)
+
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_bytes)
+                    
+                    data['images'].append(image_filename)
+
+        # Extract and normalize title
         title_match = re.search(r'Title:\s*(.+)', text, re.IGNORECASE)
         data['title'] = title_match.group(1).strip() if title_match else ""
 
-        # Extract and normalise date
+        # Extract and normalize date
         date_match = re.search(
             r'Date:\s*(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*)?'
             r'(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4}|\d{2}/\d{2}/\d{4})',
@@ -52,7 +80,7 @@ def extract_event_data(pdf_path):
         else:
             data['date_of_event'] = ""
 
-        # Extract and normalise time
+        # Extract and normalize time
         time_match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
         if time_match:
             raw_time = time_match.group(1).strip()
@@ -69,13 +97,13 @@ def extract_event_data(pdf_path):
         data['location'] = location_match.group(1).strip() if location_match else ""
 
     except Exception as e:
-        # Log the exception and reset all fields to empty strings
         print(f"Error extracting event data: {e}")
         data = {key: "" for key in data}
+        data['images'] = []  # Ensure images field is reset
 
     return data
 
-def extract_article_data(pdf_path, output_image_dir="extracted_images"):
+def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
     """Extract article details and images from the content of a PDF file."""
     data = {
         'title': '',

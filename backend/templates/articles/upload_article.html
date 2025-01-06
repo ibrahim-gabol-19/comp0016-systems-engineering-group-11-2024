@@ -43,7 +43,7 @@
                     <ul>
                         ${
                             (data.images && data.images.length > 0)
-                                ? data.images.map(img => `<li>${img.filename}</li>`).join('')
+                                ? data.images.map(img => `<li><a href="/media/extracted_images/${img}" target="_blank">${img}</a></li>`).join('')
                                 : '<li>N/A</li>'
                         }
                     </ul>
