@@ -35,11 +35,11 @@ def extract_event_data(pdf_path):
             for page in doc:
                 text += page.get_text()
 
-        # Extract and normalize title
+        # Extract and normalise title
         title_match = re.search(r'Title:\s*(.+)', text, re.IGNORECASE)
         data['title'] = title_match.group(1).strip() if title_match else ""
 
-        # Extract and normalize date
+        # Extract and normalise date
         date_match = re.search(
             r'Date:\s*(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*)?'
             r'(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4}|\d{2}/\d{2}/\d{4})',
@@ -48,15 +48,15 @@ def extract_event_data(pdf_path):
         )
         if date_match:
             raw_date = date_match.group(1).strip()
-            data['date_of_event'] = normalize_date(raw_date)
+            data['date_of_event'] = normalise_date(raw_date)
         else:
             data['date_of_event'] = ""
 
-        # Extract and normalize time
+        # Extract and normalise time
         time_match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
         if time_match:
             raw_time = time_match.group(1).strip()
-            data['time_of_event'] = normalize_time(raw_time)
+            data['time_of_event'] = normalise_time(raw_time)
         else:
             data['time_of_event'] = ""
 
@@ -75,8 +75,72 @@ def extract_event_data(pdf_path):
 
     return data
 
+def extract_article_data(pdf_path, output_image_dir="extracted_images"):
+    """Extract article details and images from the content of a PDF file."""
+    data = {
+        'title': '',
+        'description': '',
+        'main_content': '',
+        'author': '',
+        'images': [],
+        'date': datetime.now().strftime('%d/%m/%Y')
+    }
 
-def normalize_date(raw_date):
+    try:
+        with fitz.open(pdf_path) as doc:
+            text = ""
+            image_counter = 0
+
+            for page_num, page in enumerate(doc, start=1):
+                # Extract text content
+                text += page.get_text()
+
+                # Extract images
+                for img_index, img in enumerate(page.get_images(full=True), start=1):
+                    xref = img[0]  # Reference to the image
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image_ext = base_image["ext"]  # Image file extension
+
+                    # Save the extracted image to the output directory
+                    os.makedirs(output_image_dir, exist_ok=True)
+                    image_filename = f"image_page{page_num}_{img_index}.{image_ext}"
+                    image_path = os.path.join(output_image_dir, image_filename)
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_bytes)
+                    
+                    data['images'].append(image_filename)
+                    image_counter += 1
+
+            # Extract and normalize title
+            title_match = re.search(r'Title:\s*(.+)', text, re.IGNORECASE)
+            data['title'] = title_match.group(1).strip() if title_match else ""
+
+            # Extract description
+            description_match = re.search(r'Description:\s*(.+)', text, re.IGNORECASE)
+            data['description'] = description_match.group(1).strip() if description_match else ""
+
+            # Extract main content
+            main_content_match = re.search(r'Main Content:\s*(.+)', text, re.IGNORECASE | re.DOTALL)
+            if main_content_match:
+                raw_main_content = main_content_match.group(1).strip()
+                clean_main_content = re.sub(r'Title:\s*' + re.escape(data['title']), '', raw_main_content, flags=re.IGNORECASE)
+                clean_main_content = re.sub(r'Description:\s*' + re.escape(data['description']), '', clean_main_content, flags=re.IGNORECASE)
+                data['main_content'] = clean_main_content.strip()
+
+            # Extract author
+            author_match = re.search(r'Author:\s*(.+)', text, re.IGNORECASE)
+            data['author'] = author_match.group(1).strip() if author_match else ""
+
+    except Exception as e:
+        print(f"Error extracting article data: {e}")
+        data = {key: None for key in data}
+        data['date'] = datetime.now().strftime('%d/%m/%Y')  # Ensure date is always set
+
+    return data
+
+
+def normalise_date(raw_date):
     """Convert various date formats to dd/mm/yyyy."""
     try:
         # Handle formats like "Saturday 4th January 2025" or "4 January 2025"
@@ -93,10 +157,10 @@ def normalize_date(raw_date):
             return ""
 
 
-def normalize_time(raw_time):
+def normalise_time(raw_time):
     """Convert various time formats to 24-hour clock (e.g., 18:30)."""
     try:
-        # Pre-normalize the input for variations in AM/PM (e.g., "5pm" -> "5 PM")
+        # Pre-normalise the input for variations in AM/PM (e.g., "5pm" -> "5 PM")
         raw_time = re.sub(r"(\d)([APap][Mm])", r"\1 \2", raw_time.strip())
         raw_time = raw_time.upper()  # Ensure AM/PM is in uppercase for parsing
 
@@ -133,6 +197,29 @@ def upload_pdf(request):
         return JsonResponse(event_data)
 
     return render(request, 'events/create_event.html')
+
+def upload_article_pdf(request):
+    """Handle PDF file uploads, extract article data, and return JSON response."""
+    if request.method == 'POST' and request.FILES.get('pdf_file'):
+        pdf_file = request.FILES['pdf_file']
+        fs = FileSystemStorage()
+        filename = fs.save(pdf_file.name, pdf_file)
+        pdf_path = fs.path(filename)
+
+        # Extract article data
+        article_data = extract_article_data(pdf_path)
+
+        # Delete the PDF after processing
+        os.remove(pdf_path)
+
+        return JsonResponse(article_data)
+
+    elif request.method == 'GET':
+        # Render the upload article template for GET requests
+        return render(request, 'articles/upload_article.html')
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 
 
