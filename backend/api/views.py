@@ -63,11 +63,10 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
                     
                     data['images'].append(image_filename)
 
-        # Extract and normalize title
-        title_match = re.search(r'Title:\s*(.+)', text, re.IGNORECASE)
+        # Extract and normalise fields
+        title_match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
         data['title'] = title_match.group(1).strip() if title_match else ""
 
-        # Extract and normalize date
         date_match = re.search(
             r'Date:\s*(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*)?'
             r'(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4}|\d{2}/\d{2}/\d{4})',
@@ -80,7 +79,6 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
         else:
             data['date_of_event'] = ""
 
-        # Extract and normalize time
         time_match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
         if time_match:
             raw_time = time_match.group(1).strip()
@@ -88,12 +86,12 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
         else:
             data['time_of_event'] = ""
 
-        # Extract description
-        description_match = re.search(r'Description:\s*(.+)', text, re.IGNORECASE)
+        # Extract description by finding "Description:" and capturing until the next key
+        description_match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
         data['description'] = description_match.group(1).strip() if description_match else ""
 
-        # Extract location
-        location_match = re.search(r'Location:\s*(.+)', text, re.IGNORECASE)
+        # Extract location by finding "Location:" and capturing until the next key
+        location_match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', text, re.IGNORECASE | re.DOTALL)
         data['location'] = location_match.group(1).strip() if location_match else ""
 
     except Exception as e:
@@ -140,24 +138,20 @@ def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
                     data['images'].append(image_filename)
                     image_counter += 1
 
-            # Extract and normalize title
-            title_match = re.search(r'Title:\s*(.+)', text, re.IGNORECASE)
+            # Extract and normalise title
+            title_match = re.search(r'Title:\s*(.+?)(?=\n(?:Description:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
             data['title'] = title_match.group(1).strip() if title_match else ""
 
             # Extract description
-            description_match = re.search(r'Description:\s*(.+)', text, re.IGNORECASE)
+            description_match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
             data['description'] = description_match.group(1).strip() if description_match else ""
 
             # Extract main content
-            main_content_match = re.search(r'Main Content:\s*(.+)', text, re.IGNORECASE | re.DOTALL)
-            if main_content_match:
-                raw_main_content = main_content_match.group(1).strip()
-                clean_main_content = re.sub(r'Title:\s*' + re.escape(data['title']), '', raw_main_content, flags=re.IGNORECASE)
-                clean_main_content = re.sub(r'Description:\s*' + re.escape(data['description']), '', clean_main_content, flags=re.IGNORECASE)
-                data['main_content'] = clean_main_content.strip()
+            main_content_match = re.search(r'Main Content:\s*(.+?)(?=\n(?:Title:|Description:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
+            data['main_content'] = main_content_match.group(1).strip() if main_content_match else ""
 
             # Extract author
-            author_match = re.search(r'Author:\s*(.+)', text, re.IGNORECASE)
+            author_match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', text, re.IGNORECASE | re.DOTALL)
             data['author'] = author_match.group(1).strip() if author_match else ""
 
     except Exception as e:
