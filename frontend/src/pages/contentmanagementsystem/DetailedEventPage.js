@@ -80,16 +80,16 @@ const DetailedEventPage = () => {
     }
 
     if (data.date_of_event) {
-      const dateInput = document.querySelector("#date-input");
-      if (dateInput) {
-        dateInput.value = data.date_of_event;
+      const datePicker = document.querySelector("#date-picker");
+      if (datePicker) {
+        datePicker.value = data.date_of_event;
       }
     }
 
     if (data.time_of_event) {
-      const timeInput = document.querySelector("#time-input");
-      if (timeInput) {
-        timeInput.value = data.time_of_event;
+      const timePicker = document.querySelector("#time-picker");
+      if (timePicker) {
+        timePicker.value = data.time_of_event;
       }
     }
 
@@ -190,6 +190,7 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
+
 
 
 
