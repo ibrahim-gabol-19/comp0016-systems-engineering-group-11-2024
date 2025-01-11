@@ -21,15 +21,9 @@ const DetailedEventPage = () => {
   // Ref for hidden file input
   const hiddenFileInput = useRef(null);
 
-  // Debugging state
-  const [debugMessages, setDebugMessages] = useState([]);
-
-  const addDebugMessage = (message) => {
-    setDebugMessages((prev) => [...prev, message]);
-  };
-
   const handleFilesUploaded = (acceptedFiles) => {
-    setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    const fileURLs = acceptedFiles.map((file) => URL.createObjectURL(file));
+    setUploadedFiles((prevFiles) => [...prevFiles, ...fileURLs]);
   };
 
   const handleExtractFromPDFClick = () => {
@@ -40,14 +34,11 @@ const DetailedEventPage = () => {
     const file = event.target.files[0];
     if (file && file.type === "application/pdf") {
       setPdfFile(file);
-    } else {
-      addDebugMessage("Please upload a valid PDF file.");
     }
   };
 
   const handleUploadPDF = async () => {
     if (!pdfFile) {
-      addDebugMessage("No PDF file selected for upload.");
       return;
     }
 
@@ -62,25 +53,20 @@ const DetailedEventPage = () => {
       });
 
       if (!response.ok) {
-        const textResponse = await response.text();
-        addDebugMessage(`Error from backend: ${textResponse}`);
         return;
       }
 
       const data = await response.json();
-      addDebugMessage(`Data received from backend: ${JSON.stringify(data)}`);
       setExtractedData(data);
       populateFields(data);
     } catch (error) {
-      addDebugMessage(`Error uploading PDF: ${error.message}`);
+      console.error("Error uploading PDF:", error);
     } finally {
       setIsUploading(false);
     }
   };
 
   const populateFields = (data) => {
-    addDebugMessage(`populateFields called with data: ${JSON.stringify(data)}`);
-
     if (quillRefTitle.current) {
       quillRefTitle.current.getEditor().setText(data.title || "");
     }
@@ -179,39 +165,15 @@ const DetailedEventPage = () => {
                 key={index}
                 src={image}
                 alt={`Event Image ${index + 1}`}
-                className="mt-4"
+                className="mt-4 w-32 h-32 object-cover rounded"
               />
             ))}
           </div>
         )}
-      </div>
-
-      {/* Debug Panel */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "0",
-          right: "0",
-          backgroundColor: "rgba(0,0,0,0.8)",
-          color: "white",
-          padding: "10px",
-          maxHeight: "30%",
-          overflowY: "auto",
-          width: "100%",
-          zIndex: 1000,
-        }}
-      >
-        <h3>Debug Messages</h3>
-        <ul style={{ listStyleType: "none", padding: "0" }}>
-          {debugMessages.map((msg, index) => (
-            <li key={index} style={{ marginBottom: "5px" }}>
-              {msg}
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
 };
 
 export default DetailedEventPage;
+
