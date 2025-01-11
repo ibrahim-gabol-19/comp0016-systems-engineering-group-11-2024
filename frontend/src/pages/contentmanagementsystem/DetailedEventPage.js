@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom";
-import Quill, { Delta } from "quill";
 
 const DetailedEventPage = () => {
   const quillRefTitle = useRef();
@@ -17,6 +16,7 @@ const DetailedEventPage = () => {
   const [pdfFile, setPdfFile] = useState(null);
   const [extractedData, setExtractedData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDataExtracted, setIsDataExtracted] = useState(false);
 
   // Ref for hidden file input
   const hiddenFileInput = useRef(null);
@@ -28,6 +28,7 @@ const DetailedEventPage = () => {
 
   const handleExtractFromPDFClick = () => {
     hiddenFileInput.current.click();
+    setIsDataExtracted(false);
   };
 
   const handlePDFUpload = (event) => {
@@ -59,6 +60,7 @@ const DetailedEventPage = () => {
       const data = await response.json();
       setExtractedData(data);
       populateFields(data);
+      setIsDataExtracted(true);
     } catch (error) {
       console.error("Error uploading PDF:", error);
     } finally {
@@ -68,13 +70,13 @@ const DetailedEventPage = () => {
 
   const populateFields = (data) => {
     if (quillRefTitle.current) {
-      quillRefTitle.current.getEditor().setText(data.title || "");
+      quillRefTitle.current.setContents([{ insert: data.title || "" }]);
     }
     if (quillRefDescription.current) {
-      quillRefDescription.current.getEditor().setText(data.description || "");
+      quillRefDescription.current.setContents([{ insert: data.description || "" }]);
     }
     if (quillRefAuthor.current) {
-      quillRefAuthor.current.getEditor().setText(data.location || "");
+      quillRefAuthor.current.setContents([{ insert: data.location || "" }]);
     }
 
     if (data.date_of_event) {
@@ -95,6 +97,12 @@ const DetailedEventPage = () => {
       setUploadedFiles(data.images);
     }
   };
+
+  useEffect(() => {
+    if (isEditing && extractedData) {
+      populateFields(extractedData);
+    }
+  }, [isEditing, extractedData]);
 
   return (
     <div>
@@ -134,9 +142,15 @@ const DetailedEventPage = () => {
           <button
             onClick={handleUploadPDF}
             disabled={isUploading}
-            className="bg-orange-500 text-white px-4 py-2 rounded"
+            className={`${
+              isDataExtracted ? "bg-green-500" : "bg-orange-500"
+            } text-white px-4 py-2 rounded`}
           >
-            {isUploading ? "Uploading..." : "Upload PDF"}
+            {isUploading
+              ? "Uploading..."
+              : isDataExtracted
+              ? "Data successfully extracted!"
+              : "Upload PDF"}
           </button>
         </div>
       )}
@@ -176,4 +190,6 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
+
+
 
