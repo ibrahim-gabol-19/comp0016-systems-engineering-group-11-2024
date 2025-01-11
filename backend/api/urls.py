@@ -10,6 +10,7 @@ router.register(r'items', ItemViewSet, basename='item')
 urlpatterns = [
     path('upload/', upload_pdf, name='upload_pdf'),
     path('upload-article/', upload_article_pdf, name='upload_article_pdf'),
+    path('upload-event-pdf/', upload_pdf, name='upload_event_pdf'),
     path('', include(router.urls)),
 ]
 

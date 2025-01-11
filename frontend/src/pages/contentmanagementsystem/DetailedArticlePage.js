@@ -67,6 +67,14 @@ const DetailedArticlePage = () => {
   const handleFilesUploaded = (acceptedFiles) => {
     setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   };
+
+  // Function to handle Extract From PDF button click
+  const handleExtractFromPDF = () => {
+    // Add the logic for extracting from PDF here
+    alert("Extracting data from PDF...");
+    // You can also add additional handling or call an API to process the PDF extraction
+  };
+
   return (
     <div>
       {/* Toggle between edit and preview */}
@@ -80,6 +88,13 @@ const DetailedArticlePage = () => {
         {/* Non-functional save button */}
         <button className="bg-green-500 text-white px-4 py-2 rounded">
           Save
+        </button>
+        {/* Extract From PDF button (purple) */}
+        <button
+          onClick={handleExtractFromPDF}
+          className="bg-purple-500 text-white px-4 py-2 rounded ml-4"
+        >
+          Extract From PDF
         </button>
       </div>
 
@@ -134,3 +149,5 @@ const DetailedArticlePage = () => {
 };
 
 export default DetailedArticlePage;
+
+

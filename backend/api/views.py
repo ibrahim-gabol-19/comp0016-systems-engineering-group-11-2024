@@ -3,6 +3,8 @@ import re
 from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
@@ -202,23 +204,26 @@ def normalise_time(raw_time):
                 return ""
 
 
+@csrf_exempt  # Use only for testing; configure properly in production
 def upload_pdf(request):
-    """Handle PDF file uploads, extract event data, and return JSON response."""
     if request.method == 'POST' and request.FILES.get('pdf_file'):
-        pdf_file = request.FILES['pdf_file']
-        fs = FileSystemStorage()
-        filename = fs.save(pdf_file.name, pdf_file)
-        pdf_path = fs.path(filename)
+        try:
+            pdf_file = request.FILES['pdf_file']
+            fs = FileSystemStorage()
+            filename = fs.save(pdf_file.name, pdf_file)
+            pdf_path = fs.path(filename)
 
-        # Extract event data
-        event_data = extract_event_data(pdf_path)
+            extracted_data = extract_event_data(pdf_path)
 
-        # Delete the PDF after processing
-        os.remove(pdf_path)
+            # Clean up the file after processing
+            if os.path.exists(pdf_path):
+                os.remove(pdf_path)
 
-        return JsonResponse(event_data)
+            return JsonResponse(extracted_data)
+        except Exception as e:
+            return JsonResponse({'error': f"Error processing file: {str(e)}"}, status=500)
 
-    return render(request, 'events/create_event.html')
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def upload_article_pdf(request):
     """Handle PDF file uploads, extract article data, and return JSON response."""
