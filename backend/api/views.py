@@ -225,6 +225,7 @@ def upload_pdf(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@csrf_exempt  # Use only for testing; configure properly in production
 def upload_article_pdf(request):
     """Handle PDF file uploads, extract article data, and return JSON response."""
     if request.method == 'POST' and request.FILES.get('pdf_file'):
@@ -246,9 +247,3 @@ def upload_article_pdf(request):
         return render(request, 'articles/upload_article.html')
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-
-
-
-
