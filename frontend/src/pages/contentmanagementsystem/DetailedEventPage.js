@@ -48,7 +48,7 @@ const DetailedEventPage = () => {
     formData.append("pdf_file", pdfFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload-event-pdf/", {
+      const response = await fetch("http://127.0.0.1:8000/api/upload/event/", {
         method: "POST",
         body: formData,
       });

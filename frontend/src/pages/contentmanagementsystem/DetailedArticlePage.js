@@ -52,7 +52,7 @@ const DetailedArticlePage = () => {
     formData.append("pdf_file", pdfFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload-article/", {
+      const response = await fetch("http://127.0.0.1:8000/api/upload/article/", {
         method: "POST",
         body: formData,
       });

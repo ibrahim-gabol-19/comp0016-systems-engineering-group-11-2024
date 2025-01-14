@@ -205,7 +205,7 @@ def normalise_time(raw_time):
 
 
 @csrf_exempt  # Use only for testing; configure properly in production
-def upload_pdf(request):
+def upload_pdf_and_extract_data(request, pdf_type):
     if request.method == 'POST' and request.FILES.get('pdf_file'):
         try:
             pdf_file = request.FILES['pdf_file']
@@ -213,7 +213,10 @@ def upload_pdf(request):
             filename = fs.save(pdf_file.name, pdf_file)
             pdf_path = fs.path(filename)
 
-            extracted_data = extract_event_data(pdf_path)
+            if pdf_type == 'event':
+                extracted_data = extract_event_data(pdf_path)
+            elif pdf_type == "article":
+                extracted_data = extract_article_data(pdf_path)    
 
             # Clean up the file after processing
             if os.path.exists(pdf_path):
@@ -224,26 +227,3 @@ def upload_pdf(request):
             return JsonResponse({'error': f"Error processing file: {str(e)}"}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_exempt  # Use only for testing; configure properly in production
-def upload_article_pdf(request):
-    """Handle PDF file uploads, extract article data, and return JSON response."""
-    if request.method == 'POST' and request.FILES.get('pdf_file'):
-        pdf_file = request.FILES['pdf_file']
-        fs = FileSystemStorage()
-        filename = fs.save(pdf_file.name, pdf_file)
-        pdf_path = fs.path(filename)
-
-        # Extract article data
-        article_data = extract_article_data(pdf_path)
-
-        # Delete the PDF after processing
-        os.remove(pdf_path)
-
-        return JsonResponse(article_data)
-
-    elif request.method == 'GET':
-        # Render the upload article template for GET requests
-        return render(request, 'articles/upload_article.html')
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
