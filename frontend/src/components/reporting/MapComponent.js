@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
@@ -23,6 +23,37 @@ const MapComponent = ({ onMarkerSelected }) => {
     [49.5, -8],  // Southwest coordinates (approx.)
     [60, 2],     // Northeast coordinates (approx.)
   ];
+  function NewReport() {
+    const [position, setPosition] = useState(null);
+  
+    const map = useMapEvents({
+      click(e) {
+        // Log the map event location
+        console.log("Map clicked at:", e.latlng);
+  
+        // Log the new report
+        console.log("New report created at:", e.latlng);
+        
+        // Optionally, you can also update the position
+        setPosition(e.latlng);
+        
+        // Fly to the clicked location
+        map.flyTo(e.latlng, map.getZoom());
+      },
+      locationfound(e) {
+        // Set the position when location is found
+        setPosition(e.latlng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
+  
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>You are here</Popup>
+      </Marker>
+    );
+  }
+  
 
   return (
       <MapContainer
@@ -33,7 +64,7 @@ const MapComponent = ({ onMarkerSelected }) => {
         maxBoundsViscosity={1.0} // Ensures map stays within bounds
         minZoom={8} // Set minimum zoom level to allow zooming in further
         maxZoom={15} // Set maximum zoom level to zoom in further
-      >
+     >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -56,6 +87,8 @@ const MapComponent = ({ onMarkerSelected }) => {
             <Popup>{item.name}</Popup>
           </Marker>
         ))}
+        <NewReport />
+
       </MapContainer>
   );
 };
