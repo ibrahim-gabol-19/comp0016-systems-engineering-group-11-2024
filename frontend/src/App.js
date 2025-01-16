@@ -9,7 +9,7 @@ import ContentManagementSystem from './pages/contentmanagementsystem/ContentMana
 import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
 import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
 import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
-
+import ReportsPage from "./pages/reporting/ReportsPage"
 
 const App = () => {
 
@@ -27,7 +27,7 @@ const App = () => {
               <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
               <Route path="/contentmanagementsystem/details/articles/:index" element={<DetailedArticlePage />} />
               <Route path="/contentmanagementsystem/details/events/:index" element={<DetailedEventPage />} />
-
+              <Route path="/reporting" element={<ReportsPage></ReportsPage>} />
             </Routes>
           </div>
         </div>
