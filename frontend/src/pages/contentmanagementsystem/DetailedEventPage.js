@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-
+import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
@@ -15,6 +15,9 @@ const DetailedEventPage = () => {
   const [isEditing, setIsEditing] = useState(true);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
 
   const handleFilesUploaded = (acceptedFiles) => {
     if (acceptedFiles.length > 1) {
@@ -27,15 +30,7 @@ const DetailedEventPage = () => {
   const handleSave = async () => {
     console.log("Save button clicked");
 
-    const titleEditor = quillRefTitle.current;
-    const descriptionEditor = quillRefDescription.current;
-    const locationEditor = quillRefLocation.current;
-
-    // Access editor content using .root.innerText
-    const title = titleEditor.root.innerText.trim();
-    const description = descriptionEditor.root.innerText.trim();
-    const location = locationEditor.root.innerText.trim();
-
+   
     // Check if essential fields are filled
     if (!title || !date || !time || !description || !location) {
       alert("Please fill in all fields before saving.");
@@ -97,17 +92,80 @@ const DetailedEventPage = () => {
       <div className="flex justify-center items-center overflow-hidden relative">
         {isEditing ? (
           <div>
-            <NoToolbarEditor ref={quillRefTitle} placeholderText="Title" />
-            <DateTime onDateChange={setDate} onTimeChange={setTime} />
-            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" />
+            <TitleEditor
+                ref={quillRefTitle}
+                placeholderText="Title"
+                fontSize="16px"
+                defaultValue={title}
+                onTextChange={setTitle}
+              />
+            <DateTime 
+  date={date} 
+  time={time} 
+  onDateChange={setDate} 
+  onTimeChange={setTime} 
+/>
+
+            <NoToolbarEditor
+                ref={quillRefDescription}
+                placeholderText="Description"
+                fontSize="16px"
+                defaultValue={description}
+                onTextChange={setDescription}
+              />
             <MainImage onFilesUploaded={handleFilesUploaded} />
-            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" />
+            <NoToolbarEditor
+                ref={quillRefLocation}
+                placeholderText="Location"
+                fontSize="16px"
+                defaultValue={location}
+                onTextChange={setLocation}
+              />
           </div>
         ) : (
-          <div className="w-1/2 h-4/5 overflow-auto p-4 bg-gray-100 rounded">
-            <h1 className="text-3xl font-bold">Preview Title</h1>
-            <p className="mt-4">Preview Description</p>
+          <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+  <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+    {/* Title and Author Section */}
+    <div className="flex items-center justify-between">
+      <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">{title}</h1>
+      <p className="text-lg text-gray-500 ml-4">{date} {time}</p>
+    </div>
+
+    {/* Image Section*/}
+    <div className="mt-4">
+      {uploadedFiles.length > 0 && uploadedFiles[0] && (
+        <img
+          src={URL.createObjectURL(uploadedFiles[0])}
+          alt="Main Image"
+          className="w-full h-64 object-cover rounded-md shadow-md"
+        />
+      )}
+    </div>
+
+    {/* Description Section */}
+    <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
+
+    {/* Main Content Section */}
+    <p className="text-lg mt-4 text-gray-700 text-center">{location}</p>
+
+    {/* Images */}
+    <div className="mt-6 flex justify-center flex-wrap gap-6">
+      {uploadedFiles.length > 1 &&
+        uploadedFiles.slice(1).map((file, index) => (
+          <div key={index} className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+            <p className="text-sm text-gray-700">{file.name}</p>
+            <img
+              src={URL.createObjectURL(file)}
+              alt="Uploaded File"
+              className="w-full h-48 object-cover rounded-md mt-2"
+            />
           </div>
+        ))}
+    </div>
+  </div>
+</div>
+
+
         )}
       </div>
     </div>

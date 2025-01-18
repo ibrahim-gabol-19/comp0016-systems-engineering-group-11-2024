@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 
-const DateTime = ({ onDateChange, onTimeChange }) => {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-
+const DateTime = ({ date, time, onDateChange, onTimeChange }) => {
   const handleDateChange = (e) => {
     const newDate = e.target.value;
-    setDate(newDate);
     onDateChange(newDate); // Pass the date back to the parent
   };
 
   const handleTimeChange = (e) => {
     const newTime = e.target.value;
-    setTime(newTime);
-    onTimeChange(newTime); // Pass the time back to the parent
+    onTimeChange(newTime);
   };
 
   return (
@@ -29,7 +24,7 @@ const DateTime = ({ onDateChange, onTimeChange }) => {
         <input
           type="date"
           id="date-picker"
-          value={date}
+          value={date || ""} // Controlled input
           onChange={handleDateChange}
           className="bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48"
         />
@@ -46,7 +41,7 @@ const DateTime = ({ onDateChange, onTimeChange }) => {
         <input
           type="time"
           id="time-picker"
-          value={time}
+          value={time || ""} 
           onChange={handleTimeChange}
           className="bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48"
         />
