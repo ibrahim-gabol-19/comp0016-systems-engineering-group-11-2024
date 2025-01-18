@@ -23,6 +23,7 @@ const MapComponent = ({ onMarkerSelected }) => {
     [49.5, -8],  // Southwest coordinates (approx.)
     [60, 2],     // Northeast coordinates (approx.)
   ];
+
   function NewReport() {
     const [position, setPosition] = useState(null);
   
@@ -34,11 +35,15 @@ const MapComponent = ({ onMarkerSelected }) => {
         // Log the new report
         console.log("New report created at:", e.latlng);
         
+        
+
         // Optionally, you can also update the position
         setPosition(e.latlng);
         
         // Fly to the clicked location
         map.flyTo(e.latlng, map.getZoom());
+        onMarkerSelected("new");
+
       },
       locationfound(e) {
         // Set the position when location is found

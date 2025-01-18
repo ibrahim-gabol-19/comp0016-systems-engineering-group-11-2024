@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 const SidebarReport = ({ selectedMarker }) => {
-  if (selectedMarker) {
+  if (selectedMarker == "new")
+  {
+    return (
+      <div className="w-full h-full flex flex-col">
+        new newn ew
+        </div>
+    )
+  }
+  else if (selectedMarker) {
     return (
       <div className="w-full h-full flex flex-col">
         {selectedMarker.name};
