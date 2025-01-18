@@ -6,14 +6,15 @@ import "quill/dist/quill.snow.css";
 const MainEditor = forwardRef(
   ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
     const containerRef = useRef(null);
-    const defaultValueRef = useRef(defaultValue);
+    const quillRef=useRef(null);
+    /*const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
     const onSelectionChangeRef = useRef(onSelectionChange);
 
     useLayoutEffect(() => {
       onTextChangeRef.current = onTextChange;
       onSelectionChangeRef.current = onSelectionChange;
-    });
+    });*/
 
     useEffect(() => {
       ref.current?.enable(!readOnly);
@@ -31,7 +32,7 @@ const MainEditor = forwardRef(
 
       // Toolbar options
       const toolbarOptions = [
-        [{ header: [1, 2, 3, false] }], 
+        [{ header: [1, 2, 3, false] }],
         ["bold", "italic", "underline", "strike"],
         ["blockquote", "code-block"],
         ["link", "image", "video"],
@@ -62,28 +63,29 @@ const MainEditor = forwardRef(
         toolbar.style.fontFamily = "system-ui";
       }
 
-      ref.current = quill;
+      // Set text direction to left-to-right (ltr)
+      quill.root.style.direction = "ltr"; 
 
       // Set the default value if provided
-      if (defaultValueRef.current) {
-        quill.setContents(defaultValueRef.current);
+      if (defaultValue) {
+        quill.root.innerHTML = defaultValue;
       }
 
-      // Event listeners for text and selection changes
-      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
-        onTextChangeRef.current?.(...args);
+      ref.current = quill;
+      quillRef.current=quill;
+
+      quill.on("text-change", () => {
+        const content = quill.root.innerText.trim();
+        onTextChange?.(content);
       });
 
-      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
-        onSelectionChangeRef.current?.(...args);
-      });
-
+      
       // Cleanup on unmount
       return () => {
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [ref, placeholderText]);
 
     return <div className="pt-8" ref={containerRef}></div>;
   }

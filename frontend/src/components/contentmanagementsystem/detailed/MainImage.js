@@ -13,18 +13,27 @@ const MainImage = ({ onFilesUploaded }) => {
     }
 
     const file = acceptedFiles[0];
-    if (file && file.type.startsWith("image/")) {
+    const validExtensions = ["jpg", "jpeg", "png", "gif"];
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+
+    if (file && file.type.startsWith("image/") && validExtensions.includes(fileExtension)) {
+      console.log("File accepted:", file);
       onFilesUploaded([file]); // Notify parent about the uploaded file
       setPreviewImage(URL.createObjectURL(file)); // Set the preview image
     } else {
-      alert("Please upload a valid image file.");
+      alert("Please upload a valid image file (JPG, JPEG, PNG, GIF).");
     }
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxFiles: 1,
-    accept: "image/*",
+    accept: {
+      "image/png": [],
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/gif": [],
+    },
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
   });
