@@ -14,7 +14,7 @@ const ReportsPage = () => {
 
   return (
     <div className=" h-[calc(100vh-80px)] w-screen  flex">
-        <div className="bg-green-100  h-full w-1/6">
+        <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-1/6">
           <SidebarReport selectedMarker={selectedMarker}></SidebarReport>
         </div>
         <div className="bg-yellow-100 h-full w-5/6">
