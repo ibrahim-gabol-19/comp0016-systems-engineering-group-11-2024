@@ -146,7 +146,8 @@ const SidebarReport = ({ selectedMarker }) => {
               </p>
             </div>
           </div>
-          <div className="w-full h-4/6 overflow-auto ">
+          {/**Discussion */}
+          <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
             {selectedMarker.discussion.map((discussion, index) => (
               <div
                 key={index}
@@ -177,8 +178,8 @@ const SidebarReport = ({ selectedMarker }) => {
           </div>
 
           {/*New Discussion Message */}
-          <div className="w-full  flex flex-col items-center justify-center h-2/6">
-            <div className="w-full h-3/6 py-2 ">
+          <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
+            <div className="w-full h-3/4 py-2 ">
               {/* Text Input Form */}
               <textarea
                 className="w-full h-full p-2 border rounded-lg resize-none"
@@ -196,7 +197,7 @@ const SidebarReport = ({ selectedMarker }) => {
               </button>
             </div>
             {/*View Overview*/}
-          <div className="w-full  h-1/6">
+          <div className="w-full  h-1/4">
             <button
               className="flex flex-row justify-center w-full h-full  bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
               onClick={() => setViewingDiscussion(false)}
@@ -255,6 +256,12 @@ const SidebarReport = ({ selectedMarker }) => {
           {/* Description with Poster and Date */}
           <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">
             {/* Poster and Date Section */}
+            
+            {/* Description Text */}
+            <div className="w-full h-3/6 mb-3 overflow-auto">
+              <p>{selectedMarker.description}</p>
+            </div>
+            {/*Poster*/ }
             <div className="h-1/6 flex items-center space-x-4">
               {/* Profile Picture (SVG Icon) */}
               <div className="w-1/6 h-full flex justify-center items-center">
@@ -285,11 +292,6 @@ const SidebarReport = ({ selectedMarker }) => {
                 </p>
               </div>
             </div>
-            {/* Description Text */}
-            <div className="w-full h-4/6 mb-3 overflow-auto">
-              <p>{selectedMarker.description}</p>
-            </div>
-
             <div className="h-1/6 flex items-center justify-center ">
               <div className="w-1/2">
                 {/* Current Upvotes */}
