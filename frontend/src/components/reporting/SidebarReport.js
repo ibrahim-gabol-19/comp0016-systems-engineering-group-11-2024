@@ -59,66 +59,64 @@ const SidebarReport = ({ selectedMarker }) => {
 
   if (selectedMarker == "new") {
     return (
-      <div className="w-full h-full flex flex-col">
-        <h2>Submit Your Report</h2>
-        <form
-          onSubmit={handleSubmitNewForm}
-          className="space-y-4"
-          onKeyDown={handleKeyDown}
-        >
-          {/* Title Input */}
-          <div>
-            <label htmlFor="title" className="block font-medium">
+      <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
+        <div className="mb-6 ">
+          <p class="text-3xl font-bold">New report</p>
+        </div>
+        <div className="h-5/6 w-full">
+          <form
+            onSubmit={handleSubmitNewForm}
+            className="space-y-4"
+            onKeyDown={handleKeyDown}
+          >
+            {/* Title Input */}
+            <div>
+              {/* <label htmlFor="title" className="block font-medium">
               Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter title"
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
+            </label> */}
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title"
+                className="w-full py-12 text-3xl px-3 border rounded-lg"
+              />
+            </div>
 
-          {/* Image Input */}
-          <div>
-            <label htmlFor="image" className="block font-medium">
-              Upload Image
-            </label>
-            <input
-              type="file"
-              id="image"
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e)}
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
+            {/* Image Input */}
+            <div>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e)}
+                className="w-full py-6 px-3 border rounded-lg"
+              />
+            </div>
 
-          {/* Description Input */}
-          <div>
-            <label htmlFor="description" className="block font-medium">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description"
-              className="w-full p-2 border rounded-lg h-24"
-            />
-          </div>
+            {/* Description Input */}
+            <div>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter description"
+                className="w-full px-3 border rounded-lg h-48 resize-none"
+              />
+            </div>
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   } else if (selectedMarker) {
