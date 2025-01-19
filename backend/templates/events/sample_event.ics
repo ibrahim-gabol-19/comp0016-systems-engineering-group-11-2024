@@ -1,14 +1,29 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Sample Corp//NONSGML Event//EN
+PRODID:-//Advanced Event Corp//NONSGML Events//EN
 BEGIN:VEVENT
-UID:123456789@example.com
-DTSTAMP:20250118T120000Z
-DTSTART:20250120T140000Z
-DTEND:20250120T160000Z
-SUMMARY:Sample Event Title
-DESCRIPTION:This is a sample event description.\nIt spans multiple lines.
-LOCATION:Sample Event Location
+UID:1122334455@example.com
+DTSTAMP:20250118T150000Z
+DTSTART:20250301T090000Z
+DTEND:20250301T130000Z
+SUMMARY:Quarterly Business Review
+DESCRIPTION:The Quarterly Business Review (QBR) will cover the following agenda:
+ - A detailed analysis of the company's performance over the last quarter,
+   including revenue, profit margins, and growth areas.
+ - Key insights from the customer satisfaction surveys conducted during the
+   quarter.
+ - Updates on ongoing projects and their impact on overall business objectives.
+ - Departmental presentations outlining achievements, roadblocks, and future
+   plans.
+ - Leadership Q&A session to address employee concerns and suggestions.
+   Please ensure that you come prepared with any data or input relevant to
+   your department. This meeting is critical to align all departments with
+   our strategic goals for the next quarter.
+LOCATION:Main Conference Hall, Corporate HQ
+ORGANIZER;CN=Operations Manager:mailto:ops.manager@example.com
+STATUS:CONFIRMED
+SEQUENCE:2
+TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR
 

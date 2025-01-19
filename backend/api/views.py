@@ -183,9 +183,13 @@ def extract_event_data_ics(ics_path):
     }
 
     try:
-        # Read and parse the .ics file
+        # Read and preprocess the .ics file to handle multi-line descriptions
         with open(ics_path, 'r', encoding='utf-8') as file:
-            calendar = Calendar(file.read())
+            raw_content = file.read()
+
+        # Preprocess content to fix multi-line fields
+        processed_content = preprocess_ics_content(raw_content)
+        calendar = Calendar(processed_content)
 
         # Assume the first event in the .ics file is the one we want to process
         event = next(iter(calendar.events), None)
@@ -212,14 +216,29 @@ def extract_event_data_ics(ics_path):
 
     return data
 
+
+def preprocess_ics_content(raw_content):
+    """
+    Preprocess the raw .ics file content to merge multi-line property values.
+
+    Args:
+        raw_content (str): The raw content of the .ics file.
+
+    Returns:
+        str: Processed .ics content with multi-line values merged.
+    """
+    # Merge continuation lines (lines starting with a space) into the previous line
+    processed_content = re.sub(r'\n[ \t]', '', raw_content)
+    return processed_content
+
+
 def clean_description_ics(description):
     """
     Remove unwanted characters like newlines and extra spaces from the description.
     """
-    # Remove newlines and replace them with spaces
+    # Remove extra newlines and normalize spaces
     description = re.sub(r'\s+', ' ', description)
     return description.strip()
-
 
 def normalise_date(raw_date):
     """Convert various date formats to dd/mm/yyyy."""
