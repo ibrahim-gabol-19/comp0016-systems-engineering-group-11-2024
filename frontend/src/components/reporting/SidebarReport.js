@@ -259,7 +259,7 @@ const SidebarReport = ({ selectedMarker }) => {
               <p class="text-lg">{selectedMarker.description}</p>
             </div>
             {/*Poster*/}
-            <div className="h-1/6 flex items-center bg-white space-x-4">
+            <div className="h-1/6 flex items-center bg-white border border-gray-100 space-x-4">
               {/* Profile Picture (SVG Icon) */}
               <div className="w-1/6 h-full flex justify-center items-center">
                 <svg
@@ -289,7 +289,7 @@ const SidebarReport = ({ selectedMarker }) => {
                 </p>
               </div>
             </div>
-            <div className="h-1/6 flex items-center bg-white mb-3 justify-center ">
+            <div className="h-1/6 flex items-center bg-white border border-gray-100 mb-3 justify-center ">
               <div className="w-1/2">
                 {/* Current Upvotes */}
                 <p className="italic text-center">{upvotes} Upvotes</p>
