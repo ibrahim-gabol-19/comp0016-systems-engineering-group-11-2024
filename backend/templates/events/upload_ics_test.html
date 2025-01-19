@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload ICS File</title>
+</head>
+<body>
+  <h1>Upload ICS File and Extract Event Data</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="icsFile">Select .ics File:</label>
+    <input type="file" id="icsFile" name="ics_file" accept=".ics" required>
+    <button type="submit">Upload and Extract</button>
+  </form>
+  <h2>Extracted Event Data:</h2>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const fileInput = document.getElementById('icsFile');
+      if (!fileInput.files.length) {
+        alert('Please select a file to upload!');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('ics_file', fileInput.files[0]);
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/upload_ics/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken') // Ensure CSRF token is included
+          }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        } else {
+          document.getElementById('output').textContent = `Error: ${data.error || 'Unknown error'}`;
+        }
+      } catch (err) {
+        document.getElementById('output').textContent = `Error: ${err.message}`;
+      }
+    });
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  </script>
+</body>
+</html>
+

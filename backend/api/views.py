@@ -1,8 +1,9 @@
 import os
 import re
 from datetime import datetime
+from ics import Calendar
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
@@ -163,6 +164,62 @@ def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
 
     return data
 
+def extract_event_data_ics(ics_path):
+    """
+    Extract event details from an .ics file.
+
+    Args:
+        ics_path (str): Path to the input .ics file.
+
+    Returns:
+        dict: A dictionary containing extracted event details.
+    """
+    data = {
+        'title': '',
+        'date_of_event': '',
+        'time_of_event': '',
+        'description': '',
+        'location': ''
+    }
+
+    try:
+        # Read and parse the .ics file
+        with open(ics_path, 'r', encoding='utf-8') as file:
+            calendar = Calendar(file.read())
+
+        # Assume the first event in the .ics file is the one we want to process
+        event = next(iter(calendar.events), None)
+        if not event:
+            return {'error': 'No events found in the .ics file'}
+
+        # Extract title
+        data['title'] = event.name or ''
+
+        # Extract description
+        data['description'] = clean_description_ics(event.description) or ''
+
+        # Extract start time and normalize date and time
+        if event.begin:
+            data['date_of_event'] = normalise_date(event.begin.format('DD MMMM YYYY'))
+            data['time_of_event'] = normalise_time(event.begin.format('hh:mm A'))
+
+        # Extract location
+        data['location'] = event.location or ''
+
+    except Exception as e:
+        print(f"Error extracting event data from .ics file: {e}")
+        data = {key: '' for key in data}  # Reset all fields to empty if an error occurs
+
+    return data
+
+def clean_description_ics(description):
+    """
+    Remove unwanted characters like newlines and extra spaces from the description.
+    """
+    # Remove newlines and replace them with spaces
+    description = re.sub(r'\s+', ' ', description)
+    return description.strip()
+
 
 def normalise_date(raw_date):
     """Convert various date formats to dd/mm/yyyy."""
@@ -221,6 +278,97 @@ def upload_pdf_and_extract_data(request, pdf_type):
             # Clean up the file after processing
             if os.path.exists(pdf_path):
                 os.remove(pdf_path)
+
+            return JsonResponse(extracted_data)
+        except Exception as e:
+            return JsonResponse({'error': f"Error processing file: {str(e)}"}, status=500)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt  # Use only for testing; configure properly in production
+def upload_ics_and_extract_event_data(request):
+    """
+    Handle the upload of an .ics file and extract event details from it.
+    On GET, serve the HTML test page.
+    """
+    if request.method == 'GET':
+        # Serve the HTML test page
+        html_content = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Upload ICS File</title>
+        </head>
+        <body>
+          <h1>Upload ICS File and Extract Event Data</h1>
+          <form id="uploadForm" enctype="multipart/form-data">
+            <label for="icsFile">Select .ics File:</label>
+            <input type="file" id="icsFile" name="ics_file" accept=".ics" required>
+            <button type="submit">Upload and Extract</button>
+          </form>
+          <h2>Extracted Event Data:</h2>
+          <pre id="output"></pre>
+          <script>
+            document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+              event.preventDefault();
+              const fileInput = document.getElementById('icsFile');
+              if (!fileInput.files.length) {
+                alert('Please select a file to upload!');
+                return;
+              }
+              const formData = new FormData();
+              formData.append('ics_file', fileInput.files[0]);
+              try {
+                const response = await fetch('http://127.0.0.1:8000/api/upload_ics/', {
+                  method: 'POST',
+                  body: formData,
+                  headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+                } else {
+                  document.getElementById('output').textContent = `Error: ${data.error || 'Unknown error'}`;
+                }
+              } catch (err) {
+                document.getElementById('output').textContent = `Error: ${err.message}`;
+              }
+            });
+            function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                  }
+                }
+              }
+              return cookieValue;
+            }
+          </script>
+        </body>
+        </html>
+        """
+        return HttpResponse(html_content, content_type="text/html")
+
+    if request.method == 'POST' and request.FILES.get('ics_file'):
+        try:
+            ics_file = request.FILES['ics_file']
+            fs = FileSystemStorage()
+            filename = fs.save(ics_file.name, ics_file)
+            ics_path = fs.path(filename)
+
+            # Extract event data from the .ics file
+            extracted_data = extract_event_data_ics(ics_path)
+
+            # Clean up the file after processing
+            if os.path.exists(ics_path):
+                os.remove(ics_path)
 
             return JsonResponse(extracted_data)
         except Exception as e:
