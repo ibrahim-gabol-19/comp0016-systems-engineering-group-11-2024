@@ -8,13 +8,13 @@ const MapComponent = ({ onMarkerSelected }) => {
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level for the UK
   const data = [
-    { id: 1, name: "Volunteering Event", type: "issues", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278 }, // London
-    { id: 2, name: "News Update", type: "issues", date: "2024-12-10", emoji: "📰", lat: 53.4084, lng: -2.9916 }, // Manchester
-    { id: 3, name: "Local Issue", type: "issues", date: "2024-12-14", emoji: "⚠️", lat: 52.4862, lng: -1.8904 }, // Birmingham
-    { id: 4, name: "Community Event", type: "issues", date: "2024-12-12", emoji: "📍", lat: 51.4545, lng: -2.5879 }, // Bristol
-    { id: 5, name: "Volunteering Event", type: "issues", date: "2024-12-13", emoji: "🙌", lat: 55.9533, lng: -3.1883 }, // Edinburgh
-    { id: 6, name: "News Update", type: "issues", date: "2024-12-16", emoji: "📰", lat: 53.4080, lng: -2.2389 }, // Liverpool
-    { id: 7, name: "Local Issue", type: "issues", date: "2024-12-17", emoji: "⚠️", lat: 52.2053, lng: 0.1218 }, // Cambridge
+    { id: 1, name: "Volunteering Event", type: "issues", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // London
+    { id: 2, name: "News Update", type: "issues", date: "2024-12-10", emoji: "📰", lat: 53.4084, lng: -2.9916, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Manchester
+    { id: 3, name: "Local Issue", type: "issues", date: "2024-12-14", emoji: "⚠️", lat: 52.4862, lng: -1.8904, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Birmingham
+    { id: 4, name: "Community Event", type: "issues", date: "2024-12-12", emoji: "📍", lat: 51.4545, lng: -2.5879, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Bristol
+    { id: 5, name: "Volunteering Event", type: "issues", date: "2024-12-13", emoji: "🙌", lat: 55.9533, lng: -3.1883, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Edinburgh
+    { id: 6, name: "News Update", type: "issues", date: "2024-12-16", emoji: "📰", lat: 53.4080, lng: -2.2389, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Liverpool
+    { id: 7, name: "Local Issue", type: "issues", date: "2024-12-17", emoji: "⚠️", lat: 52.2053, lng: 0.1218, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Cambridge
     { id: 8, name: "Community devent", type: "issues", status:"open", tags: "Environmental", poster: "Jane Doe", description: "This is my description and such. I don't think this is good for our streets, could someone help please!", date: "2024-12-11", emoji: "📍", lat: 51.5076, lng: -0.1280 , discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"]}, // London (another spot)
 
   ];
