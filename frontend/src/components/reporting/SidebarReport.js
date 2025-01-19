@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 
 const SidebarReport = ({ selectedMarker }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
+  const [message, setMessage] = useState(null);
 
-
-
+  const handleSubmit = () => {
+    if (message.trim()) {
+      console.log("Message Submitted:", message);
+      setMessage("");
+    } else {
+      alert("Please enter a message!");
+    }
+  };
   if (selectedMarker == "new") {
-    return (
-      <div className="w-full h-full flex flex-col">
-        new newn ew
-      </div>
-    )
-  }
-  else if (selectedMarker) {
+    return <div className="w-full h-full flex flex-col">new newn ew</div>;
+  } else if (selectedMarker) {
     if (viewingDiscussion) {
       return (
         <div className="w-full h-full flex flex-col">
@@ -23,10 +25,12 @@ const SidebarReport = ({ selectedMarker }) => {
             </div>
             {/*Status + Tags*/}
             <div className="w-full h-1/4 bg-green-100 ml-4">
-              <p class="">{selectedMarker.status} ● {selectedMarker.tags}</p>
+              <p class="">
+                {selectedMarker.status} ● {selectedMarker.tags}
+              </p>
             </div>
           </div>
-          <div className="w-full bg-green-500 h-4/6 overflow-auto">
+          <div className="w-full bg-green-500 h-3/6 overflow-auto">
             {selectedMarker.discussion.map((discussion, index) => (
               <div
                 key={index}
@@ -36,11 +40,28 @@ const SidebarReport = ({ selectedMarker }) => {
               </div>
             ))}
           </div>
+          {/*New Discussion Message */}
+          <div className="w-full bg-yellow-500 h-1/6">
+            {/* Text Input Form */}
+            <textarea
+              className="w-full h-24 p-2 border rounded-lg"
+              placeholder="Type your discussion message here..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)} // Use state to manage input
+            ></textarea>
+            <button
+              className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+              onClick={handleSubmit} // Submit handler
+            >
+              Submit Message
+            </button>
+          </div>
           {/*Upvote + View discussion*/}
           <div className="w-full bg-red-100 h-1/6">
             <button
               className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100 mb-2"
-              onClick={() => setViewingDiscussion(false)}            >
+              onClick={() => setViewingDiscussion(false)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -57,15 +78,10 @@ const SidebarReport = ({ selectedMarker }) => {
               </svg>
               View Discussion
             </button>
-            <p class="">0 Upvotes</p>
-
-
-
           </div>
         </div>
-      )
-    }
-    else {
+      );
+    } else {
       return (
         <div className="w-full h-full flex flex-col">
           <div className="w-full bg-green-500 h-1/6">
@@ -75,28 +91,29 @@ const SidebarReport = ({ selectedMarker }) => {
             </div>
             {/*Status + Tags*/}
             <div className="w-full h-1/4 bg-green-100 ml-4">
-              <p class="">{selectedMarker.status} ● {selectedMarker.tags}</p>
+              <p class="">
+                {selectedMarker.status} ● {selectedMarker.tags}
+              </p>
             </div>
           </div>
           {/*Image*/}
           <div className="w-full bg-blue-500 h-2/6">
-            <img
-              src="https://picsum.photos/150"
-              alt=""
-              className=" "
-            />
+            <img src="https://picsum.photos/150" alt="" className=" " />
           </div>
           {/*Description*/} {/*Include the poster and date at the bottom */}
           <div className="w-full bg-blue-100 h-2/6">
             <p class="">{selectedMarker.description}</p>
-            <p class="">{selectedMarker.poster} ● {selectedMarker.date}</p>
-
+            <p class="">
+              {selectedMarker.poster} ● {selectedMarker.date}
+            </p>
+            <p class="">0 Upvotes</p>
           </div>
           {/*Upvote + View discussion*/}
           <div className="w-full bg-red-100 h-1/6">
             <button
               className="flex flex-row justify-center w-full py-3 bg-white font-bold text-green-500 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100 mb-2"
-              onClick={() => setViewingDiscussion(true)}            >
+              onClick={() => setViewingDiscussion(true)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -113,14 +130,10 @@ const SidebarReport = ({ selectedMarker }) => {
               </svg>
               View Discussion
             </button>
-            <p class="">0 Upvotes</p>
-
-
-
           </div>
         </div>
-      )
-    };
+      );
+    }
   } else {
     return <div></div>;
   }
