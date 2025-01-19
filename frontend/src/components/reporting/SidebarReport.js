@@ -4,7 +4,19 @@ const SidebarReport = ({ selectedMarker }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const handleSubmit = () => {
+  const [title, setTitle] = useState('');
+  const [image, setImage] = useState('');
+  const [description, setDescription] = useState('');
+
+
+  // Prevent form submission when pressing Enter key
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();  // Prevent form submission on Enter
+    }
+  };
+
+  const handleSubmitNewDiscussionMessage = () => {
     if (message.trim()) {
       console.log("Message Submitted:", message);
       setMessage("");
@@ -12,8 +24,84 @@ const SidebarReport = ({ selectedMarker }) => {
       alert("Please enter a message!");
     }
   };
+
+
+    // Submit handler
+    const handleSubmitNewForm = (e) => {
+      e.preventDefault();
+  
+      // Log the form data
+      console.log("Title:", title);
+      console.log("Image URL:", image);
+      console.log("Description:", description);
+  
+      // You can send this data to a backend or perform any other logic here.
+  
+      // Clear the form after submission
+      setTitle('');
+      setImage('');
+      setDescription('');
+    };
+
+
+
   if (selectedMarker == "new") {
-    return <div className="w-full h-full flex flex-col">new newn ew</div>;
+    return <div className="w-full h-full flex flex-col">
+      
+      
+    <h2>Submit Your Report</h2>
+      <form onSubmit={handleSubmitNewForm} className="space-y-4" onKeyDown={handleKeyDown}>
+        {/* Title Input */}
+        <div>
+          <label htmlFor="title" className="block font-medium">Title</label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter title"
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Image Input */}
+        <div>
+          <label htmlFor="image" className="block font-medium">Image URL</label>
+          <input
+            type="text"
+            id="image"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="Enter image URL"
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Description Input */}
+        <div>
+          <label htmlFor="description" className="block font-medium">Description</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
+            className="w-full p-2 border rounded-lg h-24"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+          >
+            Submit
+          </button>
+        </div>
+      </form>      
+      
+      
+      </div>;
   } else if (selectedMarker) {
     if (viewingDiscussion) {
       return (
@@ -51,7 +139,7 @@ const SidebarReport = ({ selectedMarker }) => {
             ></textarea>
             <button
               className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-              onClick={handleSubmit} // Submit handler
+              onClick={handleSubmitNewDiscussionMessage} // Submit handler
             >
               Submit Message
             </button>

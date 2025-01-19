@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
@@ -7,6 +7,8 @@ const MapComponent = ({ onMarkerSelected }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level for the UK
+  const [position, setPosition] = useState(null); // New marker position
+  
   const data = [
     { id: 1, name: "Volunteering Event", type: "issues", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // London
     { id: 2, name: "News Update", type: "issues", date: "2024-12-10", emoji: "📰", lat: 53.4084, lng: -2.9916, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Manchester
@@ -16,7 +18,6 @@ const MapComponent = ({ onMarkerSelected }) => {
     { id: 6, name: "News Update", type: "issues", date: "2024-12-16", emoji: "📰", lat: 53.4080, lng: -2.2389, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Liverpool
     { id: 7, name: "Local Issue", type: "issues", date: "2024-12-17", emoji: "⚠️", lat: 52.2053, lng: 0.1218, discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"] }, // Cambridge
     { id: 8, name: "Community devent", type: "issues", status:"open", tags: "Environmental", poster: "Jane Doe", description: "This is my description and such. I don't think this is good for our streets, could someone help please!", date: "2024-12-11", emoji: "📍", lat: 51.5076, lng: -0.1280 , discussion: ["I think this is good!", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont", "I dont"]}, // London (another spot)
-
   ];
 
   const ukBounds = [
@@ -25,76 +26,67 @@ const MapComponent = ({ onMarkerSelected }) => {
   ];
 
   function NewReport() {
-    const [position, setPosition] = useState(null);
-  
     const map = useMapEvents({
       click(e) {
-        // Log the map event location
-        console.log("Map clicked at:", e.latlng);
-  
-        // Log the new report
-        console.log("New report created at:", e.latlng);
-        
-        
+        // Close any open popups
+        map.closePopup();
 
-        // Optionally, you can also update the position
+        // Update position for the new marker
         setPosition(e.latlng);
-        
-        // Fly to the clicked location
-        map.flyTo(e.latlng, map.getZoom());
-        onMarkerSelected("new");
 
+        // Optionally, fly to the clicked location
+        map.flyTo(e.latlng, map.getZoom());
+
+        // Notify parent component of new marker
+        onMarkerSelected("new");
       },
       locationfound(e) {
-        // Set the position when location is found
         setPosition(e.latlng);
         map.flyTo(e.latlng, map.getZoom());
       },
     });
-  
+
     return position === null ? null : (
-      <Marker position={position}>
+      <Marker position={position} draggable={true}>
         <Popup>You are here</Popup>
       </Marker>
     );
   }
-  
 
   return (
-      <MapContainer
-        center={mapCenter}
-        zoom={zoomLevel}
-        style={{ width: "100%", minHeight:"100%", height: "100%" }}
-        maxBounds={ukBounds} // Restrict map movement to UK
-        maxBoundsViscosity={1.0} // Ensures map stays within bounds
-        minZoom={8} // Set minimum zoom level to allow zooming in further
-        maxZoom={15} // Set maximum zoom level to zoom in further
-     >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {data.map((item) => (
-          <Marker
-            key={item.id}
-            position={[item.lat, item.lng]}
-            icon={new L.DivIcon({
-              className: 'emoji-icon',
-              html: `<span style="font-size: 30px;">${item.emoji}</span>`, // Using emoji as the icon
-            })}
-            eventHandlers={{
-              click: () => {
-                console.log("Marker clicked:", item); // Log the data of the clicked marker
-                onMarkerSelected(item);
-              }
-            }}
-          >
-            <Popup>{item.name}</Popup>
-          </Marker>
-        ))}
-        <NewReport />
-
-      </MapContainer>
+    <MapContainer
+      center={mapCenter}
+      zoom={zoomLevel}
+      style={{ width: "100%", minHeight:"100%", height: "100%" }}
+      maxBounds={ukBounds} // Restrict map movement to UK
+      maxBoundsViscosity={1.0} // Ensures map stays within bounds
+      minZoom={8} // Set minimum zoom level to allow zooming in further
+      maxZoom={17} // Set maximum zoom level to zoom in further
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      {data.map((item) => (
+        <Marker
+          key={item.id}
+          position={[item.lat, item.lng]}
+          icon={new L.DivIcon({
+            className: 'emoji-icon',
+            html: `<span style="font-size: 30px;">${item.emoji}</span>`,
+          })}
+          eventHandlers={{
+            click: () => {
+              console.log("Marker clicked:", item); // Log the data of the clicked marker
+              onMarkerSelected(item);
+            }
+          }}
+        >
+          <Popup>{item.name}</Popup>
+        </Marker>
+      ))}
+      <NewReport />
+    </MapContainer>
   );
 };
 
