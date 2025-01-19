@@ -151,7 +151,7 @@ const SidebarReport = ({ selectedMarker }) => {
             {selectedMarker.discussion.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-100 overflow-auto`}
+                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto`}
               >
                 {/* Profile Picture (SVG Icon) */}
                 <div className="w-1/6 h-full flex justify-center items-center">
@@ -179,7 +179,7 @@ const SidebarReport = ({ selectedMarker }) => {
 
           {/*New Discussion Message */}
           <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
-            <div className="w-full h-3/4 py-2 ">
+            <div className="w-full h-2/4 py-2 ">
               {/* Text Input Form */}
               <textarea
                 className="w-full h-full p-2 border rounded-lg resize-none"
@@ -188,7 +188,7 @@ const SidebarReport = ({ selectedMarker }) => {
                 onChange={(e) => setMessage(e.target.value)} // Use state to manage input
               ></textarea>
             </div>
-            <div className="w-full h-1/6">
+            <div className="w-full h-1/4">
               <button
                 className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                 onClick={handleSubmitNewDiscussionMessage} // Submit handler
@@ -197,30 +197,29 @@ const SidebarReport = ({ selectedMarker }) => {
               </button>
             </div>
             {/*View Overview*/}
-          <div className="w-full  h-1/4">
-            <button
-              className="flex flex-row justify-center w-full h-full  bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
-              onClick={() => setViewingDiscussion(false)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-7"
+            <div className="w-full shadow-md h-1/4">
+              <button
+                className="flex flex-row justify-center w-full h-full  bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                onClick={() => setViewingDiscussion(false)}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                />
-              </svg>
-              View Overview
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                  />
+                </svg>
+                Back
+              </button>
+            </div>
           </div>
-          </div>
-          
         </div>
       );
     } else {
@@ -256,13 +255,13 @@ const SidebarReport = ({ selectedMarker }) => {
           {/* Description with Poster and Date */}
           <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">
             {/* Poster and Date Section */}
-            
+
             {/* Description Text */}
             <div className="w-full h-3/6 mb-3 overflow-auto">
-              <p>{selectedMarker.description}</p>
+              <p class="text-lg">{selectedMarker.description}</p>
             </div>
-            {/*Poster*/ }
-            <div className="h-1/6 flex items-center space-x-4">
+            {/*Poster*/}
+            <div className="h-1/6 flex items-center bg-white space-x-4">
               {/* Profile Picture (SVG Icon) */}
               <div className="w-1/6 h-full flex justify-center items-center">
                 <svg
@@ -292,7 +291,7 @@ const SidebarReport = ({ selectedMarker }) => {
                 </p>
               </div>
             </div>
-            <div className="h-1/6 flex items-center justify-center ">
+            <div className="h-1/6 flex items-center bg-white mb-3 justify-center ">
               <div className="w-1/2">
                 {/* Current Upvotes */}
                 <p className="italic text-center">{upvotes} Upvotes</p>
@@ -321,7 +320,7 @@ const SidebarReport = ({ selectedMarker }) => {
               </div>
             </div>
             {/*View discussion*/}
-            <div className="w-full h-1/6  ">
+            <div className="w-full h-1/6 shadow-md ">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 onClick={() => setViewingDiscussion(true)}
