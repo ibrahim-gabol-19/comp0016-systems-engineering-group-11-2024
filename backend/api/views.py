@@ -1,5 +1,6 @@
 import os
 import re
+import spacy
 from datetime import datetime
 from ics import Calendar
 from django.shortcuts import render
@@ -9,7 +10,11 @@ from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from collections import Counter
 import fitz  # PyMuPDF for PDF processing
+
+# Load spaCy model
+nlp = spacy.load("en_core_web_sm")
 
 
 class ItemViewSet(ViewSet):
@@ -20,6 +25,20 @@ class ItemViewSet(ViewSet):
         # Example logic for returning items
         items = [{"id": 1, "name": "Sample Item"}, {"id": 2, "name": "Another Item"}]
         return Response(items)
+    
+def is_structured_pdf(pdf_path):
+    """
+    Determine whether the PDF is structured by checking for specific field keywords.
+    """
+    try:
+        with fitz.open(pdf_path) as doc:
+            for page in doc:
+                text = page.get_text()
+                if any(keyword in text.lower() for keyword in ['title', 'date', 'time', 'location', 'description']):
+                    return True
+    except Exception as e:
+        print(f"Error checking PDF structure: {e}")
+    return False
 
 
 def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
@@ -104,6 +123,77 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
 
     return data
 
+def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_images"):
+    """
+    Extract event details and images from an unstructured PDF file using advanced heuristics and NLP.
+    """
+    data = {
+        'title': '',
+        'date_of_event': '',
+        'time_of_event': '',
+        'description': '',
+        'location': '',
+        'images': []
+    }
+
+    try:
+        with fitz.open(pdf_path) as doc:
+            full_text = ""
+            for page_num, page in enumerate(doc, start=1):
+                full_text += page.get_text()
+
+                # Extract images
+                for img_index, img in enumerate(page.get_images(full=True), start=1):
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image_ext = base_image["ext"]
+
+                    os.makedirs(output_image_dir, exist_ok=True)
+                    image_filename = f"event_unstructured_image_page{page_num}_{img_index}.{image_ext}"
+                    image_path = os.path.join(output_image_dir, image_filename)
+
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_bytes)
+                    
+                    data['images'].append(image_filename)
+
+        # Process text with spaCy NLP
+        doc_nlp = nlp(full_text)
+        sentences = [sent.text.strip() for sent in doc_nlp.sents]
+
+        # Heuristic for title: First line or paragraph with the most relevant nouns
+        if sentences:
+            first_line = sentences[0]
+            first_paragraph = " ".join(sentences[:2])  # Combine the first two sentences
+            candidate_title = Counter([token.text for token in nlp(first_paragraph) if token.pos_ in ["NOUN", "PROPN"]])
+            data['title'] = first_line if len(candidate_title) > 2 else first_paragraph
+
+        # Extract date using common date patterns
+        date_matches = re.findall(r'\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b', full_text)  # Matches DD/MM/YYYY
+        if date_matches:
+            data['date_of_event'] = date_matches[0]
+
+        # Extract time using patterns like HH:MM or HH:MM AM/PM
+        time_matches = re.findall(r'\b\d{1,2}:\d{2}\s*(AM|PM|am|pm)?\b', full_text)
+        if time_matches:
+            data['time_of_event'] = time_matches[0]
+
+        # Extract location: Look for sentences with keywords like "at" or "location"
+        location_candidates = [sent for sent in sentences if re.search(r'\bat\b|\blocation\b', sent, re.IGNORECASE)]
+        if location_candidates:
+            data['location'] = location_candidates[0]
+
+        # Description: Use the first few sentences or a relevant paragraph
+        data['description'] = " ".join(sentences[:5])  # Use the first 5 sentences as a heuristic
+
+    except Exception as e:
+        print(f"Error extracting unstructured event data: {e}")
+        data = {key: '' for key in data}
+        data['images'] = []  # Ensure images field is reset
+
+    return data
+
 def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
     """Extract article details and images from the content of a PDF file."""
     data = {
@@ -161,6 +251,70 @@ def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
         print(f"Error extracting article data: {e}")
         data = {key: None for key in data}
         data['date'] = datetime.now().strftime('%d/%m/%Y')  # Ensure date is always set
+
+    return data
+
+def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracted_images"):
+    """
+    Extract article details and images from an unstructured PDF file using advanced heuristics and NLP.
+    """
+    data = {
+        'title': '',
+        'description': '',
+        'main_content': '',
+        'author': '',
+        'images': [],
+        'date': datetime.now().strftime('%d/%m/%Y')
+    }
+
+    try:
+        with fitz.open(pdf_path) as doc:
+            full_text = ""
+            for page_num, page in enumerate(doc, start=1):
+                full_text += page.get_text()
+
+                # Extract images
+                for img_index, img in enumerate(page.get_images(full=True), start=1):
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image_ext = base_image["ext"]
+
+                    os.makedirs(output_image_dir, exist_ok=True)
+                    image_filename = f"article_unstructured_image_page{page_num}_{img_index}.{image_ext}"
+                    image_path = os.path.join(output_image_dir, image_filename)
+
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_bytes)
+                    
+                    data['images'].append(image_filename)
+
+        # Process text with spaCy NLP
+        doc_nlp = nlp(full_text)
+        sentences = [sent.text.strip() for sent in doc_nlp.sents]
+
+        # Heuristic for title: First sentence or paragraph with significant proper nouns
+        if sentences:
+            first_line = sentences[0]
+            first_paragraph = " ".join(sentences[:2])  # Combine the first two sentences
+            candidate_title = Counter([token.text for token in nlp(first_paragraph) if token.pos_ in ["NOUN", "PROPN"]])
+            data['title'] = first_line if len(candidate_title) > 2 else first_paragraph
+
+        # Extract description: First 300 characters or a summary
+        data['description'] = full_text[:300]  # Use the first 300 characters
+
+        # Extract main content: Entire text
+        data['main_content'] = full_text
+
+        # Extract author: Look for sentences with "by" or "author"
+        author_candidates = [sent for sent in sentences if re.search(r'\bby\b|\bauthor\b', sent, re.IGNORECASE)]
+        if author_candidates:
+            data['author'] = author_candidates[0]
+
+    except Exception as e:
+        print(f"Error extracting unstructured article data: {e}")
+        data = {key: '' for key in data}
+        data['images'] = []  # Ensure images field is reset
 
     return data
 
@@ -290,9 +444,11 @@ def upload_pdf_and_extract_data(request, pdf_type):
             pdf_path = fs.path(filename)
 
             if pdf_type == 'event':
-                extracted_data = extract_event_data(pdf_path)
-            elif pdf_type == "article":
-                extracted_data = extract_article_data(pdf_path)    
+                extracted_data = extract_event_data(pdf_path) if is_structured_pdf(pdf_path) else extract_unstructured_event_data(pdf_path)
+            elif pdf_type == 'article':
+                extracted_data = extract_article_data(pdf_path) if is_structured_pdf(pdf_path) else extract_unstructured_article_data(pdf_path)
+            else:
+                return JsonResponse({'error': 'Invalid pdf_type'}, status=400)
 
             # Clean up the file after processing
             if os.path.exists(pdf_path):
