@@ -178,7 +178,7 @@ const SearchBar = () => {
             {templateSearchResult.news.map((newsItem, index) => (
               <div
                 key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
               >
                 <p className="font-bold">{newsItem.title}</p>
                 <span className="text-sm text-gray-500">
@@ -192,7 +192,7 @@ const SearchBar = () => {
             {templateSearchResult.events.map((eventItem, index) => (
               <div
                 key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
               >
                 <h3 className="font-bold">{eventItem.title}</h3>
                 <p className="text-sm text-gray-500 ">
