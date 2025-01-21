@@ -12,6 +12,8 @@ import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage
 
 
 const App = () => {
+
+  
   return (
     <div>
       <Router>
