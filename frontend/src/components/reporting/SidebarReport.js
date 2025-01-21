@@ -245,9 +245,9 @@ const SidebarReport = ({ selectedMarker }) => {
             </div>
           </div>
           {/*Image*/}
-          <div className="w-full flex justify-center items-center h-2/6">
+          <div className="w-full h-2/6 py-40 flex justify-center items-center ">
             <div>
-              <img src="https://picsum.photos/600" alt="" className=" " />
+              <img src="https://picsum.photos/310" alt="" className=" h-full w-full object-contain" />
             </div>
           </div>
           {/* Description with Poster and Date */}
