@@ -12,14 +12,16 @@ const DetailedEventPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
 
-  // State for PDF extraction
+  // State for PDF and ICS extraction
   const [pdfFile, setPdfFile] = useState(null);
+  const [icsFile, setIcsFile] = useState(null);
   const [extractedData, setExtractedData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDataExtracted, setIsDataExtracted] = useState(false);
 
-  // Ref for hidden file input
-  const hiddenFileInput = useRef(null);
+  // Refs for hidden file inputs
+  const hiddenFileInputPDF = useRef(null);
+  const hiddenFileInputICS = useRef(null);
 
   const handleFilesUploaded = (acceptedFiles) => {
     const fileURLs = acceptedFiles.map((file) => URL.createObjectURL(file));
@@ -27,7 +29,12 @@ const DetailedEventPage = () => {
   };
 
   const handleExtractFromPDFClick = () => {
-    hiddenFileInput.current.click();
+    hiddenFileInputPDF.current.click();
+    setIsDataExtracted(false);
+  };
+
+  const handleExtractFromICSClick = () => {
+    hiddenFileInputICS.current.click();
     setIsDataExtracted(false);
   };
 
@@ -35,6 +42,13 @@ const DetailedEventPage = () => {
     const file = event.target.files[0];
     if (file && file.type === "application/pdf") {
       setPdfFile(file);
+    }
+  };
+
+  const handleICSUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "text/calendar") {
+      setIcsFile(file);
     }
   };
 
@@ -63,6 +77,36 @@ const DetailedEventPage = () => {
       setIsDataExtracted(true);
     } catch (error) {
       console.error("Error uploading PDF:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUploadICS = async () => {
+    if (!icsFile) {
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("ics_file", icsFile);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/upload_ics/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setExtractedData(data);
+      populateFields(data);
+      setIsDataExtracted(true);
+    } catch (error) {
+      console.error("Error uploading ICS:", error);
     } finally {
       setIsUploading(false);
     }
@@ -125,11 +169,24 @@ const DetailedEventPage = () => {
         >
           Extract From PDF
         </button>
+        <button
+          onClick={handleExtractFromICSClick}
+          className="bg-teal-500 text-white px-4 py-2 rounded ml-4"
+        >
+          Extract From ICS
+        </button>
         <input
           type="file"
           accept="application/pdf"
-          ref={hiddenFileInput}
+          ref={hiddenFileInputPDF}
           onChange={handlePDFUpload}
+          style={{ display: "none" }}
+        />
+        <input
+          type="file"
+          accept="text/calendar"
+          ref={hiddenFileInputICS}
+          onChange={handleICSUpload}
           style={{ display: "none" }}
         />
       </div>
@@ -151,6 +208,27 @@ const DetailedEventPage = () => {
               : isDataExtracted
               ? "Data successfully extracted!"
               : "Upload PDF"}
+          </button>
+        </div>
+      )}
+
+      {icsFile && (
+        <div className="p-6">
+          <p>
+            <strong>Selected ICS:</strong> {icsFile.name}
+          </p>
+          <button
+            onClick={handleUploadICS}
+            disabled={isUploading}
+            className={`${
+              isDataExtracted ? "bg-green-500" : "bg-orange-500"
+            } text-white px-4 py-2 rounded`}
+          >
+            {isUploading
+              ? "Uploading..."
+              : isDataExtracted
+              ? "Data successfully extracted!"
+              : "Upload ICS"}
           </button>
         </div>
       )}
@@ -190,6 +268,7 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
+
 
 
 
