@@ -1,11 +1,8 @@
 # articles/urls.py
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import ArticleViewSet
-
-router = DefaultRouter()
-router.register(r'', ArticleViewSet)  # Register without the 'articles' prefix
+from django.urls import path
+from .views import search_articles
 
 urlpatterns = [
-    path('', include(router.urls)),  # This will avoid double 'articles' in the URL
+    path("search/", search_articles, name="search_articles"), # Search articles endpoint
+
 ]
