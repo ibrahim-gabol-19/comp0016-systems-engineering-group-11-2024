@@ -37,23 +37,29 @@ def search(request):
     if not query:
         return JsonResponse({"error": "Please provide a query."}, status=400)
 
-    # Fetch data from multiple APIs (articles, events, etc.)
-    articles = requests.get("http://127.0.0.1:8000/articles/").json()
-    events = requests.get("http://127.0.0.1:8000/events/").json()
+    try:
+        articles = requests.get("http://127.0.0.1:8000/articles/").json()
+        events = requests.get("http://127.0.0.1:8000/events/").json()
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": "Failed to fetch data.", "details": str(e)}, status=500)
+
+    if not articles and not events:
+        return JsonResponse({"error": "No data available for search."}, status=404)
 
     # Preprocess the data for semantic search
-    datasets = [
-        {
+    datasets = []
+    if articles:
+        datasets.append({
             "source": "articles",
-            "documents": [a["content"] for a in articles],
-            "titles": [a["title"] for a in articles],
-        },
-        {
+            "documents": [a["content"] for a in articles if "content" in a],
+            "titles": [a["title"] for a in articles if "title" in a],
+        })
+    if events:
+        datasets.append({
             "source": "events",
-            "documents": [e["description"] for e in events],  # Event descriptions
-            "titles": [e["title"] for e in events],  # Event titles
-        },
-    ]
+            "documents": [e["description"] for e in events if "description" in e],
+            "titles": [e["title"] for e in events if "title" in e],
+        })
 
     # Perform semantic search
     results = perform_semantic_search(query, datasets)
