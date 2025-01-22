@@ -3,32 +3,25 @@ import { useDropzone } from "react-dropzone";
 
 const MainImage = ({ onFilesUploaded }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [previewImage, setPreviewImage] = useState(null); // State to store the image preview
   const fileInputRef = useRef(null);
 
-  const onDrop = (acceptedFiles) => {
-    // Only allow one file and ensure it is an image
-    if (acceptedFiles.length > 1) {
-      alert("Only one image can be uploaded.");
-      return;
-    }
-
-    const file = acceptedFiles[0];
-    if (file && file.type.startsWith("image/")) {
-      onFilesUploaded(acceptedFiles); // Trigger the parent function to handle uploaded files
-      setPreviewImage(URL.createObjectURL(file)); // Set the preview image
-      alert(`Uploaded 1 file successfully!`);
-    } else {
-      alert("Please upload 1 valid image file.");
-    }
-  };
-
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-      setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-      setIsDragging(false); // Reset dragging state
-      alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
+      // Only allow one file and ensure it is an image
+      if (acceptedFiles.length > 1) {
+        alert("Only one image can be uploaded.");
+        return;
+      }
+
+      const file = acceptedFiles[0];
+      if (file && file.type.startsWith("image/")) {
+        onFilesUploaded(acceptedFiles); // Trigger the parent function to handle uploaded files
+        setPreviewImage(URL.createObjectURL(file)); // Set the preview image
+        alert(`Uploaded 1 file successfully!`);
+      } else {
+        alert("Please upload 1 valid image file.");
+      }
     },
     maxFiles: 1, // Only allow one file to be uploaded
     accept: "image/*", // Only accept image files
