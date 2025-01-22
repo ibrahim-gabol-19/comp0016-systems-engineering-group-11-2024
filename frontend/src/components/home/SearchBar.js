@@ -161,50 +161,35 @@ const SearchBar = () => {
           </div>
           {/*Cards*/}
           <div className="w-3/4 h-2/6 my-4 mx-4 flex ">
-            {searchResult && searchResult.length > 0 && searchResult.map((newsItem, index) => (
+            {searchResult && searchResult.length > 0 && searchResult.map((item, index) => (
               <div
                 key={index}
                 className="w-1/3 h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
               >
-                <p className="font-bold">{newsItem.title}</p>
-                <span className="text-sm text-gray-500 capitalize">{newsItem.source}</span>
+                <p className="font-bold">{item.title}</p>
+                <span className="text-sm text-gray-500 capitalize">{item.source}</span>
                 {/* Need to comment the line below out after done testing */}
-                <p className="text-sm">Score: {newsItem.similarity_score.toFixed(3)}</p> 
+                <p className="text-sm">Score: {item.similarity_score.toFixed(3)}</p> 
 
                 {/* Conditionally render fields based on the source */}
-                {newsItem.source === "event" ? (
+                {item.source === "event" ? (
                   <>
-                    <p className="text-sm">Date: {newsItem.date}</p>
-                    <p className="text-sm">Time: {newsItem.time}</p>
-                    <p className="text-sm">Location: {newsItem.location}</p>
-                    <p className="text-sm">Description: {newsItem.description}</p>
+                    <p className="text-sm">Date: {item.date}</p>
+                    <p className="text-sm">Time: {item.time}</p>
+                    <p className="text-sm">Location: {item.location}</p>
+                    <p className="text-sm">Description: {item.description}</p>
                   </>
-                ) : newsItem.source === "article" ? (
+                ) : item.source === "article" ? (
                   <>
-                    <p className="text-sm">Author: {newsItem.author}</p>
-                    <p className="text-sm">Published Date: {newsItem.published_date}</p>
-                    <p className="text-sm">Description: {newsItem.description}</p>
+                    <p className="text-sm">Author: {item.author}</p>
+                    <p className="text-sm">Published Date: {item.published_date}</p>
+                    <p className="text-sm">Description: {item.description}</p>
                   </>
                 ) : null}
               </div>
             ))}
           </div>
 
-
-            {/* Loop over events
-            {templateSearchResult.events.map((eventItem, index) => (
-              <div
-                key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
-              >
-                <h3 className="font-bold">{eventItem.title}</h3>
-                <p className="text-sm text-gray-500 ">
-                  {eventItem.date} | {eventItem.time}
-                </p>
-                <p className="text-sm text-gray-500">{eventItem.location}</p>
-                <p className="text-sm">{eventItem.description}</p>
-              </div>
-            ))} */}
           {/*AI Response*/}
           <div
             className={`w-3/4 max-h-2/6 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
