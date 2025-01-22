@@ -15,42 +15,11 @@ const SearchBar = () => {
   const [searchResult, setSearchResult] = useState("");
   const [messages, setMessages] = useState([]);
 
-  // const templateSearchResult = {
-  //   news: [
-  //     {
-  //       title: "New Recycling Initiative Launched",
-  //       description:
-  //         "GreenEarth Inc. has introduced a new citywide recycling initiative aimed at reducing waste and promoting sustainability.",
-  //       published: "24 Dec 2024",
-  //     },
-  //   ],
-  //   events: [
-  //     {
-  //       title: "Community Trash Pickup",
-  //       description:
-  //         "Join us for a local trash pickup event to help clean up our neighborhood. All supplies will be provided.",
-  //       date: "30 Dec 2024",
-  //       time: "9:00 AM",
-  //       location: "Central Park, GreenEarth City",
-  //       contact: "volunteer@greenearthinc.com",
-  //     },
-  //     {
-  //       title: "GreenEarth Social Gathering",
-  //       description:
-  //         "A casual get-together for employees and local residents to discuss sustainability efforts and enjoy a fun evening of eco-friendly activities.",
-  //       date: "26 Dec 2024",
-  //       time: "6:00 PM",
-  //       location: "GreenEarth HQ, 123 Sustainability Road",
-  //       contact: "events@greenearthinc.com",
-  //     },
-  //   ],
-  // };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (engine) {
-      getReply(userQuery, searchResult);
+      getReply(userQuery);
       setMessages([...messages, { text: userQuery, sender: "user" }]);
     } else {
       setModelReply("Here is what I found.");
@@ -85,18 +54,23 @@ const SearchBar = () => {
     initModel();
   }, []);
 
-  const getReply = async (userQuery, searchResult) => {
-    // Because Search has not been implemented yet, I am using template JSON
-    // searchResult = JSON.stringify(templateSearchResult);
+  const getReply = async (userQuery) => {
     if (userQuery === "") {
       return;
     }
 
     try {
-      searchResult = await axios.get(`http://127.0.0.1:8000/search/`, {
+      const response = await axios.get(`http://127.0.0.1:8000/search/`, {
         params: { query: userQuery },
       });
-    } catch (error) {
+
+    // Check if the results field exists and set the state
+    if (response.data && response.data.results) {
+      setSearchResult(response.data.results); // No JSON.parse needed
+    } else {
+      setSearchResult([]); // Handle the case where no results are returned
+    }    
+  } catch (error) {
       console.error("Error while fetching search results:", error);
     }
 
@@ -120,7 +94,7 @@ const SearchBar = () => {
 
         
         Here are the search results:
-        ${searchResult}`,
+        ${JSON.stringify(searchResult)}`,
       },
       { role: "user", content: userQuery },
     ];
@@ -187,7 +161,7 @@ const SearchBar = () => {
           </div>
           {/*Cards*/}
           <div className="w-3/4 h-2/6 my-4 mx-4 flex ">
-            {searchResult && searchResult.map((newsItem, index) => (
+            {searchResult && searchResult.length > 0 && searchResult.map((newsItem, index) => (
               <div
                 key={index}
                 className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"

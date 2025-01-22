@@ -50,13 +50,13 @@ def search(request):
     datasets = []
     if articles:
         datasets.append({
-            "source": "articles",
+            "source": "article",
             "documents": [a["content"] for a in articles if "content" in a],
             "titles": [a["title"] for a in articles if "title" in a],
         })
     if events:
         datasets.append({
-            "source": "events",
+            "source": "event",
             "documents": [e["description"] for e in events if "description" in e],
             "titles": [e["title"] for e in events if "title" in e],
         })
