@@ -77,7 +77,7 @@ const NoToolbarEditor = forwardRef(
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [ref, fontSize, placeholderText]);
 
     return <div className="h-12 resize-none" ref={containerRef}></div>;
   }
