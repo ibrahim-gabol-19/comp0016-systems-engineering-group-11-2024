@@ -164,15 +164,32 @@ const SearchBar = () => {
             {searchResult && searchResult.length > 0 && searchResult.map((newsItem, index) => (
               <div
                 key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+                className="w-1/3 h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
               >
                 <p className="font-bold">{newsItem.title}</p>
-                <span className="text-sm text-gray-500">
-                  {newsItem.source}
-                </span>
-                <p className="text-sm">{newsItem.similarity_score.toFixed(3)}</p>
+                <span className="text-sm text-gray-500 capitalize">{newsItem.source}</span>
+                {/* Need to comment the line below out after done testing */}
+                <p className="text-sm">Score: {newsItem.similarity_score.toFixed(3)}</p> 
+
+                {/* Conditionally render fields based on the source */}
+                {newsItem.source === "event" ? (
+                  <>
+                    <p className="text-sm">Date: {newsItem.date}</p>
+                    <p className="text-sm">Time: {newsItem.time}</p>
+                    <p className="text-sm">Location: {newsItem.location}</p>
+                    <p className="text-sm">Description: {newsItem.description}</p>
+                  </>
+                ) : newsItem.source === "article" ? (
+                  <>
+                    <p className="text-sm">Author: {newsItem.author}</p>
+                    <p className="text-sm">Published Date: {newsItem.published_date}</p>
+                    <p className="text-sm">Description: {newsItem.description}</p>
+                  </>
+                ) : null}
               </div>
             ))}
+          </div>
+
 
             {/* Loop over events
             {templateSearchResult.events.map((eventItem, index) => (
@@ -188,7 +205,6 @@ const SearchBar = () => {
                 <p className="text-sm">{eventItem.description}</p>
               </div>
             ))} */}
-          </div>
           {/*AI Response*/}
           <div
             className={`w-3/4 max-h-2/6 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
