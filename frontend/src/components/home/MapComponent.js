@@ -7,9 +7,16 @@ const MapComponent = ({ filters, dates }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level for the UK
+  const ukBounds = [
+    [49.5, -8],  // Southwest coordinates (approx.)
+    [60, 2],     // Northeast coordinates (approx.)
+  ];
 
   // Simulate fetching and filtering data based on selected filters and dates
   useEffect(() => {
+    setMapCenter([51.5074, -0.1278]);
+    setZoomLevel(6);
+
     const fetchFilteredData = () => {
       const data = [
         { id: 1, name: "Volunteering Event", type: "volunteering", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278 }, // London
@@ -43,10 +50,6 @@ const MapComponent = ({ filters, dates }) => {
     fetchFilteredData();
   }, [filters, dates]); // Re-run filter logic when filters or dates change
 
-  const ukBounds = [
-    [49.5, -8],  // Southwest coordinates (approx.)
-    [60, 2],     // Northeast coordinates (approx.)
-  ];
 
   return (
     <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6">
