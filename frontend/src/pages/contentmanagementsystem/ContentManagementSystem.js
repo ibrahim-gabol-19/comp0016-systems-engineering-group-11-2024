@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 
+
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
   const [selectedCards, setSelectedCards] = useState([]);
@@ -224,7 +225,8 @@ const ContentManagementSystem = () => {
                 style={{ height: "300px" }}
                 onClick={() => {
                   if (selectedCards.length === 0) {
-                    handleCardClick(index);
+                    handleCardClick(event.id);
+                    console.log('Event id clicked is', event.id);
                   } else {
                     toggleCardSelection(index);
                   }

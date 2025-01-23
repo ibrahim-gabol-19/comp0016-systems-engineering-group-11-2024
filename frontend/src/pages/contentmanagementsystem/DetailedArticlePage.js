@@ -1,11 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import axios from "axios";
+import { useParams } from "react-router-dom"; // For dynamic routing
 
 const DetailedArticlePage = () => {
+  const { articleId } = useParams(); // Get the article ID from the route
+  console.log('Component rendered');
+  console.log('Article ID from useParams:', articleId);
   const quillRefTitle = useRef();
   const quillRefMain = useRef();
   const quillRefAuthor = useRef();
@@ -17,6 +21,33 @@ const DetailedArticlePage = () => {
   const [mainContent, setMainContent] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (articleId!=="2") { // 2 is default value for new article
+      console.log('useEffect is running');
+      console.log('Article id received was', articleId);
+      setIsEditing(false) // initially viwe preview when clicking box
+      
+      // Fetch article data when editing an existing article
+      axios
+        .get(`http://127.0.0.1:8000/articles/${articleId}/`)
+        .then((response) => {
+          const article = response.data;
+          setTitle(article.title || "");
+          console.log("Title set ",article.title);
+          setMainContent(article.content || "");
+          setAuthor(article.author || "");
+          setDescription(article.description || "");
+          if (article.main_image) {
+            setUploadedFiles([article.main_image]);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching article:", error);
+          alert("Failed to fetch article data. Please try again.");
+        });
+    }
+  }, [articleId]);
 
   const handleSave = async () => {
     const formData = new FormData();
@@ -37,6 +68,7 @@ const DetailedArticlePage = () => {
       });
       alert("Article saved successfully!");
     } catch (error) {
+      console.error("Error saving article:", error);
       alert("Error saving article. Please try again.");
     }
   };
@@ -83,7 +115,6 @@ const DetailedArticlePage = () => {
                 fontSize="16px"
                 defaultValue={mainContent}
                 onTextChange={setMainContent}
-                
               />
             </div>
             <div className="w-1/6 px-16 overflow-hidden">
@@ -106,48 +137,30 @@ const DetailedArticlePage = () => {
           </div>
         ) : (
           <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-  <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
-    {/* Title and Author Section */}
-    <div className="flex items-center justify-between">
-      <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">{title}</h1>
-      <p className="text-lg text-gray-500 ml-4">{author}</p>
-    </div>
-
-    {/* Image Section*/}
-    <div className="mt-4">
-      {uploadedFiles.length > 0 && uploadedFiles[0] && (
-        <img
-          src={URL.createObjectURL(uploadedFiles[0])}
-          alt="Main Image"
-          className="w-full h-64 object-cover rounded-md shadow-md"
-        />
-      )}
-    </div>
-
-    {/* Description Section */}
-    <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
-
-    {/* Main Content Section */}
-    <p className="text-lg mt-4 text-gray-700 text-center">{mainContent}</p>
-
-    {/* Images */}
-    <div className="mt-6 flex justify-center flex-wrap gap-6">
-      {uploadedFiles.length > 1 &&
-        uploadedFiles.slice(1).map((file, index) => (
-          <div key={index} className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-            <p className="text-sm text-gray-700">{file.name}</p>
-            <img
-              src={URL.createObjectURL(file)}
-              alt="Uploaded File"
-              className="w-full h-48 object-cover rounded-md mt-2"
-            />
+            <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+              <div className="flex items-center justify-between">
+                <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">
+                  {title}
+                </h1>
+                <p className="text-lg text-gray-500 ml-4">{author}</p>
+              </div>
+              <div className="mt-4">
+                {uploadedFiles.length > 0 && uploadedFiles[0] && (
+                  <img
+                    src={
+                      typeof uploadedFiles[0] === "string"
+                        ? uploadedFiles[0]
+                        : URL.createObjectURL(uploadedFiles[0])
+                    }
+                    alt="Main"
+                    className="w-full h-64 object-cover rounded-md shadow-md"
+                  />
+                )}
+              </div>
+              <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
+              <p className="text-lg mt-4 text-gray-700 text-center">{mainContent}</p>
+            </div>
           </div>
-        ))}
-    </div>
-  </div>
-</div>
-
-
         )}
       </div>
     </div>
