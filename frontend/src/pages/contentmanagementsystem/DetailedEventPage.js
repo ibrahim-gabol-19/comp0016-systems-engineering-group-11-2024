@@ -4,17 +4,12 @@ import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/N
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 
-import { useParams } from "react-router-dom";
-import Editor from "../../components/contentmanagementsystem/detailed/Editor";
-import Quill, { Delta } from "quill";
-import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
+import  { Delta } from "quill";
 
 const DetailedEventPage = () => {
-  const quillRef = useRef(); // Ref for the Quill container
   const quillRefTitle = useRef();
   const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
-  const quillRefMain = useRef();
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const category = "Articles";
@@ -54,6 +49,7 @@ const DetailedEventPage = () => {
 
   const handleFilesUploaded = (acceptedFiles) => {
     setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    console.log(uploadedFiles);
   };
   return (
     <div>

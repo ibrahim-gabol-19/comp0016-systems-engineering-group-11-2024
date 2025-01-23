@@ -11,7 +11,6 @@ const ContentManagementSystem = () => {
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
 
   const categories = ["Articles", "Events", "Forum", "Reporting"];
@@ -184,10 +183,6 @@ const ContentManagementSystem = () => {
     );
   };
 
-  const handleAddCardClicked = () => {
-    setIsAddingCard(!isAddingCard);
-  };
-
   const handleManualClicked = () => {
     navigate(
       `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
@@ -195,15 +190,16 @@ const ContentManagementSystem = () => {
       }`
     );
   };
-  const onDrop = (acceptedFiles) => {
-    setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
-    alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
-  };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const fileUploaded = () => {
+    console.log(uploadedFiles)
+  }
+
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
       setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false); // Reset dragging state
+      fileUploaded();
       alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
     },
     onDragEnter: () => setIsDragging(true),
@@ -214,6 +210,7 @@ const ContentManagementSystem = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+    fileUploaded();
   };
 
   // Define the functions that will be passed to TopBar as props
