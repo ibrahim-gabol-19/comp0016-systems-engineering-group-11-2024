@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import Logo from "../assets/earth.png";
 
 const navList = [
@@ -21,17 +21,17 @@ const navList = [
   {
     id: 4,
     data: "Events",
-    path: "/events", 
+    path: "/events",
   },
   {
     id: 5,
     data: "News",
-    path: "/news", 
+    path: "/news",
   },
   {
     id: 6,
     data: "Manage",
-    path: "/contentmanagementsystem", 
+    path: "/contentmanagementsystem",
   },
 ];
 
@@ -39,13 +39,13 @@ const Header = () => {
   return (
     <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100 z-10">
       <a
-        href="#"
+        href="/"
         className="text-3xl font-extrabold text-green-500 hover:scale-110 transition duration-500 flex items-center "
       >
-        <img src={Logo} className="w-8 h-8 mr-2 " />
+        <img alt="Logo" src={Logo} className="w-8 h-8 mr-2 " />
         <span>
           Green{" "}
-          <a href="#" className="text-sm text-green">
+          <a href="/" className="text-sm text-green">
             Inc
           </a>
         </span>

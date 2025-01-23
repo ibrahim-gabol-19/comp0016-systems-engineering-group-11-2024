@@ -83,7 +83,7 @@ const MainEditor = forwardRef(
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [ref, placeholderText]);
 
     return <div className="pt-8" ref={containerRef}></div>;
   }

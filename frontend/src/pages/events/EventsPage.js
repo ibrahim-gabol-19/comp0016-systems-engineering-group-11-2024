@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Events.css'; 
 import Calendar from '../../components/events/Calendar';
 import PointOfInterest from '../../components/events/PointOfInterest';

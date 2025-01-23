@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import aiLogo from "../../assets/ai_icon.png";
-import { CreateMLCEngine, MLCEngine } from "@mlc-ai/web-llm";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
@@ -8,7 +7,6 @@ import axios from "axios";
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [modelReply, setModelReply] = useState("");
-  const [loading, setLoading] = useState(false);
   const [engine, setEngine] = useState(null);
   const [userQuery, setUserQuery] = useState("");
   const [fullUserQuery, setFullUserQuery] = useState("");
@@ -31,7 +29,6 @@ const SearchBar = () => {
 
   useEffect(() => {
     const initModel = async () => {
-      setLoading(true);
 
       try {
         // Create the engine and load the model
@@ -47,7 +44,6 @@ const SearchBar = () => {
         console.error("Error while loading model:", error);
         setModelReply("Error while loading model:", error);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -134,7 +130,7 @@ const SearchBar = () => {
       {fullUserQuery !== "" && (
         <div
           className={` w-full rounded-3xl bg-white border border-gray-300 flex flex-col transition-all duration-200  ${
-            fullUserQuery == ""
+            fullUserQuery === ""
               ? "max-h-0 opacity-0 pointer-events-none select-none"
               : "h-[650px] max-h-[650px] opacity-100 pointer-events-auto select-auto"
           }  `}
