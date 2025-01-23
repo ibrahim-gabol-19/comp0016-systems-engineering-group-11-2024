@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import { useParams } from "react-router-dom"; // For dynamic routing
 
 import axios from "axios";
 
@@ -10,7 +11,7 @@ const DetailedEventPage = () => {
   const quillRefTitle = useRef();
   const quillRefDescription = useRef();
   const quillRefLocation = useRef();
-
+  const { eventId } = useParams();
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
   const [date, setDate] = useState("");
@@ -18,6 +19,35 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+
+  useEffect(() => {
+      if (eventId!=="2") { // 2 is default value for new article
+        console.log('useEffect is running');
+        console.log('event id received was', eventId);
+        setIsEditing(false)// initially viwe preview when clicking box
+        
+        // Fetch article data when editing an existing article
+        axios
+          .get(`http://127.0.0.1:8000/events/${eventId}/`)
+          .then((response) => {
+            const event = response.data;
+            console.log('API response:', event); // Log the API response
+            setTitle(event.title || "");
+            console.log("Title set ",event.title);
+            setTime(event.time || "");
+            setDate(event.date || "");
+            setDescription(event.description || "");
+            setLocation(event.location || "");
+            if (event.main_image) {
+              setUploadedFiles([event.main_image]);
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching article:", error);
+            alert("Failed to fetch article data. Please try again.");
+          });
+      }
+    }, [eventId]);
 
   const handleFilesUploaded = (acceptedFiles) => {
     if (acceptedFiles.length > 1) {
@@ -131,16 +161,19 @@ const DetailedEventPage = () => {
       <p className="text-lg text-gray-500 ml-4">{date} {time}</p>
     </div>
 
-    {/* Image Section*/}
     <div className="mt-4">
-      {uploadedFiles.length > 0 && uploadedFiles[0] && (
-        <img
-          src={URL.createObjectURL(uploadedFiles[0])}
-          alt="Main Image"
-          className="w-full h-64 object-cover rounded-md shadow-md"
-        />
-      )}
-    </div>
+                {uploadedFiles.length > 0 && uploadedFiles[0] && (
+                  <img
+                    src={
+                      typeof uploadedFiles[0] === "string"
+                        ? uploadedFiles[0]
+                        : URL.createObjectURL(uploadedFiles[0])
+                    }
+                    alt="Main"
+                    className="w-full h-64 object-cover rounded-md shadow-md"
+                  />
+                )}
+              </div>
 
     {/* Description Section */}
     <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>

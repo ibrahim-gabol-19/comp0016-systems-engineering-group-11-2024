@@ -24,7 +24,7 @@ const App = () => {
               <Route path="/events" element={<EventsPage />} />
               <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
               <Route path="/contentmanagementsystem/details/articles/:articleId" element={<DetailedArticlePage />} />
-              <Route path="/contentmanagementsystem/details/events/:index" element={<DetailedEventPage />} />
+              <Route path="/contentmanagementsystem/details/events/:eventId" element={<DetailedEventPage />} />
 
             </Routes>
           </div>
