@@ -4,12 +4,12 @@ import MainEditor from "../../components/contentmanagementsystem/detailed/MainEd
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import axios from "axios";
-import { useParams } from "react-router-dom"; // For dynamic routing
+import { useParams } from "react-router-dom"; 
+
+const NEW_ARTICLE_ID = "2"; 
 
 const DetailedArticlePage = () => {
   const { articleId } = useParams(); // Get the article ID from the route
-  console.log('Component rendered');
-  console.log('Article ID from useParams:', articleId);
   const quillRefTitle = useRef();
   const quillRefMain = useRef();
   const quillRefAuthor = useRef();
@@ -21,20 +21,18 @@ const DetailedArticlePage = () => {
   const [mainContent, setMainContent] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
+  // Fetch article data when editing an existing article
   useEffect(() => {
-    if (articleId!=="2") { // 2 is default value for new article
-      console.log('useEffect is running');
-      console.log('Article id received was', articleId);
-      setIsEditing(false) // initially viwe preview when clicking box
-      
-      // Fetch article data when editing an existing article
+    if (articleId !== NEW_ARTICLE_ID) {
+      setIsEditing(false); // Initially view preview when editing an existing article
+
       axios
         .get(`http://127.0.0.1:8000/articles/${articleId}/`)
         .then((response) => {
           const article = response.data;
           setTitle(article.title || "");
-          console.log("Title set ",article.title);
           setMainContent(article.content || "");
           setAuthor(article.author || "");
           setDescription(article.description || "");
@@ -44,7 +42,7 @@ const DetailedArticlePage = () => {
         })
         .catch((error) => {
           console.error("Error fetching article:", error);
-          alert("Failed to fetch article data. Please try again.");
+          setErrorMessage("Failed to fetch article data. Please try again.");
         });
     }
   }, [articleId]);
@@ -56,14 +54,14 @@ const DetailedArticlePage = () => {
     formData.append("author", author);
     formData.append("description", description);
 
-    if (uploadedFiles.length > 0) {
-      formData.append("main_image", uploadedFiles[0]);
+    if (uploadedFiles.length > 0 && typeof uploadedFiles[0] !== "string") {
+      formData.append("main_image", uploadedFiles[0]); // Append new image
     }
 
     try {
-      if (articleId !== "2") {
+      if (articleId !== NEW_ARTICLE_ID) {
         // PUT operation for updating an existing article
-        const response = await axios.put(
+        await axios.put(
           `http://127.0.0.1:8000/articles/${articleId}/`,
           formData,
           {
@@ -75,20 +73,16 @@ const DetailedArticlePage = () => {
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        const response = await axios.post(
-          "http://127.0.0.1:8000/articles/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        await axios.post("http://127.0.0.1:8000/articles/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         alert("Article saved successfully!");
       }
     } catch (error) {
       console.error("Error saving or updating article:", error);
-      alert("Error saving or updating article. Please try again.");
+      setErrorMessage("Error saving or updating article. Please try again.");
     }
   };
 
@@ -106,16 +100,24 @@ const DetailedArticlePage = () => {
         <button
           onClick={() => setIsEditing((prev) => !prev)}
           className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+          aria-label="Toggle edit/preview mode"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
         <button
           onClick={handleSave}
           className="bg-green-500 text-white px-4 py-2 rounded"
+          aria-label="Save article"
         >
           Save
         </button>
       </div>
+
+      {errorMessage && (
+        <div className="bg-red-500 text-white p-2 rounded mt-4">
+          {errorMessage}
+        </div>
+      )}
 
       <div className="flex justify-center items-center overflow-auto relative">
         {isEditing ? (
@@ -176,8 +178,12 @@ const DetailedArticlePage = () => {
                   />
                 )}
               </div>
-              <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
-              <p className="text-lg mt-4 text-gray-700 text-center">{mainContent}</p>
+              <p className="text-lg mt-6 text-gray-600 italic text-center">
+                {description}
+              </p>
+              <p className="text-lg mt-4 text-gray-700 text-center">
+                {mainContent}
+              </p>
             </div>
           </div>
         )}
