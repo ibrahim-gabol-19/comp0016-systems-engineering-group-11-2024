@@ -5,6 +5,7 @@ import DateTime from "../../components/contentmanagementsystem/detailed/DateTime
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
 
+
 import axios from "axios";
 
 const DetailedEventPage = () => {
@@ -60,19 +61,11 @@ const DetailedEventPage = () => {
   const handleSave = async () => {
     console.log("Save button clicked");
 
-   
-    // Check if essential fields are filled
+
     if (!title || !date || !time || !description || !location) {
       alert("Please fill in all fields before saving.");
       return;
     }
-
-    // Log content to verify data before sending
-    console.log('Title:', title);
-    console.log('Date:', date);
-    console.log('Time:', time);
-    console.log('Description:', description);
-    console.log('Location:', location);
 
     // Prepare the form data to be sent to the backend
     const formData = new FormData();
@@ -84,25 +77,46 @@ const DetailedEventPage = () => {
 
     // Add uploaded files to formData (only one image)
     if (uploadedFiles.length > 0) {
-      formData.append('main_image', uploadedFiles[0]); // Append the first file as 'main_image'
+      formData.append('main_image', uploadedFiles[0]); // Append the first file 
     } else {
       console.error("No image uploaded");
     }
 
-    try {
-      // Send data to the backend API
-      const response = await axios.post('http://127.0.0.1:8000/events/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Ensure it’s form-data
-        },
-      });
-      console.log('Data saved successfully:', response.data);
-      alert("Event saved successfully!");
-    } catch (error) {
-      console.error('Error saving data:', error);
-      alert("Error saving event. Please try again.");
-    }
-  };
+   try {
+         if (eventId !== "2") {
+           // PUT operation for updating an existing article
+           console.log('event id is not 2');
+           const response = await axios.put(
+             `http://127.0.0.1:8000/events/${eventId}/`,
+             formData,
+             {
+               headers: {
+                 "Content-Type": "multipart/form-data",
+               },
+             }
+           );
+           alert("Event updated successfully!");
+         } else {
+           console.log('event id received was 2');
+           // POST operation for creating a new article
+           const response = await axios.post(
+             "http://127.0.0.1:8000/events/",
+             formData,
+             {
+               headers: {
+                 "Content-Type": "multipart/form-data",
+               },
+             }
+           );
+           console.log("ran else block");
+           alert("Event saved successfully!");
+         }
+       } catch (error) {
+         console.error("Error saving or updating event:", error);
+         alert("Error saving or updating event. Please try again.");
+       }
+     };
+   
 
   return (
     <div>

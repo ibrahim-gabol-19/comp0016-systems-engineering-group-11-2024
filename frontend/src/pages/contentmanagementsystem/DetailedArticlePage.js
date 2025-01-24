@@ -61,15 +61,34 @@ const DetailedArticlePage = () => {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/articles/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("Article saved successfully!");
+      if (articleId !== "2") {
+        // PUT operation for updating an existing article
+        const response = await axios.put(
+          `http://127.0.0.1:8000/articles/${articleId}/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Article updated successfully!");
+      } else {
+        // POST operation for creating a new article
+        const response = await axios.post(
+          "http://127.0.0.1:8000/articles/",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Article saved successfully!");
+      }
     } catch (error) {
-      console.error("Error saving article:", error);
-      alert("Error saving article. Please try again.");
+      console.error("Error saving or updating article:", error);
+      alert("Error saving or updating article. Please try again.");
     }
   };
 
