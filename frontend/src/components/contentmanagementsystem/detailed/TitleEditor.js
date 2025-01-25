@@ -80,7 +80,7 @@ const TitleEditor = forwardRef(
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [ref, fontSize, placeholderText]);
 
     return <div className="h-32 resize-none " ref={containerRef}></div>;
   }

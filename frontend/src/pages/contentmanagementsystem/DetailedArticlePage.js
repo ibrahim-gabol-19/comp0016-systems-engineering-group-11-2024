@@ -1,20 +1,13 @@
 import React, { useRef, useState } from "react";
-
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-
-import { useParams } from "react-router-dom";
-import Editor from "../../components/contentmanagementsystem/detailed/Editor";
-import Quill, { Delta } from "quill";
+import { Delta } from "quill";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 
 const DetailedArticlePage = () => {
-  const quillRef = useRef(); // Ref for the Quill container
   const quillRefTitle = useRef();
   const quillRefAuthor = useRef();
-  const quillRefDescription = useRef();
   const quillRefMain = useRef();
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -41,7 +34,7 @@ const DetailedArticlePage = () => {
         Mauris commodo odio eget consectetur finibus. Pellentesque et turpis semper neque consequat consectetur. Donec ac lectus at dolor scelerisque ultricies. Sed imperdiet mauris eget metus hendrerit, vel vulputate lorem ultricies. Phasellus sit amet ipsum nunc. Curabitur diam mi, pharetra sed orci nec, pretium convallis ex. Vivamus non pretium ligula. Fusce ac turpis sit amet quam feugiat pretium. Curabitur tincidunt massa eget orci euismod lobortis. Ut porta, nunc non dapibus dapibus, orci nulla euismod velit, vel tristique tellus lorem vitae eros. Nullam tellus leo, semper at vestibulum id, viverra ac velit. Curabitur id convallis arcu, facilisis faucibus odio. Maecenas nec massa nec massa tempus auctor sed ut nunc. Integer luctus nunc finibus ligula porttitor, vitae volutpat velit fringilla. Proin quis mattis sem.
 
         Pellentesque eu est eu lectus cursus ullamcorper nec vitae augue. Sed a ex ligula. Integer sodales mi sed gravida congue. Aenean in arcu augue. Cras placerat diam vel urna sagittis consectetur. Cras ornare posuere nibh a lobortis. Fusce quis leo dui. Nam ac efficitur urna. Etiam felis erat, elementum eget mi nec, convallis placerat nisi. Integer varius, dolor eget vestibulum congue, eros quam vulputate massa, congue lacinia diam nibh id diam. In sollicitudin eget nunc nec finibus. Sed ultrices sit amet nisi sit amet venenatis. Phasellus id facilisis justo, sed tristique sem. 
-        `
+        `,
       },
     ],
   };
@@ -66,6 +59,7 @@ const DetailedArticlePage = () => {
 
   const handleFilesUploaded = (acceptedFiles) => {
     setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    console.log(uploadedFiles);
   };
   return (
     <div>
@@ -123,7 +117,7 @@ const DetailedArticlePage = () => {
             </div>
 
             <p className="justify-center text-center text-gray-500 font-semibold text-lg ">
-              {cardData.author}    |    {cardData.date}
+              {cardData.author} | {cardData.date}
             </p>
             <p className="mt-4 flex px-64 ">{cardData.content}</p>
           </div>
