@@ -6,9 +6,20 @@ class Report(models.Model):
         ('closed', 'Closed'),
         ('resolved', 'Resolved'),
     ]
+    TAGS_CHOICES = [
+        ('environmental', 'Environmental'),
+        ('road', 'Road'),
+        ('pollution', 'Pollution'),
+        ('wildlife_conservation', 'Wildlife Conservation'),
+        ('climate_change', 'Climate Change'),
+        ('waste_management', 'Waste Management'),
+        ('health_safety', 'Health & Safety'),
+        ('urban_development', 'Urban Development'),
+    ]
+
     title = models.CharField(max_length=200)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
-    # tags = models.ManyToManyField('Tag', blank=True)
+    tags = models.CharField(max_length=30, choices=TAGS_CHOICES, default='environmental')
     main_image = models.ImageField(upload_to='report_images/', blank=True, null=True)
     author = models.CharField(max_length=100)
     published_date = models.DateField(auto_now_add=True)
