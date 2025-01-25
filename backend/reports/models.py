@@ -24,7 +24,11 @@ class Report(models.Model):
     author = models.CharField(max_length=100)
     published_date = models.DateField(auto_now_add=True)
     description = models.TextField()
-    upvotes = models.IntegerField(default=0)  # Upvote count
+    upvotes = models.IntegerField(default=0)  
+    
+    
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True)  
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True)  
 
     def __str__(self):
         return self.title

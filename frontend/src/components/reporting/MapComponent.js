@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import {
   MapContainer,
   TileLayer,
@@ -14,6 +15,23 @@ const MapComponent = ({ onMarkerSelected }) => {
   const [mapCenter, setMapCenter] = useState([52.1864, 0.1145]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level for the UK
   const [position, setPosition] = useState(null); // New marker position
+  const [reports, setReports] = useState([]);
+  
+  useEffect(() => {
+    // Call the Django API using Axios
+    const fetchReports = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/reports/');
+        setReports(response.data); 
+      } catch (err) {
+        console.log(err.message); 
+      } finally {
+      }
+    };
+
+    fetchReports();
+  }, []);
+  
   const data = [
     {
       id: 1,
@@ -365,14 +383,14 @@ const MapComponent = ({ onMarkerSelected }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {data.map((item) => (
+      {reports.map((item) => (
         <Marker
           key={item.id}
-          position={[item.lat, item.lng]}
+          position={[item.latitude, item.longitude]}
           icon={
             new L.DivIcon({
               className: "emoji-icon",
-              html: `<span style="font-size: 30px;">${item.emoji}</span>`,
+              html: `<span style="font-size: 30px;">🙌</span>`,
             })
           }
           eventHandlers={{

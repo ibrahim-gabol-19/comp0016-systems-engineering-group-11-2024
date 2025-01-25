@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
 
 const SidebarReport = ({ selectedMarker }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
@@ -23,6 +24,17 @@ const SidebarReport = ({ selectedMarker }) => {
     }
   };
 
+  const fetchUpvotes = async () => {
+    // try {
+    //   const response = await axios.get('http://127.0.0.1:8000/reports/');
+    //   setReports(response.data); 
+    // } catch (err) {
+    //   console.log(err.message); 
+    // } finally {
+    // }
+  };
+  
+
   // Prevent form submission when pressing Enter key
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -40,21 +52,42 @@ const SidebarReport = ({ selectedMarker }) => {
   };
 
   // Submit handler
-  const handleSubmitNewForm = (e) => {
+  const handleSubmitNewForm = async (e) => {
     e.preventDefault();
 
-    // Log the form data
-    console.log("Title:", title);
-    console.log("Image URL:", image);
-    console.log("Description:", description);
-    console.log("Form submitted with image:", image);
+    // Create the data object to send
+    const formData = new FormData();
+    formData.append('title', title);
+    // formData.append('main_image', image);
+    formData.append('description', description);
+    formData.append('author', 'exampleauthor');
+    console.log(selectedMarker.position);
+    formData.append('longitude', selectedMarker.getLatLng().lng);
+    formData.append('latitude', selectedMarker.getLatLng().lat);
+    
+    
+    // setLoading(true);
 
-    // You can send this data to a backend or perform any other logic here.
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // To send files and form data
+        },
+      });
 
-    // Clear the form after submission
-    setTitle("");
-    setImage(null);
-    setDescription("");
+      console.log("Report created successfully:", response.data);
+      
+      // Clear the form after submission
+      setTitle('');
+      setImage(null);
+      setDescription('');
+      
+    } catch (err) {
+      // setError(err.message); // Handle error if any occurs
+      console.log("Error creating report:", err.message);
+    } finally {
+      // setLoading(false);
+    }
   };
 
   if (selectedMarker == "new") {
@@ -129,7 +162,7 @@ const SidebarReport = ({ selectedMarker }) => {
           <div className="w-full  h-1/6 px-3">
             {/*Title*/}
             <div className="w-full h-3/4 ">
-              <p class="font-medium text-4xl">{selectedMarker.name}</p>
+              <p class="font-medium text-4xl">{selectedMarker.title}</p>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
@@ -229,7 +262,7 @@ const SidebarReport = ({ selectedMarker }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 ">
-              <p class="font-medium text-4xl">{selectedMarker.name}</p>
+              <p class="font-medium text-4xl">{selectedMarker.title}</p>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
@@ -281,7 +314,7 @@ const SidebarReport = ({ selectedMarker }) => {
               {/* Poster Name and Date */}
               <div className="w-5/6 flex flex-col justify-center">
                 {/* Poster Name */}
-                <p className="font-bold">{selectedMarker.poster}</p>
+                <p className="font-bold">{selectedMarker.author}</p>
 
                 {/* Date in Italics */}
                 <p className="text-sm italic text-gray-500">
@@ -292,7 +325,7 @@ const SidebarReport = ({ selectedMarker }) => {
             <div className="h-1/6 flex items-center bg-white border border-gray-100 mb-3 justify-center ">
               <div className="w-1/2">
                 {/* Current Upvotes */}
-                <p className="italic text-center">{upvotes} Upvotes</p>
+                <p className="italic text-center">{selectedMarker.upvotes} Upvotes</p>
               </div>
               {/* Upvote Button with Icon */}
               <div className="w-1/2 justify-center">
