@@ -10,7 +10,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
-const MapComponent = ({ onMarkerSelected }) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([52.1864, 0.1145]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level for the UK
@@ -345,7 +345,7 @@ const MapComponent = ({ onMarkerSelected }) => {
         map.flyTo(e.latlng, map.getZoom());
 
         // Notify parent component of new marker
-        onMarkerSelected("new");
+        onNewMarkerSelected(e);
       },
       locationfound(e) {
         setPosition(e.latlng);

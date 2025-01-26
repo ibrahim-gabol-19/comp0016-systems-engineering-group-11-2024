@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
-const SidebarReport = ({ selectedMarker }) => {
+const SidebarReport = ({ selectedMarker, newMarker}) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -61,9 +61,8 @@ const SidebarReport = ({ selectedMarker }) => {
     // formData.append('main_image', image);
     formData.append('description', description);
     formData.append('author', 'exampleauthor');
-    console.log(selectedMarker.position);
-    formData.append('longitude', selectedMarker.getLatLng().lng);
-    formData.append('latitude', selectedMarker.getLatLng().lat);
+    formData.append('longitude', newMarker.latlng.lng.toFixed(5));
+    formData.append('latitude', newMarker.latlng.lat.toFixed(5));
     
     
     // setLoading(true);
@@ -90,7 +89,7 @@ const SidebarReport = ({ selectedMarker }) => {
     }
   };
 
-  if (selectedMarker == "new") {
+  if (newMarker) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
         <div className="mb-6 ">
