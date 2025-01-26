@@ -158,34 +158,61 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
                     
                     data['images'].append(image_filename)
 
-        # Process text with spaCy NLP
-        doc_nlp = nlp(full_text)
-        sentences = [sent.text.strip() for sent in doc_nlp.sents]
+        # Process text with heuristics
+        sentences = full_text.split("\n")  # Split into lines for easier parsing
+        sentences = [sent.strip() for sent in sentences if sent.strip()]  # Clean up empty lines
 
-        # Heuristic for title: First line or paragraph with the most relevant nouns
+        # Heuristic for title: First line with significant content
         if sentences:
             first_line = sentences[0]
-            first_paragraph = " ".join(sentences[:2])  # Combine the first two sentences
-            candidate_title = Counter([token.text for token in nlp(first_paragraph) if token.pos_ in ["NOUN", "PROPN"]])
-            data['title'] = first_line if len(candidate_title) > 2 else first_paragraph
+            first_paragraph = " ".join(sentences[:2])  # Combine the first two lines
+            data['title'] = first_line if len(first_line.split()) > 3 else first_paragraph
 
-        # Extract date using common date patterns
-        date_matches = re.findall(r'\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b', full_text)  # Matches DD/MM/YYYY
-        if date_matches:
-            data['date_of_event'] = date_matches[0]
+        # Extract date using enhanced regex and normalise_date function
+        date_matches = re.findall(
+            r'(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*'
+            r'\d{1,2}(?:st|nd|rd|th)?\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}'
+            r'|\d{2}/\d{2}/\d{4}',
+            full_text,
+            re.IGNORECASE
+        )
+        for raw_date in date_matches:
+            normalised = normalise_date(raw_date.strip())
+            if normalised:
+                data['date_of_event'] = normalised
+                break
 
-        # Extract time using patterns like HH:MM or HH:MM AM/PM
-        time_matches = re.findall(r'\b\d{1,2}:\d{2}\s*(AM|PM|am|pm)?\b', full_text)
-        if time_matches:
-            data['time_of_event'] = time_matches[0]
+        # Extract time using normalise_time function
+        time_matches = re.findall(r'\b\d{1,2}:\d{2}(?:\s*[APap][Mm])?\b', full_text)
+        for raw_time in time_matches:
+            normalised = normalise_time(raw_time.strip())
+            if normalised:
+                data['time_of_event'] = normalised
+                break
 
-        # Extract location: Look for sentences with keywords like "at" or "location"
-        location_candidates = [sent for sent in sentences if re.search(r'\bat\b|\blocation\b', sent, re.IGNORECASE)]
+        # Extract location using enhanced logic
+        location_candidates = []
+        for sentence in sentences:
+            if re.search(r'\bvenue\b|at\b|location\b|place\b|find us at\b|event will take place at\b', sentence, re.IGNORECASE):
+                location_candidates.append(sentence)
+
         if location_candidates:
-            data['location'] = location_candidates[0]
+            # Extract location after common location indicators
+            for candidate in location_candidates:
+                match = re.search(r'(?<=venue[:\s]).*|(?<=at\s).*|(?<=location[:\s]).*|(?<=place[:\s]).*', candidate, re.IGNORECASE)
+                if match:
+                    data['location'] = match.group().strip()
+                    break
 
-        # Description: Use the first few sentences or a relevant paragraph
-        data['description'] = " ".join(sentences[:5])  # Use the first 5 sentences as a heuristic
+        # Fallback for location if no match is found
+        if not data['location']:
+            for sentence in sentences:
+                if len(sentence.split()) > 3 and not re.search(r'\bdate\b|time\b', sentence, re.IGNORECASE):
+                    data['location'] = sentence.strip()
+                    break
+
+        # Extract description: First few sentences or a relevant paragraph
+        data['description'] = " ".join(sentences[:5])  # Use the first 5 lines as a heuristic
 
     except Exception as e:
         print(f"Error extracting unstructured event data: {e}")
@@ -193,6 +220,7 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
         data['images'] = []  # Ensure images field is reset
 
     return data
+
 
 def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
     """Extract article details and images from the content of a PDF file."""
@@ -306,10 +334,10 @@ def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracte
         # Extract main content: Entire text
         data['main_content'] = full_text
 
-        # Extract author: Look for sentences with "by" or "author"
-        author_candidates = [sent for sent in sentences if re.search(r'\bby\b|\bauthor\b', sent, re.IGNORECASE)]
-        if author_candidates:
-            data['author'] = author_candidates[0]
+        # Extract author: Look for patterns like "By [Author Name]"
+        author_pattern = re.search(r'\b[Bb]y\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)', full_text)
+        if author_pattern:
+            data['author'] = author_pattern.group(1).strip()
 
     except Exception as e:
         print(f"Error extracting unstructured article data: {e}")
@@ -317,6 +345,7 @@ def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracte
         data['images'] = []  # Ensure images field is reset
 
     return data
+
 
 def extract_event_data_ics(ics_path):
     """
