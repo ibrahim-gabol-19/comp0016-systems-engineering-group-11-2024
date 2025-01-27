@@ -16,12 +16,9 @@ const SearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (engine) {
-      getReply(userQuery);
-      setMessages([...messages, { text: userQuery, sender: "user" }]);
-    } else {
-      setModelReply("Here is what I found.");
-    }
+    getReply(userQuery);
+    setMessages([...messages, { text: userQuery, sender: "user" }]);
+    setModelReply("Here is what I found.");
 
     setFullUserQuery(userQuery);
     setUserQuery("");
