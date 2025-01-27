@@ -196,12 +196,15 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
             if re.search(r'\bvenue\b|at\b|location\b|place\b|find us at\b|event will take place at\b', sentence, re.IGNORECASE):
                 location_candidates.append(sentence)
 
-        if location_candidates:
-            # Extract location after common location indicators
-            for candidate in location_candidates:
-                match = re.search(r'(?<=venue[:\s]).*|(?<=at\s).*|(?<=location[:\s]).*|(?<=place[:\s]).*', candidate, re.IGNORECASE)
-                if match:
-                    data['location'] = match.group().strip()
+        # Discard candidates if they refer to time instead of a location
+        for candidate in location_candidates:
+            match = re.search(r'(?<=venue[:\s]).*|(?<=at\s).*|(?<=location[:\s]).*|(?<=place[:\s]).*|(?<=will take place at[:\s]).*', candidate, re.IGNORECASE)
+            if match:
+                extracted_text = match.group().strip()
+
+                # Check if the extracted text is a time
+                if not re.search(r'\b\d{1,2}:\d{2}(?:\s*[APap][Mm])?\b|\b\d{1,2}(?:\s*[APap][Mm])\b', extracted_text):
+                    data['location'] = extracted_text
                     break
 
         # Fallback for location if no match is found
@@ -211,8 +214,8 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
                     data['location'] = sentence.strip()
                     break
 
-        # Extract description: First few sentences or a relevant paragraph
-        data['description'] = " ".join(sentences[:5])  # Use the first 5 lines as a heuristic
+        # Extract description: Entire event text
+        data['description'] = full_text.strip()
 
     except Exception as e:
         print(f"Error extracting unstructured event data: {e}")
@@ -220,6 +223,8 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
         data['images'] = []  # Ensure images field is reset
 
     return data
+
+
 
 
 def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
