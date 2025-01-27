@@ -14,12 +14,12 @@ import "leaflet/dist/leaflet.css"; // Import leaflet styles
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-{/*Make default Icon show up for Markers*/}
+{/*Make default Icon show up for Markers*/ }
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
-  iconSize: [25,41],
-  iconAnchor: [12,16]
+  iconSize: [25, 41],
+  iconAnchor: [12, 16]
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -31,21 +31,22 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
   const [position, setPosition] = useState(null); // New marker position
   const [reports, setReports] = useState([]);
   
+  // Call the Django API using Axios
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/reports/');
+      setReports(response.data);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+    }
+  };
+
   useEffect(() => {
-    // Call the Django API using Axios
-    const fetchReports = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/reports/');
-        setReports(response.data); 
-      } catch (err) {
-        console.log(err.message); 
-      } finally {
-      }
-    };
 
     fetchReports();
   }, []);
-  
+
   const data = [
     {
       id: 1,
@@ -336,9 +337,9 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
         "I’ve made a post online to get more people involved. The more volunteers we have, the faster it’ll get done."
       ]
     }
-    
-    
-    
+
+
+
   ];
 
   const ukBounds = [
@@ -371,7 +372,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
       <Marker
         position={position}
         draggable={true}
-        
+
       >
         <Popup>You are here</Popup>
       </Marker>

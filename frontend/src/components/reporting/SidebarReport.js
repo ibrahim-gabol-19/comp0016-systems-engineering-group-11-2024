@@ -65,8 +65,6 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
     formData.append('latitude', newMarker.latlng.lat.toFixed(5));
 
 
-    // setLoading(true);
-
     try {
       const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
         headers: {
