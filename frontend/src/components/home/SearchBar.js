@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import aiLogo from "../../assets/ai_icon.png";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
+import axios from "axios";
 
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -12,46 +13,12 @@ const SearchBar = () => {
   const [searchResult, setSearchResult] = useState("");
   const [messages, setMessages] = useState([]);
 
-  const templateSearchResult = {
-    news: [
-      {
-        title: "New Recycling Initiative Launched",
-        description:
-          "GreenEarth Inc. has introduced a new citywide recycling initiative aimed at reducing waste and promoting sustainability.",
-        published: "24 Dec 2024",
-      },
-    ],
-    events: [
-      {
-        title: "Community Trash Pickup",
-        description:
-          "Join us for a local trash pickup event to help clean up our neighborhood. All supplies will be provided.",
-        date: "30 Dec 2024",
-        time: "9:00 AM",
-        location: "Central Park, GreenEarth City",
-        contact: "volunteer@greenearthinc.com",
-      },
-      {
-        title: "GreenEarth Social Gathering",
-        description:
-          "A casual get-together for employees and local residents to discuss sustainability efforts and enjoy a fun evening of eco-friendly activities.",
-        date: "26 Dec 2024",
-        time: "6:00 PM",
-        location: "GreenEarth HQ, 123 Sustainability Road",
-        contact: "events@greenearthinc.com",
-      },
-    ],
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (engine) {
-      getReply(userQuery, searchResult);
-      setMessages([...messages, { text: userQuery, sender: "user" }]);
-    } else {
-      setModelReply("Here is what I found.");
-    }
+    getReply(userQuery);
+    setMessages([...messages, { text: userQuery, sender: "user" }]);
+    setModelReply("Here is what I found.");
 
     setFullUserQuery(userQuery);
     setUserQuery("");
@@ -80,9 +47,25 @@ const SearchBar = () => {
     initModel();
   }, []);
 
-  const getReply = async (userQuery, searchResult) => {
-    // Because Search has not been implemented yet, I am using template JSON
-    setSearchResult(JSON.stringify(templateSearchResult))
+  const getReply = async (userQuery) => {
+    if (userQuery === "") {
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/search/`, {
+        params: { query: userQuery },
+      });
+
+    // Check if the results field exists and set the state
+    if (response.data && response.data.results) {
+      setSearchResult(response.data.results); // No JSON.parse needed
+    } else {
+      setSearchResult([]); // Handle the case where no results are returned
+    }    
+  } catch (error) {
+      console.error("Error while fetching search results:", error);
+    }
 
     if (!engine) {
       console.log("Model is still loading...");
@@ -104,7 +87,7 @@ const SearchBar = () => {
 
         
         Here are the search results:
-        ${searchResult}`,
+        ${JSON.stringify(searchResult)}`,
       },
       { role: "user", content: userQuery },
     ];
@@ -171,34 +154,35 @@ const SearchBar = () => {
           </div>
           {/*Cards*/}
           <div className="w-3/4 h-2/6 my-4 mx-4 flex ">
-            {templateSearchResult.news.map((newsItem, index) => (
+            {searchResult && searchResult.length > 0 && searchResult.map((item, index) => (
               <div
                 key={index}
                 className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
               >
-                <p className="font-bold">{newsItem.title}</p>
-                <span className="text-sm text-gray-500">
-                  {newsItem.published}
-                </span>
-                <p className="text-sm">{newsItem.description}</p>
-              </div>
-            ))}
+                <p className="font-bold">{item.title}</p>
+                <span className="text-sm text-gray-500 capitalize">{item.source}</span>
+                {/* Need to comment the line below out after done testing */}
+                <p className="text-sm">Score: {item.similarity_score.toFixed(3)}</p> 
 
-            {/* Loop over events */}
-            {templateSearchResult.events.map((eventItem, index) => (
-              <div
-                key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
-              >
-                <h3 className="font-bold">{eventItem.title}</h3>
-                <p className="text-sm text-gray-500 ">
-                  {eventItem.date} | {eventItem.time}
-                </p>
-                <p className="text-sm text-gray-500">{eventItem.location}</p>
-                <p className="text-sm">{eventItem.description}</p>
+                {/* Conditionally render fields based on the source */}
+                {item.source === "event" ? (
+                  <>
+                    <p className="text-sm">Date: {item.date}</p>
+                    <p className="text-sm">Time: {item.time}</p>
+                    <p className="text-sm">Location: {item.location}</p>
+                    <p className="text-sm">Description: {item.description}</p>
+                  </>
+                ) : item.source === "article" ? (
+                  <>
+                    <p className="text-sm">Author: {item.author}</p>
+                    <p className="text-sm">Published Date: {item.published_date}</p>
+                    <p className="text-sm">Description: {item.description}</p>
+                  </>
+                ) : null}
               </div>
             ))}
           </div>
+
           {/*AI Response*/}
           <div
             className={`w-3/4 max-h-2/6 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
