@@ -6,15 +6,14 @@ import "quill/dist/quill.snow.css";
 const MainEditor = forwardRef(
   ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
     const containerRef = useRef(null);
-    const quillRef=useRef(null);
-    /*const defaultValueRef = useRef(defaultValue);
+    const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
     const onSelectionChangeRef = useRef(onSelectionChange);
 
     useLayoutEffect(() => {
       onTextChangeRef.current = onTextChange;
       onSelectionChangeRef.current = onSelectionChange;
-    });*/
+    });
 
     useEffect(() => {
       ref.current?.enable(!readOnly);
@@ -32,7 +31,7 @@ const MainEditor = forwardRef(
 
       // Toolbar options
       const toolbarOptions = [
-        [{ header: [1, 2, 3, false] }],
+        [{ header: [1, 2, 3, false] }], 
         ["bold", "italic", "underline", "strike"],
         ["blockquote", "code-block"],
         ["link", "image", "video"],
@@ -63,23 +62,22 @@ const MainEditor = forwardRef(
         toolbar.style.fontFamily = "system-ui";
       }
 
-      // Set text direction to left-to-right (ltr)
-      quill.root.style.direction = "ltr"; 
+      ref.current = quill;
 
       // Set the default value if provided
-      if (defaultValue) {
-        quill.root.innerHTML = defaultValue;
+      if (defaultValueRef.current) {
+        quill.setContents(defaultValueRef.current);
       }
 
-      ref.current = quill;
-      quillRef.current=quill;
-
-      quill.on("text-change", () => {
-        const content = quill.root.innerText.trim();
-        onTextChange?.(content);
+      // Event listeners for text and selection changes
+      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
+        onTextChangeRef.current?.(...args);
       });
 
-      
+      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
+        onSelectionChangeRef.current?.(...args);
+      });
+
       // Cleanup on unmount
       return () => {
         ref.current = null;

@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'api',  
     'corsheaders',
     'articles',
-    'events'
+    'events',
+    'search',
 ]
 
 MIDDLEWARE = [

@@ -10,10 +10,12 @@ import axios from "axios";
 const NEW_EVENT_ID = "2";
 const DetailedEventPage = () => {
   const quillRefTitle = useRef();
+  const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
   const quillRefLocation = useRef();
   const { eventId } = useParams();
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const category = "Articles";
   const [isEditing, setIsEditing] = useState(true);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -117,6 +119,10 @@ const DetailedEventPage = () => {
 
   return (
     <div>
+      <div>
+        <h1>EventPage</h1>
+      </div>
+      {/* Toggle between edit and preview */}
       <div className="p-6">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
@@ -133,7 +139,9 @@ const DetailedEventPage = () => {
         </button>
       </div>
 
-      <div className="flex justify-center items-center overflow-hidden relative">
+      {/* Full-screen container */}
+      <div className=" flex justify-center items-center overflow-hidden relative">
+        {/* Conditionally render either editor or preview */}
         {isEditing ? (
           <div>
             <TitleEditor

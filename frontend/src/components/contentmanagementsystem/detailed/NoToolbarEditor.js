@@ -6,16 +6,14 @@ import "quill/dist/quill.snow.css";
 const NoToolbarEditor = forwardRef(
   ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize}, ref) => {
     const containerRef = useRef(null);
-    const quillRef = useRef(null);
-    /*const defaultValueRef = useRef(defaultValue);
+    const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
     const onSelectionChangeRef = useRef(onSelectionChange);
-    
 
     useLayoutEffect(() => {
       onTextChangeRef.current = onTextChange;
       onSelectionChangeRef.current = onSelectionChange;
-    });*/
+    });
 
     useEffect(() => {
       ref.current?.enable(!readOnly);
@@ -59,24 +57,27 @@ const NoToolbarEditor = forwardRef(
       }
 
       ref.current = quill;
-      quillRef.current = quill;
-      quill.root.style.direction = "ltr";
+
       // Set the default value if provided
-      if (defaultValue) {
-        quill.root.innerHTML = defaultValue;
+      if (defaultValueRef.current) {
+        quill.setContents(defaultValueRef.current);
       }
-      quill.on("text-change", () => {
-        const content = quill.root.innerText.trim();
-        onTextChange?.(content);
+
+      // Event listeners for text and selection changes
+      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
+        onTextChangeRef.current?.(...args);
       });
 
+      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
+        onSelectionChangeRef.current?.(...args);
+      });
 
       // Cleanup on unmount
       return () => {
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref,placeholderText]);
+    }, [ref, fontSize, placeholderText]);
 
     return <div className="h-12 resize-none" ref={containerRef}></div>;
   }
