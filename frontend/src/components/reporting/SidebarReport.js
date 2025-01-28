@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
@@ -44,22 +44,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  const fetchUpvotes = async () => {
-    // try {
-    //   const response = await axios.get('http://127.0.0.1:8000/reports/');
-    //   setReports(response.data);
-    // } catch (err) {
-    //   console.log(err.message);
-    // } finally {
-    // }
-  };
-
-  // Prevent form submission when pressing Enter key
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent form submission on Enter
-    }
-  };
 
   const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
@@ -209,9 +193,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       </div>
     );
   } else if (selectedMarker) {
-    {
-      /*Existing Report Discussion*/
-    }
+    /*Existing Report Discussion*/
     if (viewingDiscussion) {
       return (
         <div className="w-full h-full flex flex-col">
@@ -325,9 +307,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         </div>
       );
     } else {
-      {
-        /*Existing Report Overview*/
-      }
+      /*Existing Report Overview*/
       return (
         <div className="w-full h-full flex flex-col">
           <div className="w-full h-1/6 px-3 ">

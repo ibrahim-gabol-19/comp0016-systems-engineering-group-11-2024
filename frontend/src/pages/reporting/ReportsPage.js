@@ -46,6 +46,7 @@ const ReportsPage = () => {
 
   useEffect(() => {
     fetchReports();
+  // eslint-disable-next-line
   }, []);
 
   return (
