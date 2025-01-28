@@ -24,14 +24,14 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker }) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([52.1864, 0.1145]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level for the UK
-  const [position, setPosition] = useState(null); 
-  
+  const [position, setPosition] = useState(null);
 
-  
+
+
   const data = [
     {
       id: 1,
@@ -350,7 +350,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       locationfound(e) {
         setPosition(e.latlng);
         map.flyTo(e.latlng, map.getZoom());
-        
+
       },
     });
 
@@ -363,6 +363,8 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       </Marker>
     );
   }
+
+  const filteredReports = reports.filter((item) => item.status === filter);
 
   return (
     <MapContainer
@@ -378,7 +380,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {reports.map((item) => (
+      {filteredReports.map((item) => (
         <Marker
           key={item.id}
           position={[item.latitude, item.longitude]}
@@ -388,8 +390,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
               onMarkerSelected(item);
             },
           }}
-        >
-        </Marker>
+        />
       ))}
       <NewReport />
     </MapContainer>
