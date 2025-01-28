@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const SidebarReport = ({ selectedMarker, newMarker }) => {
+const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -12,6 +12,10 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
   const handleUpvote = async() => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/reports/'+selectedMarker.id+'/upvote/');
+      if (response.status === 200) {
+        fetchReports();
+      }  
+      
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -66,6 +70,7 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
 
         if (response.status === 201) {
           setMessage("");
+          fetchReports();
         }
       } catch (err) {
         console.log("Error creating discussion:", err.message);
@@ -99,7 +104,9 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
           },
         }
       );
-
+      if (response.status === 201) {
+        fetchReports();
+      }  
       console.log("Report created successfully:", response.data);
 
       // Clear the form after submission

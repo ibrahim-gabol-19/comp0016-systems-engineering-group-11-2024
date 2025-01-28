@@ -24,29 +24,14 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([52.1864, 0.1145]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level for the UK
-  const [position, setPosition] = useState(null); // New marker position
-  const [reports, setReports] = useState([]);
+  const [position, setPosition] = useState(null); 
   
-  // Call the Django API using Axios
-  const fetchReports = async () => {
-    try {
-      const response = await axios.get('http://127.0.0.1:8000/reports/');
-      setReports(response.data);
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-    }
-  };
 
-  useEffect(() => {
-
-    fetchReports();
-  }, []);
-
+  
   const data = [
     {
       id: 1,
@@ -365,10 +350,11 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
       locationfound(e) {
         setPosition(e.latlng);
         map.flyTo(e.latlng, map.getZoom());
+        
       },
     });
 
-    return position === null ? null : (
+    return newMarker === null ? null : (
       <Marker
         position={position}
         draggable={true}
