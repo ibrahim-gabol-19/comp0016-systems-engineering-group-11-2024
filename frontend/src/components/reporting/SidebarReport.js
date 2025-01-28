@@ -35,26 +35,6 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
     // }
   };
 
-  const addDiscussionMessage = async (discussionID) => {
-    // try {
-    //   const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data', // To send files and form data
-    //     },
-    //   });
-    //   console.log("Report created successfully:", response.data);
-    //   // Clear the form after submission
-    //   setTitle('');
-    //   setImage(null);
-    //   setDescription('');
-    // } catch (err) {
-    //   // setError(err.message); // Handle error if any occurs
-    //   console.log("Error creating report:", err.message);
-    // } finally {
-    //   // setLoading(false);
-    // }
-  };
-
   // Prevent form submission when pressing Enter key
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -62,10 +42,32 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
     }
   };
 
-  const handleSubmitNewDiscussionMessage = () => {
+  const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
-      console.log("Message Submitted:", message);
-      setMessage("");
+      try {
+        const discussionMessage = {
+          author: "Example Author",
+          message: message,
+          report: selectedMarker.id,
+        };
+
+        const response = await axios.post(
+          "http://127.0.0.1:8000/reportdiscussion/",
+          discussionMessage,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          setMessage("");
+        }
+      } catch (err) {
+        console.log("Error creating discussion:", err.message);
+        alert("Failed to submit your message. Please try again.");
+      }
     } else {
       alert("Please enter a message!");
     }
