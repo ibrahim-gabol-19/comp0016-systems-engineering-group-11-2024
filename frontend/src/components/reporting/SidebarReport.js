@@ -8,7 +8,18 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-
+  const [selectedTag, setSelectedTag] = useState('environmental'); // Default tag
+  
+  const tags = [
+    'environmental',
+    'road',
+    'pollution',
+    'wildlife_conservation',
+    'climate_change',
+    'waste_management',
+    'health_safety',
+    'urban_development'
+  ];
   const handleUpvote = async() => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/reports/'+selectedMarker.id+'/upvote/');
@@ -81,7 +92,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  // Submit handler
   const handleSubmitNewForm = async (e) => {
     e.preventDefault();
 
@@ -93,6 +103,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     formData.append("author", "exampleauthor");
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
     formData.append("latitude", newMarker.latlng.lat.toFixed(5));
+    formData.append("tags", selectedTag); // Include the selected tag
 
     try {
       const response = await axios.post(
@@ -113,76 +124,89 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       setTitle("");
       setImage(null);
       setDescription("");
+      setSelectedTag('environmental'); // Reset the tag after submission
     } catch (err) {
-      // setError(err.message); // Handle error if any occurs
       console.log("Error creating report:", err.message);
-    } finally {
-      // setLoading(false);
     }
   };
+
+  
 
   if (newMarker) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
-        <div className="mb-6 ">
-          <p class="text-3xl font-bold">New report</p>
-        </div>
-        <div className="h-5/6 w-full">
-          <form
-            onSubmit={handleSubmitNewForm}
-            className="space-y-4"
-            onKeyDown={handleKeyDown}
-          >
-            {/* Title Input */}
-            <div>
-              {/* <label htmlFor="title" className="block font-medium">
-              Title
-            </label> */}
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                className="w-full py-12 text-3xl px-3 border rounded-lg"
-              />
-            </div>
-
-            {/* Image Input */}
-            <div>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e)}
-                className="w-full py-6 px-3 border rounded-lg"
-              />
-            </div>
-
-            {/* Description Input */}
-            <div>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter description"
-                className="w-full px-3 border rounded-lg h-48 resize-none"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
+      <div className="mb-6 ">
+        <p className="text-3xl font-bold">New report</p>
       </div>
-    );
+      <div className="h-5/6 w-full">
+        <form
+          onSubmit={handleSubmitNewForm}
+          className="space-y-4"
+        >
+          {/* Title Input */}
+          <div>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Title"
+              className="w-full py-12 text-3xl px-3 border rounded-lg"
+            />
+          </div>
+
+          {/* Image Input */}
+          <div>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e)}
+              className="w-full py-6 px-3 border rounded-lg"
+            />
+          </div>
+
+          {/* Description Input */}
+          <div>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter description"
+              className="w-full px-3 border rounded-lg h-48 resize-none"
+            />
+          </div>
+
+          {/* Tags Select */}
+          <div>
+            <label htmlFor="tags" className="block font-medium mb-2">Select Tag</label>
+            <select
+              id="tags"
+              value={selectedTag}
+              onChange={(e) => setSelectedTag(e.target.value)}
+              className="w-full py-3 px-3 border rounded-lg"
+            >
+              {tags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag.charAt(0).toUpperCase() + tag.slice(1).replace('_', ' ')}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
   } else if (selectedMarker) {
     {
       /*Existing Report Discussion*/
@@ -302,13 +326,13 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status}
+              {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
               </p>
 
               <p className="text-center font-bold mx-4">●</p>
 
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags}
+              {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
               </p>
             </div>
           </div>
