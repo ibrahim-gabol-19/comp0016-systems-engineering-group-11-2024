@@ -4,12 +4,24 @@ import "quill/dist/quill.snow.css";
 
 const TitleEditor = forwardRef(
   (
-    { readOnly, defaultValue, onTextChange, onSelectionChange,placeholderText, fontSize },
+    { readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize },
     ref
   ) => {
     const containerRef = useRef(null);
     const quillRef = useRef(null);
-
+    
+    // Create refs for defaultValue, onTextChange, and placeholderText to avoid re-initializing the effect
+    const defaultValueRef = useRef(defaultValue);
+    const onTextChangeRef = useRef(onTextChange);
+    const fontSizeRef = useRef(fontSize);
+    const placeholderTextRef = useRef(placeholderText);
+    
+    useLayoutEffect(() => {
+      defaultValueRef.current = defaultValue;
+      onTextChangeRef.current = onTextChange;
+      fontSizeRef.current = fontSize;
+      placeholderTextRef.current = placeholderText;
+    }, [defaultValue, onTextChange, fontSize, placeholderText]);
 
     useLayoutEffect(() => {
       const container = containerRef.current;
@@ -21,32 +33,32 @@ const TitleEditor = forwardRef(
 
       const quill = new Quill(editorContainer, {
         theme: "snow",
-        placeholder: placeholderText,
+        placeholder: placeholderTextRef.current,
         modules: {
           toolbar: false,
         },
       });
 
       quill.root.style.fontFamily = "system-ui";
-      quill.root.style.fontSize = fontSize;
+      quill.root.style.fontSize = fontSizeRef.current;
       quill.root.style.lineHeight = "1.5";
       quill.root.style.textAlign = "center";
       quill.root.style.fontWeight = "bold";
       quill.root.style.minHeight = "30px";
       quill.root.style.overflowY = "auto";
-      
       quill.root.style.direction = "ltr";
 
-      if (defaultValue) {
-        quill.root.innerHTML = defaultValue;
+      if (defaultValueRef.current) {
+        quill.root.innerHTML = defaultValueRef.current;
       }
 
+      // Ensure ref is included as a dependency to avoid the warning
       ref.current = quill;
       quillRef.current = quill;
 
       quill.on("text-change", () => {
         const content = quill.root.innerText.trim();
-        onTextChange?.(content);
+        onTextChangeRef.current?.(content);
       });
 
       return () => {
@@ -54,19 +66,13 @@ const TitleEditor = forwardRef(
         quillRef.current = null;
         container.innerHTML = "";
       };
-    }, [placeholderText, fontSize]);
+    }, [placeholderText, fontSize, ref]); // Add 'ref' to the dependency array
 
     useEffect(() => {
       if (quillRef.current) {
         quillRef.current.enable(!readOnly);
       }
     }, [readOnly]);
-
-    /*useEffect(() => {
-      if (defaultValue && quillRef.current) {
-        quillRef.current.root.innerHTML = defaultValue;
-      }
-    }, [defaultValue]);*/
 
     return <div ref={containerRef}></div>;
   }

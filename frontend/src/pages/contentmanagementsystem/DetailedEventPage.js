@@ -84,7 +84,7 @@ const DetailedEventPage = () => {
       if (eventId !== NEW_EVENT_ID) {
         // PUT operation for updating an existing article
        
-        const response = await axios.put(
+         await axios.put(
           `http://127.0.0.1:8000/events/${eventId}/`,
           formData,
           {
@@ -97,7 +97,7 @@ const DetailedEventPage = () => {
       } else {
         
         // POST operation for creating a new article
-        const response = await axios.post(
+        await axios.post(
           "http://127.0.0.1:8000/events/",
           formData,
           {

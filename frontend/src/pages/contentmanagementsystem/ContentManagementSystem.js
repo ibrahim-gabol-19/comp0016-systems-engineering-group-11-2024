@@ -13,7 +13,7 @@ const ContentManagementSystem = () => {
   const [events, setEvents] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [isAddingCard, setIsAddingCard] = useState(false);
+  //const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
 
   const categories = ["Articles", "Events", "Forum", "Reporting"];
@@ -100,9 +100,10 @@ const ContentManagementSystem = () => {
     );
   };
 
+  /*
   const handleAddCardClicked = () => {
     setIsAddingCard(!isAddingCard);
-  };
+  };*/
 
   const handleManualClicked = () => {
     navigate(
@@ -112,16 +113,18 @@ const ContentManagementSystem = () => {
     );
   };
 
+  /*
   const onDrop = (acceptedFiles) => {
     setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
     alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
-  };
+  };*/
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps} = useDropzone({
     onDrop: (acceptedFiles) => {
       setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false); // Reset dragging state
       alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
+      console.log(uploadedFiles);
     },
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),

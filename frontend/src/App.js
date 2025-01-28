@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import HomePage from "./pages/home/HomePage";
 // import NewsPage from "./pages/news/NewsPage";
 import EventsPage from "./pages/events/EventsPage";
 import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem';
-import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
+//import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
 import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
 import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
 
