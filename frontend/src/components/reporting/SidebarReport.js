@@ -8,11 +8,14 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-  const [upvotes, setUpvotes] = useState(0); // Initial upvotes set to 0
 
-  const handleUpvote = () => {
-    setUpvotes(upvotes + 1); // Increment upvotes by 1
-  };
+  const handleUpvote = async() => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/reports/'+selectedMarker.id+'/upvote/');
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+    }  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
