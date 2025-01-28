@@ -6,20 +6,11 @@ on:
       - main
       - develop
 
-
 jobs:
   test-django:
     runs-on: ubuntu-latest
 
-    services:
-      - name: postgres:latest 
-        env:
-          POSTGRES_DB: testdb
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpassword
-        ports:
-          - 5432:5432
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
