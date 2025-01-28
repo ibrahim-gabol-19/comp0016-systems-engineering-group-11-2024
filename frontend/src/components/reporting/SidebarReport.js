@@ -9,7 +9,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState('environmental'); // Default tag
-  
+
   const tags = [
     'environmental',
     'road',
@@ -20,17 +20,18 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     'health_safety',
     'urban_development'
   ];
-  const handleUpvote = async() => {
+  const handleUpvote = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/reports/'+selectedMarker.id+'/upvote/');
+      const response = await axios.post('http://127.0.0.1:8000/reports/' + selectedMarker.id + '/upvote/');
       if (response.status === 200) {
         fetchReports();
-      }  
-      
+      }
+
     } catch (err) {
       console.log(err.message);
     } finally {
-    }  };
+    }
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -117,7 +118,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       );
       if (response.status === 201) {
         fetchReports();
-      }  
+      }
       console.log("Report created successfully:", response.data);
 
       // Clear the form after submission
@@ -130,83 +131,83 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  
+
 
   if (newMarker) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
-      <div className="mb-6 ">
-        <p className="text-3xl font-bold">New report</p>
+        <div className="mb-6 ">
+          <p className="text-3xl font-bold">New report</p>
+        </div>
+        <div className="h-5/6 w-full">
+          <form
+            onSubmit={handleSubmitNewForm}
+            className="space-y-4"
+          >
+            {/* Title Input */}
+            <div>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title"
+                className="w-full py-12 text-3xl px-3 border rounded-lg"
+              />
+            </div>
+
+            {/* Image Input */}
+            <div>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e)}
+                className="w-full py-6 px-3 border rounded-lg"
+              />
+            </div>
+
+            {/* Description Input */}
+            <div>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter description"
+                className="w-full px-3 border rounded-lg h-48 resize-none"
+              />
+            </div>
+
+            {/* Tags Select */}
+            <div>
+              <label htmlFor="tags" className="block font-medium mb-2">Select Tag</label>
+              <select
+                id="tags"
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="w-full py-3 px-3 border rounded-lg"
+              >
+                {tags.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag.charAt(0).toUpperCase() + tag.slice(1).replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div className="h-5/6 w-full">
-        <form
-          onSubmit={handleSubmitNewForm}
-          className="space-y-4"
-        >
-          {/* Title Input */}
-          <div>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title"
-              className="w-full py-12 text-3xl px-3 border rounded-lg"
-            />
-          </div>
-
-          {/* Image Input */}
-          <div>
-            <input
-              type="file"
-              id="image"
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e)}
-              className="w-full py-6 px-3 border rounded-lg"
-            />
-          </div>
-
-          {/* Description Input */}
-          <div>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description"
-              className="w-full px-3 border rounded-lg h-48 resize-none"
-            />
-          </div>
-
-          {/* Tags Select */}
-          <div>
-            <label htmlFor="tags" className="block font-medium mb-2">Select Tag</label>
-            <select
-              id="tags"
-              value={selectedTag}
-              onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full py-3 px-3 border rounded-lg"
-            >
-              {tags.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag.charAt(0).toUpperCase() + tag.slice(1).replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+    );
   } else if (selectedMarker) {
     {
       /*Existing Report Discussion*/
@@ -217,20 +218,31 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full  h-1/6 px-3">
             {/*Title*/}
             <div className="w-full h-3/4 ">
-              <p class="font-medium text-4xl">{selectedMarker.title}</p>
+              <div className="w-full h-3/4 text-center justify-center">
+                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+              </div>
+              <div className="w-full h-1/4 text-center justify-center">
+                <p className="text-gray-500 text-m">
+                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+                </p>
+              </div>
+
+
+
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status}
+                {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
               </p>
 
               <p className="text-center font-bold mx-4">●</p>
 
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags}
+                {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
               </p>
             </div>
+
           </div>
           {/**Discussion */}
           <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
@@ -321,23 +333,33 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 ">
-              <p class="font-medium text-4xl">{selectedMarker.title}</p>
+              <div className="w-full h-3/4 text-center justify-center">
+                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+              </div>
+              <div className="w-full h-1/4 text-center justify-center">
+                <p className="text-gray-500 text-m">
+                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+                </p>
+              </div>
+
+
+
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-              {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
+                {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
               </p>
 
               <p className="text-center font-bold mx-4">●</p>
 
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-              {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
+                {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
               </p>
             </div>
           </div>
           {/*Image*/}
-          <div className="w-full h-2/6 flex justify-center items-center">
+          <div className="w-full h-2/6 flex justify-center items-center border border-gray-300">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}
@@ -384,7 +406,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               {/* Poster Name and Date */}
               <div className="w-5/6 flex flex-col justify-center">
                 {/* Poster Name */}
-                <p className="font-bold">{selectedMarker.author}</p>
+                <p className="font-bold text-l">{selectedMarker.author}</p>
 
                 {/* Date in Italics */}
                 <p className="text-sm italic text-gray-500">
