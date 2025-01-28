@@ -16,7 +16,7 @@ class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
 
     @action(detail=True, methods=['post'])
-    def upvote(self, request ):
+    def upvote(self, request, pk=None): # pylint: disable=W0613
         """
         Handle upvotes endpoint
         """
