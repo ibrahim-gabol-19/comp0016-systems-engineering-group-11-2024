@@ -1,9 +1,71 @@
 from django.test import TestCase
 from .models import Report
+
 from django.utils import timezone
 from datetime import timedelta
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from .models import Report
 
-class ReportTestClass(TestCase):
+class ReportViewSetTestClass(TestCase):
+    
+    def setUp(self):
+        self.client = APIClient()
+        self.report = Report.objects.create( title="Test Report",
+            status="open",
+            tags="environmental",
+            author="John Doe",
+            description="Test description",
+            upvotes=0,
+            latitude=40.7128,
+            longitude=-74.0060)
+
+    def test_upvote(self):
+        # Test the upvote functionality
+        url = reverse('report-upvote', args=[self.report.id])
+        response = self.client.post(url)
+
+        # Check the response status code
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Ensure upvotes have increased
+        self.report.refresh_from_db()
+        self.assertEqual(self.report.upvotes, 1)
+
+        # Check the response data
+        self.assertEqual(response.data, {'upvotes': 1})
+
+from rest_framework.exceptions import ValidationError
+from .models import Report
+from .serializers import ReportSerializer
+
+class ReportSerializerTestClass(TestCase):
+
+    
+    def test_create_report(self):
+        # Try to set upvotes or status manually, and check if it gets removed
+        data = {
+            'title': 'Test Report',
+            'upvotes': 5,
+            'status': 'closed',
+            'tags':'environmental',
+            'author': 'John Doe',
+            'description':'Test description',
+            'upvotes':10,
+            'latitude':40.7128,
+            'longitude':-74.0060,
+        }
+
+        serializer = ReportSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+        report = serializer.save()
+        # Ensure that upvotes and status values from the input are ignored
+        self.assertEqual(report.upvotes, 0)
+        self.assertEqual(report.status, 'open')
+
+class ReportModelTestClass(TestCase):
     
     def setUp(self):
         """Create a sample report instance for testing"""
