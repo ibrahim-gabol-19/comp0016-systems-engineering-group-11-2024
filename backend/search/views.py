@@ -1,10 +1,10 @@
 """
 views.py for search
 """
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer # pylint: disable=E0401
+from sklearn.metrics.pairwise import cosine_similarity # pylint: disable=E0401
 from django.http import JsonResponse
-import requests
+import requests # pylint: disable=E0401
 
 # Load the model
 model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
