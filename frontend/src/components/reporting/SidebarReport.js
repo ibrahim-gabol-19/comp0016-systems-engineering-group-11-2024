@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 
 const SidebarReport = ({ selectedMarker, newMarker }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
@@ -13,6 +13,7 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
   const handleUpvote = () => {
     setUpvotes(upvotes + 1); // Increment upvotes by 1
   };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -27,13 +28,32 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
   const fetchUpvotes = async () => {
     // try {
     //   const response = await axios.get('http://127.0.0.1:8000/reports/');
-    //   setReports(response.data); 
+    //   setReports(response.data);
     // } catch (err) {
-    //   console.log(err.message); 
+    //   console.log(err.message);
     // } finally {
     // }
   };
 
+  const addDiscussionMessage = async (discussionID) => {
+    // try {
+    //   const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data', // To send files and form data
+    //     },
+    //   });
+    //   console.log("Report created successfully:", response.data);
+    //   // Clear the form after submission
+    //   setTitle('');
+    //   setImage(null);
+    //   setDescription('');
+    // } catch (err) {
+    //   // setError(err.message); // Handle error if any occurs
+    //   console.log("Error creating report:", err.message);
+    // } finally {
+    //   // setLoading(false);
+    // }
+  };
 
   // Prevent form submission when pressing Enter key
   const handleKeyDown = (e) => {
@@ -57,28 +77,30 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
 
     // Create the data object to send
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('main_image', image);
-    formData.append('description', description);
-    formData.append('author', 'exampleauthor');
-    formData.append('longitude', newMarker.latlng.lng.toFixed(5));
-    formData.append('latitude', newMarker.latlng.lat.toFixed(5));
-
+    formData.append("title", title);
+    formData.append("main_image", image);
+    formData.append("description", description);
+    formData.append("author", "exampleauthor");
+    formData.append("longitude", newMarker.latlng.lng.toFixed(5));
+    formData.append("latitude", newMarker.latlng.lat.toFixed(5));
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // To send files and form data
-        },
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/reports/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // To send files and form data
+          },
+        }
+      );
 
       console.log("Report created successfully:", response.data);
 
       // Clear the form after submission
-      setTitle('');
+      setTitle("");
       setImage(null);
-      setDescription('');
-
+      setDescription("");
     } catch (err) {
       // setError(err.message); // Handle error if any occurs
       console.log("Error creating report:", err.message);
@@ -176,7 +198,7 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
           </div>
           {/**Discussion */}
           <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
-            {selectedMarker.discussion.map((discussion, index) => (
+            {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
                 className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto`}
@@ -199,7 +221,11 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
                   </svg>
                 </div>
                 <div className="w-5/6 overflow-y-auto break-words py-3">
-                  <p class="">{discussion}</p>
+                  <p className="font-semibold">{discussion.author}</p>
+                  <p className="">{discussion.message}</p>
+                  <p className="text-gray-500 text-sm">
+                    {new Date(discussion.created_at).toLocaleString()}
+                  </p>
                 </div>
               </div>
             ))}
@@ -277,9 +303,17 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
           {/*Image*/}
           <div className="w-full h-2/6 flex justify-center items-center">
             {selectedMarker.main_image ? (
-              <img src={selectedMarker.main_image} alt="" className="max-h-full max-w-full" />
+              <img
+                src={selectedMarker.main_image}
+                alt=""
+                className="max-h-full max-w-full"
+              />
             ) : (
-              <img src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid" alt="" className="max-h-full max-w-full" />
+              <img
+                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
+                alt=""
+                className="max-h-full max-w-full"
+              />
             )}
           </div>
 
@@ -325,7 +359,9 @@ const SidebarReport = ({ selectedMarker, newMarker }) => {
             <div className="h-1/6 flex items-center bg-white border border-gray-100 mb-3 justify-center ">
               <div className="w-1/2">
                 {/* Current Upvotes */}
-                <p className="italic text-center">{selectedMarker.upvotes} Upvotes</p>
+                <p className="italic text-center">
+                  {selectedMarker.upvotes} Upvotes
+                </p>
               </div>
               {/* Upvote Button with Icon */}
               <div className="w-1/2 justify-center">
