@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api',  
     'corsheaders',
     'reports',
+    'reportdiscussion'
 ]
 
 MIDDLEWARE = [
