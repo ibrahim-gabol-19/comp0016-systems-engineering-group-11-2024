@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom"; // For dynamic routing
 
 import axios from "axios";
  
-const NEW_EVENT_ID = "2";
+const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
   const quillRefTitle = useRef();
   const quillRefDescription = useRef();

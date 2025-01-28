@@ -107,7 +107,7 @@ const ContentManagementSystem = () => {
   const handleManualClicked = () => {
     navigate(
       `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
-        sampleData[selectedCategory].length + 1
+        sampleData[selectedCategory].length - 1
       }`
     );
   };

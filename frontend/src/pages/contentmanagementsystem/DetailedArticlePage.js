@@ -6,7 +6,7 @@ import MainImage from "../../components/contentmanagementsystem/detailed/MainIma
 import axios from "axios";
 import { useParams } from "react-router-dom"; 
 
-const NEW_ARTICLE_ID = "2"; 
+const NEW_ARTICLE_ID = "0"; 
 
 const DetailedArticlePage = () => {
   const { articleId } = useParams(); // Get the article ID from the route
