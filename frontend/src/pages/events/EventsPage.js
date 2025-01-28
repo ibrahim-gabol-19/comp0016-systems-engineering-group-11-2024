@@ -1,8 +1,8 @@
 import React from 'react';
 import './Events.css'; 
-import Calendar from '../../components/Events/Calendar';
-import PointOfInterest from '../../components/Events/PointOfInterest';
-import FeaturedEvents from '../../components/Events/FeaturedEvents';
+import Calendar from '../../components/events/Calendar';
+import PointOfInterest from '../../components/events/PointOfInterest';
+import FeaturedEvents from '../../components/events/FeaturedEvents';
 
 const EventsPage = () => {
     return (
