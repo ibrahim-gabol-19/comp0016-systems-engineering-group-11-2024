@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'api',  
     'corsheaders',
     'reports',
-    'reportdiscussion'
+    'reportdiscussion',
     'articles',
     'events',
     'search',
