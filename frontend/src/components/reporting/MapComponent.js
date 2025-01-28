@@ -10,28 +10,43 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
-const MapComponent = ({ onMarkerSelected }) => {
+
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+{/*Make default Icon show up for Markers*/ }
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 16]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([52.1864, 0.1145]); // Default center of the UK (London)
   const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level for the UK
   const [position, setPosition] = useState(null); // New marker position
   const [reports, setReports] = useState([]);
   
+  // Call the Django API using Axios
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/reports/');
+      setReports(response.data);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+    }
+  };
+
   useEffect(() => {
-    // Call the Django API using Axios
-    const fetchReports = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/reports/');
-        setReports(response.data); 
-      } catch (err) {
-        console.log(err.message); 
-      } finally {
-      }
-    };
 
     fetchReports();
   }, []);
-  
+
   const data = [
     {
       id: 1,
@@ -322,9 +337,9 @@ const MapComponent = ({ onMarkerSelected }) => {
         "I’ve made a post online to get more people involved. The more volunteers we have, the faster it’ll get done."
       ]
     }
-    
-    
-    
+
+
+
   ];
 
   const ukBounds = [
@@ -345,7 +360,7 @@ const MapComponent = ({ onMarkerSelected }) => {
         map.flyTo(e.latlng, map.getZoom());
 
         // Notify parent component of new marker
-        onMarkerSelected("new");
+        onNewMarkerSelected(e);
       },
       locationfound(e) {
         setPosition(e.latlng);
@@ -357,12 +372,7 @@ const MapComponent = ({ onMarkerSelected }) => {
       <Marker
         position={position}
         draggable={true}
-        icon={
-          new L.DivIcon({
-            className: "emoji-icon",
-            html: `<span style="font-size: 40px;">🚩</span>`,
-          })
-        }
+
       >
         <Popup>You are here</Popup>
       </Marker>
@@ -387,12 +397,6 @@ const MapComponent = ({ onMarkerSelected }) => {
         <Marker
           key={item.id}
           position={[item.latitude, item.longitude]}
-          icon={
-            new L.DivIcon({
-              className: "emoji-icon",
-              html: `<span style="font-size: 30px;">🙌</span>`,
-            })
-          }
           eventHandlers={{
             click: () => {
               console.log("Marker clicked:", item); // Log the data of the clicked marker

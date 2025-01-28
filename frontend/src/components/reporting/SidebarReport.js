@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
-const SidebarReport = ({ selectedMarker }) => {
+const SidebarReport = ({ selectedMarker, newMarker }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -18,7 +18,7 @@ const SidebarReport = ({ selectedMarker }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result); // Store image URL in state
+        setImage(file); // Store image URL in state
       };
       reader.readAsDataURL(file); // Convert file to base64
     }
@@ -33,7 +33,7 @@ const SidebarReport = ({ selectedMarker }) => {
     // } finally {
     // }
   };
-  
+
 
   // Prevent form submission when pressing Enter key
   const handleKeyDown = (e) => {
@@ -58,15 +58,12 @@ const SidebarReport = ({ selectedMarker }) => {
     // Create the data object to send
     const formData = new FormData();
     formData.append('title', title);
-    // formData.append('main_image', image);
+    formData.append('main_image', image);
     formData.append('description', description);
     formData.append('author', 'exampleauthor');
-    console.log(selectedMarker.position);
-    formData.append('longitude', selectedMarker.getLatLng().lng);
-    formData.append('latitude', selectedMarker.getLatLng().lat);
-    
-    
-    // setLoading(true);
+    formData.append('longitude', newMarker.latlng.lng.toFixed(5));
+    formData.append('latitude', newMarker.latlng.lat.toFixed(5));
+
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/reports/', formData, {
@@ -76,12 +73,12 @@ const SidebarReport = ({ selectedMarker }) => {
       });
 
       console.log("Report created successfully:", response.data);
-      
+
       // Clear the form after submission
       setTitle('');
       setImage(null);
       setDescription('');
-      
+
     } catch (err) {
       // setError(err.message); // Handle error if any occurs
       console.log("Error creating report:", err.message);
@@ -90,7 +87,7 @@ const SidebarReport = ({ selectedMarker }) => {
     }
   };
 
-  if (selectedMarker == "new") {
+  if (newMarker) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
         <div className="mb-6 ">
@@ -278,11 +275,14 @@ const SidebarReport = ({ selectedMarker }) => {
             </div>
           </div>
           {/*Image*/}
-          <div className="w-full h-2/6 py-40 flex justify-center items-center ">
-            <div>
-              <img src="https://picsum.photos/310" alt="" className=" h-full w-full object-contain" />
-            </div>
+          <div className="w-full h-2/6 flex justify-center items-center">
+            {selectedMarker.main_image ? (
+              <img src={selectedMarker.main_image} alt="" className="max-h-full max-w-full" />
+            ) : (
+              <img src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid" alt="" className="max-h-full max-w-full" />
+            )}
           </div>
+
           {/* Description with Poster and Date */}
           <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">
             {/* Poster and Date Section */}
