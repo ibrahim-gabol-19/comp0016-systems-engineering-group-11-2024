@@ -1,3 +1,6 @@
+"""
+views.py for search
+"""
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from django.http import JsonResponse
@@ -17,18 +20,24 @@ def preprocess_data(articles, events):
         datasets.append({
             "source": "article",
             "documents": [
-                f"{a['title']} {a['description']} {a['content']} {a['author']} {a['published_date']}"
-                for a in articles if all(key in a for key in ["title", "description", "content", "author", "published_date"])
+                f"{a['title']} {a['description']} {a['content']} "
+                f"{a['author']} {a['published_date']}"
+                for a in articles
+                if all(key in a for key in ["title", "description", "content",
+                "author", "published_date"])
             ],
             "entries": articles,  # Keep full article data for frontend use
         })
+
 
     if events:
         datasets.append({
             "source": "event",
             "documents": [
-                f"{e['title']} {e['description']} {e['location']} {e['date']} {e['time']}"
-                for e in events if all(key in e for key in ["title", "description", "location", "date", "time"])
+                f"{e['title']} {e['description']} {e['location']} "
+                f"{e['date']} {e['time']}"
+                for e in events if all(key in e for key in ["title",
+                "description", "location", "date", "time"])
             ],
             "entries": events,  # Keep full event data for frontend use
         })
@@ -62,13 +71,16 @@ def perform_semantic_search(query, datasets):
 
 
 def search(request):
+    """
+    Main search function
+    """
     query = request.GET.get("query", "")  # Get search query
     if not query:
         return JsonResponse({"error": "Please provide a query."}, status=400)
 
     try:
-        articles = requests.get("http://127.0.0.1:8000/articles/").json()
-        events = requests.get("http://127.0.0.1:8000/events/").json()
+        articles = requests.get("http://127.0.0.1:8000/articles/", timeout=10).json()
+        events = requests.get("http://127.0.0.1:8000/events/", timeout=10).json()
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": "Failed to fetch data.", "details": str(e)}, status=500)
 

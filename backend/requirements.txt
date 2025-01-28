@@ -2,3 +2,4 @@ django
 djangorestframework
 django-cors-headers
 pylint
+pylint_django 

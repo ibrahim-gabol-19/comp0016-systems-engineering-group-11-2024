@@ -1,15 +1,18 @@
+"""
+Test file for reports
+"""
 from django.test import TestCase
-from .models import Report
-
 from django.utils import timezone
-from datetime import timedelta
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Report
+from .serializers import ReportSerializer
 
 class ReportViewSetTestClass(TestCase):
-    
+    """
+    Test View for Report
+    """
     def setUp(self):
         self.client = APIClient()
         self.report = Report.objects.create( title="Test Report",
@@ -22,6 +25,9 @@ class ReportViewSetTestClass(TestCase):
             longitude=-74.0060)
 
     def test_upvote(self):
+        """
+        Test Upvotes
+        """
         # Test the upvote functionality
         url = reverse('report-upvote', args=[self.report.id])
         response = self.client.post(url)
@@ -36,18 +42,19 @@ class ReportViewSetTestClass(TestCase):
         # Check the response data
         self.assertEqual(response.data, {'upvotes': 1})
 
-from rest_framework.exceptions import ValidationError
-from .models import Report
-from .serializers import ReportSerializer
 
 class ReportSerializerTestClass(TestCase):
+    """
+    Report Serializer Test Class
+    """
 
-    
     def test_create_report(self):
+        """
+        Test creation of Reports
+        """
         # Try to set upvotes or status manually, and check if it gets removed
         data = {
             'title': 'Test Report',
-            'upvotes': 5,
             'status': 'closed',
             'tags':'environmental',
             'author': 'John Doe',
@@ -66,9 +73,13 @@ class ReportSerializerTestClass(TestCase):
         self.assertEqual(report.status, 'open')
 
 class ReportModelTestClass(TestCase):
-    
+    """
+    Test Report Model Class
+    """
     def setUp(self):
-        """Create a sample report instance for testing"""
+        """
+        Create a sample report instance for testing
+        """
         self.report = Report.objects.create(
             title="Test Report",
             status="open",
@@ -79,9 +90,11 @@ class ReportModelTestClass(TestCase):
             latitude=40.7128,
             longitude=-74.0060
         )
-    
+
     def test_report_creation(self):
-        """Test that the Report object is created properly."""
+        """
+        Test that the Report object is created properly.
+        """
         report = self.report
         self.assertEqual(report.title, "Test Report")
         self.assertEqual(report.status, "open")
@@ -90,11 +103,13 @@ class ReportModelTestClass(TestCase):
         self.assertEqual(report.upvotes, 10)
         self.assertEqual(report.latitude, 40.7128)
         self.assertEqual(report.longitude, -74.0060)
-    
 
-    
+
+
     def test_tag_choices(self):
-        """Test that tags are limited to predefined choices."""
+        """
+        Test that tags are limited to predefined choices.
+        """
         valid_tags = [tag[0] for tag in Report.TAGS_CHOICES]
         report = Report.objects.create(
             title="Test Tag Choices",
@@ -107,9 +122,11 @@ class ReportModelTestClass(TestCase):
         )
         self.assertIn(report.tags, valid_tags)
 
-    
+
     def test_status_choices(self):
-        """Test that the status is limited to predefined choices."""
+        """
+        Test that the status is limited to predefined choices.
+        """
         valid_statuses = [status[0] for status in Report.STATUS_CHOICES]
         report = Report.objects.create(
             title="Test Status Choices",
@@ -125,7 +142,9 @@ class ReportModelTestClass(TestCase):
 
 
     def test_latitude_longitude(self):
-        """Test that latitude and longitude fields accept valid decimal values."""
+        """
+        Test that latitude and longitude fields accept valid decimal values.
+        """
         report = Report.objects.create(
             title="GeoLocation Test",
             status="open",
@@ -139,12 +158,16 @@ class ReportModelTestClass(TestCase):
         self.assertEqual(report.longitude, -0.1278)
 
     def test_str_method(self):
-        """Test the __str__ method of the Report model."""
+        """
+        Test the __str__ method of the Report model.
+        """
         report = self.report
         self.assertEqual(str(report), "Test Report")
 
     def test_published_date_auto_add(self):
-        """Test that the published_date is automatically set upon creation."""
+        """
+        Test that the published_date is automatically set upon creation.
+        """
         report = Report.objects.create(
             title="Test Report",
             status="open",
@@ -157,7 +180,7 @@ class ReportModelTestClass(TestCase):
         )
         # Ensure the published_date is set to the current date
         self.assertTrue(report.published_date <= timezone.now().date())
-     
+
     def test_report_upvotes_increment(self):
         """Test that upvotes can be incremented correctly."""
         report = self.report

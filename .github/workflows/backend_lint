@@ -30,4 +30,4 @@ jobs:
         run: |
           cd backend
           source venv/bin/activate  # Ensure virtual environment is active
-          pylint **/*.py  # Run pylint on all Python files in the backend
+          pylint --load-plugins pylint_django **/*.py
