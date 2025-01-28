@@ -360,7 +360,6 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
         draggable={true}
 
       >
-        <Popup>You are here</Popup>
       </Marker>
     );
   }
@@ -390,7 +389,6 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
             },
           }}
         >
-          <Popup>{item.name}</Popup>
         </Marker>
       ))}
       <NewReport />
