@@ -1,0 +1,49 @@
+name: Backend Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+
+jobs:
+  test-django:
+    runs-on: ubuntu-latest
+
+    services:
+      - name: postgres:latest 
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"  
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          python -m venv venv  # Create a virtual environment
+          source venv/bin/activate  # Activate the virtual environment
+          pip install -r requirements.txt  # Install dependencies from requirements.txt
+
+      - name: Run Django migrations
+        run: |
+          cd backend
+          source venv/bin/activate  # Ensure virtual environment is active
+          python manage.py migrate  # Run migrations
+
+      - name: Run Django tests
+        run: |
+          cd backend
+          source venv/bin/activate  # Ensure virtual environment is active
+          python manage.py test  # Run Django tests

@@ -1,0 +1,33 @@
+name: Backend Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          python -m venv venv  # Create a virtual environment
+          source venv/bin/activate  # Activate the virtual environment
+          pip install -r requirements.txt  # Install dependencies from requirements.txt
+
+      - name: Run Pylint
+        run: |
+          cd backend
+          source venv/bin/activate  # Ensure virtual environment is active
+          pylint **/*.py  # Run pylint on all Python files in the backend
