@@ -86,7 +86,6 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
           position={[item.latitude, item.longitude]}
           eventHandlers={{
             click: () => {
-              console.log("Marker clicked:", item); // Log the data of the clicked marker
               onMarkerSelected(item);
             },
           }}

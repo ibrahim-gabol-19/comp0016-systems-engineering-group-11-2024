@@ -103,7 +103,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       if (response.status === 201) {
         fetchReports();
       }
-      console.log("Report created successfully:", response.data);
 
       // Clear the form after submission
       setTitle("");
