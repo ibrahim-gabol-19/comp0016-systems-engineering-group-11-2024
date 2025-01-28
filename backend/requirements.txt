@@ -2,4 +2,5 @@ django
 djangorestframework
 django-cors-headers
 pylint
-pylint_django 
+pylint_django
+sentence-transformers
