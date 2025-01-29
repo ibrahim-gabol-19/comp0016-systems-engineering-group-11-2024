@@ -10,7 +10,6 @@ jobs:
   test-django:
     runs-on: ubuntu-latest
 
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,7 +17,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"  
+          python-version: "3.9"
+
+      - name: Cache pip dependencies
+        id: pip-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
 
       - name: Install dependencies
         run: |

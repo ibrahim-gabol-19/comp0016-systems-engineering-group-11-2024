@@ -19,6 +19,15 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: Cache pip dependencies
+        id: pip-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
       - name: Install dependencies
         run: |
           cd backend
