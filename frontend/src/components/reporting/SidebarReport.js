@@ -8,25 +8,26 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-  const [selectedTag, setSelectedTag] = useState('environmental'); // Default tag
+  const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
 
   const tags = [
-    'environmental',
-    'road',
-    'pollution',
-    'wildlife_conservation',
-    'climate_change',
-    'waste_management',
-    'health_safety',
-    'urban_development'
+    "environmental",
+    "road",
+    "pollution",
+    "wildlife_conservation",
+    "climate_change",
+    "waste_management",
+    "health_safety",
+    "urban_development",
   ];
   const handleUpvote = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/reports/' + selectedMarker.id + '/upvote/');
+      const response = await axios.post(
+        "http://127.0.0.1:8000/reports/" + selectedMarker.id + "/upvote/"
+      );
       if (response.status === 200) {
         fetchReports();
       }
-
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -43,7 +44,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       reader.readAsDataURL(file); // Convert file to base64
     }
   };
-
 
   const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
@@ -83,7 +83,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     // Create the data object to send
     const formData = new FormData();
     formData.append("title", title);
-    if (image) {formData.append("main_image", image);}
+    if (image) {
+      formData.append("main_image", image);
+    }
     formData.append("description", description);
     formData.append("author", "exampleauthor");
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
@@ -108,13 +110,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       setTitle("");
       setImage(null);
       setDescription("");
-      setSelectedTag('environmental'); // Reset the tag after submission
+      setSelectedTag("environmental"); // Reset the tag after submission
     } catch (err) {
       console.log("Error creating report:", err.message);
     }
   };
-
-
 
   if (newMarker) {
     return (
@@ -123,10 +123,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <p className="text-3xl font-bold">New report</p>
         </div>
         <div className="h-5/6 w-full">
-          <form
-            onSubmit={handleSubmitNewForm}
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmitNewForm} className="space-y-4">
             {/* Title Input */}
             <div>
               <input
@@ -163,7 +160,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
             {/* Tags Select */}
             <div>
-              <label htmlFor="tags" className="block font-medium mb-2">Select Tag</label>
+              <label htmlFor="tags" className="block font-medium mb-2">
+                Select Tag
+              </label>
               <select
                 id="tags"
                 value={selectedTag}
@@ -172,7 +171,8 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               >
                 {tags.map((tag) => (
                   <option key={tag} value={tag}>
-                    {tag.charAt(0).toUpperCase() + tag.slice(1).replace('_', ' ')}
+                    {tag.charAt(0).toUpperCase() +
+                      tag.slice(1).replace("_", " ")}
                   </option>
                 ))}
               </select>
@@ -207,23 +207,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
-
-
-
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
+                {selectedMarker.status.charAt(0).toUpperCase() +
+                  selectedMarker.status.slice(1).replace("_", " ")}
               </p>
 
               <p className="text-center font-bold mx-4">●</p>
 
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
+                {selectedMarker.tags.charAt(0).toUpperCase() +
+                  selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
-
           </div>
           {/**Discussion */}
           <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
@@ -320,20 +318,17 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
-
-
-
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() + selectedMarker.status.slice(1).replace('_', ' ')}
+                {selectedMarker.status.charAt(0).toUpperCase() +
+                  selectedMarker.status.slice(1).replace("_", " ")}
               </p>
-
               <p className="text-center font-bold mx-4">●</p>
-
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() + selectedMarker.tags.slice(1).replace('_', ' ')}
+                {selectedMarker.tags.charAt(0).toUpperCase() +
+                  selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
           </div>
