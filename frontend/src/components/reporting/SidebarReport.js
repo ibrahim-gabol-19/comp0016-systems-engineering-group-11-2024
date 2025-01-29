@@ -83,7 +83,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     // Create the data object to send
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("main_image", image);
+    if (image) {formData.append("main_image", image);}
     formData.append("description", description);
     formData.append("author", "exampleauthor");
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
