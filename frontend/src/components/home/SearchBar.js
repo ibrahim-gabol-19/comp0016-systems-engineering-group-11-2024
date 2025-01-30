@@ -157,7 +157,7 @@ const SearchBar = () => {
             {searchResult && searchResult.length > 0 && searchResult.map((item, index) => (
               <div
                 key={index}
-                className="w-1/3 h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-gray-50 overflow-hidden"
+                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
               >
                 <p className="font-bold">{item.title}</p>
                 <span className="text-sm text-gray-500 capitalize">{item.source}</span>

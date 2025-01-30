@@ -8,17 +8,17 @@ const Calendar = () => {
 
   // Fake event data
   const events = {
-    "2024-12-16": [
+    "2025-01-20": [
       { time: "10:00 AM", title: "Guided Tour", description: "Description given here." },
     ],
-    "2024-12-17": [
+    "2025-01-21": [
       { time: "1:00 PM", title: "Community Lunch", description: "Join neighbours and local residents at Cafe X for a community lunch and networking." },
       { time: "3:00 PM", title: "Park Renovation Volunteering", description: "Collaborate with volunteers to plan milestones for the park improvement project." },
     ],
-    "2024-12-19": [
+    "2025-01-23": [
       { time: "9:00 AM", title: "Health Awareness Session", description: "Learn about wellness tips and resources available at the community health centre." },
     ],
-    "2024-12-20": [
+    "2025-01-26": [
       { time: "8:00 AM", title: "Community Breakfast Meetup", description: "Start your morning with coffee and conversation at the town square cafe." },
       { time: "12:00 PM", title: "Virtual Workshop: Growing Your Garden", description: "Learn gardening tips and tricks from local experts in this interactive online session." },
       { time: "3:00 PM", title: "Neighbourhood Potluck", description: "Bring a dish to share and enjoy a community meal with fellow residents." },
