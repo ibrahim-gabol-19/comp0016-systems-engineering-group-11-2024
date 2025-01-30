@@ -1,30 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventPosition, setSelectedEventPosition] = useState(null);
+  const [events, setEvents] = useState({}); // State for fetched events
+  const [loading, setLoading] = useState(true);
 
   // Fake event data
-  const events = {
-    "2025-01-20": [
-      { time: "10:00 AM", title: "Guided Tour", description: "Description given here." },
-    ],
-    "2025-01-21": [
-      { time: "1:00 PM", title: "Community Lunch", description: "Join neighbours and local residents at Cafe X for a community lunch and networking." },
-      { time: "3:00 PM", title: "Park Renovation Volunteering", description: "Collaborate with volunteers to plan milestones for the park improvement project." },
-    ],
-    "2025-01-23": [
-      { time: "9:00 AM", title: "Health Awareness Session", description: "Learn about wellness tips and resources available at the community health centre." },
-    ],
-    "2025-01-26": [
-      { time: "8:00 AM", title: "Community Breakfast Meetup", description: "Start your morning with coffee and conversation at the town square cafe." },
-      { time: "12:00 PM", title: "Virtual Workshop: Growing Your Garden", description: "Learn gardening tips and tricks from local experts in this interactive online session." },
-      { time: "3:00 PM", title: "Neighbourhood Potluck", description: "Bring a dish to share and enjoy a community meal with fellow residents." },
-      { time: "6:00 PM", title: "Evening Nature Walk", description: "Join the local walking group for a stroll through the park, guided by an environmentalist." },
-    ],
-  };
+  // const events = {
+  //   "2025-01-20": [
+  //     { time: "10:00 AM", title: "Guided Tour", description: "Description given here." },
+  //   ],
+  //   "2025-01-21": [
+  //     { time: "1:00 PM", title: "Community Lunch", description: "Join neighbours and local residents at Cafe X for a community lunch and networking." },
+  //     { time: "3:00 PM", title: "Park Renovation Volunteering", description: "Collaborate with volunteers to plan milestones for the park improvement project." },
+  //   ],
+  //   "2025-01-23": [
+  //     { time: "9:00 AM", title: "Health Awareness Session", description: "Learn about wellness tips and resources available at the community health centre." },
+  //   ],
+  //   "2025-01-26": [
+  //     { time: "8:00 AM", title: "Community Breakfast Meetup", description: "Start your morning with coffee and conversation at the town square cafe." },
+  //     { time: "12:00 PM", title: "Virtual Workshop: Growing Your Garden", description: "Learn gardening tips and tricks from local experts in this interactive online session." },
+  //     { time: "3:00 PM", title: "Neighbourhood Potluck", description: "Bring a dish to share and enjoy a community meal with fellow residents." },
+  //     { time: "6:00 PM", title: "Evening Nature Walk", description: "Join the local walking group for a stroll through the park, guided by an environmentalist." },
+  //   ],
+  // };
 
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
@@ -32,6 +34,23 @@ const Calendar = () => {
   const daysOfWeek = Array.from({ length: 7 }, (_, index) =>
     startOfWeek.add(index, "day")
   );
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/events/"); // Adjust this if your API is at a different endpoint
+      if (!response.ok) throw new Error("Failed to fetch events");
+      const data = await response.json();
+      setEvents(data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNextWeek = () => {
     setCurrentWeek((prevWeek) => prevWeek.add(7, "day"));
@@ -96,55 +115,51 @@ const Calendar = () => {
           </button>
         </div>
       </div>
-      {/* Weekly Calendar */}
-      <div
-        className="grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6"
-        style={{ height: "400px" }} // Fixed height
-      >
-        {daysOfWeek.map((day) => {
-          const dayKey = day.format("YYYY-MM-DD");
-          const isToday = today.isSame(day, "day");
-          const dayEvents = events[dayKey] || [];
 
-          return (
-            <div
-              key={dayKey}
-              className={`border rounded-lg shadow p-4 flex flex-col ${
-                isToday && highlightToday ? "bg-green-200" : "bg-white"
-              }`}
-              style={{ height: "100%" }} // Take the full height of the grid cell
-            >
-              <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
-              <p className="font-bold text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
+      {/* Display loading state */}
+      {loading ? (
+        <p className="text-center text-gray-500">Loading events...</p>
+      ) : (
+        <div className="grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6" style={{ height: "400px" }}>
+          {daysOfWeek.map((day) => {
+            const dayKey = day.format("YYYY-MM-DD");
+            const isToday = today.isSame(day, "day");
+            const dayEvents = events[dayKey] || [];
 
+            return (
               <div
-                className={`flex-grow mt-4 space-y-2 overflow-y-auto`}
-                style={{ maxHeight: "300px" }} // Limit content height
+                key={dayKey}
+                className={`border rounded-lg shadow p-4 flex flex-col ${
+                  isToday && highlightToday ? "bg-green-200" : "bg-white"
+                }`}
+                style={{ height: "100%" }}
               >
-                {dayEvents.length > 0 ? (
-                  dayEvents.map((event, index) => (
-                    <div
-                      key={index}
-                      className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
-                      onClick={(e) => openEventDetails(event, e)}
-                    >
-                      <p
-                        className="font-semibold text-md line-clamp-2 overflow-hidden"
-                        title={event.title}
+                <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
+                <p className="font-bold text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
+
+                <div className="flex-grow mt-4 space-y-2 overflow-y-auto" style={{ maxHeight: "300px" }}>
+                  {dayEvents.length > 0 ? (
+                    dayEvents.map((event, index) => (
+                      <div
+                        key={index}
+                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
+                        onClick={(e) => openEventDetails(event, e)}
                       >
-                        {event.title}
-                      </p>
-                      <p className="text-sm text-gray-600">{event.time}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-400">No events</p>
-                )}
+                        <p className="font-semibold text-md line-clamp-2 overflow-hidden" title={event.title}>
+                          {event.title}
+                        </p>
+                        <p className="text-sm text-gray-600">{event.time}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-400">No events</p>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Event Modal */}
       {selectedEvent && selectedEventPosition && (
