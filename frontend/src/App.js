@@ -18,33 +18,32 @@ const App = () => {
       <AuthProvider>
         <Router>
           <div className="bg-gray-100 text-black min-h-screen">
-            <Header />
-            <div className="pt-20">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
+            
+            
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/events" element={<EventsPage />} />
-                  <Route
-                    path="/contentmanagementsystem"
-                    element={<ContentManagementSystem />}
-                  />
-                  <Route
-                    path="/contentmanagementsystem/details/articles/:articleId"
-                    element={<DetailedArticlePage />}
-                  />
-                  <Route
-                    path="/contentmanagementsystem/details/events/:eventId"
-                    element={<DetailedEventPage />}
-                  />
-                  <Route path="/reporting" element={<ReportsPage />} />
-                </Route>
-              </Routes>
-            </div>
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route
+                  path="/contentmanagementsystem"
+                  element={<ContentManagementSystem />}
+                />
+                <Route
+                  path="/contentmanagementsystem/details/articles/:articleId"
+                  element={<DetailedArticlePage />}
+                />
+                <Route
+                  path="/contentmanagementsystem/details/events/:eventId"
+                  element={<DetailedEventPage />}
+                />
+                <Route path="/reporting" element={<ReportsPage />} />
+              </Route>
+            </Routes>
           </div>
         </Router>
       </AuthProvider>

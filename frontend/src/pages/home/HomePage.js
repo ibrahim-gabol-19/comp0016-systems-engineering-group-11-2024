@@ -3,6 +3,7 @@ import SearchBar from "../../components/home/SearchBar"; // Import the SearchBar
 import ForYouCard from "../../components/home/ForYouCard";
 import MapFilter from "../../components/home/MapFilter";
 import MapComponent from "../../components/home/MapComponent";
+import Header from "../../components/Header";
 
 
 const HomePage = () => {
@@ -24,7 +25,10 @@ const HomePage = () => {
     setDates(newDates);
   };
   return (
+    
     <div>
+      <Header />            
+      <div className="pt-20"></div>
       {/* Add SearchBar component below the Header */}
       <div className="container mx-auto px-4 py-4">
         <SearchBar />
