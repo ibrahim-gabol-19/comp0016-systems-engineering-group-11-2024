@@ -4,3 +4,4 @@ django-cors-headers
 pylint
 pylint_django
 sentence-transformers
+djangorestframework-simplejwt
