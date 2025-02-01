@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/login/",
+        "https://group11.ibrahimgabol.com/api/auth/login/",
         {
           username,
           password,

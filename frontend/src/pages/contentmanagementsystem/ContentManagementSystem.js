@@ -60,13 +60,13 @@ const ContentManagementSystem = () => {
   // Fetch articles from the API when the component is mounted
   useEffect(() => {
     if (selectedCategory === "Articles") {
-      fetch("http://127.0.0.1:8000/articles/")
+      fetch("https://group11.ibrahimgabol.com/articles/")
         .then((response) => response.json())
         .then((data) => setArticles(data))
         .catch((error) => console.error("Error fetching articles:", error));
     }
     if (selectedCategory === "Events") {
-      fetch("http://127.0.0.1:8000/events/")
+      fetch("https://group11.ibrahimgabol.com/events/")
         .then((response) => response.json())
         .then((data) => setEvents(data))
         .catch((error) => console.error("Error fetching events:", error));

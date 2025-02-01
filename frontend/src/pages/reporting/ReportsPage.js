@@ -23,7 +23,7 @@ const ReportsPage = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/reports/");
+      const response = await axios.get("https://group11.ibrahimgabol.com/reports/");
       const newReports = response.data;
       setReports(newReports);
 

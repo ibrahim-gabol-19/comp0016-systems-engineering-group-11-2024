@@ -30,7 +30,7 @@ const DetailedArticlePage = () => {
       setIsEditing(false); // Initially view preview when editing an existing article
 
       axios
-        .get(`http://127.0.0.1:8000/articles/${articleId}/`)
+        .get(`https://group11.ibrahimgabol.com/articles/${articleId}/`)
         .then((response) => {
           const article = response.data;
           setTitle(article.title || "");
@@ -63,7 +63,7 @@ const DetailedArticlePage = () => {
       if (articleId !== NEW_ARTICLE_ID) {
         // PUT operation for updating an existing article
         await axios.put(
-          `http://127.0.0.1:8000/articles/${articleId}/`,
+          `https://group11.ibrahimgabol.com/articles/${articleId}/`,
           formData,
           {
             headers: {
@@ -74,7 +74,7 @@ const DetailedArticlePage = () => {
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        await axios.post("http://127.0.0.1:8000/articles/", formData, {
+        await axios.post("https://group11.ibrahimgabol.com/articles/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

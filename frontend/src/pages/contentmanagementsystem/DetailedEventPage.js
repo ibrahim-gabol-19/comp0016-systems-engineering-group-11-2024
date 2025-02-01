@@ -32,7 +32,7 @@ const DetailedEventPage = () => {
 
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(`https://group11.ibrahimgabol.com/events/${eventId}/`)
         .then((response) => {
           const event = response.data;
           console.log("API response:", event); // Log the API response
@@ -87,7 +87,7 @@ const DetailedEventPage = () => {
         // PUT operation for updating an existing article
        
          await axios.put(
-          `http://127.0.0.1:8000/events/${eventId}/`,
+          `https://group11.ibrahimgabol.com/events/${eventId}/`,
           formData,
           {
             headers: {
@@ -100,7 +100,7 @@ const DetailedEventPage = () => {
         
         // POST operation for creating a new article
         await axios.post(
-          "http://127.0.0.1:8000/events/",
+          "https://group11.ibrahimgabol.com/events/",
           formData,
           {
             headers: {

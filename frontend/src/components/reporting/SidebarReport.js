@@ -23,7 +23,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleUpvote = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/" + selectedMarker.id + "/upvote/"
+        "https://group11.ibrahimgabol.com/reports/" + selectedMarker.id + "/upvote/"
       );
       if (response.status === 200) {
         fetchReports();
@@ -55,7 +55,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         };
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/reportdiscussion/",
+          "https://group11.ibrahimgabol.com/reportdiscussion/",
           discussionMessage,
           {
             headers: {
@@ -94,7 +94,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/",
+        "https://group11.ibrahimgabol.com/reports/",
         formData,
         {
           headers: {

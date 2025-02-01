@@ -53,7 +53,7 @@ const SearchBar = () => {
     }
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search/`, {
+      const response = await axios.get(`https://group11.ibrahimgabol.com/search/`, {
         params: { query: userQuery },
       });
 

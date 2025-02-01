@@ -53,7 +53,7 @@ const SignUp = () => {
     }
     setError("");
     try {
-      await axios.post("http://localhost:8000/api/auth/signup/", {
+      await axios.post("https://group11.ibrahimgabol.com/api/auth/signup/", {
         username,
         email,
         password,
