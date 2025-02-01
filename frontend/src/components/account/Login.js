@@ -17,7 +17,7 @@ const Login = () => {
                 password,
             });
             login(response.data.access);
-            navigate('/dashboard');
+            navigate('/');
         } catch (error) {
             console.error('Error logging in:', error);
         }
