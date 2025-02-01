@@ -6,10 +6,42 @@ const SignUp = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumbers = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        if (password.length < minLength) {
+            return 'Password must be at least 8 characters long.';
+        }
+        if (!hasUpperCase) {
+            return 'Password must contain at least one uppercase letter.';
+        }
+        if (!hasLowerCase) {
+            return 'Password must contain at least one lowercase letter.';
+        }
+        if (!hasNumbers) {
+            return 'Password must contain at least one number.';
+        }
+        if (!hasSpecialChar) {
+            return 'Password must contain at least one special character.';
+        }
+        return '';
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+            setError(passwordError);
+            return;
+        }
+        setError('');
         try {
             await axios.post('http://localhost:8000/api/auth/signup/', {
                 username,
@@ -18,14 +50,15 @@ const SignUp = () => {
             });
             navigate('/login');
         } catch (error) {
+            setError(error.message);
             console.error('Error signing up:', error);
         }
     };
-      
+
     return (
-        <div className="h-[calc(100vh-80px)]  w-screen  bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="h-[calc(100vh-80px)] w-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
                     Sign up for an account
                 </h2>
             </div>
@@ -85,12 +118,13 @@ const SignUp = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
+                            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                         </div>
 
                         <div>
                             <button
                                 type="submit"
-                                className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                             >
                                 Sign up
                             </button>
