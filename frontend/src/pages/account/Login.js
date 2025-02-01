@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext"; // Assuming you have an auth context
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -95,6 +95,21 @@ const Login = () => {
               </button>
             </div>
           </form>
+
+          {/* Sign-up Link if not logged in */}
+          {!auth.isAuthenticated && (
+            <div className="mt-4 text-center">
+              <span className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <Link
+                  to="/signup" // Make sure to replace with the correct route
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Sign up
+                </Link>
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
