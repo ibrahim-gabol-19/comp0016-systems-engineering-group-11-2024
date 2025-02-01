@@ -8,9 +8,9 @@ import ContentManagementSystem from "./pages/contentmanagementsystem/ContentMana
 import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage";
 import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage";
 import ReportsPage from "./pages/reporting/ReportsPage";
-import SignUp from "./components/account/SignUp";
-import Login from "./components/account/Login";
-import ProtectedRoute from "./components/account/ProtectedRoute";
+import SignUp from "./pages/account/SignUp";
+import Login from "./pages/account/Login";
+import ProtectedRoute from "./pages/account/ProtectedRoute";
 
 const App = () => {
   return (
