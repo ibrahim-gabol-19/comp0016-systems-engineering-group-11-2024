@@ -11,21 +11,21 @@ const ForYouCard = () => {
       tag: "News",
       content: "Green Inc are proud to launch their first prototype!  😁",
       comment: "Awesome news!",
-      media: "https://via.placeholder.com/300x200", // Media image URL
+      media: "https://picsum.photos/550", // Media image URL
     },
     {
       name: "John Doe",
       tag: "Event",
       content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
       comment: "Sounds interesting!",
-      media: "https://via.placeholder.com/300x200",
+      media: "https://picsum.photos/551",
     },
     {
       name: "Emily Smith",
       tag: "Volunteering",
       content: "Join us in making a difference in the community! 🌍",
       comment: "It's a rewarding experience!",
-      media: "https://via.placeholder.com/300x200",
+      media: "https://picsum.photos/552",
     },
   ];
 
