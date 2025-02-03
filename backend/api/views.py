@@ -40,93 +40,115 @@ def is_structured_pdf(pdf_path):
         print(f"Error checking PDF structure: {e}")
     return False
 
+# ---------------------- STRUCTURED EXTRACTION HELPERS ---------------------- #
+
+def extract_structured_title(text):
+    match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+def extract_structured_date(text):
+    match = re.search(
+        r'Date:\s*(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*)?'
+        r'(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4}|\d{2}/\d{2}/\d{4})',
+        text,
+        re.IGNORECASE,
+    )
+    return normalise_date(match.group(1).strip()) if match else ""
+
+def extract_structured_time(text):
+    match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
+    return normalise_time(match.group(1).strip()) if match else ""
+
+def extract_structured_description(text):
+    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+def extract_structured_location(text):
+    match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+# ---------------------- UNSTRUCTURED EXTRACTION HELPERS ---------------------- #
+
+def extract_unstructured_title(sentences):
+    first_line = sentences[0] if sentences else ""
+    first_paragraph = " ".join(sentences[:2])  
+    return first_line if len(first_line.split()) > 3 else first_paragraph
+
+def extract_unstructured_date(text):
+    match = re.search(
+        r'\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*'
+        r'(\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}|\d{1,2}/\d{1,2}/\d{4})\b',
+        text,
+        re.IGNORECASE
+    )
+    return normalise_date(match.group(1).strip()) if match else ""
+
+def extract_unstructured_time(text):
+    match = re.search(r'\b\d{1,2}:\d{2}(?:\s*[APap][Mm])?\b', text)
+    return normalise_time(match.group(0).strip()) if match else ""
+
+def extract_unstructured_location(full_text, sentences):
+    """
+    Extract the location from unstructured text using NLP and regex.
+    
+    Args:
+        full_text (str): The full text extracted from the PDF.
+        sentences (list): List of sentences extracted from the text.
+
+    Returns:
+        str: The extracted location.
+    """
+    # **NLP-Based Location Extraction**
+    doc_nlp = nlp(full_text)
+    location_entities = [ent.text for ent in doc_nlp.ents if ent.label_ in ["GPE", "FAC", "ORG"]]
+
+    location = ""
+    if location_entities:
+        location = " ".join(location_entities)  # Combine multiple location-related entities
+
+    # **Backup: Regex-Based Location Extraction**
+    if not location:
+        location_keywords = [
+            "venue:", "address:", "location:", "find us at:", "event will take place at:", 
+            "the event is taking place at", "the venue is:", "the location is:", "event location:", 
+            "venue address:", "located at:", "happening at:", "taking place at:", "where:", 
+            "meet us at:", "our event will be at:", "the venue for this event is:", "come to:", 
+            "you'll find us at:", "visit us at:", "join us at:", "the event is scheduled at:", 
+            "held at:", "hosted at:", "takes place at:", "we are gathering at:", 
+            "this event is being held at:", "the address for this event is:", 
+            "this event is set to be at:", "gather with us at:"
+        ]
+        
+        for i, sentence in enumerate(sentences):
+            for keyword in location_keywords:
+                if keyword in sentence.lower():
+                    location_start = sentence.lower().index(keyword) + len(keyword)
+                    location = sentence[location_start:].strip()
+
+                    # Check if next sentence continues location
+                    if i + 1 < len(sentences):
+                        next_sentence = sentences[i + 1]
+                        if len(next_sentence.split()) < 10:
+                            location += " " + next_sentence.strip()
+                    break
+
+    # **Post-processing: Remove Unwanted Prefixes**
+    if location:
+        location = re.sub(
+            r'^(at the|located at|the venue is|the location is|venue address|event location|where is|where:|join us at|hosted at|held at|happening at|taking place at)\s*',
+            '', location, flags=re.IGNORECASE
+        ).strip()
+
+    return location
+
+def extract_unstructured_description(text):
+    return "\n\n".join(paragraph.strip() for paragraph in text.split("\n\n") if paragraph.strip())
+
+# ---------------------- GENERAL EVENT EXTRACTION FUNCTION ---------------------- #
 
 def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
     """
-    Extract event details and images from the content of a PDF file.
-    
-    Args:
-        pdf_path (str): Path to the input PDF file.
-        output_image_dir (str): Directory to save extracted images.
-
-    Returns:
-        dict: A dictionary containing extracted event details and images.
-    """
-    data = {
-        'title': '',
-        'date_of_event': '',
-        'time_of_event': '',
-        'description': '',
-        'location': '',
-        'images': []
-    }
-
-    try:
-        with fitz.open(pdf_path) as doc:
-            text = ""
-            for page_num, page in enumerate(doc, start=1):
-                # Extract text
-                text += page.get_text()
-
-                # Extract images
-                for img_index, img in enumerate(page.get_images(full=True), start=1):
-                    xref = img[0]
-                    base_image = doc.extract_image(xref)
-                    image_bytes = base_image["image"]
-                    image_ext = base_image["ext"]
-
-                    # Create output directory for images
-                    os.makedirs(output_image_dir, exist_ok=True)
-                    image_filename = f"event_image_page{page_num}_{img_index}.{image_ext}"
-                    image_path = os.path.join(output_image_dir, image_filename)
-
-                    with open(image_path, "wb") as image_file:
-                        image_file.write(image_bytes)
-                    
-                    data['images'].append(image_filename)
-
-        # Extract and normalise fields
-        title_match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
-        data['title'] = title_match.group(1).strip() if title_match else ""
-
-        date_match = re.search(
-            r'Date:\s*(?:(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*)?'
-            r'(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4}|\d{2}/\d{2}/\d{4})',
-            text,
-            re.IGNORECASE,
-        )
-        if date_match:
-            raw_date = date_match.group(1).strip()
-            data['date_of_event'] = normalise_date(raw_date)
-        else:
-            data['date_of_event'] = ""
-
-        time_match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
-        if time_match:
-            raw_time = time_match.group(1).strip()
-            data['time_of_event'] = normalise_time(raw_time)
-        else:
-            data['time_of_event'] = ""
-
-        # Extract description by finding "Description:" and capturing until the next key
-        description_match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
-        data['description'] = description_match.group(1).strip() if description_match else ""
-
-        # Extract location by finding "Location:" and capturing until the next key
-        location_match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', text, re.IGNORECASE | re.DOTALL)
-        data['location'] = location_match.group(1).strip() if location_match else ""
-
-    except Exception as e:
-        print(f"Error extracting event data: {e}")
-        data = {key: "" for key in data}
-        data['images'] = []  # Ensure images field is reset
-
-    return data
-
-
-def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_images"):
-    """
-    Extract event details and images from an unstructured PDF file using NLP and regex.
+    Extract event details and images from any type of PDF (structured, unstructured, or semi-structured).
     """
     data = {
         'title': '',
@@ -143,7 +165,6 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
             for page_num, page in enumerate(doc, start=1):
                 full_text += page.get_text() + "\n"
 
-                # Extract images
                 for img_index, img in enumerate(page.get_images(full=True), start=1):
                     xref = img[0]
                     base_image = doc.extract_image(xref)
@@ -151,7 +172,7 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
                     image_ext = base_image["ext"]
 
                     os.makedirs(output_image_dir, exist_ok=True)
-                    image_filename = f"event_unstructured_image_page{page_num}_{img_index}.{image_ext}"
+                    image_filename = f"event_image_page{page_num}_{img_index}.{image_ext}"
                     image_path = os.path.join(output_image_dir, image_filename)
 
                     with open(image_path, "wb") as image_file:
@@ -159,151 +180,31 @@ def extract_unstructured_event_data(pdf_path, output_image_dir="media/extracted_
                     
                     data['images'].append(image_filename)
 
-        # Process text
-        sentences = full_text.split("\n")
-        sentences = [sent.strip() for sent in sentences if sent.strip()]
+        sentences = [sent.strip() for sent in full_text.split("\n") if sent.strip()]
 
-        # Extract title
-        if sentences:
-            first_line = sentences[0]
-            first_paragraph = " ".join(sentences[:2])  
-            data['title'] = first_line if len(first_line.split()) > 3 else first_paragraph
+        structured_fields = {
+            'title': extract_structured_title(full_text),
+            'date_of_event': extract_structured_date(full_text),
+            'time_of_event': extract_structured_time(full_text),
+            'description': extract_structured_description(full_text),
+            'location': extract_structured_location(full_text)
+        }
 
-        # Extract date
-        date_match = re.search(
-            r'\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*'
-            r'(\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}'
-            r'|\d{1,2}/\d{1,2}/\d{4})\b',
-            full_text,
-            re.IGNORECASE
-        )
-        if date_match:
-            raw_date = date_match.group(1).strip()
-            data['date_of_event'] = normalise_date(raw_date)
-
-        # Extract time
-        time_matches = re.findall(r'\b\d{1,2}:\d{2}(?:\s*[APap][Mm])?\b', full_text)
-        if time_matches:
-            data['time_of_event'] = normalise_time(time_matches[0].strip())
-
-        # **NLP-Based Location Extraction**
-        doc_nlp = nlp(full_text)
-        location_entities = [ent.text for ent in doc_nlp.ents if ent.label_ in ["GPE", "FAC", "ORG"]]
-
-        location = ""
-        if location_entities:
-            location = " ".join(location_entities)  # Combine multiple location-related entities
-
-        # **Backup: Regex-Based Location Extraction**
-        if not location:
-            location_keywords = [
-                "venue:", "address:", "location:", "find us at:", "event will take place at:", 
-                "the event is taking place at", "the venue is:", "the location is:", "event location:", 
-                "venue address:", "located at:", "happening at:", "taking place at:", "where:", 
-                "meet us at:", "our event will be at:", "the venue for this event is:", "come to:", 
-                "you'll find us at:", "visit us at:", "join us at:", "the event is scheduled at:", 
-                "held at:", "hosted at:", "takes place at:", "we are gathering at:", 
-                "this event is being held at:", "the address for this event is:", 
-                "this event is set to be at:", "gather with us at:"
-            ]
-            
-            for i, sentence in enumerate(sentences):
-                for keyword in location_keywords:
-                    if keyword in sentence.lower():
-                        location_start = sentence.lower().index(keyword) + len(keyword)
-                        location = sentence[location_start:].strip()
-
-                        # Check if next sentence continues location
-                        if i + 1 < len(sentences):
-                            next_sentence = sentences[i + 1]
-                            if len(next_sentence.split()) < 10:
-                                location += " " + next_sentence.strip()
-                        break
-
-        # **Post-processing: Remove Unwanted Prefixes**
-        if location:
-            location = re.sub(
-                r'^(at the|located at|the venue is|the location is|venue address|event location|where is|where:|join us at|hosted at|held at|happening at|taking place at)\s*',
-                '', location, flags=re.IGNORECASE
-            ).strip()
-
-        data['location'] = location
-
-        # Extract description: Preserve paragraph gaps
-        description_paragraphs = full_text.split("\n\n")
-        formatted_description = "\n\n".join(paragraph.strip() for paragraph in description_paragraphs if paragraph.strip())
-        data['description'] = formatted_description
+        # Fill extracted structured fields, then use unstructured extraction if needed
+        data['title'] = structured_fields['title'] or extract_unstructured_title(sentences)
+        data['date_of_event'] = structured_fields['date_of_event'] or extract_unstructured_date(full_text)
+        data['time_of_event'] = structured_fields['time_of_event'] or extract_unstructured_time(full_text)
+        data['description'] = structured_fields['description'] or extract_unstructured_description(full_text)
+        data['location'] = structured_fields['location'] or extract_unstructured_location(full_text, sentences)
 
     except Exception as e:
-        print(f"Error extracting unstructured event data: {e}")
+        print(f"Error extracting event data: {e}")
         data = {key: '' for key in data}
         data['images'] = []
 
     return data
 
-def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracted_images"):
-    """
-    Extract article details and images from an unstructured PDF file using advanced heuristics and NLP.
-    """
-    data = {
-        'title': '',
-        'description': '',
-        'main_content': '',
-        'author': '',
-        'images': [],
-        'date': datetime.now().strftime('%d/%m/%Y')
-    }
 
-    try:
-        with fitz.open(pdf_path) as doc:
-            full_text = ""
-            for page_num, page in enumerate(doc, start=1):
-                full_text += page.get_text()
-
-                # Extract images
-                for img_index, img in enumerate(page.get_images(full=True), start=1):
-                    xref = img[0]
-                    base_image = doc.extract_image(xref)
-                    image_bytes = base_image["image"]
-                    image_ext = base_image["ext"]
-
-                    os.makedirs(output_image_dir, exist_ok=True)
-                    image_filename = f"article_unstructured_image_page{page_num}_{img_index}.{image_ext}"
-                    image_path = os.path.join(output_image_dir, image_filename)
-
-                    with open(image_path, "wb") as image_file:
-                        image_file.write(image_bytes)
-
-                    data['images'].append(image_filename)
-
-        # Process text with spaCy NLP
-        doc_nlp = nlp(full_text)
-        sentences = [sent.text.strip() for sent in doc_nlp.sents]
-
-        # Heuristic for title: First sentence or paragraph with significant proper nouns
-        if sentences:
-            first_line = sentences[0]
-            first_paragraph = " ".join(sentences[:2])  # Combine the first two sentences
-            candidate_title = Counter([token.text for token in nlp(first_paragraph) if token.pos_ in ["NOUN", "PROPN"]])
-            data['title'] = first_line if len(candidate_title) > 2 else first_paragraph
-
-        # Extract description: First 300 characters or a summary
-        data['description'] = full_text[:300]  # Use the first 300 characters
-
-        # Extract main content: Entire text
-        data['main_content'] = full_text
-
-        # Extract author: Look for patterns like "By [Author Name]"
-        author_pattern = re.search(r'\b[Bb]y\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)', full_text)
-        if author_pattern:
-            data['author'] = author_pattern.group(1).strip()
-
-    except Exception as e:
-        print(f"Error extracting unstructured article data: {e}")
-        data = {key: '' for key in data}
-        data['images'] = []  # Ensure images field is reset
-
-    return data
 
 def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
     """Extract article details and images from the content of a PDF file."""
@@ -556,7 +457,7 @@ def upload_pdf_and_extract_data(request, pdf_type):
             pdf_path = fs.path(filename)
 
             if pdf_type == 'event':
-                extracted_data = extract_event_data(pdf_path) if is_structured_pdf(pdf_path) else extract_unstructured_event_data(pdf_path)
+                extracted_data = extract_event_data(pdf_path)
             elif pdf_type == 'article':
                 extracted_data = extract_article_data(pdf_path) if is_structured_pdf(pdf_path) else extract_unstructured_article_data(pdf_path)
             else:
