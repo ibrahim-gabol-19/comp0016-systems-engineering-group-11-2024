@@ -13,9 +13,9 @@ class Event(models.Model):
     ]
 
     POI_TYPES = [
-        ('landmark', 'Landmark'),
-        ('museum', 'Museum'),
-        ('park', 'Park'),
+        ('landmarks', 'Landmarks'),
+        ('museums', 'Museums'),
+        ('parks', 'Parks'),
         ('other', 'Other'),
     ]
 

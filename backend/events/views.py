@@ -6,6 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Event
 from .serializers import EventSerializer
+from rest_framework.decorators import action
+
 
 
 class EventsViewSet(viewsets.ModelViewSet):
@@ -38,3 +40,22 @@ class EventsViewSet(viewsets.ModelViewSet):
             })
 
         return Response(event_dict)
+    
+    @action(detail=False, methods=['get'])
+    def pois(self, request):
+        pois = Event.objects.filter(event_type="point_of_interest").values("title", "opening_times", "description", "poi_type", "main_image")
+        poi_dict = {}
+
+        for poi in pois:
+            category = poi["poi_type"] or "Other"
+            if category not in poi_dict:
+                poi_dict[category] = []
+            poi_dict[category].append({
+                "title": poi["title"],
+                "openTimes": poi["opening_times"] or "No opening hours available",
+                "description": poi["description"],
+                "image": poi["main_image"] or "https://picsum.photos/950",
+                "category": category
+            })
+
+        return Response(poi_dict)
