@@ -8,30 +8,6 @@ const PointOfInterest = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Sample events data for each category
-  // const poiEvents = {
-  //   Landmarks: [
-  //     { title: "Big Ben", openTimes: "9:00 AM - 6:00 PM", description: "Iconic clock tower located in London.", image: "https://picsum.photos/850" },
-  //     { title: "Tower of London", openTimes: "10:00 AM - 5:30 PM", description: "Historic castle on the River Thames.", image: "https://picsum.photos/750" },
-  //     { title: "London Eye", openTimes: "10:00 AM - 8:00 PM", description: "Famous observation wheel offering panoramic views.", image: "https://picsum.photos/1000" },
-  //     { title: "The Shard", openTimes: "9:00 AM - 10:00 PM", description: "Tallest building in London with an observation deck.", image: "https://picsum.photos/915" },
-  //     { title: "Buckingham Palace", openTimes: "9:00 AM - 7:00 PM", description: "The official residence of the British monarch.", image: "https://picsum.photos/910" },
-  //     { title: "Stonehenge", openTimes: "9:00 AM - 5:00 PM", description: "Prehistoric monument consisting of large stone circles.", image: "https://picsum.photos/1500" },
-  //     { title: "Westminster Abbey", openTimes: "9:30 AM - 3:30 PM", description: "Historic church and burial site of many monarchs.", image: "https://picsum.photos/720" },
-  //     { title: "London Bridge", openTimes: "Open 24 hours", description: "Iconic bridge spanning the River Thames.", image: "https://picsum.photos/760#" },
-  //   ],
-  //   Museums: [
-  //     { title: "British Museum", openTimes: "10:00 AM - 6:00 PM", description: "Explore world history and culture.", image: "https://picsum.photos/150" },
-  //     { title: "Natural History Museum", openTimes: "10:00 AM - 5:50 PM", description: "Discover the wonders of the natural world.", image: "https://picsum.photos/6750" },
-  //   ],
-  //   Parks: [
-  //     { title: "Hyde Park", openTimes: "Open 24 hours", description: "Relax in one of London's largest parks.", image: "https://picsum.photos/950" },
-  //   ],
-  //   Other: [
-  //     { title: "Camden Market", openTimes: "10:00 AM - 7:00 PM", description: "Browse eclectic shops and food stalls.", image: "https://picsum.photos/550" },
-  //   ],
-  // };
-
   useEffect(() => {
     fetchPoiEvents();
   }, []);

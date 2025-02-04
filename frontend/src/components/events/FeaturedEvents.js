@@ -5,28 +5,6 @@ const FeaturedEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Placeholder data for Featured Events
-  // const featuredEvents = [
-  //   {
-  //     title: "Tech Conference 2024",
-  //     openTimes: "9:00 AM - 5:00 PM",
-  //     description: "A premier conference showcasing cutting-edge technology.",
-  //     image: "https://picsum.photos/550",
-  //   },
-  //   {
-  //     title: "Food Festival",
-  //     openTimes: "11:00 AM - 9:00 PM",
-  //     description: "Taste the best dishes from around the world.",
-  //     image: "https://picsum.photos/840",
-  //   },
-  //   {
-  //     title: "Music Concert",
-  //     openTimes: "6:00 PM - 11:00 PM",
-  //     description: "Enjoy live music performances from top artists.",
-  //     image: "https://picsum.photos/830",
-  //   },
-  // ];
-
   useEffect(() => {
     const fetchFeaturedEvents = async () => {
       try {

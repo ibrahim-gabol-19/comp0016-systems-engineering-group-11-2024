@@ -8,26 +8,6 @@ const Calendar = () => {
   const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Fake event data
-  // const events = {
-  //   "2025-01-20": [
-  //     { time: "10:00 AM", title: "Guided Tour", description: "Description given here." },
-  //   ],
-  //   "2025-01-21": [
-  //     { time: "1:00 PM", title: "Community Lunch", description: "Join neighbours and local residents at Cafe X for a community lunch and networking." },
-  //     { time: "3:00 PM", title: "Park Renovation Volunteering", description: "Collaborate with volunteers to plan milestones for the park improvement project." },
-  //   ],
-  //   "2025-01-23": [
-  //     { time: "9:00 AM", title: "Health Awareness Session", description: "Learn about wellness tips and resources available at the community health centre." },
-  //   ],
-  //   "2025-01-26": [
-  //     { time: "8:00 AM", title: "Community Breakfast Meetup", description: "Start your morning with coffee and conversation at the town square cafe." },
-  //     { time: "12:00 PM", title: "Virtual Workshop: Growing Your Garden", description: "Learn gardening tips and tricks from local experts in this interactive online session." },
-  //     { time: "3:00 PM", title: "Neighbourhood Potluck", description: "Bring a dish to share and enjoy a community meal with fellow residents." },
-  //     { time: "6:00 PM", title: "Evening Nature Walk", description: "Join the local walking group for a stroll through the park, guided by an environmentalist." },
-  //   ],
-  // };
-
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
   const startOfWeek = currentWeek.startOf("week").add(1, "day");
