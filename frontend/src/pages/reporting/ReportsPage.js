@@ -54,35 +54,36 @@ const ReportsPage = () => {
   return (
     <div className="h-screen flex flex-col">
       <Header />
-      <div className="h-20"></div>
-
-      <div className=" h-full w-full flex">
-        <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6">
-          <SidebarReport
-            selectedMarker={selectedMarker}
-            newMarker={newMarker}
-            fetchReports={fetchReports}
-          ></SidebarReport>
-        </div>
-        <div className=" h-full flex flex-col w-4/6 pb-9">
-          <div className="text-sm justify-center text-center font-bold pb-2">
-            <select
-              value={filter}
-              onChange={filterChange}
-              className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="open">Open Issues</option>
-              <option value="resolved">Resolved Issues</option>
-              <option value="closed">Closed Issues</option>
-            </select>
+      <div className="pt-20"></div>
+      <div className="h-full flex flex-col">
+        <div className=" h-full w-full flex">
+          <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6">
+            <SidebarReport
+              selectedMarker={selectedMarker}
+              newMarker={newMarker}
+              fetchReports={fetchReports}
+            ></SidebarReport>
           </div>
-          <MapComponent
-            onMarkerSelected={handleMarkerSelected}
-            onNewMarkerSelected={handleNewMarkerSelected}
-            reports={reports}
-            newMarker={newMarker}
-            filter={filter}
-          ></MapComponent>
+          <div className=" h-full flex flex-col w-4/6 pb-9">
+            <div className="text-sm justify-center text-center font-bold pb-2">
+              <select
+                value={filter}
+                onChange={filterChange}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="open">Open Issues</option>
+                <option value="resolved">Resolved Issues</option>
+                <option value="closed">Closed Issues</option>
+              </select>
+            </div>
+            <MapComponent
+              onMarkerSelected={handleMarkerSelected}
+              onNewMarkerSelected={handleNewMarkerSelected}
+              reports={reports}
+              newMarker={newMarker}
+              filter={filter}
+            ></MapComponent>
+          </div>
         </div>
       </div>
     </div>
