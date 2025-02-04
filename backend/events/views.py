@@ -59,3 +59,20 @@ class EventsViewSet(viewsets.ModelViewSet):
             })
 
         return Response(poi_dict)
+
+    @action(detail=False, methods=['get'])
+    def featured(self, request):
+        featured_events = Event.objects.filter(is_featured=True).values(
+            "title", "opening_times", "description", "main_image", "event_type"
+        )
+        featured_event_list = [
+            {
+                "title": event["title"],
+                "openTimes": event["opening_times"] or "N/A",
+                "description": event["description"],
+                "image": event["main_image"] or "https://picsum.photos/550",
+                "event_type": event["event_type"]
+            }
+            for event in featured_events
+        ]
+        return Response(featured_event_list)
