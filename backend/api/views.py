@@ -16,7 +16,6 @@ import fitz  # PyMuPDF for PDF processing
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
-
 class ItemViewSet(ViewSet):
     """
     Example ViewSet for handling item-related operations.
@@ -40,7 +39,6 @@ def is_structured_pdf(pdf_path):
         print(f"Error checking PDF structure: {e}")
     return False
 
-# ---------------------- STRUCTURED EXTRACTION HELPERS ---------------------- #
 
 def extract_structured_title(text):
     match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
@@ -67,7 +65,20 @@ def extract_structured_location(text):
     match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
-# ---------------------- UNSTRUCTURED EXTRACTION HELPERS ---------------------- #
+def extract_structured_main_content(text):
+    """
+    Extracts the main content from a structured PDF.
+    """
+    match = re.search(r'Main Content:\s*(.+)', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+def extract_structured_author(text):
+    """
+    Extracts the author from a structured PDF.
+    """
+    match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""    
+
 
 def extract_unstructured_title(sentences):
     first_line = sentences[0] if sentences else ""
@@ -144,7 +155,52 @@ def extract_unstructured_location(full_text, sentences):
 def extract_unstructured_description(text):
     return "\n\n".join(paragraph.strip() for paragraph in text.split("\n\n") if paragraph.strip())
 
-# ---------------------- GENERAL EVENT EXTRACTION FUNCTION ---------------------- #
+def extract_unstructured_main_content(text):
+    """
+    Extracts the main content from an unstructured PDF.
+    """
+    return text.strip()
+
+def extract_unstructured_author(text):
+    """
+    Extract author name from unstructured text.
+    - First, use regex to find clear author patterns.
+    - If regex fails, use spaCy NLP but ensure the name appears early or late in the text.
+    """
+
+    author_patterns = [
+        r'\b[Bb]y\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "By John Doe"
+        r'\b[Bb]yline:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Byline: Jane Smith"
+        r'\b[Bb]y:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "By: Alice Brown"
+        r'\b[Aa]rticle\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Article by Alex Green"
+        r'\b[Rr]eported\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Reported by Anna Johnson"
+        r'\b[Cc]ontributed\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Contributed by Emily White"
+        r'\b[Ee]ditor:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Editor: Michael Brown"
+        r'\b[Pp]ublished\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Published by Daniel Grey"
+        r'\b[Rr]eport\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "Report by Sarah Black"
+        r'\b[Ss]tory\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'  # "Story by Chris Redfield"
+    ]
+
+    # Try regex extraction first
+    for pattern in author_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1).strip()
+
+    # Fallback: Use spaCy NLP for named entity recognition (NER)
+    doc_nlp = nlp(text)
+    text_length = len(text)
+
+    for ent in doc_nlp.ents:
+        if ent.label_ == "PERSON":
+            pos = text.find(ent.text)
+            # Ensure the entity appears either at the start (first 300 chars) or end (last 300 chars)
+            if pos < 300 or (text_length > 300 and pos > text_length - 300):
+                return ent.text.strip()
+
+    # If no author is found, return an empty string
+    return ""    
+
 
 def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
     """
@@ -205,70 +261,9 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
     return data
 
 
-
 def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
-    """Extract article details and images from the content of a PDF file."""
-    data = {
-        'title': '',
-        'description': '',
-        'main_content': '',
-        'author': '',
-        'images': [],
-        'date': datetime.now().strftime('%d/%m/%Y')
-    }
-
-    try:
-        with fitz.open(pdf_path) as doc:
-            text = ""
-            image_counter = 0
-
-            for page_num, page in enumerate(doc, start=1):
-                # Extract text content
-                text += page.get_text()
-
-                # Extract images
-                for img_index, img in enumerate(page.get_images(full=True), start=1):
-                    xref = img[0]  # Reference to the image
-                    base_image = doc.extract_image(xref)
-                    image_bytes = base_image["image"]
-                    image_ext = base_image["ext"]  # Image file extension
-
-                    # Save the extracted image to the output directory
-                    os.makedirs(output_image_dir, exist_ok=True)
-                    image_filename = f"image_page{page_num}_{img_index}.{image_ext}"
-                    image_path = os.path.join(output_image_dir, image_filename)
-                    with open(image_path, "wb") as image_file:
-                        image_file.write(image_bytes)
-                    
-                    data['images'].append(image_filename)
-                    image_counter += 1
-
-            # Extract and normalise title
-            title_match = re.search(r'Title:\s*(.+?)(?=\n(?:Description:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
-            data['title'] = title_match.group(1).strip() if title_match else ""
-
-            # Extract description
-            description_match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
-            data['description'] = description_match.group(1).strip() if description_match else ""
-
-            # Extract main content
-            main_content_match = re.search(r'Main Content:\s*(.+?)(?=\n(?:Title:|Description:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
-            data['main_content'] = main_content_match.group(1).strip() if main_content_match else ""
-
-            # Extract author
-            author_match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', text, re.IGNORECASE | re.DOTALL)
-            data['author'] = author_match.group(1).strip() if author_match else ""
-
-    except Exception as e:
-        print(f"Error extracting article data: {e}")
-        data = {key: None for key in data}
-        data['date'] = datetime.now().strftime('%d/%m/%Y')  # Ensure date is always set
-
-    return data
-
-def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracted_images"):
     """
-    Extract article details and images from an unstructured PDF file using advanced heuristics and NLP.
+    Extract article details and images from any type of PDF (structured, unstructured, or semi-structured).
     """
     data = {
         'title': '',
@@ -283,9 +278,8 @@ def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracte
         with fitz.open(pdf_path) as doc:
             full_text = ""
             for page_num, page in enumerate(doc, start=1):
-                full_text += page.get_text()
+                full_text += page.get_text() + "\n"
 
-                # Extract images
                 for img_index, img in enumerate(page.get_images(full=True), start=1):
                     xref = img[0]
                     base_image = doc.extract_image(xref)
@@ -293,7 +287,7 @@ def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracte
                     image_ext = base_image["ext"]
 
                     os.makedirs(output_image_dir, exist_ok=True)
-                    image_filename = f"article_unstructured_image_page{page_num}_{img_index}.{image_ext}"
+                    image_filename = f"article_image_page{page_num}_{img_index}.{image_ext}"
                     image_path = os.path.join(output_image_dir, image_filename)
 
                     with open(image_path, "wb") as image_file:
@@ -301,35 +295,28 @@ def extract_unstructured_article_data(pdf_path, output_image_dir="media/extracte
 
                     data['images'].append(image_filename)
 
-        # Process text with spaCy NLP
-        doc_nlp = nlp(full_text)
-        sentences = [sent.text.strip() for sent in doc_nlp.sents]
+        sentences = [sent.strip() for sent in full_text.split("\n") if sent.strip()]
 
-        # Heuristic for title: First sentence or paragraph with significant proper nouns
-        if sentences:
-            first_line = sentences[0]
-            first_paragraph = " ".join(sentences[:2])  # Combine the first two sentences
-            candidate_title = Counter([token.text for token in nlp(first_paragraph) if token.pos_ in ["NOUN", "PROPN"]])
-            data['title'] = first_line if len(candidate_title) > 2 else first_paragraph
+        structured_fields = {
+            'title': extract_structured_title(full_text),
+            'description': extract_structured_description(full_text),
+            'main_content': extract_structured_main_content(full_text),
+            'author': extract_structured_author(full_text)
+        }
 
-        # Extract description: First 300 characters or a summary
-        data['description'] = full_text[:300]  # Use the first 300 characters
-
-        # Extract main content: Entire text
-        data['main_content'] = full_text
-
-        # Extract author: Look for patterns like "By [Author Name]"
-        author_pattern = re.search(r'\b[Bb]y\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)', full_text)
-        if author_pattern:
-            data['author'] = author_pattern.group(1).strip()
+        # Fill extracted structured fields, then use unstructured extraction if needed
+        data['title'] = structured_fields['title'] or extract_unstructured_title(sentences)
+        data['description'] = structured_fields['description'] or extract_unstructured_description(full_text)
+        data['main_content'] = structured_fields['main_content'] or extract_unstructured_main_content(full_text)
+        data['author'] = structured_fields['author'] or extract_unstructured_author(full_text)
 
     except Exception as e:
-        print(f"Error extracting unstructured article data: {e}")
+        print(f"Error extracting article data: {e}")
         data = {key: '' for key in data}
-        data['images'] = []  # Ensure images field is reset
+        data['images'] = []  # Reset images field
+        data['date'] = datetime.now().strftime('%d/%m/%Y')
 
     return data
-
 
 def extract_event_data_ics(ics_path):
     """
@@ -459,7 +446,7 @@ def upload_pdf_and_extract_data(request, pdf_type):
             if pdf_type == 'event':
                 extracted_data = extract_event_data(pdf_path)
             elif pdf_type == 'article':
-                extracted_data = extract_article_data(pdf_path) if is_structured_pdf(pdf_path) else extract_unstructured_article_data(pdf_path)
+                extracted_data = extract_article_data(pdf_path)
             else:
                 return JsonResponse({'error': 'Invalid pdf_type'}, status=400)
 
