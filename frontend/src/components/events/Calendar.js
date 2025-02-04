@@ -5,7 +5,7 @@ const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventPosition, setSelectedEventPosition] = useState(null);
-  const [events, setEvents] = useState({}); // State for fetched events
+  const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
 
   // Fake event data
@@ -36,12 +36,12 @@ const Calendar = () => {
   );
 
   useEffect(() => {
-    fetchEvents();
+    fetchScheduledEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchScheduledEvents = async () => {
     try {
-      const response = await fetch("http://localhost:8000/events/"); // Adjust this if your API is at a different endpoint
+      const response = await fetch("http://localhost:8000/events/scheduled/");
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
       setEvents(data);

@@ -14,7 +14,16 @@ class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def list(self, request):
+    def list(self, request): #For the /events/ endpoint
+        event_fields = [field.name for field in Event._meta.fields]
+
+        # Query all events, handling potential null values gracefully
+        all_events = Event.objects.values(*event_fields)
+
+        return Response(list(all_events))
+
+    @action(detail=False, methods=['get'])
+    def scheduled(self, request): #For the /events/scheduled/ endpoint
         events = Event.objects.all().values("title", "date", "time", "description")
         event_dict = {}
 
@@ -42,7 +51,7 @@ class EventsViewSet(viewsets.ModelViewSet):
         return Response(event_dict)
     
     @action(detail=False, methods=['get'])
-    def pois(self, request):
+    def pois(self, request): #For the /events/pois/ endpoint
         pois = Event.objects.filter(event_type="point_of_interest").values("title", "opening_times", "description", "poi_type", "main_image")
         poi_dict = {}
 
@@ -61,7 +70,7 @@ class EventsViewSet(viewsets.ModelViewSet):
         return Response(poi_dict)
 
     @action(detail=False, methods=['get'])
-    def featured(self, request):
+    def featured(self, request): #For the /events/featured/ endpoint
         featured_events = Event.objects.filter(is_featured=True).values(
             "title", "opening_times", "description", "main_image", "event_type"
         )

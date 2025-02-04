@@ -34,10 +34,11 @@ def preprocess_data(articles, events):
         datasets.append({
             "source": "event",
             "documents": [
-                f"{e['title']} {e['description']} {e['location']} "
-                f"{e['date']} {e['time']}"
+                f"{e['title']} {e['event_type']} {e['description']} "
+                f"{e['location']} {e['date']} {e['time']} {e['opening_times']}"
+                f"{e['poi_type']}"
                 for e in events if all(key in e for key in ["title",
-                "description", "location", "date", "time"])
+                "event_type", "description", "location", "date", "time", "opening_times", "poi_type"])
             ],
             "entries": events,  # Keep full event data for frontend use
         })
