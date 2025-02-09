@@ -1,3 +1,10 @@
+# accounts/urls.py
+
+"""
+This module defines the URL patterns for user authentication,
+including sign-up and login views.
+"""
+
 from django.urls import path
 from .views import SignUpView, LoginView
 
