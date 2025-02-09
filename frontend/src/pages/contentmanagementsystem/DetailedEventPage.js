@@ -4,9 +4,8 @@ import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/N
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
-
 import axios from "axios";
- 
+
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
   const quillRefTitle = useRef();
@@ -20,26 +19,29 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
+  const [eventType, setEventType] = useState("");
+  const [poiType, setPoiType] = useState("");
+  const [openingTimes, setOpeningTimes] = useState("");
+  const [isFeatured, setIsFeatured] = useState(false);
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
-      // 2 is default value for new article
-      console.log("useEffect is running");
-      console.log("event id received was", eventId);
-      setIsEditing(false); // initially viwe preview when clicking box
-
-      // Fetch article data when editing an existing article
       axios
         .get(`http://127.0.0.1:8000/events/${eventId}/`)
         .then((response) => {
           const event = response.data;
-          console.log("API response:", event); // Log the API response
           setTitle(event.title || "");
-          console.log("Title set ", event.title);
           setTime(event.time || "");
           setDate(event.date || "");
           setDescription(event.description || "");
           setLocation(event.location || "");
+          setAddress(event.address || "");
+          setEventType(event.event_type || "");
+          setPoiType(event.poi_type || "");
+          setIsFeatured(event.is_featured || false);
+          setOpeningTimes(event.opening_times || "");
+
           if (event.main_image) {
             setUploadedFiles([event.main_image]);
           }
@@ -51,62 +53,43 @@ const DetailedEventPage = () => {
     }
   }, [eventId]);
 
-  const handleFilesUploaded = (acceptedFiles) => {
-    if (acceptedFiles.length > 1) {
-      alert("Only one image can be uploaded.");
-      return;
-    }
-    setUploadedFiles([acceptedFiles[0]]);
-  };
-
   const handleSave = async () => {
-    console.log("Save button clicked");
-
-    if (!title || !date || !time || !description || !location) {
-      alert("Please fill in all fields before saving.");
+    if (eventType === "scheduled" && (!title || !date || !time || !description || !location)) {
+      alert("Please fill in all fields for a Scheduled Event before saving.");
       return;
     }
-
-    // Prepare the form data to be sent to the backend
+    
+    if (eventType === "poi" && (!title || !description || !location || !openingTimes || !poiType)) {
+      alert("Please fill in all fields for a Point of Interest before saving.");
+      return;
+    }
+    
     const formData = new FormData();
     formData.append("title", title);
     formData.append("date", date);
     formData.append("time", time);
     formData.append("description", description);
     formData.append("location", location);
+    formData.append("address", address);
+    formData.append("event_type", eventType);
+    formData.append("poi_type", poiType);
+    formData.append("is_featured", isFeatured);
+    formData.append("opening_times", openingTimes);
 
-    // Add uploaded files to formData (only one image)
     if (uploadedFiles.length > 0 && typeof uploadedFiles[0] !== "string") {
       formData.append("main_image", uploadedFiles[0]);
     }
 
     try {
       if (eventId !== NEW_EVENT_ID) {
-        // PUT operation for updating an existing article
-       
-         await axios.put(
-          `http://127.0.0.1:8000/events/${eventId}/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         alert("Event updated successfully!");
       } else {
-        
-        // POST operation for creating a new article
-        await axios.post(
-          "http://127.0.0.1:8000/events/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-      
+        await axios.post("http://127.0.0.1:8000/events/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         alert("Event saved successfully!");
       }
     } catch (error) {
@@ -117,113 +100,79 @@ const DetailedEventPage = () => {
 
   return (
     <div>
-      <div className="p-6">
-        <button
-          onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
-        >
+      <div className="p-6 flex justify-between items-center">
+        <button onClick={() => setIsEditing((prev) => !prev)} className="bg-blue-500 text-white px-4 py-2 rounded mr-4">
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
-
-        <button
-          onClick={handleSave}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Save
-        </button>
+        <select value={eventType} onChange={(e) => setEventType(e.target.value)} className="border rounded px-2 py-1">
+          <option value="">Select Event Type</option>
+          <option value="scheduled">Scheduled Event</option>
+          <option value="poi">Point of Interest</option>
+        </select>
+        <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">Save</button>
       </div>
+      {isEditing ? (
+        <>
+        {eventType === "scheduled" && (
+          <>
+            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
+            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={setDescription} />
+            <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />
+            <MainImage onFilesUploaded={setUploadedFiles} />
+            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={setLocation} />
+            <label className="flex items-center space-x-2 mt-2">
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="form-checkbox"
+              />
+              <span>Featured Event</span>
+            </label>
 
-      <div className="flex justify-center items-center overflow-hidden relative">
-        {isEditing ? (
-          <div>
-            <TitleEditor
-              ref={quillRefTitle}
-              placeholderText="Title"
-              fontSize="16px"
-              defaultValue={title}
-              onTextChange={setTitle}
-            />
-            <DateTime
-              date={date}
-              time={time}
-              onDateChange={setDate}
-              onTimeChange={setTime}
-            />
-
-            <NoToolbarEditor
-              ref={quillRefDescription}
-              placeholderText="Description"
-              fontSize="16px"
-              defaultValue={description}
-              onTextChange={setDescription}
-            />
-            <MainImage onFilesUploaded={handleFilesUploaded} />
-            <NoToolbarEditor
-              ref={quillRefLocation}
-              placeholderText="Location"
-              fontSize="16px"
-              defaultValue={location}
-              onTextChange={setLocation}
-            />
-          </div>
-        ) : (
-          <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-            <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
-              {/* Title and Author Section */}
-              <div className="flex items-center justify-between">
-                <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">
-                  {title}
-                </h1>
-                <p className="text-lg text-gray-500 ml-4">
-                  {date} {time}
-                </p>
-              </div>
-
-              <div className="mt-4">
-                {uploadedFiles.length > 0 && uploadedFiles[0] && (
-                  <img
-                    src={
-                      typeof uploadedFiles[0] === "string"
-                        ? uploadedFiles[0]
-                        : URL.createObjectURL(uploadedFiles[0])
-                    }
-                    alt="Main"
-                    className="w-full h-64 object-cover rounded-md shadow-md"
-                  />
-                )}
-              </div>
-
-              {/* Description Section */}
-              <p className="text-lg mt-6 text-gray-600 italic text-center">
-                {description}
-              </p>
-
-              {/* Main Content Section */}
-              <p className="text-lg mt-4 text-gray-700 text-center">
-                {location}
-              </p>
-
-              {/* Images */}
-              <div className="mt-6 flex justify-center flex-wrap gap-6">
-                {uploadedFiles.length > 1 &&
-                  uploadedFiles.slice(1).map((file, index) => (
-                    <div
-                      key={index}
-                      className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
-                    >
-                      <p className="text-sm text-gray-700">{file.name}</p>
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt="Uploaded File"
-                        className="w-full h-48 object-cover rounded-md mt-2"
-                      />
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
+          </>
         )}
-      </div>
+        {eventType === "poi" && (
+          <>
+            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
+            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={setDescription} />
+            <NoToolbarEditor placeholderText="Opening Times" fontSize="16px" defaultValue={openingTimes} onTextChange={setOpeningTimes} />
+            <select value={poiType} onChange={(e) => setPoiType(e.target.value)} className="border rounded px-2 py-1 mt-2">
+              <option value="">Select POI Type</option>
+              <option value="landmarks">Landmarks</option>
+              <option value="museums">Museums</option>
+              <option value="parks">Parks</option>
+              <option value="other">Other</option>
+            </select>
+            <MainImage onFilesUploaded={setUploadedFiles} />
+            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={setLocation} />
+            <label className="flex items-center space-x-2 mt-2">
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="form-checkbox"
+              />
+              <span>Featured Event</span>
+            </label>
+            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
+          </>
+        )}
+        </>
+      ) : (
+        <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+          <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+            <div className="flex items-center justify-between">
+              <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">{title}</h1>
+              <p className="text-lg text-gray-500 ml-4">{date} {time}</p>
+              <p className="text-lg text-gray-500 ml-4">{eventType}</p>
+            </div>
+            <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
+            <p className="text-lg mt-4 text-gray-700 text-center">{location}</p>
+            <p className="text-lg mt-4 text-gray-700 text-center">{address}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
