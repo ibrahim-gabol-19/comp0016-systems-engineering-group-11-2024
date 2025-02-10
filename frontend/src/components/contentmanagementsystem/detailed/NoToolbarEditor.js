@@ -51,7 +51,7 @@ const NoToolbarEditor = forwardRef(
       quill.root.style.minHeight = "30px"; // Minimum height for the editor
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling
       quill.root.style.overflowX = "auto";
-
+      
       ref.current = quill;
       quillRef.current = quill;
       quill.root.style.direction = "ltr";

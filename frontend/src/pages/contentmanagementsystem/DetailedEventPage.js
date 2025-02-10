@@ -8,9 +8,9 @@ import axios from "axios";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
-  const quillRefTitle = useRef();
-  const quillRefDescription = useRef();
-  const quillRefLocation = useRef();
+  const quillRefTitle = useRef(null);
+  const quillRefDescription = useRef(null);
+  const quillRefLocation = useRef(null);
   const { eventId } = useParams();
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
@@ -47,19 +47,19 @@ const DetailedEventPage = () => {
           }
         })
         .catch((error) => {
-          console.error("Error fetching article:", error);
-          alert("Failed to fetch article data. Please try again.");
+          console.error("Error fetching event:", error);
+          alert("Failed to fetch event data. Please try again.");
         });
     }
   }, [eventId]);
 
   const handleSave = async () => {
-    if (eventType === "scheduled" && (!title || !date || !time || !description || !location)) {
+    if (eventType === "scheduled" && (!title || !date || !time || !description)) {
       alert("Please fill in all fields for a Scheduled Event before saving.");
       return;
     }
     
-    if (eventType === "poi" && (!title || !description || !location || !openingTimes || !poiType)) {
+    if (eventType === "point_of_interest" && (!title || !description || !location || !poiType)) {
       alert("Please fill in all fields for a Point of Interest before saving.");
       return;
     }
@@ -98,81 +98,74 @@ const DetailedEventPage = () => {
     }
   };
 
+  const CommonFields = ({ title, setTitle, description, setDescription, location, setLocation, isFeatured, setIsFeatured, quillRefTitle, quillRefDescription, quillRefLocation, setUploadedFiles }) => (
+    <>
+      <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
+      <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={setDescription} />
+      <MainImage onFilesUploaded={setUploadedFiles} />
+      <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={setLocation} />
+      <label className="flex items-center space-x-2 mt-2">
+        <input
+          type="checkbox"
+          checked={isFeatured}
+          onChange={(e) => setIsFeatured(e.target.checked)}
+          className="form-checkbox"
+        />
+        <span>Featured Event</span>
+      </label>
+    </>
+  );
+
   return (
     <div>
-      <div className="p-6 flex justify-between items-center">
-        <button onClick={() => setIsEditing((prev) => !prev)} className="bg-blue-500 text-white px-4 py-2 rounded mr-4">
-          {isEditing ? "Switch to Preview" : "Switch to Edit"}
-        </button>
-        <select value={eventType} onChange={(e) => setEventType(e.target.value)} className="border rounded px-2 py-1">
-          <option value="">Select Event Type</option>
-          <option value="scheduled">Scheduled Event</option>
-          <option value="poi">Point of Interest</option>
-        </select>
-        <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">Save</button>
-      </div>
-      {isEditing ? (
-        <>
-        {eventType === "scheduled" && (
-          <>
-            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
-            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={setDescription} />
-            <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />
-            <MainImage onFilesUploaded={setUploadedFiles} />
-            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={setLocation} />
-            <label className="flex items-center space-x-2 mt-2">
-              <input
-                type="checkbox"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-                className="form-checkbox"
-              />
-              <span>Featured Event</span>
-            </label>
+      <h1>{isEditing ? "Edit Event" : "Event Details"}</h1>
+      {/* Event Type Selection for New Events */}
+      {eventId === NEW_EVENT_ID && (
+        <label>
+          Event Type:
+          <select value={eventType} onChange={(e) => {
+            const newType = e.target.value;
+            setEventType(newType);
 
-          </>
-        )}
-        {eventType === "poi" && (
-          <>
-            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
-            <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={setDescription} />
-            <NoToolbarEditor placeholderText="Opening Times" fontSize="16px" defaultValue={openingTimes} onTextChange={setOpeningTimes} />
-            <select value={poiType} onChange={(e) => setPoiType(e.target.value)} className="border rounded px-2 py-1 mt-2">
-              <option value="">Select POI Type</option>
-              <option value="landmarks">Landmarks</option>
-              <option value="museums">Museums</option>
-              <option value="parks">Parks</option>
-              <option value="other">Other</option>
-            </select>
-            <MainImage onFilesUploaded={setUploadedFiles} />
-            <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={setLocation} />
-            <label className="flex items-center space-x-2 mt-2">
-              <input
-                type="checkbox"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-                className="form-checkbox"
-              />
-              <span>Featured Event</span>
-            </label>
-            <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={setTitle} />
-          </>
-        )}
-        </>
-      ) : (
-        <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-          <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
-            <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">{title}</h1>
-              <p className="text-lg text-gray-500 ml-4">{date} {time}</p>
-              <p className="text-lg text-gray-500 ml-4">{eventType}</p>
-            </div>
-            <p className="text-lg mt-6 text-gray-600 italic text-center">{description}</p>
-            <p className="text-lg mt-4 text-gray-700 text-center">{location}</p>
-            <p className="text-lg mt-4 text-gray-700 text-center">{address}</p>
-          </div>
-        </div>
+            // Reset relevant fields when switching event types
+            if (newType === "scheduled") {
+              setDate("");
+              setTime("");
+              setPoiType("");
+              setOpeningTimes("");
+            } else if (newType === "point_of_interest") {
+              setDate("");
+              setTime("");
+            }
+          }}>
+            <option value="">Select Type</option>
+            <option value="scheduled">Scheduled Event</option>
+            <option value="point_of_interest">Point of Interest</option>
+          </select>
+        </label>
       )}
+      <CommonFields
+        title={title} setTitle={setTitle}
+        description={description} setDescription={setDescription}
+        location={location} setLocation={setLocation}
+        isFeatured={isFeatured} setIsFeatured={setIsFeatured}
+        quillRefTitle={quillRefTitle}
+        quillRefDescription={quillRefDescription}
+        quillRefLocation={quillRefLocation}
+        setUploadedFiles={setUploadedFiles}
+      />
+      {eventType === "scheduled" && <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />}
+      {eventType === "point_of_interest" && (
+        <>
+          <select value={poiType} onChange={(e) => setPoiType(e.target.value)}>
+            <option value="">Select POI Type</option>
+            <option value="landmarks">Landmarks</option>
+            <option value="parks">Parks</option>
+          </select>
+          <input type="text" value={openingTimes} onChange={(e) => setOpeningTimes(e.target.value)} placeholder="Opening Times" />
+        </>
+      )}
+      <button onClick={handleSave}>Save</button>
     </div>
   );
 };
