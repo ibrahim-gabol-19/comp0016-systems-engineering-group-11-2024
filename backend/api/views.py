@@ -24,7 +24,7 @@ class ItemViewSet(ViewSet):
         # Example logic for returning items
         items = [{"id": 1, "name": "Sample Item"}, {"id": 2, "name": "Another Item"}]
         return Response(items)
-    
+
 def is_structured_pdf(pdf_path):
     """
     Determine whether the PDF is structured by checking for specific field keywords.
@@ -33,7 +33,8 @@ def is_structured_pdf(pdf_path):
         with fitz.open(pdf_path) as doc:
             for page in doc:
                 text = page.get_text()
-                if any(keyword in text.lower() for keyword in ['title', 'date', 'time', 'location', 'description']):
+                if any(keyword in text.lower() for keyword in 
+                       ['title', 'date', 'time', 'location', 'description']):
                     return True
     except Exception as e:
         print(f"Error checking PDF structure: {e}")
@@ -41,11 +42,13 @@ def is_structured_pdf(pdf_path):
 
 
 def extract_structured_event_title(text):
-    match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_article_title(text):
-    match = re.search(r'Title:\s*(.+?)(?=\n(?:Description:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Title:\s*(.+?)(?=\n(?:Description:|Main Content:|Author:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 
@@ -63,24 +66,29 @@ def extract_structured_time(text):
     return normalise_time(match.group(1).strip()) if match else ""
 
 def extract_structured_event_description(text):
-    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_article_description(text):
-    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Main Content:|Author:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_location(text):
-    match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Location:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Description:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_main_content(text):
-    match = re.search(r'Main Content:\s*(.+?)(?=\n(?:Title:|Description:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Main Content:\s*(.+?)(?=\n(?:Title:|Description:|Author:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_author(text):
 
-    match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', 
+                      text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""    
 
 
@@ -90,6 +98,19 @@ def extract_unstructured_title(sentences):
     return first_line if len(first_line.split()) > 3 else first_paragraph
 
 def extract_unstructured_date(text):
+    """
+    Extracts a date from unstructured text and normalises it.
+
+    This function searches for a date in the given text. The date can be in the format
+    "dd Month yyyy" (e.g., "12th January 2023") or "dd/mm/yyyy" (e.g., "12/01/2023").
+    Optionally, the date can be preceded by a day of the week (e.g., "Monday 12th January 2023").
+
+    Args:
+        text (str): The unstructured text from which to extract the date.
+
+    Returns:
+        str: The normalised date string if a date is found, otherwise an empty string.
+    """
     match = re.search(
         r'\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*'
         r'(\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}|\d{1,2}/\d{1,2}/\d{4})\b',
@@ -157,6 +178,9 @@ def extract_unstructured_location(full_text, sentences):
     return location
 
 def extract_unstructured_description(text):
+    """
+    Extracts the description from an unstructured PDF.
+    """
     return "\n\n".join(paragraph.strip() for paragraph in text.split("\n\n") if paragraph.strip())
 
 def extract_unstructured_main_content(text):
