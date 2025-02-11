@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
-
+import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
 
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
@@ -168,10 +168,10 @@ const ContentManagementSystem = () => {
       );
     });
   };
-  
+
 
   return (
-    <div className="h-[calc(100vh-146px)]">
+    <div className="h-[calc(100vh-146px)] w-full">
       <Header />
       <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
@@ -195,23 +195,25 @@ const ContentManagementSystem = () => {
       >
         <input {...getInputProps()} ref={fileInputRef} />
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${isDragging ? "opacity-100" : "opacity-0"
-            }`}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
+            isDragging ? "opacity-100" : "opacity-0"
+          }`}
         >
           <p className="text-gray-500 font-semibold text-center">
             Drag and drop files here to upload
           </p>
         </div>
-
+  
         <div className="w-1/6 bg-[#f9f9f9] flex flex-col text-black shadow-lg">
           <ul className="space-y-2 py-4">
             {categories.map((category) => (
               <li
                 key={category}
-                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${selectedCategory === category
+                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
+                  selectedCategory === category
                     ? "bg-gray-200 text-green-600 border-r-4 border-green-500"
                     : "text-gray-600 hover:bg-gray-200"
-                  }`}
+                }`}
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}
@@ -219,94 +221,96 @@ const ContentManagementSystem = () => {
             ))}
           </ul>
         </div>
-
-        <div className="w-5/6 bg-white pl-6 overflow-auto">
-          <div
-            className="grid grid-cols-4 gap-8 overflow-y-auto"
-            style={{ alignContent: "start" }}
-          >
-            
-            {(selectedCategory === "Articles"
-              ? filterItems(articles, userQuery)
-              : selectedCategory === "Events"
+  
+        <div className="w-5/6 h-full bg-white pl-6 overflow-auto">
+          {selectedCategory === "Reporting" && <ReportsSection />}
+          {selectedCategory !== "Reporting" && (
+            <div className="grid grid-cols-4 gap-8 p-4">
+              {(selectedCategory === "Articles"
+                ? filterItems(articles, userQuery)
+                : selectedCategory === "Events"
                 ? filterItems(events, userQuery)
                 : sampleData[selectedCategory]
-            )?.map((event, index) => (
-              <div
-                key={index}
-                className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(index)
-                    ? "bg-green-100 border border-transparent border-8"
-                    : "bg-white"
+              )?.map((event, index) => (
+                <div
+                  key={index}
+                  className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${
+                    selectedCards.includes(index)
+                      ? "bg-green-100 border border-transparent border-8"
+                      : "bg-white"
                   }`}
-                style={{ height: "300px" }}
-                onClick={() => {
-                  if (selectedCards.length === 0) {
-                    handleCardClick(event.id);
-                    console.log('Event id clicked is', event.id);
-                  } else {
-                    toggleCardSelection(index);
-                  }
-                }}
-              >
-                {event.main_image && (
-                  <img
-                    src={event.main_image}
-                    alt={event.title}
-                    className="w-full h-1/2 object-cover rounded-lg"
-                  />
-                )}
-                <div className="p-2 flex flex-col h-1/2 text-center">
-                  <h1 className="font-bold text-2xl text-gray-800 truncate">
-                    {event.title}
-                  </h1>
-                  <p className="text-sm text-gray-500 truncate">
-                    {event.openTimes}
-                  </p>
-                  <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
-                    {event.description}
-                  </p>
-                </div>
-
-                <button
-                  className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(index)
-                      ? "opacity-100 bg-gray-600 font-bold text-white"
-                      : "opacity-60"
+                  style={{ minHeight: "300px" }}
+                  onClick={() => {
+                    if (selectedCards.length === 0) {
+                      handleCardClick(event.id);
+                      console.log('Event id clicked is', event.id);
+                    } else {
+                      toggleCardSelection(index);
+                    }
+                  }}
+                >
+                  {event.main_image && (
+                    <img
+                      src={event.main_image}
+                      alt={event.title}
+                      className="w-full h-1/2 object-cover rounded-lg"
+                    />
+                  )}
+                  <div className="p-2 flex flex-col h-1/2 text-center">
+                    <h1 className="font-bold text-2xl text-gray-800 truncate">
+                      {event.title}
+                    </h1>
+                    <p className="text-sm text-gray-500 truncate">
+                      {event.openTimes}
+                    </p>
+                    <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
+                      {event.description}
+                    </p>
+                  </div>
+  
+                  <button
+                    className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
+                      selectedCards.includes(index)
+                        ? "opacity-100 bg-gray-600 font-bold text-white"
+                        : "opacity-60"
                     } group-hover:opacity-100 transition-opacity`}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the card click
-                    toggleCardSelection(index);
-                  }}
-                >
-                  ✓
-                </button>
-
-                {/* Star Button */}
-                <button
-                  className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(index)
-                      ? "bg-yellow-500 text-white"
-                      : "opacity-60"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      toggleCardSelection(index);
+                    }}
+                  >
+                    ✓
+                  </button>
+  
+                  {/* Star Button */}
+                  <button
+                    className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
+                      starredCards.includes(index)
+                        ? "bg-yellow-500 text-white"
+                        : "opacity-60"
                     }`}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the card click
-                    toggleStarSelection(index);
-                  }}
-                >
-                  ★
-                </button>
-
-                {/* Delete Button */}
-                <button
-                  className="absolute top-2 right-10 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the card click
-                    handleDelete();
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      toggleStarSelection(index);
+                    }}
+                  >
+                    ★
+                  </button>
+  
+                  {/* Delete Button */}
+                  <button
+                    className="absolute top-2 right-10 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      handleDelete();
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
