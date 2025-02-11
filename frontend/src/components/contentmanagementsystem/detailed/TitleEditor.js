@@ -2,87 +2,79 @@ import React, { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
-// Editor is an uncontrolled React component
 const TitleEditor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize}, ref) => {
+  (
+    { readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize },
+    ref
+  ) => {
     const containerRef = useRef(null);
+    const quillRef = useRef(null);
+    
+    // Create refs for defaultValue, onTextChange, and placeholderText to avoid re-initializing the effect
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
-    const onSelectionChangeRef = useRef(onSelectionChange);
+    const fontSizeRef = useRef(fontSize);
+    const placeholderTextRef = useRef(placeholderText);
+    
+    useLayoutEffect(() => {
+      defaultValueRef.current = defaultValue;
+      onTextChangeRef.current = onTextChange;
+      fontSizeRef.current = fontSize;
+      placeholderTextRef.current = placeholderText;
+    }, [defaultValue, onTextChange, fontSize, placeholderText]);
 
     useLayoutEffect(() => {
-      onTextChangeRef.current = onTextChange;
-      onSelectionChangeRef.current = onSelectionChange;
-    });
-
-    useEffect(() => {
-      ref.current?.enable(!readOnly);
-    }, [ref, readOnly]);
-
-    useEffect(() => {
       const container = containerRef.current;
-      const editorContainer = container.appendChild(
-        container.ownerDocument.createElement("div")
-      );
+      const editorContainer = document.createElement("div");
+      container.appendChild(editorContainer);
 
-      // Register Styles
       const Font = Quill.import("formats/font");
       Quill.register(Font, true);
 
-      // Initialize Quill
       const quill = new Quill(editorContainer, {
         theme: "snow",
-        placeholder: placeholderText,
+        placeholder: placeholderTextRef.current,
         modules: {
           toolbar: false,
         },
       });
 
-      // Quill Editor Styles
       quill.root.style.fontFamily = "system-ui";
-      quill.root.style.fontSize = fontSize; // Set default font size for normal text (equivalent to p)
-      quill.root.style.lineHeight = "1.5"; // Set line height for readability
-      quill.root.style.textAlign = "center"; // Center align the text
+      quill.root.style.fontSize = fontSizeRef.current;
+      quill.root.style.lineHeight = "1.5";
+      quill.root.style.textAlign = "center";
+      quill.root.style.fontWeight = "bold";
+      quill.root.style.minHeight = "30px";
+      quill.root.style.overflowY = "auto";
+      quill.root.style.direction = "ltr";
 
-      // Remove any italics from preview
-      quill.root.style.fontStyle = "bold"; // Remove italics
-      quill.root.style.fontWeight = "bold"
-
-      // Set minimum and maximum height for the editor container
-      quill.root.style.minHeight = "30px"; // Minimum height for the editor
-      quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
-      quill.root.style.overflowX = "auto";
-
-      // Quill Toolbar Styles
-      const toolbar = container.querySelector(".ql-toolbar");
-      if (toolbar) {
-        toolbar.style.fontFamily = "system-ui";
-      }
-
-      ref.current = quill;
-
-      // Set the default value if provided
       if (defaultValueRef.current) {
-        quill.setContents(defaultValueRef.current);
+        quill.root.innerHTML = defaultValueRef.current;
       }
 
-      // Event listeners for text and selection changes
-      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
-        onTextChangeRef.current?.(...args);
+      // Ensure ref is included as a dependency to avoid the warning
+      ref.current = quill;
+      quillRef.current = quill;
+
+      quill.on("text-change", () => {
+        const content = quill.root.innerText.trim();
+        onTextChangeRef.current?.(content);
       });
 
-      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
-        onSelectionChangeRef.current?.(...args);
-      });
-
-      // Cleanup on unmount
       return () => {
         ref.current = null;
+        quillRef.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [placeholderText, fontSize, ref]); // Add 'ref' to the dependency array
 
-    return <div className="h-32 resize-none " ref={containerRef}></div>;
+    useEffect(() => {
+      if (quillRef.current) {
+        quillRef.current.enable(!readOnly);
+      }
+    }, [readOnly]);
+
+    return <div ref={containerRef}></div>;
   }
 );
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
@@ -6,18 +6,18 @@ import "quill/dist/quill.snow.css";
 const MainEditor = forwardRef(
   ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
     const containerRef = useRef(null);
-    const defaultValueRef = useRef(defaultValue);
-    const onTextChangeRef = useRef(onTextChange);
-    const onSelectionChangeRef = useRef(onSelectionChange);
+    const quillRef = useRef(null);
+    const onTextChangeRef = useRef(onTextChange); // Ref to track the latest onTextChange
+    const defaultValueRef = useRef(defaultValue); // Ref to track the latest defaultValue
 
-    useLayoutEffect(() => {
+    // Update refs whenever props change
+    useEffect(() => {
       onTextChangeRef.current = onTextChange;
-      onSelectionChangeRef.current = onSelectionChange;
-    });
+    }, [onTextChange]);
 
     useEffect(() => {
-      ref.current?.enable(!readOnly);
-    }, [ref, readOnly]);
+      defaultValueRef.current = defaultValue;
+    }, [defaultValue]);
 
     useEffect(() => {
       const container = containerRef.current;
@@ -31,7 +31,7 @@ const MainEditor = forwardRef(
 
       // Toolbar options
       const toolbarOptions = [
-        [{ header: [1, 2, 3, false] }], 
+        [{ header: [1, 2, 3, false] }],
         ["bold", "italic", "underline", "strike"],
         ["blockquote", "code-block"],
         ["link", "image", "video"],
@@ -46,36 +46,25 @@ const MainEditor = forwardRef(
         },
       });
 
-      // Quill Editor Styles
+      // Set Quill styles
       quill.root.style.fontFamily = "system-ui";
-      quill.root.style.fontSize = "16px"; // Set default font size for normal text (equivalent to p)
-      quill.root.style.lineHeight = "1.5"; // Set line height for readability
-
-      // Set minimum and maximum height for the editor container
-      quill.root.style.minHeight = "900px"; // Minimum height for the editor
-      quill.root.style.maxHeight = "900px"; // Maximum height for the editor
-      quill.root.style.overflowY = "auto"; // Enable vertical scrolling when content exceeds max height
-
-      // Quill Toolbar Styles
-      const toolbar = container.querySelector(".ql-toolbar");
-      if (toolbar) {
-        toolbar.style.fontFamily = "system-ui";
-      }
-
-      ref.current = quill;
+      quill.root.style.fontSize = "16px";
+      quill.root.style.lineHeight = "1.5";
+      quill.root.style.minHeight = "900px";
+      quill.root.style.maxHeight = "900px";
+      quill.root.style.overflowY = "auto";
 
       // Set the default value if provided
       if (defaultValueRef.current) {
-        quill.setContents(defaultValueRef.current);
+        quill.root.innerHTML = defaultValueRef.current;
       }
 
-      // Event listeners for text and selection changes
-      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
-        onTextChangeRef.current?.(...args);
-      });
+      ref.current = quill;
+      quillRef.current = quill;
 
-      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
-        onSelectionChangeRef.current?.(...args);
+      quill.on("text-change", () => {
+        const content = quill.root.innerText.trim();
+        onTextChangeRef.current?.(content); // Use the latest onTextChange function
       });
 
       // Cleanup on unmount
@@ -83,7 +72,12 @@ const MainEditor = forwardRef(
         ref.current = null;
         container.innerHTML = "";
       };
-    }, [ref]);
+    }, [ref, placeholderText]);
+
+    // Handle readOnly changes
+    useEffect(() => {
+      ref.current?.enable(!readOnly);
+    }, [readOnly, ref]);
 
     return <div className="pt-8" ref={containerRef}></div>;
   }

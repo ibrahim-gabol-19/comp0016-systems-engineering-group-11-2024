@@ -23,4 +23,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('reports/', include('reports.urls')),
+    path('reportdiscussion/', include('reportdiscussion.urls')),
+    path('articles/', include('articles.urls')),
+    path('events/', include('events.urls')),
+    path('search/', include('search.urls')),
+]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

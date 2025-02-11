@@ -40,9 +40,14 @@ def is_structured_pdf(pdf_path):
     return False
 
 
-def extract_structured_title(text):
+def extract_structured_event_title(text):
     match = re.search(r'Title:\s*(.+?)(?=\n(?:Date:|Time:|Description:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
+
+def extract_structured_article_title(text):
+    match = re.search(r'Title:\s*(.+?)(?=\n(?:Description:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
 
 def extract_structured_date(text):
     match = re.search(
@@ -57,8 +62,12 @@ def extract_structured_time(text):
     match = re.search(r'Time:\s*([\d:]+(?:\s*[APap][Mm])?)', text)
     return normalise_time(match.group(1).strip()) if match else ""
 
-def extract_structured_description(text):
+def extract_structured_event_description(text):
     match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Date:|Time:|Location:|$))', text, re.IGNORECASE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+def extract_structured_article_description(text):
+    match = re.search(r'Description:\s*(.+?)(?=\n(?:Title:|Main Content:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_location(text):
@@ -66,16 +75,11 @@ def extract_structured_location(text):
     return match.group(1).strip() if match else ""
 
 def extract_structured_main_content(text):
-    """
-    Extracts the main content from a structured PDF.
-    """
-    match = re.search(r'Main Content:\s*(.+)', text, re.IGNORECASE | re.DOTALL)
+    match = re.search(r'Main Content:\s*(.+?)(?=\n(?:Title:|Description:|Author:|$))', text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""
 
 def extract_structured_author(text):
-    """
-    Extracts the author from a structured PDF.
-    """
+
     match = re.search(r'Author:\s*(.+?)(?=\n(?:Title:|Description:|Main Content:|$))', text, re.IGNORECASE | re.DOTALL)
     return match.group(1).strip() if match else ""    
 
@@ -239,10 +243,10 @@ def extract_event_data(pdf_path, output_image_dir="media/extracted_images"):
         sentences = [sent.strip() for sent in full_text.split("\n") if sent.strip()]
 
         structured_fields = {
-            'title': extract_structured_title(full_text),
+            'title': extract_structured_event_title(full_text),
             'date_of_event': extract_structured_date(full_text),
             'time_of_event': extract_structured_time(full_text),
-            'description': extract_structured_description(full_text),
+            'description': extract_structured_event_description(full_text),
             'location': extract_structured_location(full_text)
         }
 
@@ -298,8 +302,8 @@ def extract_article_data(pdf_path, output_image_dir="media/extracted_images"):
         sentences = [sent.strip() for sent in full_text.split("\n") if sent.strip()]
 
         structured_fields = {
-            'title': extract_structured_title(full_text),
-            'description': extract_structured_description(full_text),
+            'title': extract_structured_article_title(full_text),
+            'description': extract_structured_article_description(full_text),
             'main_content': extract_structured_main_content(full_text),
             'author': extract_structured_author(full_text)
         }

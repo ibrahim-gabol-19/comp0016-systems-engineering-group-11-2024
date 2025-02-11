@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import HomePage from "./pages/home/HomePage";
 // import NewsPage from "./pages/news/NewsPage";
 import EventsPage from "./pages/events/EventsPage";
 import ContentManagementSystem from './pages/contentmanagementsystem/ContentManagementSystem';
-import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
+//import DetailedPage from "./pages/contentmanagementsystem/DetailedPage"
 import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
 import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
-
+import ReportsPage from "./pages/reporting/ReportsPage"
 
 const App = () => {
   return (
@@ -23,9 +22,9 @@ const App = () => {
               {/* <Route path="/news" element={<NewsPage />} /> */}
               <Route path="/events" element={<EventsPage />} />
               <Route path="/contentmanagementsystem" element={<ContentManagementSystem />} />
-              <Route path="/contentmanagementsystem/details/articles/:index" element={<DetailedArticlePage />} />
-              <Route path="/contentmanagementsystem/details/events/:index" element={<DetailedEventPage />} />
-
+              <Route path="/contentmanagementsystem/details/articles/:articleId" element={<DetailedArticlePage />} />
+              <Route path="/contentmanagementsystem/details/events/:eventId" element={<DetailedEventPage />} />
+              <Route path="/reporting" element={<ReportsPage></ReportsPage>} />
             </Routes>
           </div>
         </div>
