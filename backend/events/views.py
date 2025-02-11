@@ -16,12 +16,13 @@ class EventsViewSet(viewsets.ModelViewSet):
 
     def list(self, request):  # For the /events/ endpoint
         events = Event.objects.values(
-            "title", "event_type", "description", "main_image", "location", "longitude", "latitude",
+            "id", "title", "event_type", "description", "main_image", "location", "longitude", "latitude",
             "date", "time", "opening_times", "poi_type"
         )
 
         event_list = [
             {
+                "id": event["id"],
                 "title": event["title"],
                 "event_type": event["event_type"],
                 "description": event["description"],
