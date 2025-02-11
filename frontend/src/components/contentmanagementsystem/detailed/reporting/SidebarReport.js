@@ -38,10 +38,10 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleStatusChange = async (status) => {
     try {
       const response = await axios.patch(
-        `${API_URL}/reports/${selectedMarker.id}/`, 
-        { status: status.target.value } 
+        `${API_URL}/reports/${selectedMarker.id}/`,
+        { status: status.target.value }
       );
-      
+
       if (response.status === 200) {
         console.log("Status updated successfully");
         fetchReports();
@@ -54,10 +54,10 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleTagsChange = async (tags) => {
     try {
       const response = await axios.patch(
-        `${API_URL}/reports/${selectedMarker.id}/`, 
-        { tags: tags.target.value } 
+        `${API_URL}/reports/${selectedMarker.id}/`,
+        { tags: tags.target.value }
       );
-      
+
       if (response.status === 200) {
         console.log("Tags updated successfully");
         fetchReports();
@@ -70,9 +70,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleDeleteReport = async () => {
     try {
       const response = await axios.delete(
-        `${API_URL}/reports/${selectedMarker.id}/`, 
+        `${API_URL}/reports/${selectedMarker.id}/`,
       );
-      
+
       if (response.status === 204) {
         console.log("Report deleted successfully");
         fetchReports();
@@ -81,6 +81,23 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       console.log(err.message);
     }
   }
+
+
+  const handleDeleteDiscussion = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/reportdiscussion/${id}/`,
+      );
+
+      if (response.status === 204) {
+        console.log("Discussion deleted successfully");
+        fetchReports();
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -103,7 +120,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         };
 
         const response = await axios.post(
-           API_URL + "reportdiscussion/",
+          API_URL + "reportdiscussion/",
           discussionMessage,
           {
             headers: {
@@ -142,7 +159,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-         API_URL + "reports/",
+        API_URL + "reports/",
         formData,
         {
           headers: {
@@ -344,7 +361,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 <div className="w-1/6 overflow-auto">
                   <button
                     className="justify-center w-full flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
-                    onClick={console.log()}
+                    onClick={() => handleDeleteDiscussion(discussion.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
