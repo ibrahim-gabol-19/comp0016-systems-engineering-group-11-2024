@@ -17,7 +17,7 @@ const ContentManagementSystem = () => {
   //const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
 
-  const categories = ["Articles", "Events", "Forum", "Reporting"];
+  const categories = ["Articles", "Events", "Reporting"];
   const navigate = useNavigate();
 
   const sampleData = {
@@ -108,8 +108,7 @@ const ContentManagementSystem = () => {
 
   const handleManualClicked = () => {
     navigate(
-      `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
-        sampleData[selectedCategory].length - 1
+      `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${sampleData[selectedCategory].length - 1
       }`
     );
   };
@@ -120,7 +119,7 @@ const ContentManagementSystem = () => {
     alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
   };*/
 
-  const { getRootProps, getInputProps} = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
       setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false); // Reset dragging state
@@ -161,8 +160,8 @@ const ContentManagementSystem = () => {
 
   return (
     <div className="h-[calc(100vh-146px)]">
-            <Header />            
-            <div className="pt-20"></div>
+      <Header />
+      <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
         <SelectTopBar
           selectedCards={selectedCards}
@@ -183,9 +182,8 @@ const ContentManagementSystem = () => {
       >
         <input {...getInputProps()} ref={fileInputRef} />
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
-            isDragging ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${isDragging ? "opacity-100" : "opacity-0"
+            }`}
         >
           <p className="text-gray-500 font-semibold text-center">
             Drag and drop files here to upload
@@ -197,11 +195,10 @@ const ContentManagementSystem = () => {
             {categories.map((category) => (
               <li
                 key={category}
-                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
-                  selectedCategory === category
+                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${selectedCategory === category
                     ? "bg-gray-200 text-green-600 border-r-4 border-green-500"
                     : "text-gray-600 hover:bg-gray-200"
-                }`}
+                  }`}
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}
@@ -215,19 +212,19 @@ const ContentManagementSystem = () => {
             className="grid grid-cols-4 gap-8 overflow-y-auto"
             style={{ alignContent: "start" }}
           >
+            
             {(selectedCategory === "Articles"
               ? articles
               : selectedCategory === "Events"
-              ? events
-              : sampleData[selectedCategory]
+                ? events
+                : sampleData[selectedCategory]
             )?.map((event, index) => (
               <div
                 key={index}
-                className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${
-                  selectedCards.includes(index)
+                className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(index)
                     ? "bg-green-100 border border-transparent border-8"
                     : "bg-white"
-                }`}
+                  }`}
                 style={{ height: "300px" }}
                 onClick={() => {
                   if (selectedCards.length === 0) {
@@ -258,11 +255,10 @@ const ContentManagementSystem = () => {
                 </div>
 
                 <button
-                  className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
-                    selectedCards.includes(index)
+                  className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(index)
                       ? "opacity-100 bg-gray-600 font-bold text-white"
                       : "opacity-60"
-                  } group-hover:opacity-100 transition-opacity`}
+                    } group-hover:opacity-100 transition-opacity`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
                     toggleCardSelection(index);
@@ -273,11 +269,10 @@ const ContentManagementSystem = () => {
 
                 {/* Star Button */}
                 <button
-                  className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
-                    starredCards.includes(index)
+                  className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(index)
                       ? "bg-yellow-500 text-white"
                       : "opacity-60"
-                  }`}
+                    }`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the click event from triggering the card click
                     toggleStarSelection(index);
