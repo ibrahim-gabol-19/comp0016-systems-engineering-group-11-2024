@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
+import Header from "../../components/Header";
 
 
 const ContentManagementSystem = () => {
@@ -160,6 +161,8 @@ const ContentManagementSystem = () => {
 
   return (
     <div className="h-[calc(100vh-146px)]">
+            <Header />            
+            <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
         <SelectTopBar
           selectedCards={selectedCards}
