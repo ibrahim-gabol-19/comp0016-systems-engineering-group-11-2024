@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
@@ -23,7 +24,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleUpvote = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/" + selectedMarker.id + "/upvote/"
+        API_URL + "reports/" + selectedMarker.id + "/upvote/"
       );
       if (response.status === 200) {
         fetchReports();
@@ -332,22 +333,22 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </p>
             </div>
           </div>
-{/*Image*/}
-<div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
-  {selectedMarker.main_image ? (
-    <img
-      src={selectedMarker.main_image}
-      alt=""
-      className="h-64 w-64 object-contain"
-    />
-  ) : (
-    <img
-      src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
-      alt=""
-      className="h-64 w-64 object-contain"
-    />
-  )}
-</div>
+          {/*Image*/}
+          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+            {selectedMarker.main_image ? (
+              <img
+                src={selectedMarker.main_image}
+                alt=""
+                className="h-64 w-64 object-contain"
+              />
+            ) : (
+              <img
+                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
+                alt=""
+                className="h-64 w-64 object-contain"
+              />
+            )}
+          </div>
 
 
           {/* Description with Poster and Date */}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
@@ -23,7 +24,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleUpvote = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/" + selectedMarker.id + "/upvote/"
+        API_URL + "reports/" + selectedMarker.id + "/upvote/"
       );
       if (response.status === 200) {
         fetchReports();
@@ -33,6 +34,20 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     } finally {
     }
   };
+
+  const handleStatusChange = async () => {
+    try {
+      const response = await axios.post(
+        API_URL + "reports/" + selectedMarker.id + "/upvote/"
+      );
+      if (response.status === 200) {
+        fetchReports();
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+    }
+  }
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
