@@ -196,31 +196,70 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     if (viewingDiscussion) {
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full  h-1/6 px-3">
+          <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
-            <div className="w-full h-3/4 ">
-              <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+            <div className="w-full h-3/4 flex justify-center items-center ">
+              <div className="w-3/4">
+                <div className="w-full h-3/4 text-center justify-center">
+                  <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+                </div>
+                <div className="w-full h-1/4 text-center justify-center">
+                  <p className="text-gray-500 text-m">
+                    {new Date(selectedMarker.published_date).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-              <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
-                </p>
+              <div className="w-1/4">
+                <button
+                  className="justify-center  flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  onClick={console.log()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.7"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  Delete
+                </button>
               </div>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() +
-                  selectedMarker.status.slice(1).replace("_", " ")}
-              </p>
 
+              <select
+                value={selectedMarker.status}
+                onChange={console.log()}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="open">Open</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
               <p className="text-center font-bold mx-4">●</p>
 
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() +
-                  selectedMarker.tags.slice(1).replace("_", " ")}
-              </p>
+              <select
+                value={selectedMarker.tags}
+                onChange={console.log()}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="road">Road</option>
+                <option value="environmental">Environmental</option>
+                <option value="pollution">Pollution</option>
+                <option value="wildlife_conservation">Wildlife Conservation</option>
+                <option value="climate_change">Climate Change</option>
+                <option value="waste_management">Waste Management</option>
+                <option value="health_safety">Health & Safety</option>
+                <option value="urban_development">Urban Development</option>
+              </select>
             </div>
           </div>
           {/**Discussion */}
@@ -228,8 +267,8 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto`}
-              >
+                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${discussion.author === "Business" ? "bg-yellow-200" : ""
+                  }`}              >
                 {/* Profile Picture (SVG Icon) */}
                 <div className="w-1/6 h-full flex justify-center items-center">
                   <svg
@@ -247,12 +286,34 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                     />
                   </svg>
                 </div>
-                <div className="w-5/6 overflow-y-auto break-words py-3">
+                <div className="w-4/6 overflow-y-auto break-words py-3">
                   <p className="font-semibold">{discussion.author}</p>
                   <p className="">{discussion.message}</p>
                   <p className="text-gray-500 text-sm">
                     {new Date(discussion.created_at).toLocaleString()}
                   </p>
+                </div>
+                <div className="w-1/6 overflow-auto">
+                  <button
+                    className="justify-center w-full flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                    onClick={console.log()}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.7"
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}
@@ -264,7 +325,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               {/* Text Input Form */}
               <textarea
                 className="w-full h-full p-2 border rounded-lg resize-none"
-                placeholder="Type your discussion message here..."
+                placeholder="Type your anouncement message here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)} // Use state to manage input
               ></textarea>
@@ -274,7 +335,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                 onClick={handleSubmitNewDiscussionMessage} // Submit handler
               >
-                Submit Message
+                Submit Anouncement
               </button>
             </div>
             {/*View Overview*/}
@@ -309,45 +370,86 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         <div className="w-full h-full flex flex-col">
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
-            <div className="w-full h-3/4 ">
-              <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+            <div className="w-full h-3/4 flex justify-center items-center ">
+              <div className="w-3/4">
+                <div className="w-full h-3/4 text-center justify-center overflow-auto">
+                  <p class="font-semibold text-3xl">{selectedMarker.title}</p>
+                </div>
+                <div className="w-full h-1/4 text-center justify-center">
+                  <p className="text-gray-500 text-m">
+                    {new Date(selectedMarker.published_date).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-              <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
-                </p>
+              <div className="w-1/4">
+                <button
+                  className="justify-center  flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  onClick={console.log()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.7"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  Delete
+                </button>
               </div>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() +
-                  selectedMarker.status.slice(1).replace("_", " ")}
-              </p>
+
+              <select
+                value={selectedMarker.status}
+                onChange={console.log()}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="open">Open</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
               <p className="text-center font-bold mx-4">●</p>
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() +
-                  selectedMarker.tags.slice(1).replace("_", " ")}
-              </p>
+
+              <select
+                value={selectedMarker.tags}
+                onChange={console.log()}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="road">Road</option>
+                <option value="environmental">Environmental</option>
+                <option value="pollution">Pollution</option>
+                <option value="wildlife_conservation">Wildlife Conservation</option>
+                <option value="climate_change">Climate Change</option>
+                <option value="waste_management">Waste Management</option>
+                <option value="health_safety">Health & Safety</option>
+                <option value="urban_development">Urban Development</option>
+              </select>
             </div>
           </div>
-{/*Image*/}
-<div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
-  {selectedMarker.main_image ? (
-    <img
-      src={selectedMarker.main_image}
-      alt=""
-      className="h-64 w-64 object-contain"
-    />
-  ) : (
-    <img
-      src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
-      alt=""
-      className="h-64 w-64 object-contain"
-    />
-  )}
-</div>
+          {/*Image*/}
+          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+            {selectedMarker.main_image ? (
+              <img
+                src={selectedMarker.main_image}
+                alt=""
+                className="h-64 w-64 object-contain"
+              />
+            ) : (
+              <img
+                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
+                alt=""
+                className="h-64 w-64 object-contain"
+              />
+            )}
+          </div>
 
 
           {/* Description with Poster and Date */}
@@ -398,25 +500,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               {/* Upvote Button with Icon */}
               <div className="w-1/2 justify-center">
-                <button
-                  onClick={handleUpvote}
-                  className="flex items-center justify-center space-x-2  w-full px-4 py-2 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
-                    />
-                  </svg>
-                </button>
+
               </div>
             </div>
             {/*View discussion*/}
