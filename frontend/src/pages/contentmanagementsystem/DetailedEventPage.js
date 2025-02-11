@@ -1,30 +1,11 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
-import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
+import React, { useState, useEffect } from "react";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import axios from "axios";
 
-// Custom debounce hook
-function useDebounce(func, delay) {
-  const timeoutRef = useRef(null);
-
-  const debouncedFunc = useCallback((...args) => {
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      func(...args);
-    }, delay);
-  }, [func, delay]);
-
-  return debouncedFunc;
-}
-
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
-  const quillRefTitle = useRef(null);
-  const quillRefDescription = useRef(null);
-  const quillRefLocation = useRef(null);
   const { eventId } = useParams();
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
@@ -39,45 +20,6 @@ const DetailedEventPage = () => {
   const [openingTimes, setOpeningTimes] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
 
-  const debouncedSetTitle = useDebounce(setTitle, 300);
-  const debouncedSetDescription = useDebounce(setDescription, 300);
-  const debouncedSetLocation = useDebounce(setLocation, 300);
-
-  const [titleInput, setTitleInput] = useState("");
-  const [descriptionInput, setDescriptionInput] = useState("");
-  const [locationInput, setLocationInput] = useState("");
-
-  // *** MISSING DECLARATIONS - THIS WAS THE PROBLEM ***
-  const [debouncedTitle, setDebouncedTitle] = useState("");
-  const [debouncedDescription, setDebouncedDescription] = useState("");
-  const [debouncedLocation, setDebouncedLocation] = useState("");
-
-  const handleTitleChange = (newTitle) => {
-    setTitle(newTitle); // Update input state immediately
-    // setDebouncedTitle(newTitle); // Update debounced state
-  };
-
-  const handleDescriptionChange = (newDescription) => {
-    setDescription(newDescription); // Update input state immediately
-    // setDebouncedDescription(newDescription); // Update debounced state
-  };
-
-  const handleLocationChange = (newLocation) => {
-    setLocation(newLocation); // Update input state immediately
-    // setDebouncedLocation(newLocation); // Update debounced state
-  };
-
-  // useEffect(() => {
-  //   debouncedSetTitle(debouncedTitle);
-  // }, [debouncedTitle, debouncedSetTitle]);
-
-  // useEffect(() => {
-  //   debouncedSetDescription(debouncedDescription);
-  // }, [debouncedDescription, debouncedSetDescription]);
-
-  // useEffect(() => {
-  //   debouncedSetLocation(debouncedLocation);
-  // }, [debouncedLocation, debouncedSetLocation]);
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
@@ -152,24 +94,6 @@ const DetailedEventPage = () => {
     }
   };
 
-  const CommonFields = ({ title, description, location, isFeatured, setIsFeatured, quillRefTitle, quillRefDescription, quillRefLocation, setUploadedFiles }) => (
-    <>
-      <TitleEditor ref={quillRefTitle} placeholderText="Title" fontSize="16px" defaultValue={title} onTextChange={debouncedSetTitle} />
-      <NoToolbarEditor ref={quillRefDescription} placeholderText="Description" fontSize="16px" defaultValue={description} onTextChange={debouncedSetDescription} />
-      <MainImage onFilesUploaded={setUploadedFiles} />
-      <NoToolbarEditor ref={quillRefLocation} placeholderText="Location" fontSize="16px" defaultValue={location} onTextChange={debouncedSetLocation} />
-      <label className="flex items-center space-x-2 mt-2">
-        <input
-          type="checkbox"
-          checked={isFeatured}
-          onChange={(e) => setIsFeatured(e.target.checked)}
-          className="form-checkbox"
-        />
-        <span>Featured Event</span>
-      </label>
-    </>
-  );
-
   return (
     <div>
       <h1>{isEditing ? "Edit Event" : "Event Details"}</h1>
@@ -198,17 +122,23 @@ const DetailedEventPage = () => {
           </select>
         </label>
       )}
-      <CommonFields
-        title={title}
-        description={description}
-        location={location}
-        isFeatured={isFeatured}
-        setIsFeatured={setIsFeatured}
-        quillRefTitle={quillRefTitle}
-        quillRefDescription={quillRefDescription}
-        quillRefLocation={quillRefLocation}
-        setUploadedFiles={setUploadedFiles}
-      />
+      <>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+        <MainImage onFilesUploaded={setUploadedFiles} />
+        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
+        <label className="flex items-center space-x-2 mt-2">
+          <input
+            type="checkbox"
+            checked={isFeatured}
+            onChange={(e) => setIsFeatured(e.target.checked)}
+            className="form-checkbox"
+          />
+          <span>Featured Event</span>
+        </label>
+      </>
+
+
       {eventType === "scheduled" && <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />}
       {eventType === "point_of_interest" && (
         <>
