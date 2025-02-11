@@ -49,6 +49,14 @@ const DetailedEventPage = () => {
     }
   }, [eventId]);
 
+  const handleFilesUploaded = (acceptedFiles) => {
+    if (acceptedFiles.length > 1) {
+      alert("Only one image can be uploaded.");
+      return;
+    }
+    setUploadedFiles([acceptedFiles[0]]);
+  };
+
   const handleSave = async () => {
     if (eventType === "scheduled" && (!title || !date || !time || !description)) {
       alert("Please fill in all necessary fields for a Scheduled Event before saving.");
@@ -125,7 +133,7 @@ const DetailedEventPage = () => {
       <>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
-        <MainImage onFilesUploaded={setUploadedFiles} />
+        <MainImage onFilesUploaded={handleFilesUploaded} />
         <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
         <label className="flex items-center space-x-2 mt-2">
           <input
