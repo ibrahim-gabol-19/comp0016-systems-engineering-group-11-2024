@@ -5,6 +5,8 @@ import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar"
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
@@ -62,13 +64,13 @@ const ContentManagementSystem = () => {
   // Fetch articles from the API when the component is mounted
   useEffect(() => {
     if (selectedCategory === "Articles") {
-      fetch("http://127.0.0.1:8000/articles/")
+      fetch( API_URL + "articles/")
         .then((response) => response.json())
         .then((data) => setArticles(data))
         .catch((error) => console.error("Error fetching articles:", error));
     }
     if (selectedCategory === "Events") {
-      fetch("http://127.0.0.1:8000/events/")
+      fetch( API_URL + "events/")
         .then((response) => response.json())
         .then((data) => setEvents(data))
         .catch((error) => console.error("Error fetching events:", error));

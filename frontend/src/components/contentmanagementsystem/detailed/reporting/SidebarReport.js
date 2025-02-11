@@ -35,17 +35,35 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  const handleStatusChange = async () => {
+  const handleStatusChange = async (status) => {
     try {
-      const response = await axios.post(
-        API_URL + "reports/" + selectedMarker.id + "/upvote/"
+      const response = await axios.patch(
+        `${API_URL}/reports/${selectedMarker.id}/`, 
+        { status: status.target.value } 
       );
+      
       if (response.status === 200) {
+        console.log("Status updated successfully");
         fetchReports();
       }
     } catch (err) {
       console.log(err.message);
-    } finally {
+    }
+  }
+
+  const handleTagsChange = async (tags) => {
+    try {
+      const response = await axios.patch(
+        `${API_URL}/reports/${selectedMarker.id}/`, 
+        { tags: tags.target.value } 
+      );
+      
+      if (response.status === 200) {
+        console.log("Tags updated successfully");
+        fetchReports();
+      }
+    } catch (err) {
+      console.log(err.message);
     }
   }
 
@@ -70,7 +88,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         };
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/reportdiscussion/",
+           API_URL + "reportdiscussion/",
           discussionMessage,
           {
             headers: {
@@ -109,7 +127,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/",
+         API_URL + "reports/",
         formData,
         {
           headers: {
@@ -252,7 +270,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
               <select
                 value={selectedMarker.status}
-                onChange={console.log()}
+                onChange={handleStatusChange}
                 className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="open">Open</option>
@@ -263,7 +281,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
               <select
                 value={selectedMarker.tags}
-                onChange={console.log()}
+                onChange={handleTagsChange}
                 className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="road">Road</option>
@@ -424,7 +442,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
               <select
                 value={selectedMarker.status}
-                onChange={console.log()}
+                onChange={handleStatusChange}
                 className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="open">Open</option>
@@ -435,7 +453,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
               <select
                 value={selectedMarker.tags}
-                onChange={console.log()}
+                onChange={handleTagsChange}
                 className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="road">Road</option>

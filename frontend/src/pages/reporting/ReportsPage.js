@@ -4,6 +4,8 @@ import MapComponent from "../../components/reporting/MapComponent";
 import SidebarReport from "../../components/reporting/SidebarReport";
 import axios from "axios";
 import Header from "../../components/Header";
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 const ReportsPage = () => {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -23,7 +25,7 @@ const ReportsPage = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/reports/");
+      const response = await axios.get( API_URL + "reports/");
       const newReports = response.data;
       setReports(newReports);
 

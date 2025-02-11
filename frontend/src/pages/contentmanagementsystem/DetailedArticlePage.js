@@ -6,6 +6,8 @@ import MainImage from "../../components/contentmanagementsystem/detailed/MainIma
 import axios from "axios";
 import { useParams } from "react-router-dom"; 
 import Header from "../../components/Header";
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 const NEW_ARTICLE_ID = "0"; 
 
@@ -74,7 +76,7 @@ const DetailedArticlePage = () => {
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        await axios.post("http://127.0.0.1:8000/articles/", formData, {
+        await axios.post( API_URL + "articles/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

@@ -5,9 +5,12 @@ import DateTime from "../../components/contentmanagementsystem/detailed/DateTime
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
-
-
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
+
+
+
+
  
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -100,7 +103,7 @@ const DetailedEventPage = () => {
         
         // POST operation for creating a new article
         await axios.post(
-          "http://127.0.0.1:8000/events/",
+           API_URL + "events/",
           formData,
           {
             headers: {

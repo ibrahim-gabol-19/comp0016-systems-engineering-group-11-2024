@@ -56,7 +56,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         };
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/reportdiscussion/",
+           API_URL + "reportdiscussion/",
           discussionMessage,
           {
             headers: {
@@ -95,7 +95,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/",
+         API_URL + "reports/",
         formData,
         {
           headers: {

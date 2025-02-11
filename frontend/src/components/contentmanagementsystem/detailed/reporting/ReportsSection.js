@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import MapComponent from "./MapComponent";
 import SidebarReport from "./SidebarReport";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const ReportsSection = () => {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -22,7 +23,7 @@ const ReportsSection = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/reports/");
+      const response = await axios.get( API_URL + "reports/");
       const newReports = response.data;
       setReports(newReports);
 
