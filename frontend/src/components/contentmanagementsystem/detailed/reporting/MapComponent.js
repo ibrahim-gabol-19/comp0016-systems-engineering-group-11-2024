@@ -91,7 +91,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
           }}
         />
       ))}
-      <NewReport />
+      {/* <NewReport /> */}
     </MapContainer>
   );
 };
