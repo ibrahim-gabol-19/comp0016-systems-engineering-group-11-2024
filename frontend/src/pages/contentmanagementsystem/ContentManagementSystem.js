@@ -16,6 +16,8 @@ const ContentManagementSystem = () => {
   const [isDragging, setIsDragging] = useState(false);
   //const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
+  const [userQuery, setUserQuery] = useState("");
+
 
   const categories = ["Articles", "Events", "Reporting"];
   const navigate = useNavigate();
@@ -158,6 +160,16 @@ const ContentManagementSystem = () => {
     setSelectedCards([]); // Deselect all cards
   };
 
+  const filterItems = (items, userQuery, itemFields = ['title', 'description']) => {
+    const query = userQuery.toLowerCase();
+    return (items || []).filter((item) => {
+      return itemFields.some(field =>
+        item[field]?.toLowerCase().includes(query)
+      );
+    });
+  };
+  
+
   return (
     <div className="h-[calc(100vh-146px)]">
       <Header />
@@ -174,6 +186,7 @@ const ContentManagementSystem = () => {
         <DefaultTopBar
           onManual={handleManualClicked}
           onUpload={handleFileUploadClick}
+          setUserQuery={setUserQuery}
         />
       )}
       <div
@@ -214,9 +227,9 @@ const ContentManagementSystem = () => {
           >
             
             {(selectedCategory === "Articles"
-              ? articles
+              ? filterItems(articles, userQuery)
               : selectedCategory === "Events"
-                ? events
+                ? filterItems(events, userQuery)
                 : sampleData[selectedCategory]
             )?.map((event, index) => (
               <div

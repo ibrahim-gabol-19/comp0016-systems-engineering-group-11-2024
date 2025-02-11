@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 
-const DefaultTopBar = ({ onManual, onUpload }) => {
+const DefaultTopBar = ({ onManual, onUpload, setUserQuery }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -12,7 +12,7 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
     <div className="pb-2 text-white border-b-2  flex flex-row justify-center items-center z-10 relative">
       {/* New Button to toggle dropdown */}
       <button
-        className="justify-center basis-1/6 flex flex-row py-3 max-w-80 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-500"
+        className="justify-center w-1/6 flex flex-row py-3 max-w-80 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-500"
         onClick={toggleDropdown}
       >
         <svg
@@ -31,10 +31,10 @@ const DefaultTopBar = ({ onManual, onUpload }) => {
         </svg>
         New
       </button>
-      <div className="basis-3/12"></div>
+      <div className="w-3/12"></div>
 
-      <SearchBar />
-      <div className="basis-3/12"></div>
+      <SearchBar setUserQuery={setUserQuery}/>
+      <div className="w-3/12"></div>
 
       {/* Dropdown list, visible when isDropdownOpen is true */}
       <div
