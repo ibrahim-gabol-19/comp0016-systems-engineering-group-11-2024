@@ -277,7 +277,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <div className="w-1/4">
                 <button
                   className="justify-center  flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
-                  onClick={console.log()}
+                  onClick={handleDeleteReport}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
