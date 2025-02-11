@@ -14,13 +14,39 @@ class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def list(self, request): #For the /events/ endpoint
-        event_fields = [field.name for field in Event._meta.fields]
+    def list(self, request):  # For the /events/ endpoint
+        events = Event.objects.values(
+            "title", "event_type", "description", "main_image", "location", "longitude", "latitude",
+            "date", "time", "opening_times", "poi_type"
+        )
 
-        # Query all events, handling potential null values gracefully
-        all_events = Event.objects.values(*event_fields)
+        event_list = [
+            {
+                "title": event["title"],
+                "event_type": event["event_type"],
+                "description": event["description"],
+                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
+                "location": event["location"],
+                "longitude": event["longitude"],
+                "latitude": event["latitude"],
+                **(
+                    {  # Fields for Scheduled Events
+                        "date": event["date"],
+                        "time": event["time"]
+                    }
+                    if event["event_type"] == "scheduled" else  # Only include for scheduled events
+                    {  # Fields for POIs
+                        "opening_times": event["opening_times"] or "N/A",
+                        "poi_type": event["poi_type"]
+                    }
+                    if event["event_type"] == "poi" else {}  # Only include for POIs
+                )
+            }
+            for event in events
+        ]
 
-        return Response(list(all_events))
+        return Response(event_list)
+
 
     @action(detail=False, methods=['get'])
     def scheduled(self, request): #For the /events/scheduled/ endpoint
@@ -63,7 +89,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "title": poi["title"],
                 "openTimes": poi["opening_times"] or "No opening hours available",
                 "description": poi["description"],
-                "image": poi["main_image"] or "https://picsum.photos/950",
+                "main_image": f"http://127.0.0.1:8000/media/{poi['main_image']}" if poi["main_image"] else "https://picsum.photos/550",
                 "category": category
             })
 
@@ -79,7 +105,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "title": event["title"],
                 "openTimes": event["opening_times"] or "N/A",
                 "description": event["description"],
-                "image": event["main_image"] or "https://picsum.photos/550",
+                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
                 "event_type": event["event_type"]
             }
             for event in featured_events

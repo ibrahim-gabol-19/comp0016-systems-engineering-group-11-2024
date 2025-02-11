@@ -29,11 +29,11 @@ class Event(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
 
-    # Fields for Scheduled Events
+    # Fields for Scheduled Events only
     date = models.DateField(null=True, blank=True)  # Will validate in serializer
     time = models.TimeField(null=True, blank=True)  # Will validate in serializer
 
-    # Fields for Points of Interest
+    # Fields for Points of Interest only
     opening_times = models.CharField(max_length=255, blank=True, null=True)
     poi_type = models.CharField(max_length=20, choices=POI_TYPES, blank=True, null=True)
 

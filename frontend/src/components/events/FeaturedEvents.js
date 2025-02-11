@@ -44,9 +44,9 @@ const FeaturedEvents = () => {
               className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
               onClick={() => handleEventClick(event)}
             >
-              {event.image && (
+              {event.main_image && (
                 <img
-                  src={event.image}
+                  src={event.main_image}
                   alt={event.title}
                   className="w-full h-32 object-cover"
                 />

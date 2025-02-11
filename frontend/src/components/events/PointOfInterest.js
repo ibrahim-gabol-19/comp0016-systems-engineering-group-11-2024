@@ -82,9 +82,9 @@ const PointOfInterest = () => {
                 onClick={() => openEventDetails(event)}
                 style={{ minHeight: "250px", maxHeight: "250px" }}
               >
-                {event.image && (
+                {event.main_image && (
                   <img
-                    src={event.image}
+                    src={event.main_image}
                     alt={event.title}
                     className="w-full h-32 object-cover"
                   />
