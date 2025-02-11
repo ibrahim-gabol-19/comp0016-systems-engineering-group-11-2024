@@ -332,22 +332,23 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </p>
             </div>
           </div>
-          {/*Image*/}
-          <div className="w-full h-2/6 flex justify-center items-center border border-gray-300">
-            {selectedMarker.main_image ? (
-              <img
-                src={selectedMarker.main_image}
-                alt=""
-                className="max-h-full max-w-full"
-              />
-            ) : (
-              <img
-                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
-                alt=""
-                className="max-h-full max-w-full"
-              />
-            )}
-          </div>
+{/*Image*/}
+<div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+  {selectedMarker.main_image ? (
+    <img
+      src={selectedMarker.main_image}
+      alt=""
+      className="h-64 w-64 object-contain"
+    />
+  ) : (
+    <img
+      src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
+      alt=""
+      className="h-64 w-64 object-contain"
+    />
+  )}
+</div>
+
 
           {/* Description with Poster and Date */}
           <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">

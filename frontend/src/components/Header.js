@@ -1,17 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/earth.png";
+import { useAuth } from "../context/AuthContext"; // Assuming the AuthContext is in this path
 
 const navList = [
   {
     id: 1,
     data: "Home",
     path: "/",
-  },
-  {
-    id: 2,
-    data: "Forum",
-    path: "/forum",
   },
   {
     id: 3,
@@ -24,11 +20,6 @@ const navList = [
     path: "/events",
   },
   {
-    id: 5,
-    data: "News",
-    path: "/news",
-  },
-  {
     id: 6,
     data: "Manage",
     path: "/contentmanagementsystem",
@@ -36,6 +27,14 @@ const navList = [
 ];
 
 const Header = () => {
+  const { auth, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout(); // Log the user out
+    navigate("/login"); // Redirect to login page
+  };
+
   return (
     <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100 z-10">
       <a
@@ -60,6 +59,14 @@ const Header = () => {
             {item.data}
           </Link>
         ))}
+        {auth.isAuthenticated && (
+          <button
+            onClick={handleLogout}
+            className="ml-8 text-lg text-red-500 hover:text-red-700 transition duration-300"
+          >
+            Logout
+          </button>
+        )}
       </nav>
     </header>
   );

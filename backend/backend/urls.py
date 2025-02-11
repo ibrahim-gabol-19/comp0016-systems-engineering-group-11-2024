@@ -28,6 +28,7 @@ urlpatterns = [
     path('articles/', include('articles.urls')),
     path('events/', include('events.urls')),
     path('search/', include('search.urls')),
+    path('api/auth/', include('accounts.urls')),
 ]
 
 # Serve media files during development

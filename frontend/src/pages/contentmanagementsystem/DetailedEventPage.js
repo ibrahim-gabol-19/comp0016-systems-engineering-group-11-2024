@@ -4,6 +4,7 @@ import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/N
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
+import Header from "../../components/Header";
 import axios from "axios";
 
 const NEW_EVENT_ID = "0";
@@ -240,6 +241,8 @@ const DetailedEventPage = () => {
 
   return (
     <div>
+      <Header />            
+      <div className="pt-20"></div>
       <div className="p-6">
         <button
           onClick={() => setIsEditing((prev) => !prev)}

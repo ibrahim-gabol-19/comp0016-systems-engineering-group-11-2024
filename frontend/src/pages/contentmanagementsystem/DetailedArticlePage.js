@@ -5,6 +5,8 @@ import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/N
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useParams } from "react-router-dom"; 
+import Header from "../../components/Header";
 
 const NEW_ARTICLE_ID = "0";
 
@@ -171,6 +173,8 @@ const DetailedArticlePage = () => {
 
   return (
     <div>
+            <Header />            
+            <div className="pt-20"></div>
       <div className="pl-6">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
