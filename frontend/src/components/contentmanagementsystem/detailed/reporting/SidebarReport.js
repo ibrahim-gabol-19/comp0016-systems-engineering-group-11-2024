@@ -271,9 +271,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-3/4">
-                <div className="w-full h-3/4 text-center justify-center">
-                  <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+              <div className="w-3/4 h-1/2">
+                <div className="w-full h-3/4 text-center justify-center overflow-auto">
+                  <p class="font-semibold text-3xl">{selectedMarker.title}</p>
                 </div>
                 <div className="w-full h-1/4 text-center justify-center">
                   <p className="text-gray-500 text-m">
@@ -283,24 +283,24 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-1/4">
                 <button
-                  className="justify-center  flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    strokeWidth="1.7"
+                    stroke-width="1.5"
                     stroke="currentColor"
-                    className="w-6 h-6"
+                    class="size-6"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                     />
                   </svg>
-                  Delete
+
                 </button>
               </div>
             </div>
@@ -310,7 +310,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <select
                 value={selectedMarker.status}
                 onChange={handleStatusChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600"
               >
                 <option value="open">Open</option>
                 <option value="resolved">Resolved</option>
@@ -321,7 +321,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <select
                 value={selectedMarker.tags}
                 onChange={handleTagsChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center  text-sky-400 "
               >
                 <option value="road">Road</option>
                 <option value="environmental">Environmental</option>
@@ -365,26 +365,27 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                     {new Date(discussion.created_at).toLocaleString()}
                   </p>
                 </div>
+
                 <div className="w-1/6 overflow-auto">
                   <button
-                    className="justify-center w-full flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                    className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                     onClick={() => handleDeleteDiscussion(discussion.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      strokeWidth="1.7"
+                      stroke-width="1.5"
                       stroke="currentColor"
-                      className="w-6 h-6"
+                      class="size-6"
                     >
                       <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                       />
                     </svg>
-                    Delete
+
                   </button>
                 </div>
               </div>
@@ -443,7 +444,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-3/4">
+              <div className="w-3/4 h-1/2">
                 <div className="w-full h-3/4 text-center justify-center overflow-auto">
                   <p class="font-semibold text-3xl">{selectedMarker.title}</p>
                 </div>
@@ -455,24 +456,24 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-1/4">
                 <button
-                  className="justify-center  flex flex-row py-3 max-w-80 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    strokeWidth="1.7"
+                    stroke-width="1.5"
                     stroke="currentColor"
-                    className="w-6 h-6"
+                    class="size-6"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                     />
                   </svg>
-                  Delete
+
                 </button>
               </div>
             </div>
@@ -482,7 +483,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <select
                 value={selectedMarker.status}
                 onChange={handleStatusChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600"
               >
                 <option value="open">Open</option>
                 <option value="resolved">Resolved</option>
@@ -493,7 +494,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <select
                 value={selectedMarker.tags}
                 onChange={handleTagsChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center  text-sky-400 "
               >
                 <option value="road">Road</option>
                 <option value="environmental">Environmental</option>
