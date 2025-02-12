@@ -208,7 +208,7 @@ const ContentManagementSystem = () => {
   const handleSelectAll = () => {
     const allCards = (
       selectedCategory === "Articles" ? articles : sampleData[selectedCategory]
-    )?.map((_, index) => index);
+    )?.map((_, index) => _);
     setSelectedCards(allCards);
   };
 
@@ -276,7 +276,7 @@ const ContentManagementSystem = () => {
           </ul>
         </div>
 
-        <div className="w-5/6 h-full bg-white pl-6 overflow-auto">
+        <div className="w-5/6 h-full bg-white overflow-auto">
           {selectedCategory === "Reporting" && <ReportsSection userQuery={userQuery} />}
           {selectedCategory !== "Reporting" && (
             <div className="grid grid-cols-4 gap-8 p-4">
