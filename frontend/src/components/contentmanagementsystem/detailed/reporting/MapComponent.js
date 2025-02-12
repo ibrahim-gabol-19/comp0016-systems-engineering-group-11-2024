@@ -22,7 +22,17 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter }) => {
+// The filter function to search within item fields
+const filterItems = (items, userQuery, itemFields = ['title', 'description']) => {
+  const query = userQuery.toLowerCase();
+  return (items || []).filter((item) => {
+    return itemFields.some(field =>
+      item[field]?.toLowerCase().includes(query)
+    );
+  });
+};
+
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, userQuery }) => {
   const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
   const zoomLevel = 13;
   const [position, setPosition] = useState(null);
@@ -50,7 +60,6 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       locationfound(e) {
         setPosition(e.latlng);
         map.flyTo(e.latlng, map.getZoom());
-
       },
     });
 
@@ -58,13 +67,13 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       <Marker
         position={position}
         draggable={true}
-
       >
       </Marker>
     );
   }
 
-  const filteredReports = reports.filter((item) => item.status === filter);
+  // Filter the reports based on the status and user query
+  const filteredReports = filterItems(reports.filter(item => item.status === filter), userQuery);
 
   return (
     <MapContainer

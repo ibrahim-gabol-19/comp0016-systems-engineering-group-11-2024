@@ -225,7 +225,7 @@ const ContentManagementSystem = () => {
         </div>
   
         <div className="w-5/6 h-full bg-white pl-6 overflow-auto">
-          {selectedCategory === "Reporting" && <ReportsSection />}
+          {selectedCategory === "Reporting" && <ReportsSection userQuery={userQuery} />}
           {selectedCategory !== "Reporting" && (
             <div className="grid grid-cols-4 gap-8 p-4">
               {(selectedCategory === "Articles"

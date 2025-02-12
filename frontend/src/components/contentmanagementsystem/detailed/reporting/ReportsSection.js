@@ -5,7 +5,7 @@ import SidebarReport from "./SidebarReport";
 import axios from "axios";
 const API_URL = process.env.REACT_APP_API_URL;
 
-const ReportsSection = () => {
+const ReportsSection = ({userQuery}) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
@@ -80,6 +80,7 @@ const ReportsSection = () => {
               reports={reports}
               newMarker={newMarker}
               filter={filter}
+              userQuery={userQuery}
             ></MapComponent>
           </div>
         </div>
