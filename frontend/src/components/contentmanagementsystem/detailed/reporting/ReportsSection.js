@@ -52,10 +52,10 @@ const ReportsSection = ({userQuery}) => {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col py-1 pr-2">
+    <div className="h-full w-full flex flex-col   py-1 px-2">
       <div className="h-full flex flex-col">
         <div className=" h-full w-full flex">
-          <div className="bg-[#f9f9f9]  shadow-l py-5 rounded-xl h-full w-2/6">
+          <div className="bg-white  shadow-xl py-5 rounded-xl h-full w-2/6">
             <SidebarReport
               selectedMarker={selectedMarker}
               newMarker={newMarker}
