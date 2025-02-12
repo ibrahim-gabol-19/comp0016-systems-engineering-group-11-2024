@@ -68,17 +68,20 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   }
 
   const handleDeleteReport = async () => {
-    try {
-      const response = await axios.delete(
-        `${API_URL}/reports/${selectedMarker.id}/`,
-      );
+    const isConfirmed = window.confirm(`Are you sure you want to delete report?`);
+    if (isConfirmed) {
+      try {
+        const response = await axios.delete(
+          `${API_URL}/reports/${selectedMarker.id}/`,
+        );
 
-      if (response.status === 204) {
-        console.log("Report deleted successfully");
-        fetchReports();
+        if (response.status === 204) {
+          console.log("Report deleted successfully");
+          fetchReports();
+        }
+      } catch (err) {
+        console.log(err.message);
       }
-    } catch (err) {
-      console.log(err.message);
     }
   }
 
