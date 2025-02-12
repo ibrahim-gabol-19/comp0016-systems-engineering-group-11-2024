@@ -87,17 +87,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
 
   const handleDeleteDiscussion = async (id) => {
-    try {
-      const response = await axios.delete(
-        `${API_URL}/reportdiscussion/${id}/`,
-      );
+    const isConfirmed = window.confirm(`Are you sure you want to delete discussion?`);
+    if (isConfirmed) {
 
-      if (response.status === 204) {
-        console.log("Discussion deleted successfully");
-        fetchReports();
+      try {
+        const response = await axios.delete(
+          `${API_URL}/reportdiscussion/${id}/`,
+        );
+
+        if (response.status === 204) {
+          console.log("Discussion deleted successfully");
+          fetchReports();
+        }
+      } catch (err) {
+        console.log(err.message);
       }
-    } catch (err) {
-      console.log(err.message);
     }
   }
 
