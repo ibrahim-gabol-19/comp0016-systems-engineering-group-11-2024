@@ -85,7 +85,6 @@ const DetailedArticlePage = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log(response);
         navigate(`/contentmanagementsystem/details/articles/${response.data.id}`); // Navigate to the new article URL
         alert("Article saved successfully!");
         
@@ -196,9 +195,10 @@ const DetailedArticlePage = () => {
               <p className="text-lg mt-6 text-gray-600 italic text-center">
                 {description}
               </p>
-              <p className="text-lg mt-4 text-gray-700 text-center">
-                {mainContent}
-              </p>
+              <p className="text-lg mt-4 text-gray-700 text-center" style={{ whiteSpace: 'pre-wrap' }}>
+  {mainContent}
+</p>
+
             </div>
           </div>
         )}
