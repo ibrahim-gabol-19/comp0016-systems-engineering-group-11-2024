@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
@@ -25,6 +25,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
@@ -35,7 +36,7 @@ const DetailedEventPage = () => {
 
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(API_URL + `events/${eventId}/`)
         .then((response) => {
           const event = response.data;
           console.log("API response:", event); // Log the API response
@@ -90,7 +91,7 @@ const DetailedEventPage = () => {
         // PUT operation for updating an existing article
        
          await axios.put(
-          `http://127.0.0.1:8000/events/${eventId}/`,
+          API_URL + `events/${eventId}/`,
           formData,
           {
             headers: {

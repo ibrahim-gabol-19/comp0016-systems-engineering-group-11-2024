@@ -352,7 +352,7 @@ const ContentManagementSystem = () => {
 
                   {/* Delete Button */}
                   <button
-                    className="absolute top-2 right-10 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent the click event from triggering the card click
                       handleDeleteSingular(event);

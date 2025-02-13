@@ -32,7 +32,7 @@ const DetailedArticlePage = () => {
       setIsEditing(false); // Initially view preview when editing an existing article
 
       axios
-        .get(`http://127.0.0.1:8000/articles/${articleId}/`)
+        .get(API_URL + `articles/${articleId}/`)
         .then((response) => {
           const article = response.data;
           setTitle(article.title || "");
@@ -66,7 +66,7 @@ const DetailedArticlePage = () => {
       if (articleId !== NEW_ARTICLE_ID) {
         // PUT operation for updating an existing article
         await axios.put(
-          `http://127.0.0.1:8000/articles/${articleId}/`,
+          API_URL + `articles/${articleId}/`,
           formData,
           {
             headers: {
