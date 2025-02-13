@@ -42,6 +42,7 @@ const DetailedArticlePage = () => {
           if (article.main_image) {
             setUploadedFiles([article.main_image]);
           }
+          setErrorMessage("");
         })
         .catch((error) => {
           console.error("Error fetching article:", error);
@@ -83,6 +84,7 @@ const DetailedArticlePage = () => {
         });
         alert("Article saved successfully!");
       }
+      setErrorMessage("");
     } catch (error) {
       console.error("Error saving or updating article:", error);
       setErrorMessage("Error saving or updating article. Please try again.");
