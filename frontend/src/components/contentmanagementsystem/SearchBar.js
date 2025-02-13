@@ -9,7 +9,7 @@ const SearchBar = ({setUserQuery}) => {
 
       {/* Search Bar */}
       <div
-        className={` justify-center px-2 items-center transition-all flex duration-300 ease-in-out   rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isFocused ? "h-12 w-3/4" : "h-12 w-1/2"
+        className={` justify-center px-2 items-center transition-all flex duration-300 ease-in-out    rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isFocused ? "h-12 w-3/4 ring-2 ring-blue-500" : "h-12 w-1/2"
           }`}>
         <div className="w-1/6 h-full flex justify-center items-center">
           <svg
