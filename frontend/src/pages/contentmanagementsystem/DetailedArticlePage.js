@@ -4,12 +4,12 @@ import MainEditor from "../../components/contentmanagementsystem/detailed/MainEd
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import axios from "axios";
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 const API_URL = process.env.REACT_APP_API_URL;
 
 
-const NEW_ARTICLE_ID = "0"; 
+const NEW_ARTICLE_ID = "0";
 
 const DetailedArticlePage = () => {
   const { articleId } = useParams(); // Get the article ID from the route
@@ -76,7 +76,7 @@ const DetailedArticlePage = () => {
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        await axios.post( API_URL + "articles/", formData, {
+        await axios.post(API_URL + "articles/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -98,20 +98,20 @@ const DetailedArticlePage = () => {
   };
 
   return (
-    <div>
-            <Header />            
-            <div className="pt-20"></div>
-      <div className="pl-6">
+    <div className="h-[calc(100vh-146px)] w-full">
+      <Header />
+      <div className="pt-20"></div>
+      <div className="flex justify-between px-5">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+          className="bg-blue-500 text-white justify-cetner font-bold rounded-lg  hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
           aria-label="Toggle edit/preview mode"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
         <button
           onClick={handleSave}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-green-500 text-white justify-cetner font-bold rounded-lg  hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
           aria-label="Save article"
         >
           Save
@@ -124,10 +124,11 @@ const DetailedArticlePage = () => {
         </div>
       )}
 
-      <div className="flex justify-center items-center overflow-auto relative">
+      <div className="h-full flex justify-center items-center overflow-auto relative">
         {isEditing ? (
           <div className="w-screen h-full flex relative">
-            <div className="w-5/6 px-72 overflow-y-auto">
+            <div className="h-full w-1/6 "/>
+            <div className="w-3/6 h-full py-2 px-3 overflow-y-auto">
               <TitleEditor
                 ref={quillRefTitle}
                 placeholderText="Title"
@@ -143,7 +144,8 @@ const DetailedArticlePage = () => {
                 onTextChange={setMainContent}
               />
             </div>
-            <div className="w-1/6 px-16 overflow-hidden">
+            <div className="h-full w-1/6"/>
+            <div className="w-2/6  px-3 pb-64 flex flex-col justify-center  overflow-hidden">
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Author"

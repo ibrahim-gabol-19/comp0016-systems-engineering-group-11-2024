@@ -49,6 +49,7 @@ const NoToolbarEditor = forwardRef(
       quill.root.style.fontSize = fontSizeRef.current; // Use the latest font size from the ref
       quill.root.style.lineHeight = "1.5"; // Set line height for readability
       quill.root.style.minHeight = "30px"; // Minimum height for the editor
+      quill.root.style.textAlign = "center";
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling
       quill.root.style.overflowX = "auto";
 
