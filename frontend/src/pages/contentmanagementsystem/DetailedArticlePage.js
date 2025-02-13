@@ -7,7 +7,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import { useNavigate } from 'react-router-dom';
-import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
 const API_URL = process.env.REACT_APP_API_URL;
 
 

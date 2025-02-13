@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React  from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
-  useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
@@ -35,42 +34,11 @@ const filterItems = (items, userQuery, itemFields = ['title', 'description']) =>
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, userQuery }) => {
   const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
   const zoomLevel = 13;
-  const [position, setPosition] = useState(null);
 
   const ukBounds = [
     [49.5, -8], // Southwest coordinates (approx.)
     [60, 2], // Northeast coordinates (approx.)
   ];
-
-  function NewReport() {
-    const map = useMapEvents({
-      click(e) {
-        // Close any open popups
-        map.closePopup();
-
-        // Update position for the new marker
-        setPosition(e.latlng);
-
-        // Optionally, fly to the clicked location
-        map.flyTo(e.latlng, map.getZoom());
-
-        // Notify parent component of new marker
-        onNewMarkerSelected(e);
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
-
-    return newMarker === null ? null : (
-      <Marker
-        position={position}
-        draggable={true}
-      >
-      </Marker>
-    );
-  }
 
   // Filter the reports based on the status and user query
   const filteredReports = filterItems(reports.filter(item => item.status === filter), userQuery);
@@ -100,7 +68,6 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
           }}
         />
       ))}
-      {/* <NewReport /> */}
     </MapContainer>
   );
 };

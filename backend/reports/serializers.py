@@ -1,3 +1,6 @@
+"""
+serializers.py
+"""
 from rest_framework import serializers
 from reportdiscussion.serializers import ReportDiscussionSerializer
 from .models import Report
@@ -31,9 +34,8 @@ class ReportSerializer(serializers.ModelSerializer):
         """
         if self.instance is None:  # Ensure this only applies to creation
             attrs.setdefault('status', 'open')
-            attrs.setdefault('upvotes', 0)  
+            attrs.setdefault('upvotes', 0)
             # Ignore user-provided upvotes and status values during validation
             attrs.pop('upvotes', None)
             attrs.pop('status', None)  # Don't allow users to override 'status' during creation
-            
         return attrs

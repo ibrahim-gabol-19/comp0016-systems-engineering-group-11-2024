@@ -77,8 +77,8 @@ const ContentManagementSystem = () => {
   }
   // Fetch articles from the API when the component is mounted
   useEffect(() => {
-
     refreshData();
+    // eslint-disable-next-line
   }, [selectedCategory]);
 
   const handleCategoryClick = (category) => {
@@ -128,7 +128,6 @@ const ContentManagementSystem = () => {
         }`
       );
     }
-    
   };
 
   /*

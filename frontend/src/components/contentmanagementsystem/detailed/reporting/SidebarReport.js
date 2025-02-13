@@ -21,19 +21,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     "health_safety",
     "urban_development",
   ];
-  const handleUpvote = async () => {
-    try {
-      const response = await axios.post(
-        API_URL + "reports/" + selectedMarker.id + "/upvote/"
-      );
-      if (response.status === 200) {
-        fetchReports();
-      }
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-    }
-  };
+
 
   const handleStatusChange = async (status) => {
     try {
