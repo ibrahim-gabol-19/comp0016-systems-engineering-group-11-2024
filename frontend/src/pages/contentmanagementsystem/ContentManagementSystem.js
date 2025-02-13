@@ -157,7 +157,6 @@ const ContentManagementSystem = () => {
           );
 
           if (response.status === 204) {
-            console.log(`${selectedCategory} with ID ${item.id} deleted successfully`);
           }
         }
 
@@ -322,7 +321,7 @@ const ContentManagementSystem = () => {
                   </div>
 
                   <button
-                    className={`absolute top-2 left-2 w-7 h-7 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
+                    className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
                       ? "opacity-100 bg-gray-600 font-bold text-white"
                       : "opacity-60"
                       } group-hover:opacity-100 transition-opacity`}
@@ -337,7 +336,7 @@ const ContentManagementSystem = () => {
                   {/* Conditional Star Button */}
                   {selectedCategory !== "Articles" && (
                     <button
-                      className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(index)
+                      className={`absolute top-2 right-2 w-9 h-9 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(index)
                         ? "bg-yellow-500 text-white"
                         : "opacity-60"
                         }`}
@@ -352,7 +351,7 @@ const ContentManagementSystem = () => {
 
                   {/* Delete Button */}
                   <button
-                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent the click event from triggering the card click
                       handleDeleteSingular(event);

@@ -6,6 +6,8 @@ import MainImage from "../../components/contentmanagementsystem/detailed/MainIma
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
+import { useNavigate } from 'react-router-dom';
+import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
 const API_URL = process.env.REACT_APP_API_URL;
 
 
@@ -17,6 +19,7 @@ const DetailedArticlePage = () => {
   const quillRefMain = useRef();
   const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
+  const navigate = useNavigate();
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
@@ -77,12 +80,15 @@ const DetailedArticlePage = () => {
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        await axios.post(API_URL + "articles/", formData, {
+        const response = await axios.post(API_URL + "articles/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+        console.log(response);
+        navigate(`/contentmanagementsystem/details/articles/${response.data.id}`); // Navigate to the new article URL
         alert("Article saved successfully!");
+        
       }
       setErrorMessage("");
     } catch (error) {

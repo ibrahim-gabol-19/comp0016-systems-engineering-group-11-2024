@@ -43,7 +43,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       );
 
       if (response.status === 200) {
-        console.log("Status updated successfully");
         fetchReports();
       }
     } catch (err) {
@@ -59,7 +58,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       );
 
       if (response.status === 200) {
-        console.log("Tags updated successfully");
         fetchReports();
       }
     } catch (err) {
@@ -76,7 +74,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         );
 
         if (response.status === 204) {
-          console.log("Report deleted successfully");
           fetchReports();
         }
       } catch (err) {
@@ -96,7 +93,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         );
 
         if (response.status === 204) {
-          console.log("Discussion deleted successfully");
           fetchReports();
         }
       } catch (err) {
