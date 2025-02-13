@@ -128,7 +128,7 @@ const DetailedArticlePage = () => {
         {isEditing ? (
           <div className="w-screen h-full flex relative">
             <div className="h-full w-1/6 "/>
-            <div className="w-3/6 h-full py-2 px-3 overflow-y-auto">
+            <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
               <TitleEditor
                 ref={quillRefTitle}
                 placeholderText="Title"
