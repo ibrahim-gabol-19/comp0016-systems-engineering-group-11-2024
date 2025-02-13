@@ -56,7 +56,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         };
 
         const response = await axios.post(
-           API_URL + "reportdiscussion/",
+          API_URL + "reportdiscussion/",
           discussionMessage,
           {
             headers: {
@@ -95,7 +95,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-         API_URL + "reports/",
+        API_URL + "reports/",
         formData,
         {
           headers: {
@@ -229,7 +229,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto`}
+
+                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${discussion.author === "Business" ? "bg-yellow-200" : ""}
+                }`}
               >
                 {/* Profile Picture (SVG Icon) */}
                 <div className="w-1/6 h-full flex justify-center items-center">
