@@ -271,7 +271,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-3/4 h-1/2">
+              <div className="w-2/4 h-1/2 ">
                 <div className="w-full h-3/4 text-center justify-center overflow-auto">
                   <p class="font-semibold text-3xl">{selectedMarker.title}</p>
                 </div>
@@ -281,9 +281,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   </p>
                 </div>
               </div>
-              <div className="w-1/4">
+              <div className="w-1/4 h-1/2">
                 <button
-                  className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="justify-center items-center w-1/2 h-full ml-16 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
@@ -368,7 +368,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
                 <div className="w-1/6 overflow-auto">
                   <button
-                    className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                    className="justify-center items-center w-1/2 h-1/4 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                     onClick={() => handleDeleteDiscussion(discussion.id)}
                   >
                     <svg
@@ -377,7 +377,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="size-6"
+                      class="size-4"
                     >
                       <path
                         stroke-linecap="round"
@@ -444,7 +444,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-3/4 h-1/2">
+              <div className="w-2/4 h-1/2 ">
                 <div className="w-full h-3/4 text-center justify-center overflow-auto">
                   <p class="font-semibold text-3xl">{selectedMarker.title}</p>
                 </div>
@@ -454,9 +454,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   </p>
                 </div>
               </div>
-              <div className="w-1/4">
+              <div className="w-1/4 h-1/2">
                 <button
-                  className="justify-center w-1/2  flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="justify-center items-center w-1/2 h-full ml-16 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
