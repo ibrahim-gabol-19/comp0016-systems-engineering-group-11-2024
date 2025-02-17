@@ -104,63 +104,151 @@ const DetailedEventPage = () => {
 
   return (
     <div>
-      <h1>{isEditing ? "Edit Event" : "Event Details"}</h1>
-      {/* Event Type Selection for New Events */}
-      {eventId === NEW_EVENT_ID && (
-        <label>
-          Event Type:
-          <select value={eventType} onChange={(e) => {
-            const newType = e.target.value;
-            setEventType(newType);
+      <div className="p-6">
+        <button
+          onClick={() => setIsEditing((prev) => !prev)}
+          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+        >
+          {isEditing ? "Switch to Preview" : "Switch to Edit"}
+        </button>
 
-            // Reset relevant fields when switching event types
-            if (newType === "scheduled") {
-              setDate("");
-              setTime("");
-              setPoiType("");
-              setOpeningTimes("");
-            } else if (newType === "point_of_interest") {
-              setDate("");
-              setTime("");
-            }
-          }}>
-            <option value="">Select Type</option>
-            <option value="scheduled">Scheduled Event</option>
-            <option value="point_of_interest">Point of Interest</option>
-          </select>
-        </label>
-      )}
-      <>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
-        <MainImage onFilesUploaded={handleFilesUploaded} />
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
-        <label className="flex items-center space-x-2 mt-2">
-          <input
-            type="checkbox"
-            checked={isFeatured}
-            onChange={(e) => setIsFeatured(e.target.checked)}
-            className="form-checkbox"
-          />
-          <span>Featured Event</span>
-        </label>
-      </>
+        <button
+          onClick={handleSave}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Save
+        </button>
+      </div>
+      {isEditing ? (
+        <div>
+          {/* Event Type Selection for New Events */}
+          {eventId === NEW_EVENT_ID && (
+            <label>
+              Event Type:
+              <select value={eventType} onChange={(e) => {
+                const newType = e.target.value;
+                setEventType(newType);
+
+                // Reset relevant fields when switching event types
+                if (newType === "scheduled") {
+                  setDate("");
+                  setTime("");
+                  setPoiType("");
+                  setOpeningTimes("");
+                } else if (newType === "point_of_interest") {
+                  setDate("");
+                  setTime("");
+                }
+              }}>
+                <option value="">Select Type</option>
+                <option value="scheduled">Scheduled Event</option>
+                <option value="point_of_interest">Point of Interest</option>
+              </select>
+            </label>
+          )}
+          <>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
+            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+            <MainImage onFilesUploaded={handleFilesUploaded} />
+            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
+            <label className="flex items-center space-x-2 mt-2">
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="form-checkbox"
+              />
+              <span>Featured Event</span>
+            </label>
+          </>
 
 
-      {eventType === "scheduled" && <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />}
-      {eventType === "point_of_interest" && (
-        <>
-          <select value={poiType} onChange={(e) => setPoiType(e.target.value)}>
-            <option value="">Select POI Type</option>
-            <option value="landmarks">Landmarks</option>
-            <option value="museums">Museums</option>
-            <option value="parks">Parks</option>
-            <option value="other">Other</option>
-          </select>
-          <input type="text" value={openingTimes} onChange={(e) => setOpeningTimes(e.target.value)} placeholder="Opening Times" />
-        </>
-      )}
-      <button onClick={handleSave}>Save</button>
+          {eventType === "scheduled" && <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />}
+          {eventType === "point_of_interest" && (
+            <>
+              <select value={poiType} onChange={(e) => setPoiType(e.target.value)}>
+                <option value="">Select POI Type</option>
+                <option value="landmarks">Landmarks</option>
+                <option value="museums">Museums</option>
+                <option value="parks">Parks</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" value={openingTimes} onChange={(e) => setOpeningTimes(e.target.value)} placeholder="Opening Times" />
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
+          <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+            {/* Title and Author Section */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-4xl font-bold text-gray-900 text-center flex-1">
+                {title}
+              </h1>
+              {eventType === "point_of_interest" && !(poiType === "other") && (
+                <p className="text-lg mt-4 text-gray-600 text-center">
+                  {poiType.charAt(0).toUpperCase() + poiType.slice(1, -1)}
+                </p>
+                )}
+
+
+            </div>
+
+            <div className="mt-4">
+              {uploadedFiles.length > 0 && uploadedFiles[0] && (
+                <img
+                  src={
+                    typeof uploadedFiles[0] === "string"
+                      ? uploadedFiles[0]
+                      : URL.createObjectURL(uploadedFiles[0])
+                  }
+                  alt="Main"
+                  className="w-full h-64 object-cover rounded-md shadow-md"
+                />
+              )}
+            </div>
+
+            {/* Description Section */}
+            <p className="text-lg mt-6 text-gray-900 text-center">
+              {description}
+            </p>
+
+            {eventType === "scheduled" && (
+                <p className="text-lg mt-4 text-gray-900 text-center">
+                Event Date & Time: {date} {time}
+                </p>)
+              }
+              {eventType === "point_of_interest" && (
+                <p className="text-lg mt-4 text-gray-900 text-center">
+                Open Time: {openingTimes}
+                </p>)
+              }
+
+            {/* Main Content Section */}
+            <p className="text-lg mt-4 text-gray-900 text-center">
+              {location}
+            </p>
+
+            {/* Images */}
+            <div className="mt-6 flex justify-center flex-wrap gap-6">
+              {uploadedFiles.length > 1 &&
+                uploadedFiles.slice(1).map((file, index) => (
+                  <div
+                    key={index}
+                    className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
+                  >
+                    <p className="text-sm text-gray-700">{file.name}</p>
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Uploaded File"
+                      className="w-full h-48 object-cover rounded-md mt-2"
+                    />
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      )};
     </div>
   );
 };
