@@ -387,7 +387,7 @@ const ContentManagementSystem = () => {
                         }`}
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
-                        toggleStarSelection(event);
+                        toggleStarSelection(event.id);
                       }}
                     >
                       ★
