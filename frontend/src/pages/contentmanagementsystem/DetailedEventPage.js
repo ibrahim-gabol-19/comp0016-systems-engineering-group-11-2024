@@ -104,7 +104,7 @@ const DetailedEventPage = () => {
 
   return (
     <div>
-      <div className="p-6">
+      <div className="p-6 flex justify-end">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
           className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
@@ -120,67 +120,112 @@ const DetailedEventPage = () => {
         </button>
       </div>
       {isEditing ? (
-        <div>
-          {/* Event Type Selection for New Events */}
-          {eventId === NEW_EVENT_ID && (
-            <label>
-              Event Type:
-              <select value={eventType} onChange={(e) => {
-                const newType = e.target.value;
-                setEventType(newType);
+        <div className="flex justify-center items-center h-full w-full p-8">
+          {/* Editing Section */}
+          <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            {/* Event Type Selection for New Events */}
+            {eventId === NEW_EVENT_ID && (
+              <label className="block text-sm font-medium text-gray-700">
+                Event Type:
+                <select
+                  value={eventType}
+                  onChange={(e) => {
+                    const newType = e.target.value;
+                    setEventType(newType);
 
-                // Reset relevant fields when switching event types
-                if (newType === "scheduled") {
-                  setDate("");
-                  setTime("");
-                  setPoiType("");
-                  setOpeningTimes("");
-                } else if (newType === "point_of_interest") {
-                  setDate("");
-                  setTime("");
-                }
-              }}>
-                <option value="">Select Type</option>
-                <option value="scheduled">Scheduled Event</option>
-                <option value="point_of_interest">Point of Interest</option>
-              </select>
-            </label>
-          )}
-          <>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
-            <MainImage onFilesUploaded={handleFilesUploaded} />
-            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
-            <label className="flex items-center space-x-2 mt-2">
+                    // Reset relevant fields when switching event types
+                    if (newType === "scheduled") {
+                      setDate("");
+                      setTime("");
+                      setPoiType("");
+                      setOpeningTimes("");
+                    } else if (newType === "point_of_interest") {
+                      setDate("");
+                      setTime("");
+                    }
+                  }}
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">Select Type</option>
+                  <option value="scheduled">Scheduled Event</option>
+                  <option value="point_of_interest">Point of Interest</option>
+                </select>
+              </label>
+            )}
+
+            <div className="space-y-4 mt-4">
               <input
-                type="checkbox"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-                className="form-checkbox"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
               />
-              <span>Featured Event</span>
-            </label>
-          </>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto"
+                rows="3"
+                style={{ maxHeight: "200px" }} // Limits growth, enables scrolling
+              />
+              <MainImage onFilesUploaded={handleFilesUploaded} />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Location"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              <label className="flex items-center space-x-2 text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={isFeatured}
+                  onChange={(e) => setIsFeatured(e.target.checked)}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span className="text-sm font-medium">Featured Event</span>
+              </label>
+            </div>
 
+            {eventType === "scheduled" && (
+              <div className="mt-4">
+                <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />
+              </div>
+            )}
 
-          {eventType === "scheduled" && <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />}
-          {eventType === "point_of_interest" && (
-            <>
-              <select value={poiType} onChange={(e) => setPoiType(e.target.value)}>
-                <option value="">Select POI Type</option>
-                <option value="landmarks">Landmarks</option>
-                <option value="museums">Museums</option>
-                <option value="parks">Parks</option>
-                <option value="other">Other</option>
-              </select>
-              <input type="text" value={openingTimes} onChange={(e) => setOpeningTimes(e.target.value)} placeholder="Opening Times" />
-            </>
-          )}
+            {eventType === "point_of_interest" && (
+              <div className="mt-4 space-y-4">
+                <label className="block text-sm font-medium text-gray-700">POI Type:</label>
+                <select
+                  value={poiType}
+                  onChange={(e) => setPoiType(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">Select POI Type</option>
+                  <option value="landmarks">Landmarks</option>
+                  <option value="museums">Museums</option>
+                  <option value="parks">Parks</option>
+                  <option value="other">Other</option>
+                </select>
+
+                <input
+                  type="text"
+                  value={openingTimes}
+                  onChange={(e) => setOpeningTimes(e.target.value)}
+                  placeholder="Open Dates & Times"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+            )}
+          </div>
         </div>
+
       ) : (
         <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
-          <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
-            {/* Title and Author Section */}
+          {/* Preview Event */}
+          <div className="max-w-7xl w-full bg-white p-6 rounded-md shadow-md">
+            {/* Title Section */}
             <div className="flex items-center justify-between">
               <h1 className="text-4xl font-bold text-gray-900 text-center flex-1">
                 {title}
@@ -209,24 +254,24 @@ const DetailedEventPage = () => {
             </div>
 
             {/* Description Section */}
-            <p className="text-lg mt-6 text-gray-900 text-center">
+            <p className="text-lg mt-6 text-gray-900 text-center break-words overflow-hidden">
               {description}
             </p>
 
             {eventType === "scheduled" && (
                 <p className="text-lg mt-4 text-gray-900 text-center">
-                Event Date & Time: {date} {time}
+                <b>Event Date & Time:</b> On {date} at {time}
                 </p>)
               }
               {eventType === "point_of_interest" && (
                 <p className="text-lg mt-4 text-gray-900 text-center">
-                Open Time: {openingTimes}
+                <b>Open Time:</b> {openingTimes}
                 </p>)
               }
 
             {/* Main Content Section */}
             <p className="text-lg mt-4 text-gray-900 text-center">
-              {location}
+              <b>Location:</b> {location}
             </p>
 
             {/* Images */}
@@ -248,7 +293,7 @@ const DetailedEventPage = () => {
             </div>
           </div>
         </div>
-      )};
+      )}
     </div>
   );
 };
