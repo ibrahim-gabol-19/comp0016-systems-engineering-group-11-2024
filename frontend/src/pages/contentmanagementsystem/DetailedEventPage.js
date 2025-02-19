@@ -109,17 +109,42 @@ const DetailedEventPage = () => {
   };
 
   const fetchSuggestions = async (query) => {
-    if (query.length < 3) {
-      setSuggestions([]);
-      return;
+    if (!query) return;
+  
+    try {
+      const controller = new AbortController(); // Allows us to cancel the fetch
+      const timeoutId = setTimeout(() => {
+        controller.abort(); // Abort the fetch after 3 seconds
+        alert("Location not found"); 
+      }, 3000);
+  
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${query}`,
+        { signal: controller.signal }
+      );
+  
+      clearTimeout(timeoutId); // Clear timeout if fetch is successful
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      if (data.length === 0) {
+        alert("Location not found");
+      } else {
+        setSuggestions(data);
+      }
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.warn("Fetch aborted due to timeout");
+      } else {
+        console.error("Error fetching suggestions:", error);
+      }
     }
-
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
-    );
-    const data = await res.json();
-    setSuggestions(data);
   };
+  
 
   const handleSelectLocation = (place) => {
     setLocation(place.display_name);
@@ -237,18 +262,23 @@ const DetailedEventPage = () => {
                 />
               </div>
             )}
-            <div className="space-y-4">
+            <div className="mt-4 space-y-4">
               {/* Input Field */}
               <input
                 type="text"
                 value={location}
                 onChange={(e) => {
                   setLocation(e.target.value);
-                  fetchSuggestions(e.target.value);
                 }}
                 placeholder="Location"
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
               />
+              <button
+                onClick={() => fetchSuggestions(location)}
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Find Location
+              </button>
 
               {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
@@ -283,7 +313,7 @@ const DetailedEventPage = () => {
                     eventHandlers={{
                       dragend: (e) => {
                         const { lat, lng } = e.target.getLatLng();
-                        setPosition([lat, lng]); // Updates position but not location name
+                        setPosition([lat, lng]); // Updates position
                       },
                     }}
                   >
