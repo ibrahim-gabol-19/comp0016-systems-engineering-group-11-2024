@@ -51,7 +51,7 @@ class EventsViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def scheduled(self, request): #For the /events/scheduled/ endpoint
-        events = Event.objects.all().values("title", "date", "time", "description")
+        events = Event.objects.all().values("id", "title", "date", "time", "description", "location")
         event_dict = {}
 
         for event in events:
@@ -63,16 +63,18 @@ class EventsViewSet(viewsets.ModelViewSet):
 
             # Handle missing or None time
             if event["time"]:
-                time_str = event["time"].strftime("%I:%M %p")  # Convert to 12-hour format
+                time_str = event["time"].strftime("%I:%M")  # Convert to 12-hour format
             else:
                 time_str = ""  # Default for missing time
 
             if date_str not in event_dict:
                 event_dict[date_str] = []
             event_dict[date_str].append({
+                "id": event["id"],
                 "time": time_str,
                 "title": event["title"],
                 "description": event["description"],
+                "location": event["location"]
             })
 
         return Response(event_dict)
@@ -100,15 +102,17 @@ class EventsViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def featured(self, request): #For the /events/featured/ endpoint
         featured_events = Event.objects.filter(is_featured=True).values(
-            "title", "opening_times", "description", "main_image", "event_type"
+            "id", "title", "opening_times", "description", "main_image", "event_type", "location"
         )
         featured_event_list = [
             {
+                "id": event["id"],
                 "title": event["title"],
                 "openTimes": event["opening_times"] or "N/A",
                 "description": event["description"],
                 "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
-                "event_type": event["event_type"]
+                "event_type": event["event_type"],
+                "location": event["location"]
             }
             for event in featured_events
         ]

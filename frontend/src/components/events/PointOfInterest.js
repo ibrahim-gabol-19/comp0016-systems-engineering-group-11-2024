@@ -35,9 +35,6 @@ const PointOfInterest = () => {
     setSelectedCategory(category);
   };
 
-  // const openEventDetails = (event) => {
-  //   alert(`Redirecting to detailed page for: ${event.title}`);
-  // };
   const handleCardClick = (id) => {
     console.log("Navigating to event ID:", id);
     navigate(

@@ -9,13 +9,14 @@ const DetailedEventPageView = () => {
     console.log("Event ID from URL:", eventId);
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(null);    
   
     useEffect(() => {
       axios
         .get(`http://127.0.0.1:8000/events/${eventId}/`)
         .then((response) => {
-          setEvent(response.data);
+            const event = response.data;
+          setEvent(event);
           setLoading(false);
         })
         .catch((error) => {
@@ -38,7 +39,6 @@ const DetailedEventPageView = () => {
       eventType,
       poiType,
       openingTimes,
-      mainImage,
       latitude,
       longitude,
     } = event;
@@ -59,19 +59,15 @@ const DetailedEventPageView = () => {
             )}
         </div>
 
-        {/* <div className="mt-4">
-            {uploadedFiles.length > 0 && uploadedFiles[0] && (
-            <img
-                src={
-                typeof uploadedFiles[0] === "string"
-                    ? uploadedFiles[0]
-                    : URL.createObjectURL(uploadedFiles[0])
-                }
-                alt="Main"
-                className="w-full h-64 object-cover rounded-md shadow-md"
-            />
-            )}
-        </div> */}
+        <div className="mt-4">                
+            {event.main_image && (
+                <img
+                    src={event.main_image}
+                    alt={event.title}
+                    className="w-full h-64 object-cover rounded-md shadow-md"
+                />
+                )}
+        </div>
 
         {/* Description Section */}
         <p className="text-lg mt-6 text-gray-900 text-center break-words overflow-hidden">
@@ -108,24 +104,6 @@ const DetailedEventPageView = () => {
             </MapContainer>
             )}
         </p>
-
-        {/* Images */}
-        {/* <div className="mt-6 flex justify-center flex-wrap gap-6">
-            {uploadedFiles.length > 1 &&
-            uploadedFiles.slice(1).map((file, index) => (
-                <div
-                key={index}
-                className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
-                >
-                <p className="text-sm text-gray-700">{file.name}</p>
-                <img
-                    src={URL.createObjectURL(file)}
-                    alt="Uploaded File"
-                    className="w-full h-48 object-cover rounded-md mt-2"
-                />
-                </div>
-            ))}
-        </div> */}
         </div>
     </div>
 )};
