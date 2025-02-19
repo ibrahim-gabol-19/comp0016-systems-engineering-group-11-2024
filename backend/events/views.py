@@ -17,7 +17,7 @@ class EventsViewSet(viewsets.ModelViewSet):
     def list(self, request):  # For the /events/ endpoint
         events = Event.objects.values(
             "id", "title", "event_type", "description", "main_image", "location", "longitude", "latitude",
-            "date", "time", "opening_times", "poi_type"
+            "date", "time", "opening_times", "poi_type", "is_featured"
         )
 
         event_list = [
@@ -30,6 +30,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "location": event["location"],
                 "longitude": event["longitude"],
                 "latitude": event["latitude"],
+                "is_featured": event["is_featured"],
                 **(
                     {  # Fields for Scheduled Events
                         "date": event["date"],

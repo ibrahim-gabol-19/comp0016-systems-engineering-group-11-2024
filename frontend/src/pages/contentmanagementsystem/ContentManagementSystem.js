@@ -74,6 +74,7 @@ const ContentManagementSystem = () => {
         .then((data) => {
           setEvents(data);
           setStarredCards(data.filter(event => event.is_featured).map(event => event.id));
+          updateStarredCards(data); // Update starred events
         })
       .catch((error) => console.error("Error fetching events:", error));
     }
@@ -88,8 +89,16 @@ const ContentManagementSystem = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setSelectedCards([]);
-    // setStarredCards([]);
   };
+
+  const updateStarredCards = (events) => {
+    const starredEventIds = events
+      .filter(event => event.is_featured) // Find events that are starred
+      .map(event => event.id); // Extract their IDs
+  
+    setStarredCards(starredEventIds); // Update state
+  };
+  
 
   const handleCardClick = (index) => {
     navigate(
@@ -117,8 +126,6 @@ const ContentManagementSystem = () => {
       ? starredCards.filter((id) => id !== eventId)
       : [...starredCards, eventId];
 
-
-    setStarredCards(updatedStarredCards);
  
     try {
       const response = await fetch(API_URL+`events/${eventId}/`, {
@@ -128,8 +135,8 @@ const ContentManagementSystem = () => {
         },
         body: JSON.stringify({ is_featured: !isCurrentlyStarred }),
       });
-      console.log("Backend response:", await response.json());
 
+      setStarredCards(updatedStarredCards);
 
         // Update the event in the state
       setEvents((prevEvents) =>
@@ -137,7 +144,6 @@ const ContentManagementSystem = () => {
           event.id === eventId ? { ...event, is_featured: !isCurrentlyStarred } : event
         )
       );
-
 
     } catch (error) {
       console.error("Error updating star status:", error);
@@ -381,7 +387,7 @@ const ContentManagementSystem = () => {
                   {/* Conditional Star Button */}
                   {selectedCategory === "Events" && (
                     <button
-                      className={`absolute top-2 right-2 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${event.is_featured //starredCards.includes(index)
+                      className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
                         ? "bg-yellow-500 text-white"
                         : "opacity-60"
                         }`}
@@ -396,7 +402,7 @@ const ContentManagementSystem = () => {
 
                   {/* Delete Button */}
                   <button
-                    className="absolute top-2 right-10 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent the click event from triggering the card click
                       handleDeleteSingular(event);
