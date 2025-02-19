@@ -83,8 +83,15 @@ const DetailedEventPage = () => {
     formData.append("poi_type", poiType);
     formData.append("is_featured", isFeatured);
     formData.append("opening_times", openingTimes);
-    formData.append("latitude", position[0]);
-    formData.append("longitude", position[1]);
+
+    // Check if position is null before setting latitude/longitude
+    if (position) {
+      formData.append("latitude", position[0]);
+      formData.append("longitude", position[1]);
+    } else {
+      formData.append("latitude", "");
+      formData.append("longitude", "");
+    }
 
     if (uploadedFiles.length > 0 && typeof uploadedFiles[0] !== "string") {
       formData.append("main_image", uploadedFiles[0]);
@@ -150,6 +157,10 @@ const DetailedEventPage = () => {
     setLocation(place.display_name);
     setPosition([parseFloat(place.lat), parseFloat(place.lon)]);
     setSuggestions([]);
+  };
+
+  const handleDeleteLocation = () => {
+    setPosition(null);
   };
 
 
@@ -300,28 +311,37 @@ const DetailedEventPage = () => {
 
               {/* Map Display */}
               {position && (
-                <MapContainer
-                  center={position}
-                  zoom={13}
-                  style={{ height: "300px", width: "100%" }}
-                  className="rounded-md"
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker
-                    position={position}
-                    draggable={true}
-                    eventHandlers={{
-                      dragend: (e) => {
-                        const { lat, lng } = e.target.getLatLng();
-                        setPosition([lat, lng]); // Updates position
-                      },
-                    }}
+                <div className="relative">
+                  <MapContainer
+                    center={position}
+                    zoom={13}
+                    style={{ height: "100%", width: "100%", zIndex: 0 }}
+                    className="rounded-md"
                   >
-                    <Popup>{location}</Popup>
-                  </Marker>
-                </MapContainer>
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker
+                      position={position}
+                      draggable={true}
+                      eventHandlers={{
+                        dragend: (e) => {
+                          const { lat, lng } = e.target.getLatLng();
+                          setPosition([lat, lng]); // Updates position
+                        },
+                      }}
+                    >
+                      <Popup>{location}</Popup>
+                    </Marker>
+                  </MapContainer>
+                  <button
+                  onClick={handleDeleteLocation}
+                  className="absolute bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg"
+                  style={{zIndex: 10 }}
+                  >
+                    Delete Map
+                  </button>
+                </div>
               )}
             </div>
           </div>
