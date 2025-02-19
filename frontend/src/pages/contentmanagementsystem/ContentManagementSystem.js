@@ -3,7 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
-import Header from "../../components/Header";
+// import Header from "../../components/Header";
 // import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
 import axios from 'axios';
 const API_URL = "http://127.0.0.1:8000/";
@@ -248,13 +248,6 @@ const ContentManagementSystem = () => {
     }
   };
 
-  const handleStarMultiple = () => {
-
-    const allCards = selectedCards?.map((_, index) => index);
-    allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
-    handleCancel();
-  };
-
   const handleSelectAll = () => {
     const allCards = (
       selectedCategory === "Articles" ? articles : sampleData[selectedCategory]
@@ -278,13 +271,11 @@ const ContentManagementSystem = () => {
 
   return (
     <div className="h-[calc(100vh-146px)] w-full">
-      <Header />
       <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
         <SelectTopBar
           selectedCards={selectedCards}
           onDelete={handleDeleteMultiple}
-          onStar={handleStarMultiple}
           onSelectAll={handleSelectAll}
           onCancel={handleCancel}
         />
