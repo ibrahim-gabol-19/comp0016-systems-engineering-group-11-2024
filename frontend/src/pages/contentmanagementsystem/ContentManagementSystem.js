@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
-
+import axios from "axios";
 
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
@@ -59,17 +59,34 @@ const ContentManagementSystem = () => {
 
   // Fetch articles from the API when the component is mounted
   useEffect(() => {
+    const token = localStorage.getItem("token");
+  
     if (selectedCategory === "Articles") {
-      fetch("http://127.0.0.1:8000/articles/")
-        .then((response) => response.json())
-        .then((data) => setArticles(data))
-        .catch((error) => console.error("Error fetching articles:", error));
+      axios.get("http://127.0.0.1:8000/articles/", {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
+        })
+        .then((response) => {
+          console.log("DEBUG: Articles API Response:", response.data);
+          setArticles(Array.isArray(response.data) ? response.data : []);
+        })
+        .catch((error) => {
+          console.error("Error fetching articles:", error.response?.data);
+          setArticles([]);  // Prevents breaking UI
+        });
     }
+  
     if (selectedCategory === "Events") {
-      fetch("http://127.0.0.1:8000/events/")
-        .then((response) => response.json())
-        .then((data) => setEvents(data))
-        .catch((error) => console.error("Error fetching events:", error));
+      axios.get("http://127.0.0.1:8000/events/", {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
+        })
+        .then((response) => {
+          console.log("DEBUG: Events API Response:", response.data);
+          setEvents(Array.isArray(response.data) ? response.data : []);
+        })
+        .catch((error) => {
+          console.error("Error fetching events:", error.response?.data);
+          setEvents([]);
+        });
     }
   }, [selectedCategory]);
 
