@@ -19,9 +19,10 @@ const DetailedEventPage = () => {
   const [eventType, setEventType] = useState("");
   const [poiType, setPoiType] = useState("");
   const [openingTimes, setOpeningTimes] = useState("");
-  const [isFeatured, setIsFeatured] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
+  const [featuredCount, setFeaturedCount] = useState(0);
+
 
 
   useEffect(() => {
@@ -37,8 +38,8 @@ const DetailedEventPage = () => {
           setLocation(event.location || "");
           setEventType(event.event_type || "");
           setPoiType(event.poi_type || "");
-          setIsFeatured(event.is_featured || false);
           setOpeningTimes(event.opening_times || "");
+          fetchFeaturedEventCount();
 
           if (event.main_image) {
             setUploadedFiles([event.main_image]);
@@ -53,6 +54,16 @@ const DetailedEventPage = () => {
         });
     }
   }, [eventId]);
+
+  const fetchFeaturedEventCount = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/events/?is_featured=true"); // Adjust URL if needed
+      setFeaturedCount(response.data.count || response.data.length); // Update featuredCount
+    } catch (error) {
+      console.error("Error fetching featured event count:", error);
+      alert("Error fetching featured event count. Please try again.");
+    }
+  };
 
   const handleFilesUploaded = (acceptedFiles) => {
     if (acceptedFiles.length > 1) {
@@ -72,6 +83,10 @@ const DetailedEventPage = () => {
       alert("Please fill in all necessary fields for a Point of Interest before saving.");
       return;
     }
+
+    await fetchFeaturedEventCount();  // Make sure we have the latest count
+
+
     
     const formData = new FormData();
     formData.append("title", title);
@@ -81,7 +96,6 @@ const DetailedEventPage = () => {
     formData.append("location", location);
     formData.append("event_type", eventType);
     formData.append("poi_type", poiType);
-    formData.append("is_featured", isFeatured);
     formData.append("opening_times", openingTimes);
 
     // Check if position is null before setting latitude/longitude
@@ -98,13 +112,14 @@ const DetailedEventPage = () => {
     }
 
     try {
+      let response; // Store the response
       if (eventId !== NEW_EVENT_ID) {
-        await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
+        response = await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         alert("Event updated successfully!");
       } else {
-        await axios.post("http://127.0.0.1:8000/events/", formData, {
+        response = await axios.post("http://127.0.0.1:8000/events/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         alert("Event saved successfully!");
@@ -152,7 +167,6 @@ const DetailedEventPage = () => {
     }
   };
   
-
   const handleSelectLocation = (place) => {
     setLocation(place.display_name);
     setPosition([parseFloat(place.lat), parseFloat(place.lon)]);
@@ -162,7 +176,6 @@ const DetailedEventPage = () => {
   const handleDeleteLocation = () => {
     setPosition(null);
   };
-
 
   return (
     <div>
@@ -232,15 +245,6 @@ const DetailedEventPage = () => {
                 style={{ maxHeight: "200px" }} // Limits growth, enables scrolling
               />
               <MainImage onFilesUploaded={handleFilesUploaded} />
-              <label className="flex items-center space-x-2 text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="text-sm font-medium">Featured Event</span>
-              </label>
             </div>
 
             {eventType === "scheduled" && (
