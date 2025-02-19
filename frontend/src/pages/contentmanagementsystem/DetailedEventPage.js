@@ -264,21 +264,23 @@ const DetailedEventPage = () => {
             )}
             <div className="mt-4 space-y-4">
               {/* Input Field */}
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-                placeholder="Location"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              <button
-                onClick={() => fetchSuggestions(location)}
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Find Location
-              </button>
+              <div className="w-full flex space-x-4">
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                  }}
+                  placeholder="Location"
+                  className="flex-1 p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <button
+                  onClick={() => fetchSuggestions(location)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Find Location
+                </button>
+              </div>
 
               {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
