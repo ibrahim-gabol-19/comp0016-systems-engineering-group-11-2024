@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+
 
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
@@ -7,6 +9,8 @@ const Calendar = () => {
   const [selectedEventPosition, setSelectedEventPosition] = useState(null);
   const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
@@ -63,6 +67,13 @@ const Calendar = () => {
     setSelectedEvent(null);
     setSelectedEventPosition(null);
   };
+
+  const handleEventClick = (id) => {
+    navigate(
+      `/events/${id}`
+    );
+  };
+
 
   return (
     <div className="max-w-6xxl mx-auto mt-10">
@@ -169,7 +180,7 @@ const Calendar = () => {
           {/* More Info Button */}
           <button
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-            onClick={() => alert("Redirecting to event details...")} // Replace with functionality
+            onClick={() => handleEventClick(selectedEvent.id)} // Replace with functionality
           >
             More info
           </button>

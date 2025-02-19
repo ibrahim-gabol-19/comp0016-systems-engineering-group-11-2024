@@ -36,7 +36,6 @@ const PointOfInterest = () => {
   };
 
   const handleCardClick = (id) => {
-    console.log("Navigating to event ID:", id);
     navigate(
       `/events/${id}`
     );

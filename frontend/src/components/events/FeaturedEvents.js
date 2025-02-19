@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const FeaturedEvents = () => {
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFeaturedEvents = async () => {
@@ -25,10 +28,12 @@ const FeaturedEvents = () => {
   }, []);
 
   // Handle click on a featured event
-  const handleEventClick = (event) => {
-    alert(`Redirecting to detailed page for: ${event.title}`);
+  const handleEventClick = (id) => {
+    navigate(
+      `/events/${id}`
+    );
   };
-  
+
   return (
     <div className="max-w-6xl mx-auto mt-14">
       <h2 className="text-2xl font-bold px-6 mb-8">Featured Events</h2>
@@ -42,7 +47,7 @@ const FeaturedEvents = () => {
             <div
               key={index}
               className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-              onClick={() => handleEventClick(event)}
+              onClick={() => handleEventClick(event.id)}
             >
               {event.main_image && (
                 <img
