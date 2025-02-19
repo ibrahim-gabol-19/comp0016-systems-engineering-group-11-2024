@@ -315,7 +315,7 @@ const DetailedEventPage = () => {
                   <MapContainer
                     center={position}
                     zoom={13}
-                    style={{ height: "100%", width: "100%", zIndex: 0 }}
+                    style={{ height: "400px", width: "100%", zIndex: 0 }}
                     className="rounded-md"
                   >
                     <TileLayer
