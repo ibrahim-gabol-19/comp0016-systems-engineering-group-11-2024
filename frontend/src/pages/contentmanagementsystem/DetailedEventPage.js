@@ -112,14 +112,13 @@ const DetailedEventPage = () => {
     }
 
     try {
-      let response; // Store the response
       if (eventId !== NEW_EVENT_ID) {
-        response = await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
+        await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         alert("Event updated successfully!");
       } else {
-        response = await axios.post("http://127.0.0.1:8000/events/", formData, {
+        await axios.post("http://127.0.0.1:8000/events/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         alert("Event saved successfully!");
