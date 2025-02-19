@@ -9,6 +9,8 @@ import ContentManagementSystem from './pages/contentmanagementsystem/ContentMana
 import DetailedArticlePage from "./pages/contentmanagementsystem/DetailedArticlePage"
 import DetailedEventPage from "./pages/contentmanagementsystem/DetailedEventPage"
 import ReportsPage from "./pages/reporting/ReportsPage"
+import DetailedEventPageView from "./pages/events/DetailedEventPageView";
+
 
 const App = () => {
   return (
@@ -25,6 +27,7 @@ const App = () => {
               <Route path="/contentmanagementsystem/details/articles/:articleId" element={<DetailedArticlePage />} />
               <Route path="/contentmanagementsystem/details/events/:eventId" element={<DetailedEventPage />} />
               <Route path="/reporting" element={<ReportsPage></ReportsPage>} />
+              <Route path="/events/:eventId" element={<DetailedEventPageView />} />
             </Routes>
           </div>
         </div>

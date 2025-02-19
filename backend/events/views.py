@@ -79,7 +79,7 @@ class EventsViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def pois(self, request): #For the /events/pois/ endpoint
-        pois = Event.objects.filter(event_type="point_of_interest").values("title", "opening_times", "description", "poi_type", "main_image")
+        pois = Event.objects.filter(event_type="point_of_interest").values("id", "title", "opening_times", "description", "poi_type", "main_image")
         poi_dict = {}
 
         for poi in pois:
@@ -87,6 +87,7 @@ class EventsViewSet(viewsets.ModelViewSet):
             if category not in poi_dict:
                 poi_dict[category] = []
             poi_dict[category].append({
+                "id": poi["id"],
                 "title": poi["title"],
                 "openTimes": poi["opening_times"] or "No opening hours available",
                 "description": poi["description"],

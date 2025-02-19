@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const PointOfInterest = () => {
   const [selectedCategory, setSelectedCategory] = useState("landmarks");
@@ -7,6 +9,7 @@ const PointOfInterest = () => {
   const [poiEvents, setPoiEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPoiEvents();
@@ -32,8 +35,14 @@ const PointOfInterest = () => {
     setSelectedCategory(category);
   };
 
-  const openEventDetails = (event) => {
-    alert(`Redirecting to detailed page for: ${event.title}`);
+  // const openEventDetails = (event) => {
+  //   alert(`Redirecting to detailed page for: ${event.title}`);
+  // };
+  const handleCardClick = (id) => {
+    console.log("Navigating to event ID:", id);
+    navigate(
+      `/events/${id}`
+    );
   };
 
   return (
@@ -79,7 +88,7 @@ const PointOfInterest = () => {
               <div
                 key={index}
                 className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-                onClick={() => openEventDetails(event)}
+                onClick={() => handleCardClick(event.id)}
                 style={{ minHeight: "250px", maxHeight: "250px" }}
               >
                 {event.main_image && (
