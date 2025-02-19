@@ -3,6 +3,8 @@ import DateTime from "../../components/contentmanagementsystem/detailed/DateTime
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import axios from "axios";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -14,11 +16,12 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [address, setAddress] = useState("");
   const [eventType, setEventType] = useState("");
   const [poiType, setPoiType] = useState("");
   const [openingTimes, setOpeningTimes] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [position, setPosition] = useState(null);
 
 
   useEffect(() => {
@@ -32,7 +35,6 @@ const DetailedEventPage = () => {
           setDate(event.date || "");
           setDescription(event.description || "");
           setLocation(event.location || "");
-          setAddress(event.address || "");
           setEventType(event.event_type || "");
           setPoiType(event.poi_type || "");
           setIsFeatured(event.is_featured || false);
@@ -40,6 +42,9 @@ const DetailedEventPage = () => {
 
           if (event.main_image) {
             setUploadedFiles([event.main_image]);
+          }
+          if (event.latitude && event.longitude) {
+            setPosition([parseFloat(event.latitude), parseFloat(event.longitude)]);
           }
         })
         .catch((error) => {
@@ -74,11 +79,12 @@ const DetailedEventPage = () => {
     formData.append("time", time);
     formData.append("description", description);
     formData.append("location", location);
-    formData.append("address", address);
     formData.append("event_type", eventType);
     formData.append("poi_type", poiType);
     formData.append("is_featured", isFeatured);
     formData.append("opening_times", openingTimes);
+    formData.append("latitude", position[0]);
+    formData.append("longitude", position[1]);
 
     if (uploadedFiles.length > 0 && typeof uploadedFiles[0] !== "string") {
       formData.append("main_image", uploadedFiles[0]);
@@ -101,6 +107,26 @@ const DetailedEventPage = () => {
       alert("Error saving or updating event. Please try again.");
     }
   };
+
+  const fetchSuggestions = async (query) => {
+    if (query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
+    );
+    const data = await res.json();
+    setSuggestions(data);
+  };
+
+  const handleSelectLocation = (place) => {
+    setLocation(place.display_name);
+    setPosition([parseFloat(place.lat), parseFloat(place.lon)]);
+    setSuggestions([]);
+  };
+
 
   return (
     <div>
@@ -170,13 +196,6 @@ const DetailedEventPage = () => {
                 style={{ maxHeight: "200px" }} // Limits growth, enables scrolling
               />
               <MainImage onFilesUploaded={handleFilesUploaded} />
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Location"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              />
               <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
@@ -218,6 +237,61 @@ const DetailedEventPage = () => {
                 />
               </div>
             )}
+            <div className="space-y-4">
+              {/* Input Field */}
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  fetchSuggestions(e.target.value);
+                }}
+                placeholder="Location"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
+
+              {/* Suggestions Dropdown */}
+              {suggestions.length > 0 && (
+                <ul className="border border-gray-300 rounded-md bg-white shadow-md max-h-60 overflow-auto">
+                  {suggestions.map((place) => (
+                    <li
+                      key={place.place_id}
+                      onClick={() => handleSelectLocation(place)}
+                      className="p-2 cursor-pointer hover:bg-gray-100"
+                    >
+                      {place.display_name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+
+              {/* Map Display */}
+              {position && (
+                <MapContainer
+                  center={position}
+                  zoom={13}
+                  style={{ height: "300px", width: "100%" }}
+                  className="rounded-md"
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker
+                    position={position}
+                    draggable={true}
+                    eventHandlers={{
+                      dragend: (e) => {
+                        const { lat, lng } = e.target.getLatLng();
+                        setPosition([lat, lng]); // Updates position but not location name
+                      },
+                    }}
+                  >
+                    <Popup>{location}</Popup>
+                  </Marker>
+                </MapContainer>
+              )}
+            </div>
           </div>
         </div>
 
@@ -272,6 +346,21 @@ const DetailedEventPage = () => {
             {/* Main Content Section */}
             <p className="text-lg mt-4 text-gray-900 text-center">
               <b>Location:</b> {location}
+              {position && (
+                <MapContainer
+                  center={position}
+                  zoom={13}
+                  style={{ height: "300px", width: "100%" }}
+                  className="rounded-md"
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={position}>
+                    <Popup>{location}</Popup>
+                  </Marker>
+                </MapContainer>
+              )}
             </p>
 
             {/* Images */}
