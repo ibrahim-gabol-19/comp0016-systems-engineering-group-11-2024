@@ -15,6 +15,7 @@ class ReportViewSetTestClass(TestCase):
     """
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username="testuser", password="testpass")
         self.report = Report.objects.create( title="Test Report",
             status="open",
             tags="environmental",
@@ -23,6 +24,7 @@ class ReportViewSetTestClass(TestCase):
             upvotes=0,
             latitude=40.7128,
             longitude=-74.0060)
+        self.client.login(username="testuser", password="testpass")
 
     def test_upvote(self):
         """

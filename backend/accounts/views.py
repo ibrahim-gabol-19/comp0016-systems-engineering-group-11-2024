@@ -1,17 +1,15 @@
-# accounts/views.py
-
 """
 This module contains views for user authentication, including sign-up and login.
 The views use serializers to handle user creation and login logic.
 """
 
+from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny,IsAuthenticated
-from .serializers import UserSerializer, UserLoginSerializer
-from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-    
+from .serializers import UserSerializer, UserLoginSerializer
+
 
 class SignUpView(APIView):
     """
@@ -31,9 +29,10 @@ class SignUpView(APIView):
             return Response({
                 "username": user.username,
                 "email": user.email,
-                "is_superuser": user.is_superuser 
+                "is_superuser": user.is_superuser
             }, status=201)
         return Response(serializer.errors, status=400)
+
 
 class LoginView(APIView):
     """
@@ -49,14 +48,14 @@ class LoginView(APIView):
         """
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = User.objects.get(username=request.data['username'])  # Get user object
+            user = User.objects.get(username=request.data['username'])
             return Response({
                 "refresh": serializer.validated_data['refresh'],
                 "access": serializer.validated_data['access'],
                 "user": {
                     "username": user.username,
                     "email": user.email,
-                    "is_superuser": user.is_superuser  
+                    "is_superuser": user.is_superuser
                 }
             }, status=200)
         return Response(serializer.errors, status=400)
@@ -69,6 +68,9 @@ class GetUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Handle GET requests to retrieve the authenticated user's details.
+        """
         user = request.user
         serializer = UserSerializer(user)
         print("DEBUG: User Retrieved:", serializer.data)
