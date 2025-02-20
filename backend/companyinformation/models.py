@@ -1,0 +1,30 @@
+# company/models.py
+
+from django.db import models
+
+class CompanyInformation(models.Model):
+    """
+    Company Model to store information about the company.
+    This model is designed to enforce a singleton pattern, ensuring
+    only one entry exists in the database.
+    """
+    name = models.CharField(max_length=200)
+    about = models.TextField()
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    main_color = models.CharField(max_length=7)  # Hex code for color (e.g., '#FF5733')
+    font = models.CharField(max_length=100)  # Font name (e.g., 'Arial')
+    
+    # Map boundary information
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """
+        Ensure there is only one instance of this model in the database.
+        """
+        if not self.pk and CompanyInformation.objects.exists():
+            raise ValueError("Only one instance of CompanyInformation can exist.")
+        super().save(*args, **kwargs)
