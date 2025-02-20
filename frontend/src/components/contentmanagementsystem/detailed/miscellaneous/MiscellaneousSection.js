@@ -83,156 +83,163 @@ const MiscellaneousSection = () => {
   };
 
   return (
-    <div className="h-full w-full  bg-green-100 px-5 py-5 ">
-      <div className="bg-white shadow-xl rounded-xl">
-        <p>Company Information</p>
-        <form onSubmit={handleSubmit}>
-          {/* Name */}
-          <div className="overflow-auto">
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Name"
-              className="w-1/2 text-xl border rounded-lg"
-            />
-          </div>
-          {/* Name */}
-          <div className="overflow-auto">
-            <input
-              type="text"
-              id="about"
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              placeholder="About"
-              className="w-1/2 text-xl border rounded-lg"
-            />
-          </div>
+    <div className="h-full w-full  px-5 py-5 ">
+      <div className="bg-white border shadow-2xl overflow-auto px-5 rounded-xl">
+        <h2 className="py-2 font-bold text-4xl">Company Information</h2>
+        <div className>
+          <form onSubmit={handleSubmit}>
+            {/* Name */}
+            <div className="overflow-auto px-2 py-2">
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name"
+                className=" text-3xl border rounded-lg"
+              />
+            </div>
+            {/* About */}
+            <div className="overflow-auto px-2 py-2">
+              <textarea
+                id="about"
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+                placeholder="About"
+                className="w-1/2 h-32 text-l border rounded-lg resize-none"
+              />
+            </div>
 
-          {/* Image Upload */}
-          <div>
-            {/* Show image if it exists */}
-            {image ? (
-              <div>
-                <img src={image} alt="Uploaded" style={{ width: '200px', height: 'auto' }} />
+            {/* Image Upload */}
+            <div>
+              {/* Show image if it exists */}
+              {image ? (
+                <div>
+                  <img src={image} alt="Uploaded" className="py-2 px-2 " style={{ width: '200px', height: 'auto' }} />
+                </div>
+              ) : (
+                <p>No image uploaded</p>
+              )}
+
+              {/* Image upload input */}
+              <input type="file" className="py-2 px-2" accept="image/*" onChange={handleImageChange} />
+            </div>
+
+            {/* Color Picker */}
+            <div className="px-2 py-2">
+              <label htmlFor="color" className="block text-xl ">Choose a color</label>
+              <input
+                type="color"
+                id="color"
+                value={mainColor}
+                onChange={(e) => setMainColor(e.target.value)}
+                className="w-1/2"
+              />
+            </div>
+            <div>
+              <label htmlFor="font" className="block text-xl">Choose a font</label>
+              <select
+                id="font"
+                value={font}
+                onChange={(e) => setFont(e.target.value)}
+                className="w-1/2 text-xl border rounded-lg"
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Tahoma">Tahoma</option>
+              </select>
+            </div>
+            {/* Boundaries */}
+            <div className="py-5">
+              <h2 className="py-2 font-bold text-4xl">Reporting </h2>
+            </div>
+            <div className="flex">
+
+
+
+              {/* Bottom Side */}
+              <div className="w-1/2">
+                {/* Top Side */}
+                <div className="mb-4">
+                  <label className="block">Top Side</label>
+                  <input
+                    type="range"
+                    min="-90"
+                    max="90"
+                    step="0.05"
+                    value={neLat}
+                    onChange={handleNeLatChange}
+                    className="w-full"
+                  />
+                  <span>{neLat}°</span>
+                </div>
+                <div className="mb-4">
+                  <label className="block">Bottom Side</label>
+                  <input
+                    type="range"
+                    min="-90"
+                    max="90"
+                    step="0.05"
+                    value={swLat}
+                    onChange={handleSwLatChange}
+                    className="w-full"
+                  />
+                  <span>{swLat}°</span>
+                </div>
+
+                {/* Left Side */}
+                <div className="mb-4">
+                  <label className="block">Left Side</label>
+                  <input
+                    type="range"
+                    min="-180"
+                    max="180"
+                    step="0.05"
+                    value={swLon}
+                    onChange={handleSwLonChange}
+                    className="w-full"
+                  />
+                  <span>{swLon}°</span>
+                </div>
+                {/* Right Side */}
+                <div className="mb-4">
+                  <label className="block">Right Side</label>
+                  <input
+                    type="range"
+                    min="-180"
+                    max="180"
+                    step="0.05"
+                    value={neLon}
+                    onChange={handleNeLonChange}
+                    className="w-full"
+                  />
+                  <span>{neLon}°</span>
+                </div>
+
+
               </div>
-            ) : (
-              <p>No image uploaded</p>
-            )}
 
-            {/* Image upload input */}
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-          </div>
-
-          {/* Color Picker */}
-          <div>
-            <label htmlFor="color" className="block text-xl">Choose a color</label>
-            <input
-              type="color"
-              id="color"
-              value={mainColor}
-              onChange={(e) => setMainColor(e.target.value)}
-              className="w-1/2"
-            />
-          </div>
-          <div>
-            <label htmlFor="font" className="block text-xl">Choose a font</label>
-            <select
-              id="font"
-              value={font}
-              onChange={(e) => setFont(e.target.value)}
-              className="w-1/2 text-xl border rounded-lg"
-            >
-              <option value="Arial">Arial</option>
-              <option value="Helvetica">Helvetica</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Courier New">Courier New</option>
-              <option value="Verdana">Verdana</option>
-              <option value="Georgia">Georgia</option>
-              <option value="Tahoma">Tahoma</option>
-            </select>
-          </div>
-          {/* Boundaries */}
-          <div>
-            <h3>Set Boundaries</h3>
-
-            {/* Bottom Side */}
-            <div className="mb-4">
-              <label className="block">Bottom Side</label>
-              <input
-                type="range"
-                min="-90"
-                max="90"
-                step="0.05"
-                value={swLat}
-                onChange={handleSwLatChange}
-                className="w-full"
-              />
-              <span>{swLat}°</span>
+              {/* Map Component */}
+              <div className="h-96 ml-5 w-1/2">
+                <MapComponent bounds={[[swLat, swLon], [neLat, neLon]]} />
+              </div>
             </div>
 
-            {/* Left Side */}
-            <div className="mb-4">
-              <label className="block">Left Side</label>
-              <input
-                type="range"
-                min="-180"
-                max="180"
-                step="0.05"
-                value={swLon}
-                onChange={handleSwLonChange}
-                className="w-full"
-              />
-              <span>{swLon}°</span>
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+              >
+                Save
+              </button>
             </div>
-
-            {/* Top Side */}
-            <div className="mb-4">
-              <label className="block">Top Side</label>
-              <input
-                type="range"
-                min="-90"
-                max="90"
-                step="0.05"
-                value={neLat}
-                onChange={handleNeLatChange}
-                className="w-full"
-              />
-              <span>{neLat}°</span>
-            </div>
-
-            {/* Right Side */}
-            <div className="mb-4">
-              <label className="block">Right Side</label>
-              <input
-                type="range"
-                min="-180"
-                max="180"
-                step="0.05"
-                value={neLon}
-                onChange={handleNeLonChange}
-                className="w-full"
-              />
-              <span>{neLon}°</span>
-            </div>
-
-            {/* Map Component */}
-            <div className="h-96">
-              <MapComponent bounds={[[swLat, swLon], [neLat, neLon]]} />
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div >
     </div >
 
