@@ -164,7 +164,7 @@ const MiscellaneousSection = () => {
                 type="range"
                 min="-90"
                 max="90"
-                step="0.1"
+                step="0.05"
                 value={swLat}
                 onChange={handleSwLatChange}
                 className="w-full"
@@ -179,7 +179,7 @@ const MiscellaneousSection = () => {
                 type="range"
                 min="-180"
                 max="180"
-                step="0.1"
+                step="0.05"
                 value={swLon}
                 onChange={handleSwLonChange}
                 className="w-full"
@@ -194,7 +194,7 @@ const MiscellaneousSection = () => {
                 type="range"
                 min="-90"
                 max="90"
-                step="0.1"
+                step="0.05"
                 value={neLat}
                 onChange={handleNeLatChange}
                 className="w-full"
@@ -209,7 +209,7 @@ const MiscellaneousSection = () => {
                 type="range"
                 min="-180"
                 max="180"
-                step="0.1"
+                step="0.05"
                 value={neLon}
                 onChange={handleNeLonChange}
                 className="w-full"
