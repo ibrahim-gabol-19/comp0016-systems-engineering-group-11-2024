@@ -45,8 +45,7 @@ def preprocess_data(articles, events):
                     f"{e['date']} {e['time']}"
                 )
                 for e in events
-                if all(key in e for key in ["title", "description", 
-                                            "location", "date", "time"])
+                if all(key in e for key in ["title", "description", "location", "date", "time"])
             ],
             "entries": events,  # Keep full event data for frontend use
         })
@@ -75,8 +74,7 @@ def perform_semantic_search(query, datasets):
             results.append(result_entry)
 
     # Sort all results by similarity score and return top 3 overall
-    results = sorted(results, key=lambda x: x["similarity_score"], 
-                      reverse=True)[:3]
+    results = sorted(results, key=lambda x: x["similarity_score"],reverse=True)[:3]
     return results
 
 
