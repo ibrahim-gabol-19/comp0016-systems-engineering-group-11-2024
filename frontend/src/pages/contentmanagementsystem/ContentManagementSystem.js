@@ -5,6 +5,7 @@ import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar"
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
+import MiscellaneousSection from "../../components/contentmanagementsystem/detailed/miscellaneous/MiscellaneousSection";
 import axios from 'axios';
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -22,7 +23,7 @@ const ContentManagementSystem = () => {
   const [userQuery, setUserQuery] = useState("");
 
 
-  const categories = ["Articles", "Events", "Reporting"];
+  const categories = ["Articles", "Events", "Reporting", "Miscellaneous"];
   const navigate = useNavigate();
 
   const sampleData = {
@@ -286,7 +287,8 @@ const ContentManagementSystem = () => {
 
         <div className="w-5/6 h-full bg-white overflow-auto">
           {selectedCategory === "Reporting" && <ReportsSection userQuery={userQuery} />}
-          {selectedCategory !== "Reporting" && (
+          {selectedCategory === "Miscellaneous" && <MiscellaneousSection/>}
+          {selectedCategory !== "Reporting" && selectedCategory !== "Miscellaneous" && (
             <div className="grid grid-cols-4 gap-8 p-4">
               {(selectedCategory === "Articles"
                 ? filterItems(articles, userQuery)
