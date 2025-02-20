@@ -31,9 +31,15 @@ const filterItems = (items, userQuery, itemFields = ['title', 'description']) =>
   });
 };
 
-const MapComponent = ({ bounds }) => {
-  const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
-  const zoomLevel = 8;
+
+
+const MapComponent = ({ bounds}) => {
+  const mapCenter = [
+    (bounds[0][0] + bounds[1][0]) / 2, // Average of latitudes (swLat + neLat) / 2
+    (bounds[0][1] + bounds[1][1]) / 2, // Average of longitudes (swLon + neLon) / 2
+  ];  
+  console.log(mapCenter);// const mapCenter = [1, 2]/;
+  const zoomLevel = 1;
 
 
 
@@ -42,7 +48,7 @@ const MapComponent = ({ bounds }) => {
       center={mapCenter}
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
-      maxBounds={bounds} // Restrict map movement to UK
+      // maxBounds={bounds} // Restrict map movement to UK
       maxBoundsViscosity={1.0} // Ensures map stays within bounds
       minZoom={1} // Set minimum zoom level to allow zooming in further
       maxZoom={17} // Set maximum zoom level to zoom in further

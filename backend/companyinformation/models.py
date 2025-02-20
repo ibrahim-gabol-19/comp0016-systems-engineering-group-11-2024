@@ -15,9 +15,11 @@ class CompanyInformation(models.Model):
     font = models.CharField(max_length=100)  # Font name (e.g., 'Arial')
     
     # Map boundary information
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
-    
+    sw_lat = models.DecimalField(max_digits=9, decimal_places=6)  # southwest latitude
+    sw_lon = models.DecimalField(max_digits=9, decimal_places=6)  # southwest longitude
+    ne_lat = models.DecimalField(max_digits=9, decimal_places=6)  # northeast latitude
+    ne_lon = models.DecimalField(max_digits=9, decimal_places=6)  # northeast longitude
+
     def __str__(self):
         return self.name
 
