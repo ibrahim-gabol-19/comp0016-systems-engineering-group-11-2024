@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
-def make_first_user_superuser(_sender, instance, created, **kwargs):
+def make_first_user_superuser(sender, instance, created, **kwargs):
     """
     Automatically sets the first created user as a superuser.
 
