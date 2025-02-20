@@ -21,7 +21,6 @@ const DetailedEventPage = () => {
   const [openingTimes, setOpeningTimes] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
-  const [featuredCount, setFeaturedCount] = useState(0);
   const [requiredFields, setRequiredFields] = useState({});
 
 
@@ -40,7 +39,6 @@ const DetailedEventPage = () => {
           setEventType(event.event_type || "");
           setPoiType(event.poi_type || "");
           setOpeningTimes(event.opening_times || "");
-          fetchFeaturedEventCount();
 
           if (event.main_image) {
             setUploadedFiles([event.main_image]);
@@ -56,15 +54,6 @@ const DetailedEventPage = () => {
     }
   }, [eventId]);
 
-  const fetchFeaturedEventCount = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/events/?is_featured=true"); 
-      setFeaturedCount(response.data.count || response.data.length); // Update featuredCount
-    } catch (error) {
-      console.error("Error fetching featured event count:", error);
-      alert("Error fetching featured event count. Please try again.");
-    }
-  };
 
   const handleFilesUploaded = (acceptedFiles) => {
     if (acceptedFiles.length > 1) {
@@ -95,8 +84,6 @@ const DetailedEventPage = () => {
       alert("Please fill in all necessary fields.");
       return;
     }
-
-    await fetchFeaturedEventCount();
     
     const formData = new FormData();
     formData.append("title", title);
