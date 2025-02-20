@@ -22,6 +22,7 @@ const DetailedEventPage = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
   const [featuredCount, setFeaturedCount] = useState(0);
+  const [requiredFields, setRequiredFields] = useState({});
 
 
 
@@ -57,7 +58,7 @@ const DetailedEventPage = () => {
 
   const fetchFeaturedEventCount = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/events/?is_featured=true"); // Adjust URL if needed
+      const response = await axios.get("http://127.0.0.1:8000/events/?is_featured=true"); 
       setFeaturedCount(response.data.count || response.data.length); // Update featuredCount
     } catch (error) {
       console.error("Error fetching featured event count:", error);
@@ -74,19 +75,28 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
-    if (eventType === "scheduled" && (!title || !date || !time || !description)) {
-      alert("Please fill in all necessary fields for a Scheduled Event before saving.");
+    const newRequiredFields = {};
+
+    if (eventType === "scheduled") {
+      if (!title) newRequiredFields.title = true;
+      if (!date) newRequiredFields.date = true;
+      if (!time) newRequiredFields.time = true;
+      if (!description) newRequiredFields.description = true;
+    } else if (eventType === "point_of_interest") {
+      if (!title) newRequiredFields.title = true;
+      if (!description) newRequiredFields.description = true;
+      if (!location) newRequiredFields.location = true;
+      if (!poiType) newRequiredFields.poiType = true;
+    }
+
+    setRequiredFields(newRequiredFields);
+
+    if (Object.keys(newRequiredFields).length > 0) {
+      alert("Please fill in all necessary fields.");
       return;
     }
-    
-    if (eventType === "point_of_interest" && (!title || !description || !location || !poiType)) {
-      alert("Please fill in all necessary fields for a Point of Interest before saving.");
-      return;
-    }
 
-    await fetchFeaturedEventCount();  // Make sure we have the latest count
-
-
+    await fetchFeaturedEventCount();
     
     const formData = new FormData();
     formData.append("title", title);
@@ -176,6 +186,8 @@ const DetailedEventPage = () => {
     setPosition(null);
   };
 
+  const isFieldRequired = (fieldName) => requiredFields[fieldName];
+
   return (
     <div>
       <div className="p-6 flex justify-end">
@@ -220,7 +232,6 @@ const DetailedEventPage = () => {
                   }}
                   className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                  <option value="">Select Type</option>
                   <option value="scheduled">Scheduled Event</option>
                   <option value="point_of_interest">Point of Interest</option>
                 </select>
@@ -233,13 +244,17 @@ const DetailedEventPage = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full p-3 border ${
+                  isFieldRequired("title") ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
               />
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto"
+                className={`w-full p-3 border ${
+                  isFieldRequired("description") ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto`}
                 rows="3"
                 style={{ maxHeight: "200px" }} // Limits growth, enables scrolling
               />
@@ -248,7 +263,18 @@ const DetailedEventPage = () => {
 
             {eventType === "scheduled" && (
               <div className="mt-4">
-                <DateTime date={date} time={time} onDateChange={setDate} onTimeChange={setTime} />
+                <DateTime
+                  date={date}
+                  time={time}
+                  onDateChange={setDate}
+                  onTimeChange={setTime}
+                  dateClassName={`w-full p-3 border ${
+                    isFieldRequired("date") ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
+                  timeClassName={`w-full p-3 border ${
+                    isFieldRequired("time") ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
+                />
               </div>
             )}
 
@@ -258,7 +284,9 @@ const DetailedEventPage = () => {
                 <select
                   value={poiType}
                   onChange={(e) => setPoiType(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className={`w-full p-3 border ${
+                    isFieldRequired("poiType") ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
                 >
                   <option value="">Select POI Type</option>
                   <option value="landmarks">Landmarks</option>
@@ -286,7 +314,9 @@ const DetailedEventPage = () => {
                     setLocation(e.target.value);
                   }}
                   placeholder="Location"
-                  className="flex-1 p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className={`flex-1 p-3 border ${
+                    isFieldRequired("location") ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
                 />
                 <button
                   onClick={() => fetchSuggestions(location)}
