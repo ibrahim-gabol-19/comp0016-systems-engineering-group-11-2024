@@ -1,5 +1,3 @@
-# accounts/apps.py
-
 """
 This module defines the configuration for the 'accounts' app in a Django project.
 """
@@ -14,7 +12,10 @@ class AccountsConfig(AppConfig):
     """
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'accounts'
+
     def ready(self):
-        import accounts.signals  # noqa: F401
-        
-        
+        """
+        Import signals to ensure they are registered.
+        This import is inside the method to prevent circular import issues.
+        """
+        import accounts.signals  # noqa: F401  # pylint: disable=C0415,W0611

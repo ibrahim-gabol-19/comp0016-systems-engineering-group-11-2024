@@ -3,12 +3,14 @@ This module contains views for user authentication, including sign-up and login.
 The views use serializers to handle user creation and login logic.
 """
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import UserSerializer, UserLoginSerializer
+
+User = get_user_model()
 
 
 class SignUpView(APIView):
@@ -73,5 +75,4 @@ class GetUserView(APIView):
         """
         user = request.user
         serializer = UserSerializer(user)
-        print("DEBUG: User Retrieved:", serializer.data)
         return Response(serializer.data)
