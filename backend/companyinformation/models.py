@@ -1,4 +1,7 @@
-# company/models.py
+"""
+This module defines the CompanyInformation model, which stores information about the company.
+It enforces a singleton pattern to ensure that only one entry can exist in the database.
+"""
 
 from django.db import models
 
@@ -13,7 +16,7 @@ class CompanyInformation(models.Model):
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     main_color = models.CharField(max_length=7)  # Hex code for color (e.g., '#FF5733')
     font = models.CharField(max_length=100)  # Font name (e.g., 'Arial')
-    
+
     # Map boundary information
     sw_lat = models.DecimalField(max_digits=9, decimal_places=6)  # southwest latitude
     sw_lon = models.DecimalField(max_digits=9, decimal_places=6)  # southwest longitude

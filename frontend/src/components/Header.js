@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Assuming the AuthContext is in this path
 import { CompanyContext } from "../context/CompanyContext";
-const API_URL = process.env.REACT_APP_API_URL;
-import Logo from "../assets/earth.png";
-import { useAuth } from "../context/AuthContext"; // Ensure AuthContext provides isSuperuser
+
 
 const navList = [
   {

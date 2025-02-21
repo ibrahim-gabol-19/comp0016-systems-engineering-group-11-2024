@@ -6,9 +6,7 @@ import MainImage from "../../components/contentmanagementsystem/detailed/MainIma
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
-import { useNavigate } from 'react-router-dom';
 const API_URL = process.env.REACT_APP_API_URL;
-
 
 const NEW_ARTICLE_ID = "0";
 
@@ -18,7 +16,6 @@ const DetailedArticlePage = () => {
   const quillRefMain = useRef();
   const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
-  const navigate = useNavigate();
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
@@ -35,9 +32,10 @@ const DetailedArticlePage = () => {
 
       const token = localStorage.getItem("token");
 
-axios.get(API_URL + `articles/${articleId}/`, {
-    headers: { Authorization: `Bearer ${token}` },  
-})
+      axios
+        .get(API_URL + `articles/${articleId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
 
         .then((response) => {
           const article = response.data;
@@ -58,7 +56,7 @@ axios.get(API_URL + `articles/${articleId}/`, {
   }, [articleId]);
 
   const handleSave = async () => {
-    const token=localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -74,26 +72,22 @@ axios.get(API_URL + `articles/${articleId}/`, {
         // PUT operation for updating an existing article
         const token = localStorage.getItem("token");
 
-axios.put(
-    API_URL + `articles/${articleId}/`,
-    formData,
-    {
-        headers: {
+        axios.put(API_URL + `articles/${articleId}/`, formData, {
+          headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,  
-        },
-    }
-        );
+            Authorization: `Bearer ${token}`,
+          },
+        });
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
         await axios.post(API_URL + "articles/", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`, 
-                },
-            });
-            alert("Article saved successfully!");
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert("Article saved successfully!");
       }
       setErrorMessage("");
     } catch (error) {
@@ -140,7 +134,7 @@ axios.put(
       <div className="h-full flex justify-center items-center overflow-auto relative">
         {isEditing ? (
           <div className="w-screen h-full flex relative">
-            <div className="h-full w-1/6 "/>
+            <div className="h-full w-1/6 " />
             <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
               <TitleEditor
                 ref={quillRefTitle}
@@ -157,7 +151,7 @@ axios.put(
                 onTextChange={setMainContent}
               />
             </div>
-            <div className="h-full w-1/6"/>
+            <div className="h-full w-1/6" />
             <div className="w-2/6  px-3 pb-64 flex flex-col justify-center  overflow-hidden">
               <NoToolbarEditor
                 ref={quillRefAuthor}
@@ -201,10 +195,12 @@ axios.put(
               <p className="text-lg mt-6 text-gray-600 italic text-center">
                 {description}
               </p>
-              <p className="text-lg mt-4 text-gray-700 text-center" style={{ whiteSpace: 'pre-wrap' }}>
-  {mainContent}
-</p>
-
+              <p
+                className="text-lg mt-4 text-gray-700 text-center"
+                style={{ whiteSpace: "pre-wrap" }}
+              >
+                {mainContent}
+              </p>
             </div>
           </div>
         )}

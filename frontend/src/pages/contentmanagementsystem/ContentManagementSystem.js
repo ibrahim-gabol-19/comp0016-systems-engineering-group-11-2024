@@ -22,8 +22,8 @@ const ContentManagementSystem = () => {
   //const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
-  const { main_color, logo, name } = useContext(CompanyContext);
-
+  const { main_color } = useContext(CompanyContext);
+  const token = localStorage.getItem("token");
   const categories = ["Articles", "Events", "Reporting", "Miscellaneous"];
   const navigate = useNavigate();
 

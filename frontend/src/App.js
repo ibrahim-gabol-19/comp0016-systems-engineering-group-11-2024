@@ -15,16 +15,12 @@ import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import
 const API_URL = process.env.REACT_APP_API_URL;
 
 const App = () => {
-  const [companyName, setCompanyName] = useState(null);
-  const [companyLogo, setCompanyLogo] = useState(null);
   const [font, setFont] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}companyinformation/1/`)
       .then((response) => response.json())
       .then((data) => {
-        setCompanyName(data.name);
-        setCompanyLogo(data.logo); // Assume 'data.logo' contains the URL to the logo image
         setFont(data.font);
 
         // Update the tab title dynamically

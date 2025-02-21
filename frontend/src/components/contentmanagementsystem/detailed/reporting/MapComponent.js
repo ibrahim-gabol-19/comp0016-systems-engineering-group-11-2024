@@ -30,15 +30,7 @@ const filterItems = (
   });
 };
 
-const MapComponent = ({
-  onMarkerSelected,
-  onNewMarkerSelected,
-  reports,
-  newMarker,
-  filter,
-  userQuery,
-}) => {
-  const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
+const MapComponent = ({ onMarkerSelected, reports, filter, userQuery }) => {
   const zoomLevel = 13;
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
@@ -55,7 +47,7 @@ const MapComponent = ({
 
   return (
     <MapContainer
-      center={[0,0]}
+      center={[0, 0]}
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
       maxBounds={bounds} // Restrict map movement to UK

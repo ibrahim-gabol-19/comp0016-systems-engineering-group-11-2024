@@ -11,7 +11,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
-  const { main_color, logo, name } = useContext(CompanyContext);
+  const { main_color } = useContext(CompanyContext);
 
   const tags = [
     "environmental",

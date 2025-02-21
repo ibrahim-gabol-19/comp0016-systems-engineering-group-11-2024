@@ -3,7 +3,7 @@ import SearchBar from "./SearchBar";
 import { CompanyContext } from "../../context/CompanyContext";
 const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi" }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { main_color, logo, name } = useContext(CompanyContext);
+  const { main_color } = useContext(CompanyContext);
 
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
