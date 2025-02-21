@@ -1,54 +1,64 @@
-import React  from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-} from "react-leaflet";
+import React, { useContext } from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
-
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import { CompanyContext } from "../../../../context/CompanyContext";
 // Make default Icon show up for Markers
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
-  iconAnchor: [12, 16]
+  iconAnchor: [12, 16],
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
 // The filter function to search within item fields
-const filterItems = (items, userQuery, itemFields = ['title', 'description']) => {
+const filterItems = (
+  items,
+  userQuery,
+  itemFields = ["title", "description"]
+) => {
   const query = userQuery.toLowerCase();
   return (items || []).filter((item) => {
-    return itemFields.some(field =>
+    return itemFields.some((field) =>
       item[field]?.toLowerCase().includes(query)
     );
   });
 };
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, userQuery }) => {
+const MapComponent = ({
+  onMarkerSelected,
+  onNewMarkerSelected,
+  reports,
+  newMarker,
+  filter,
+  userQuery,
+}) => {
   const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
   const zoomLevel = 13;
+  const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
-  const ukBounds = [
-    [49.5, -8], // Southwest coordinates (approx.)
-    [60, 2], // Northeast coordinates (approx.)
+  const bounds = [
+    [sw_lat, sw_lon], // Southwest coordinates
+    [ne_lat, ne_lon], // Northeast coordinates
   ];
 
   // Filter the reports based on the status and user query
-  const filteredReports = filterItems(reports.filter(item => item.status === filter), userQuery);
+  const filteredReports = filterItems(
+    reports.filter((item) => item.status === filter),
+    userQuery
+  );
 
   return (
     <MapContainer
-      center={mapCenter}
+      center={[0,0]}
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
-      maxBounds={ukBounds} // Restrict map movement to UK
+      maxBounds={bounds} // Restrict map movement to UK
       maxBoundsViscosity={1.0} // Ensures map stays within bounds
       minZoom={8} // Set minimum zoom level to allow zooming in further
       maxZoom={17} // Set maximum zoom level to zoom in further

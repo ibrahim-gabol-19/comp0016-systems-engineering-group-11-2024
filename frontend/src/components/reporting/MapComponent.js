@@ -69,10 +69,10 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
 
   return (
     <MapContainer
-      center={mapCenter}
+      center={[0,0]}
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
-      maxBounds={bounds} // Restrict map movement to UK
+      maxBounds={bounds} 
       maxBoundsViscosity={1.0} // Ensures map stays within bounds
       minZoom={8} // Set minimum zoom level to allow zooming in further
       maxZoom={17} // Set maximum zoom level to zoom in further
