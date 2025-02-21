@@ -46,7 +46,6 @@ const MiscellaneousSection = () => {
 
       // Set state variables based on the response data
       setName(data.name || ""); // Set Name, or default to an empty string if not available
-      setImage(data.logo || null); // Set image, or default to null
       setAbout(data.about || ""); // Assuming 'about' is the description
       setMainColor(data.main_color || "#000000"); // Assuming 'color' is the color, or default to black
 
