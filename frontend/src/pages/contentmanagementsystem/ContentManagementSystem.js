@@ -289,11 +289,11 @@ const ContentManagementSystem = () => {
           </p>
         </div>
         <div className="w-1/6 bg-[#f9f9f9] flex flex-col text-black shadow-lg">
-          <ul className="space-y-2 py-4">
-            {categories.map((category) => (
+          <ul className="space-y-2 py-4 flex flex-col h-full justify-between">
+            {categories.map((category, index) => (
               <li
                 key={category}
-                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
+                className={`p-4  text-center font-semibold cursor-pointer transition-colors ${
                   selectedCategory === category
                     ? "bg-gray-200 border-r-4" // Base styles for selected category
                     : "text-gray-600 hover:bg-gray-200" // Base styles for unselected category
@@ -302,6 +302,7 @@ const ContentManagementSystem = () => {
                   color: selectedCategory === category ? main_color : "inherit", // Dynamic text color
                   borderColor:
                     selectedCategory === category ? main_color : "transparent", // Dynamic border color
+                  marginTop: category === "Miscellaneous" ? "auto" : "0", // Push "Miscellaneous" to the bottom
                 }}
                 onClick={() => handleCategoryClick(category)}
               >
