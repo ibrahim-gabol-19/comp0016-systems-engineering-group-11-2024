@@ -8,13 +8,14 @@ const MiscellaneousSection = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
   const [about, setAbout] = useState("");
-  const [mainColor, setMainColor] = useState('#000000'); // Default color (black)
+  const [mainColor, setMainColor] = useState("#000000"); // Default color (black)
+  const [file, setFile] = useState(null);
 
-  const [font, setFont] = useState('Arial'); // State for selected font
+  const [font, setFont] = useState("Arial"); // State for selected font
   const [swLat, setSwLat] = useState(49.5); // Southwest Latitude
-  const [swLon, setSwLon] = useState(-8);   // Southwest Longitude
-  const [neLat, setNeLat] = useState(60);   // Northeast Latitude
-  const [neLon, setNeLon] = useState(2);    // Northeast Longitude
+  const [swLon, setSwLon] = useState(-8); // Southwest Longitude
+  const [neLat, setNeLat] = useState(60); // Northeast Latitude
+  const [neLon, setNeLon] = useState(2); // Northeast Longitude
 
   // Update the bounds based on slider values
   const handleSwLatChange = (e) => setSwLat(parseFloat(e.target.value));
@@ -27,54 +28,63 @@ const MiscellaneousSection = () => {
     // eslint-disable-next-line
   }, []);
 
-
-  const handleImageChange = (e) => {
+  const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));  // Set the image URL to the state
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(file); // Store the File object in state
+      };
+      reader.readAsDataURL(file); // Convert file to base64 for preview (optional)
     }
   };
+
   const fetchCompanyInformation = async () => {
     try {
       const response = await axios.get(API_URL + "companyinformation/");
       const data = response.data[0]; // Assuming data is an array and you need the first item.
 
-      console.log(data);
       // Set state variables based on the response data
       setName(data.name || ""); // Set Name, or default to an empty string if not available
       setImage(data.logo || null); // Set image, or default to null
       setAbout(data.about || ""); // Assuming 'about' is the description
-      setMainColor(data.main_color || '#000000'); // Assuming 'color' is the color, or default to black
+      setMainColor(data.main_color || "#000000"); // Assuming 'color' is the color, or default to black
 
       setSwLat(data.sw_lat || 0);
       setSwLon(data.sw_lon || 0);
       setNeLat(data.ne_lat || 0);
       setNeLon(data.ne_lon || 0);
-
     } catch (err) {
       console.log(err.message);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(image);
-
-    const companyInfo = {
-      name,
-      image,
-      about,
-      main_color: mainColor,
-      font,
-      sw_lat: swLat,
-      sw_lon: swLon,
-      ne_lat: neLat,
-      ne_lon: neLon,
-    };
-
+  
+    const formData = new FormData();
+    formData.append("name", name);
+    if (image) {
+      formData.append("logo", image); // Append the File object directly
+    }
+    formData.append("about", about);
+    formData.append("main_color", mainColor);
+    formData.append("font", font);
+    formData.append("sw_lat", swLat);
+    formData.append("sw_lon", swLon);
+    formData.append("ne_lat", neLat);
+    formData.append("ne_lon", neLon);
+  
     try {
-      const response = await axios.put(API_URL + "companyinformation/1/", companyInfo);
-      console.log("Company information saved:", response.data);
+      const response = await axios.put(
+        API_URL + "companyinformation/1/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Set the correct content type
+          },
+        }
+      );
       // Handle success, show success message or navigate
     } catch (err) {
       console.error("Error saving company information:", err.message);
@@ -115,19 +125,31 @@ const MiscellaneousSection = () => {
               {/* Show image if it exists */}
               {image ? (
                 <div>
-                  <img src={image} alt="Uploaded" className="py-2 px-2 " style={{ width: '200px', height: 'auto' }} />
+                  <img
+                    src={image}
+                    alt="Uploaded"
+                    className="py-2 px-2 "
+                    style={{ width: "200px", height: "auto" }}
+                  />
                 </div>
               ) : (
                 <p>No image uploaded</p>
               )}
 
               {/* Image upload input */}
-              <input type="file" className="py-2 px-2" accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                className="py-2 px-2"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e)}
+              />
             </div>
 
             {/* Color Picker */}
             <div className="px-2 py-2">
-              <label htmlFor="color" className="block text-xl ">Choose a color</label>
+              <label htmlFor="color" className="block text-xl ">
+                Choose a color
+              </label>
               <input
                 type="color"
                 id="color"
@@ -137,7 +159,9 @@ const MiscellaneousSection = () => {
               />
             </div>
             <div>
-              <label htmlFor="font" className="block text-xl">Choose a font</label>
+              <label htmlFor="font" className="block text-xl">
+                Choose a font
+              </label>
               <select
                 id="font"
                 value={font}
@@ -158,9 +182,6 @@ const MiscellaneousSection = () => {
               <h2 className="py-2 font-bold text-4xl">Reporting </h2>
             </div>
             <div className="flex">
-
-
-
               {/* Bottom Side */}
               <div className="w-1/2">
                 {/* Top Side */}
@@ -219,13 +240,16 @@ const MiscellaneousSection = () => {
                   />
                   <span>{neLon}°</span>
                 </div>
-
-
               </div>
 
               {/* Map Component */}
               <div className="h-96 ml-5 w-1/2">
-                <MapComponent bounds={[[swLat, swLon], [neLat, neLon]]} />
+                <MapComponent
+                  bounds={[
+                    [swLat, swLon],
+                    [neLat, neLon],
+                  ]}
+                />
               </div>
             </div>
 
@@ -240,9 +264,8 @@ const MiscellaneousSection = () => {
             </div>
           </form>
         </div>
-      </div >
-    </div >
-
+      </div>
+    </div>
   );
 };
 export default MiscellaneousSection;

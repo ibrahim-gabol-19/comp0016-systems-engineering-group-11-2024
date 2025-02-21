@@ -38,7 +38,6 @@ const MapComponent = ({ bounds}) => {
     (bounds[0][0] + bounds[1][0]) / 2, // Average of latitudes (swLat + neLat) / 2
     (bounds[0][1] + bounds[1][1]) / 2, // Average of longitudes (swLon + neLon) / 2
   ];  
-  console.log(mapCenter);// const mapCenter = [1, 2]/;
   const zoomLevel = 1;
 
 
