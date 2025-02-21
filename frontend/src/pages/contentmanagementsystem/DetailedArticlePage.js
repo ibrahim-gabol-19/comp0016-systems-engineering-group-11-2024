@@ -38,8 +38,12 @@ const DetailedArticlePage = () => {
     if (articleId !== NEW_ARTICLE_ID) {
       setIsEditing(false); // Initially view preview when editing an existing article
 
-      axios
-        .get(`http://127.0.0.1:8000/articles/${articleId}/`)
+      const token = localStorage.getItem("token");
+
+axios.get(`http://127.0.0.1:8000/articles/${articleId}/`, {
+    headers: { Authorization: `Bearer ${token}` },  
+})
+
         .then((response) => {
           const article = response.data;
           setTitle(article.title || "");
@@ -58,6 +62,7 @@ const DetailedArticlePage = () => {
   }, [articleId]);
 
   const handleSave = async () => {
+    const token=localStorage.getItem('token');
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -71,24 +76,28 @@ const DetailedArticlePage = () => {
     try {
       if (articleId !== NEW_ARTICLE_ID) {
         // PUT operation for updating an existing article
-        await axios.put(
-          `http://127.0.0.1:8000/articles/${articleId}/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+        const token = localStorage.getItem("token");
+
+axios.put(
+    `http://127.0.0.1:8000/articles/${articleId}/`,
+    formData,
+    {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,  
+        },
+    }
         );
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
         await axios.post("http://127.0.0.1:8000/articles/", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Article saved successfully!");
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            alert("Article saved successfully!");
       }
     } catch (error) {
       console.error("Error saving or updating article:", error);

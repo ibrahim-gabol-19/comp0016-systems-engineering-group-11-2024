@@ -23,7 +23,12 @@ const ReportsPage = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/reports/");
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}; 
+      
+      const response = await axios.get("http://127.0.0.1:8000/reports/", {
+        headers, 
+    });
       const newReports = response.data;
       setReports(newReports);
 

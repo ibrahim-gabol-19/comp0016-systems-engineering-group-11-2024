@@ -40,7 +40,9 @@ const DetailedEventPage = () => {
 
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(`http://127.0.0.1:8000/events/${eventId}/`, {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
+      })
         .then((response) => {
           const event = response.data;
           console.log("API response:", event); // Log the API response
@@ -70,6 +72,7 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
+    const token=localStorage.getItem('token');
     console.log("Save button clicked");
 
     if (!title || !date || !time || !description || !location) {
@@ -92,6 +95,7 @@ const DetailedEventPage = () => {
 
     try {
       if (eventId !== NEW_EVENT_ID) {
+        const token = localStorage.getItem("token");
         // PUT operation for updating an existing article
         await axios.put(
           `http://127.0.0.1:8000/events/${eventId}/`,
@@ -99,6 +103,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -111,6 +116,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );

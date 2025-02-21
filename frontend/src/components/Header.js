@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/earth.png";
-import { useAuth } from "../context/AuthContext"; // Assuming the AuthContext is in this path
+import { useAuth } from "../context/AuthContext"; // Ensure AuthContext provides isSuperuser
 
 const navList = [
   {
@@ -12,17 +12,12 @@ const navList = [
   {
     id: 3,
     data: "Reporting",
-    path: "/reporting", // Link to Reporting
+    path: "/reporting",
   },
   {
     id: 4,
     data: "Events",
     path: "/events",
-  },
-  {
-    id: 6,
-    data: "Manage",
-    path: "/contentmanagementsystem",
   },
 ];
 
@@ -36,7 +31,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100 z-10">
+    <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100">
       <a
         href="/"
         className="text-3xl font-extrabold text-green-500 hover:scale-110 transition duration-500 flex items-center "
@@ -59,6 +54,17 @@ const Header = () => {
             {item.data}
           </Link>
         ))}
+
+        {/* Only show "Manage" if user is superuser */}
+        {auth.user?.is_superuser && (
+          <Link
+            to="/contentmanagementsystem"
+            className="ml-8 text-lg text-black hover:text-green-500 hover:scale-110 transition duration-300"
+          >
+            Manage
+          </Link>
+        )}
+
         {auth.isAuthenticated && (
           <button
             onClick={handleLogout}
