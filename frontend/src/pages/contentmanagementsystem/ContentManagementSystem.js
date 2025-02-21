@@ -260,20 +260,25 @@ const ContentManagementSystem = () => {
       <Header />
       <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
-        <SelectTopBar
-          selectedCards={selectedCards}
-          onDelete={handleDeleteMultiple}
-          onStar={handleStar}
-          onSelectAll={handleSelectAll}
-          onCancel={handleCancel}
-        />
-      ) : (
-        <DefaultTopBar
-          onManual={handleManualClicked}
-          onUpload={handleFileUploadClick}
-          setUserQuery={setUserQuery}
-        />
-      )}
+  <SelectTopBar
+    selectedCards={selectedCards}
+    onDelete={handleDeleteMultiple}
+    onStar={handleStar}
+    onSelectAll={handleSelectAll}
+    onCancel={handleCancel}
+  />
+) : selectedCategory === "Miscellaneous" ? (
+  <div className="h-14 pb-2 text-white border-b-2  flex flex-row justify-center items-center z-10 relative">
+    
+  </div>
+) : (
+  <DefaultTopBar
+    onManual={handleManualClicked}
+    onUpload={handleFileUploadClick}
+    setUserQuery={setUserQuery}
+    selectedCategory={selectedCategory}
+  />
+)}
       <div
         {...getRootProps()}
         className="w-screen h-full flex overflow-hidden relative"

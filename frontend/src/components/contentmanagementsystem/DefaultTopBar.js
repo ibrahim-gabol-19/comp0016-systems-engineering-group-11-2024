@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import SearchBar from "./SearchBar";
 import { CompanyContext } from "../../context/CompanyContext";
-const DefaultTopBar = ({ onManual, onUpload, setUserQuery }) => {
+const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi" }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { main_color, logo, name } = useContext(CompanyContext);
 
@@ -74,7 +74,7 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery }) => {
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          New
+          New {selectedCategory === "Articles" && "Article"} {selectedCategory === "Events" && "Event"} {selectedCategory === "Reporting" && "Report"} 
         </button>
         <div
           className={`absolute bg-gray-200 py-1 px-5 mt-2 rounded-lg shadow-lg z-20 w-1/6 left-0 transition-all duration-200 ${

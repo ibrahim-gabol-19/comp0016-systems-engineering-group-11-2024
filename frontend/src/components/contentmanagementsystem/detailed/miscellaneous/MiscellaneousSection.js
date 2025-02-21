@@ -79,14 +79,14 @@ const MiscellaneousSection = () => {
   };
 
   return (
-    <div className="h-full w-full px-5 py-5">
+    <div className="h-full w-full px-1 py-1">
          {/* Feedback Message */}
          {feedback.message && (
-              <div className={`py-2 text-center text-xl font-bold text-${feedback.color}-600`}>
+              <div className={`py-2 w-full bg-green-100 text-center text-xl  text-${feedback.color}-600`}>
                 {feedback.message}
               </div>
             )}
-      <div className="bg-white border shadow-2xl overflow-auto px-5 rounded-xl relative">
+      <div className="bg-white border shadow-2xl overflow-auto px-5 py-5 rounded-xl relative">
         {/* Save Button (Anchored to Top Right) */}
         <button
           type="submit"
