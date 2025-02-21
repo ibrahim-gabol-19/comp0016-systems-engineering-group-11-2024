@@ -31,7 +31,7 @@ const Header = () => {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
 
-  const { color, logo, name } = useContext(CompanyContext);
+  const { main_color, logo, name } = useContext(CompanyContext);
   // Fetch the company logo from the API
   const handleLogout = () => {
     logout(); // Log the user out
@@ -42,7 +42,8 @@ const Header = () => {
     <header className="fixed w-full md:w-full flex justify-between items-center p-4 z-50 bg-gray-100 z-10">
       <a
         href="/"
-        className="text-3xl font-extrabold text-green-500 hover:scale-110 transition duration-500 flex items-center"
+        style={{ color: main_color }}
+        className="text-3xl font-extrabold hover:scale-110 transition duration-500 flex items-center"
       >
         {/* Use the dynamically fetched logo */}
         {logo ? (
@@ -52,13 +53,18 @@ const Header = () => {
         )}
         <span>{name}</span>
       </a>
-
       <nav className="md:flex">
         {navList.map((item) => (
           <Link
             key={item.id}
             to={item.path}
-            className="ml-8 text-lg text-black hover:text-green-500 hover:scale-110 transition duration-300"
+            style={{
+              color: "black", // Default color
+              transition: "color 0.3s, transform 0.3s",
+            }}
+            className="ml-8 text-lg hover:scale-110"
+            onMouseEnter={(e) => (e.target.style.color = main_color)} // Set hover color
+            onMouseLeave={(e) => (e.target.style.color = "black")} // Reset to default
           >
             {item.data}
           </Link>
@@ -66,7 +72,13 @@ const Header = () => {
         {auth.isAuthenticated && (
           <button
             onClick={handleLogout}
-            className="ml-8 text-lg text-red-500 hover:text-red-700 transition duration-300"
+            style={{
+              color: "red", // Default color
+              transition: "color 0.3s",
+            }}
+            className="ml-8 text-lg"
+            onMouseEnter={(e) => (e.target.style.color = "red")} // Set hover color
+            onMouseLeave={(e) => (e.target.style.color = "red")} // Reset to default
           >
             Logout
           </button>
