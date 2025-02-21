@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import { CompanyContext } from "../../../../context/CompanyContext";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
@@ -10,6 +11,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
+  const { main_color, logo, name } = useContext(CompanyContext);
 
   const tags = [
     "environmental",
@@ -21,7 +23,25 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     "health_safety",
     "urban_development",
   ];
+  const lightenColor = (color, percent) => {
+    const num = parseInt(color.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = ((num >> 8) & 0x00ff) + amt;
+    const B = (num & 0x0000ff) + amt;
 
+    return (
+      "#" +
+      (
+        0x1000000 +
+        (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+        (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+        (B < 255 ? (B < 1 ? 0 : B) : 255)
+      )
+        .toString(16)
+        .slice(1)
+    );
+  };
 
   const handleStatusChange = async (status) => {
     try {
@@ -36,7 +56,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     } catch (err) {
       console.log(err.message);
     }
-  }
+  };
 
   const handleTagsChange = async (tags) => {
     try {
@@ -51,14 +71,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     } catch (err) {
       console.log(err.message);
     }
-  }
+  };
 
   const handleDeleteReport = async () => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete report?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete report?`
+    );
     if (isConfirmed) {
       try {
         const response = await axios.delete(
-          `${API_URL}/reports/${selectedMarker.id}/`,
+          `${API_URL}/reports/${selectedMarker.id}/`
         );
 
         if (response.status === 204) {
@@ -68,16 +90,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         console.log(err.message);
       }
     }
-  }
-
+  };
 
   const handleDeleteDiscussion = async (id) => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete discussion?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete discussion?`
+    );
     if (isConfirmed) {
-
       try {
         const response = await axios.delete(
-          `${API_URL}/reportdiscussion/${id}/`,
+          `${API_URL}/reportdiscussion/${id}/`
         );
 
         if (response.status === 204) {
@@ -87,8 +109,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         console.log(err.message);
       }
     }
-  }
-
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -149,15 +170,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     formData.append("tags", selectedTag); // Include the selected tag
 
     try {
-      const response = await axios.post(
-        API_URL + "reports/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // To send files and form data
-          },
-        }
-      );
+      const response = await axios.post(API_URL + "reports/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // To send files and form data
+        },
+      });
       if (response.status === 201) {
         fetchReports();
       }
@@ -261,7 +278,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 </div>
                 <div className="w-full h-1/4 text-center justify-center">
                   <p className="text-gray-500 text-m">
-                    {new Date(selectedMarker.published_date).toLocaleDateString()}
+                    {new Date(
+                      selectedMarker.published_date
+                    ).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -284,13 +303,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                       d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                     />
                   </svg>
-
                 </button>
               </div>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
-
               <select
                 value={selectedMarker.status}
                 onChange={handleStatusChange}
@@ -310,7 +327,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 <option value="road">Road</option>
                 <option value="environmental">Environmental</option>
                 <option value="pollution">Pollution</option>
-                <option value="wildlife_conservation">Wildlife Conservation</option>
+                <option value="wildlife_conservation">
+                  Wildlife Conservation
+                </option>
                 <option value="climate_change">Climate Change</option>
                 <option value="waste_management">Waste Management</option>
                 <option value="health_safety">Health & Safety</option>
@@ -323,8 +342,10 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${discussion.author === "Business" ? "bg-yellow-200" : ""
-                  }`}              >
+                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${
+                  discussion.author === "Business" ? "bg-yellow-200" : ""
+                }`}
+              >
                 {/* Profile Picture (SVG Icon) */}
                 <div className="w-1/6 h-full flex justify-center items-center">
                   <svg
@@ -369,7 +390,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                         d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                       />
                     </svg>
-
                   </button>
                 </div>
               </div>
@@ -398,20 +418,44 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/*View Overview*/}
             <div className="w-full shadow-md h-1/4">
               <button
-                className="flex flex-row justify-center w-full h-full  bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                style={{
+                  color: main_color, // Dynamic text color
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  ); // Lighter background on hover
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    60
+                  ); // Even lighter background on active
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  ); // Reset to hover state on mouse up
+                }}
                 onClick={() => setViewingDiscussion(false)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  className="size-6"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
                   />
                 </svg>
@@ -434,7 +478,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 </div>
                 <div className="w-full h-1/4 text-center justify-center">
                   <p className="text-gray-500 text-m">
-                    {new Date(selectedMarker.published_date).toLocaleDateString()}
+                    {new Date(
+                      selectedMarker.published_date
+                    ).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -457,13 +503,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                       d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                     />
                   </svg>
-
                 </button>
               </div>
             </div>
             {/* Status + Tags */}
             <div className="w-full h-1/4 flex justify-center items-center">
-
               <select
                 value={selectedMarker.status}
                 onChange={handleStatusChange}
@@ -483,7 +527,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 <option value="road">Road</option>
                 <option value="environmental">Environmental</option>
                 <option value="pollution">Pollution</option>
-                <option value="wildlife_conservation">Wildlife Conservation</option>
+                <option value="wildlife_conservation">
+                  Wildlife Conservation
+                </option>
                 <option value="climate_change">Climate Change</option>
                 <option value="waste_management">Waste Management</option>
                 <option value="health_safety">Health & Safety</option>
@@ -507,7 +553,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               />
             )}
           </div>
-
 
           {/* Description with Poster and Date */}
           <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">
@@ -556,27 +601,49 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 </p>
               </div>
               {/* Upvote Button with Icon */}
-              <div className="w-1/2 justify-center">
-
-              </div>
+              <div className="w-1/2 justify-center"></div>
             </div>
             {/*View discussion*/}
-            <div className="w-full h-1/6 shadow-md ">
+            <div className="w-full h-1/6 shadow-md">
               <button
-                className="flex flex-row justify-center w-full h-full bg-white font-bold text-green-500 rounded-lg active:bg-green-200 hover:bg-green-100 transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                style={{
+                  color: main_color, // Dynamic text color
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  ); // Lighter background on hover
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    60
+                  ); // Even lighter background on active
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  ); // Reset to hover state on mouse up
+                }}
                 onClick={() => setViewingDiscussion(true)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-7 "
+                  className="size-7"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
                   />
                 </svg>

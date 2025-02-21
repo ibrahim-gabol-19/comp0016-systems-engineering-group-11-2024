@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar";
@@ -6,9 +6,10 @@ import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBa
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
 import MiscellaneousSection from "../../components/contentmanagementsystem/detailed/miscellaneous/MiscellaneousSection";
-import axios from 'axios';
-const API_URL = process.env.REACT_APP_API_URL;
+import axios from "axios";
+import { CompanyContext } from "../../context/CompanyContext";
 
+const API_URL = process.env.REACT_APP_API_URL;
 
 const ContentManagementSystem = () => {
   const [selectedCategory, setSelectedCategory] = useState("Articles");
@@ -21,7 +22,7 @@ const ContentManagementSystem = () => {
   //const [isAddingCard, setIsAddingCard] = useState(false);
   const fileInputRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
-
+  const { main_color, logo, name } = useContext(CompanyContext);
 
   const categories = ["Articles", "Events", "Reporting", "Miscellaneous"];
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const ContentManagementSystem = () => {
         openTimes: "10:00 AM - 7:00 PM",
         description: "Browse eclectic shops and food stalls.",
         main_image: "https://picsum.photos/150",
-      }
+      },
     ],
   };
   const refreshData = async () => {
@@ -75,7 +76,7 @@ const ContentManagementSystem = () => {
         .then((data) => setEvents(data))
         .catch((error) => console.error("Error fetching events:", error));
     }
-  }
+  };
   // Fetch articles from the API when the component is mounted
   useEffect(() => {
     refreshData();
@@ -116,16 +117,12 @@ const ContentManagementSystem = () => {
   };*/
 
   const handleManualClicked = () => {
-    if (selectedCategory === "Reporting")
-    {
+    if (selectedCategory === "Reporting") {
+      navigate(`/reporting/`);
+    } else {
       navigate(
-        `/reporting/`
-      );
-    }
-    else
-    {
-      navigate(
-        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${sampleData[selectedCategory].length - 1
+        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
+          sampleData[selectedCategory].length - 1
         }`
       );
     }
@@ -155,7 +152,9 @@ const ContentManagementSystem = () => {
   };
   const handleDeleteMultiple = async () => {
     // Ask the user for confirmation
-    const isConfirmed = window.confirm(`Are you sure you want to delete selected items?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete selected items?`
+    );
 
     if (isConfirmed) {
       try {
@@ -183,16 +182,16 @@ const ContentManagementSystem = () => {
     handleCancel();
   };
 
-
-
   const handleDeleteSingular = async (item) => {
     // Ask the user for confirmation
-    const isConfirmed = window.confirm(`Are you sure you want to delete ${item.title}?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete ${item.title}?`
+    );
 
     if (isConfirmed) {
       try {
         const response = await axios.delete(
-          `${API_URL}${selectedCategory.toLowerCase()}/${item.id}/`,
+          `${API_URL}${selectedCategory.toLowerCase()}/${item.id}/`
         );
 
         if (response.status === 204) {
@@ -208,7 +207,6 @@ const ContentManagementSystem = () => {
   };
 
   const handleStar = () => {
-
     const allCards = selectedCards?.map((_, index) => index);
     allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
     handleCancel();
@@ -225,15 +223,37 @@ const ContentManagementSystem = () => {
     setSelectedCards([]); // Deselect all cards
   };
 
-  const filterItems = (items, userQuery, itemFields = ['title', 'description']) => {
+  const filterItems = (
+    items,
+    userQuery,
+    itemFields = ["title", "description"]
+  ) => {
     const query = userQuery.toLowerCase();
     return (items || []).filter((item) => {
-      return itemFields.some(field =>
+      return itemFields.some((field) =>
         item[field]?.toLowerCase().includes(query)
       );
     });
   };
+  const lightenColor = (color, percent) => {
+    const num = parseInt(color.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = ((num >> 8) & 0x00ff) + amt;
+    const B = (num & 0x0000ff) + amt;
 
+    return (
+      "#" +
+      (
+        0x1000000 +
+        (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+        (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+        (B < 255 ? (B < 1 ? 0 : B) : 255)
+      )
+        .toString(16)
+        .slice(1)
+    );
+  };
 
   return (
     <div className="h-[calc(100vh-146px)] w-full">
@@ -260,23 +280,29 @@ const ContentManagementSystem = () => {
       >
         <input {...getInputProps()} ref={fileInputRef} />
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${isDragging ? "opacity-100" : "opacity-0"
-            }`}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
+            isDragging ? "opacity-100" : "opacity-0"
+          }`}
         >
           <p className="text-gray-500 font-semibold text-center">
             Drag and drop files here to upload
           </p>
         </div>
-
         <div className="w-1/6 bg-[#f9f9f9] flex flex-col text-black shadow-lg">
           <ul className="space-y-2 py-4">
             {categories.map((category) => (
               <li
                 key={category}
-                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${selectedCategory === category
-                  ? "bg-gray-200 text-green-600 border-r-4 border-green-500"
-                  : "text-gray-600 hover:bg-gray-200"
-                  }`}
+                className={`p-4 text-center font-semibold cursor-pointer transition-colors ${
+                  selectedCategory === category
+                    ? "bg-gray-200 border-r-4" // Base styles for selected category
+                    : "text-gray-600 hover:bg-gray-200" // Base styles for unselected category
+                }`}
+                style={{
+                  color: selectedCategory === category ? main_color : "inherit", // Dynamic text color
+                  borderColor:
+                    selectedCategory === category ? main_color : "transparent", // Dynamic border color
+                }}
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}
@@ -286,94 +312,120 @@ const ContentManagementSystem = () => {
         </div>
 
         <div className="w-5/6 h-full bg-white overflow-auto">
-          {selectedCategory === "Reporting" && <ReportsSection userQuery={userQuery} />}
-          {selectedCategory === "Miscellaneous" && <MiscellaneousSection/>}
-          {selectedCategory !== "Reporting" && selectedCategory !== "Miscellaneous" && (
-            <div className="grid grid-cols-4 gap-8 p-4">
-              {(selectedCategory === "Articles"
-                ? filterItems(articles, userQuery)
-                : selectedCategory === "Events"
+          {selectedCategory === "Reporting" && (
+            <ReportsSection userQuery={userQuery} />
+          )}
+          {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
+          {selectedCategory !== "Reporting" &&
+            selectedCategory !== "Miscellaneous" && (
+              <div className="grid grid-cols-4 gap-8 p-4">
+                {(selectedCategory === "Articles"
+                  ? filterItems(articles, userQuery)
+                  : selectedCategory === "Events"
                   ? filterItems(events, userQuery)
                   : sampleData[selectedCategory]
-              )?.map((event, index) => (
-                <div
-                  key={index}
-                  className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(event)
-                    ? "bg-green-100 border border-transparent border-8"
-                    : "bg-white"
+                )?.map((event, index) => (
+                  <div
+                    key={index}
+                    className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${
+                      selectedCards.includes(event)
+                        ? "border border-transparent border-8" // Keep the border styles
+                        : "bg-white"
                     }`}
-                  style={{ minHeight: "300px" }}
-                  onClick={() => {
-                    if (selectedCards.length === 0) {
-                      handleCardClick(event.id);
-                      console.log('Event id clicked is', event.id);
-                    } else {
-                      toggleCardSelection(event);
-                    }
-                  }}
-                >
-                  {event.main_image && (
-                    <img
-                      src={event.main_image}
-                      alt={event.title}
-                      className="w-full h-1/2 object-cover rounded-lg"
-                    />
-                  )}
-                  <div className="p-2 flex flex-col h-1/2 text-center">
-                    <h1 className="font-bold text-2xl text-gray-800 truncate">
-                      {event.title}
-                    </h1>
-                    <p className="text-sm text-gray-500 truncate">
-                      {event.openTimes}
-                    </p>
-                    <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
-                      {event.description}
-                    </p>
-                  </div>
-
-                  <button
-                    className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
-                      ? "opacity-100 bg-gray-600 font-bold text-white"
-                      : "opacity-60"
-                      } group-hover:opacity-100 transition-opacity`}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent the click event from triggering the card click
-                      toggleCardSelection(event);
+                    style={{
+                      minHeight: "300px",
+                      backgroundColor: selectedCards.includes(event)
+                        ? lightenColor(main_color, 80)
+                        : "white", // Dynamic background color
+                      transition: "background-color 0.3s, transform 0.3s", // Smooth transitions
+                    }}
+                    onClick={() => {
+                      if (selectedCards.length === 0) {
+                        handleCardClick(event.id);
+                        console.log("Event id clicked is", event.id);
+                      } else {
+                        toggleCardSelection(event);
+                      }
+                    }}
+                    onMouseEnter={(e) => {
+                      // if (!selectedCards.includes(event)) {
+                      //   e.currentTarget.style.backgroundColor = main_color; // Set hover background color
+                      // }
+                      e.currentTarget.style.transform = "scale(1.02)"; // Optional: Add a slight scale effect
+                    }}
+                    onMouseLeave={(e) => {
+                      // if (!selectedCards.includes(event)) {
+                      //   e.currentTarget.style.backgroundColor = "white"; // Reset background color
+                      // }
+                      e.currentTarget.style.transform = "scale(1)"; // Reset scale
                     }}
                   >
-                    ✓
-                  </button>
+                    {/* Content inside the div */}
 
-                  {/* Conditional Star Button */}
-                  {selectedCategory !== "Articles" && (
+                    {event.main_image && (
+                      <img
+                        src={event.main_image}
+                        alt={event.title}
+                        className="w-full h-1/2 object-cover rounded-lg"
+                      />
+                    )}
+                    <div className="p-2 flex flex-col h-1/2 text-center">
+                      <h1 className="font-bold text-2xl text-gray-800 truncate">
+                        {event.title}
+                      </h1>
+                      <p className="text-sm text-gray-500 truncate">
+                        {event.openTimes}
+                      </p>
+                      <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
+                        {event.description}
+                      </p>
+                    </div>
+
                     <button
-                      className={`absolute top-2 right-2 w-9 h-9 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(index)
-                        ? "bg-yellow-500 text-white"
-                        : "opacity-60"
-                        }`}
+                      className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
+                        selectedCards.includes(event)
+                          ? "opacity-100 bg-gray-600 font-bold text-white"
+                          : "opacity-60"
+                      } group-hover:opacity-100 transition-opacity`}
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
-                        toggleStarSelection(event);
+                        toggleCardSelection(event);
                       }}
                     >
-                      ★
+                      ✓
                     </button>
-                  )}
 
-                  {/* Delete Button */}
-                  <button
-                    className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent the click event from triggering the card click
-                      handleDeleteSingular(event);
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                    {/* Conditional Star Button */}
+                    {selectedCategory !== "Articles" && (
+                      <button
+                        className={`absolute top-2 right-2 w-9 h-9 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
+                          starredCards.includes(index)
+                            ? "bg-yellow-500 text-white"
+                            : "opacity-60"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent the click event from triggering the card click
+                          toggleStarSelection(event);
+                        }}
+                      >
+                        ★
+                      </button>
+                    )}
+
+                    {/* Delete Button */}
+                    <button
+                      className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent the click event from triggering the card click
+                        handleDeleteSingular(event);
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
         </div>
       </div>
     </div>

@@ -48,7 +48,7 @@ const MiscellaneousSection = () => {
       setName(data.name || ""); // Set Name, or default to an empty string if not available
       setAbout(data.about || ""); // Assuming 'about' is the description
       setMainColor(data.main_color || "#000000"); // Assuming 'color' is the color, or default to black
-
+      setFont(data.font || null);
       setSwLat(data.sw_lat || 0);
       setSwLon(data.sw_lon || 0);
       setNeLat(data.ne_lat || 0);
