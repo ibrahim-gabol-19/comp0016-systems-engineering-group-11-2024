@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Assuming the AuthContext is in this path
-
+import { CompanyContext } from "../context/CompanyContext";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const navList = [
@@ -30,24 +30,10 @@ const navList = [
 const Header = () => {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
-  const [logo, setLogo] = useState(null);
-  const [name, setName] = useState(null);
 
+  const { color, logo, name } = useContext(CompanyContext);
   // Fetch the company logo from the API
-  useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const response = await fetch(`${API_URL}companyinformation/1/`);
-        const data = await response.json();
-        setLogo(data.logo); // Set the logo URL from the API response
-        setName(data.name);
-      } catch (error) {
-        console.error("Error fetching company logo:", error);
-      }
-    };
-
-    fetchLogo();
-  }, []);  const handleLogout = () => {
+  const handleLogout = () => {
     logout(); // Log the user out
     navigate("/login"); // Redirect to login page
   };
@@ -64,9 +50,7 @@ const Header = () => {
         ) : (
           <span className="w-8 h-8 mr-2 bg-gray-300 rounded-full"></span> // Fallback if logo is not available
         )}
-        <span>
-         {name}
-        </span>
+        <span>{name}</span>
       </a>
 
       <nav className="md:flex">

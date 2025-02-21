@@ -10,6 +10,7 @@ import ReportsPage from "./pages/reporting/ReportsPage";
 import SignUp from "./pages/account/SignUp";
 import Login from "./pages/account/Login";
 import ProtectedRoute from "./pages/account/ProtectedRoute";
+import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -50,34 +51,36 @@ const App = () => {
   return (
     <div>
       <AuthProvider>
-        <Router>
-          <div className="bg-gray-100 text-black min-h-screen">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
+        <CompanyProvider>
+          <Router>
+            <div className="bg-gray-100 text-black min-h-screen">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
 
-              {/* Protected Routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/events" element={<EventsPage />} />
-                <Route
-                  path="/contentmanagementsystem"
-                  element={<ContentManagementSystem />}
-                />
-                <Route
-                  path="/contentmanagementsystem/details/articles/:articleId"
-                  element={<DetailedArticlePage />}
-                />
-                <Route
-                  path="/contentmanagementsystem/details/events/:eventId"
-                  element={<DetailedEventPage />}
-                />
-                <Route path="/reporting" element={<ReportsPage />} />
-              </Route>
-            </Routes>
-          </div>
-        </Router>
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/events" element={<EventsPage />} />
+                  <Route
+                    path="/contentmanagementsystem"
+                    element={<ContentManagementSystem />}
+                  />
+                  <Route
+                    path="/contentmanagementsystem/details/articles/:articleId"
+                    element={<DetailedArticlePage />}
+                  />
+                  <Route
+                    path="/contentmanagementsystem/details/events/:eventId"
+                    element={<DetailedEventPage />}
+                  />
+                  <Route path="/reporting" element={<ReportsPage />} />
+                </Route>
+              </Routes>
+            </div>
+          </Router>
+        </CompanyProvider>
       </AuthProvider>
     </div>
   );
