@@ -32,10 +32,12 @@ const DetailedEventPage = () => {
       console.log("useEffect is running");
       console.log("event id received was", eventId);
       setIsEditing(false); // initially viwe preview when clicking box
-
+      const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article
       axios
-        .get(API_URL + `events/${eventId}/`)
+        .get(API_URL + `events/${eventId}/`, {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
+      })
         .then((response) => {
           const event = response.data;
           console.log("API response:", event); // Log the API response
@@ -66,6 +68,7 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
+    const token=localStorage.getItem('token');
     console.log("Save button clicked");
 
     if (!title || !date || !time || !description || !location) {
@@ -88,6 +91,7 @@ const DetailedEventPage = () => {
 
     try {
       if (eventId !== NEW_EVENT_ID) {
+        const token = localStorage.getItem("token");
         // PUT operation for updating an existing article
 
         await axios.put(
@@ -96,6 +100,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -109,6 +114,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );

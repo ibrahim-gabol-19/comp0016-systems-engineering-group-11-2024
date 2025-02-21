@@ -54,9 +54,12 @@ const SearchBar = () => {
     }
 
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(API_URL + `search/`, {
         params: { query: userQuery },
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+      
 
     // Check if the results field exists and set the state
     if (response.data && response.data.results) {

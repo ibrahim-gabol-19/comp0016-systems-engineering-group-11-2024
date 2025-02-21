@@ -33,8 +33,12 @@ const DetailedArticlePage = () => {
     if (articleId !== NEW_ARTICLE_ID) {
       setIsEditing(false); // Initially view preview when editing an existing article
 
-      axios
-        .get(API_URL + `articles/${articleId}/`)
+      const token = localStorage.getItem("token");
+
+axios.get(API_URL + `articles/${articleId}/`, {
+    headers: { Authorization: `Bearer ${token}` },  
+})
+
         .then((response) => {
           const article = response.data;
           setTitle(article.title || "");
@@ -54,6 +58,7 @@ const DetailedArticlePage = () => {
   }, [articleId]);
 
   const handleSave = async () => {
+    const token=localStorage.getItem('token');
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -67,26 +72,28 @@ const DetailedArticlePage = () => {
     try {
       if (articleId !== NEW_ARTICLE_ID) {
         // PUT operation for updating an existing article
-        await axios.put(
-          API_URL + `articles/${articleId}/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+        const token = localStorage.getItem("token");
+
+axios.put(
+    API_URL + `articles/${articleId}/`,
+    formData,
+    {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,  
+        },
+    }
         );
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        const response = await axios.post(API_URL + "articles/", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        navigate(`/contentmanagementsystem/details/articles/${response.data.id}`); // Navigate to the new article URL
-        alert("Article saved successfully!");
-        
+        await axios.post(API_URL + "articles/", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            alert("Article saved successfully!");
       }
       setErrorMessage("");
     } catch (error) {

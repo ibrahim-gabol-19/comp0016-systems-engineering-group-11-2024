@@ -65,16 +65,31 @@ const ContentManagementSystem = () => {
   };
   const refreshData = async () => {
     if (selectedCategory === "Articles") {
-      fetch(API_URL + "articles/")
-        .then((response) => response.json())
-        .then((data) => setArticles(data))
-        .catch((error) => console.error("Error fetching articles:", error));
+      axios.get(API_URL + "articles/", {
+        headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
+      })
+      .then((response) => {
+        console.log("DEBUG: Articles API Response:", response.data);
+        setArticles(Array.isArray(response.data) ? response.data : []);
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error.response?.data);
+        setArticles([]);  // Prevents breaking UI
+      });
     }
+  
     if (selectedCategory === "Events") {
-      fetch(API_URL + "events/")
-        .then((response) => response.json())
-        .then((data) => setEvents(data))
-        .catch((error) => console.error("Error fetching events:", error));
+      axios.get(API_URL + "events/", {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
+        })
+        .then((response) => {
+          console.log("DEBUG: Events API Response:", response.data);
+          setEvents(Array.isArray(response.data) ? response.data : []);
+        })
+        .catch((error) => {
+          console.error("Error fetching events:", error.response?.data);
+          setEvents([]);
+        });
     }
   };
   // Fetch articles from the API when the component is mounted

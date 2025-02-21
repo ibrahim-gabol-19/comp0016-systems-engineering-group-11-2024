@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -8,24 +9,52 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({
         isAuthenticated: false,
         token: null,
+        user: null, // 
     });
 
-    // Check localStorage for token on initial load
+    // Fetch user details if a token exists
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            setAuth({ isAuthenticated: true, token });
+            axios.get('http://localhost:8000/api/auth/user/', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(response => {
+                setAuth({
+                    isAuthenticated: true,
+                    token,
+                    user: response.data,  
+                });
+            })
+            .catch(() => {
+                localStorage.removeItem('token'); // Clear token if request fails
+                setAuth({ isAuthenticated: false, token: null, user: null });
+            });
         }
     }, []);
 
-    const login = (token) => {
-        localStorage.setItem('token', token); // Store token in localStorage
-        setAuth({ isAuthenticated: true, token });
+    // Login function - stores token and fetches user data
+    const login = async (token) => {
+        localStorage.setItem('token', token);
+        try {
+            const response = await axios.get('http://localhost:8000/api/auth/user/', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log("User Data After Login:", response.data);
+            setAuth({
+                isAuthenticated: true,
+                token,
+                user: response.data,  // 
+            });
+        } catch (error) {
+            console.error("Failed to fetch user data", error);
+        }
     };
 
+    // Logout function - clears token and user info
     const logout = () => {
-        localStorage.removeItem('token'); // Remove token from localStorage
-        setAuth({ isAuthenticated: false, token: null });
+        localStorage.removeItem('token');
+        setAuth({ isAuthenticated: false, token: null, user: null });
     };
 
     return (

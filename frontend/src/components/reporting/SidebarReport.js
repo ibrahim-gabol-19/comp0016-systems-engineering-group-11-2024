@@ -25,9 +25,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   ];
   const handleUpvote = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
-        API_URL + "reports/" + selectedMarker.id + "/upvote/"
-      );
+        API_URL + "reports/" + selectedMarker.id + "/upvote/",
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,  
+            },
+        }
+    );
       if (response.status === 200) {
         fetchReports();
       }
@@ -56,6 +63,14 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           message: message,
           report: selectedMarker.id,
         };
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          alert("Authentication required. Please log in.");
+          return;
+      }
+
+        
 
         const response = await axios.post(
           API_URL + "reportdiscussion/",
@@ -63,6 +78,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           {
             headers: {
               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -84,6 +100,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     e.preventDefault();
 
     // Create the data object to send
+    const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("title", title);
     if (image) {
@@ -96,11 +113,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     formData.append("tags", selectedTag); // Include the selected tag
 
     try {
-      const response = await axios.post(API_URL + "reports/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // To send files and form data
-        },
-      });
+      const response = await axios.post(
+        (API_URL + "reports/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // To send files and form data
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      ));
       if (response.status === 201) {
         fetchReports();
       }

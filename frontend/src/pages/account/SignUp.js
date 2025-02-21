@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate,Link  } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Assuming you have an auth context
 
 const SignUp = () => {
@@ -10,7 +10,7 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState([]);
 
   // If user is logged in, redirect to home or dashboard
   useEffect(() => {
@@ -19,39 +19,41 @@ const SignUp = () => {
     }
   }, [auth.isAuthenticated, navigate]);
 
+  // ✅ Validate password and return multiple errors at once
   const validatePassword = (password) => {
-    const minLength = 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const errors = [];
 
-    if (password.length < minLength) {
-      return "Password must be at least 8 characters long.";
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters long.");
     }
-    if (!hasUpperCase) {
-      return "Password must contain at least one uppercase letter.";
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must contain at least one uppercase letter.");
     }
-    if (!hasLowerCase) {
-      return "Password must contain at least one lowercase letter.";
+    if (!/[a-z]/.test(password)) {
+      errors.push("Password must contain at least one lowercase letter.");
     }
-    if (!hasNumbers) {
-      return "Password must contain at least one number.";
+    if (!/\d/.test(password)) {
+      errors.push("Password must contain at least one number.");
     }
-    if (!hasSpecialChar) {
-      return "Password must contain at least one special character.";
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push("Password must contain at least one special character.");
     }
-    return "";
+
+    return errors;
   };
 
+  // ✅ Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-      setError(passwordError);
+    const passwordErrors = validatePassword(password);
+
+    if (passwordErrors.length > 0) {
+      setError(["", ...passwordErrors]);
       return;
     }
-    setError("");
+
+    setError([]); // Clear errors if password is valid
+
     try {
       await axios.post("http://localhost:8000/api/auth/signup/", {
         username,
@@ -60,7 +62,7 @@ const SignUp = () => {
       });
       navigate("/login");
     } catch (error) {
-      setError(error.message);
+      setError(["Signup failed. Please try again."]);
       console.error("Error signing up:", error);
     }
   };
@@ -137,7 +139,16 @@ const SignUp = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+              {/* ✅ Display Errors on New Lines */}
+              {error.length > 0 && (
+                <div className="text-red-500 text-sm mt-2">
+                  <p className="font-bold">These errors need to be fixed:</p>
+                  {error.map((err, index) => (
+                    <p key={index} className="mt-1">{err}</p> // ✅ Each error appears on a new line
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>
@@ -150,20 +161,21 @@ const SignUp = () => {
             </div>
           </form>
         </div>
-           {/* Sign-up Link if not logged in */}
-           {!auth.isAuthenticated && (
-            <div className="mt-4 text-center">
-              <span className="text-sm text-gray-600">
-                Already have an account?{" "}
-                <Link
-                  to="/login" // Make sure to replace with the correct route
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Login
-                </Link>
-              </span>
-            </div>
-          )}
+
+        {/* Sign-up Link if not logged in */}
+        {!auth.isAuthenticated && (
+          <div className="mt-4 text-center">
+            <span className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Login
+              </Link>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
