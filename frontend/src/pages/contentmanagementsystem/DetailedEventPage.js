@@ -5,8 +5,6 @@ import DateTime from "../../components/contentmanagementsystem/detailed/DateTime
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
-
-
 import axios from "axios";
  
 const NEW_EVENT_ID = "0";
@@ -22,6 +20,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+ 
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
@@ -29,10 +28,12 @@ const DetailedEventPage = () => {
       console.log("useEffect is running");
       console.log("event id received was", eventId);
       setIsEditing(false); // initially viwe preview when clicking box
-
+      const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(`http://127.0.0.1:8000/events/${eventId}/`, {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
+      })
         .then((response) => {
           const event = response.data;
           console.log("API response:", event); // Log the API response
@@ -62,6 +63,7 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
+    const token=localStorage.getItem('token');
     console.log("Save button clicked");
 
     if (!title || !date || !time || !description || !location) {
@@ -84,6 +86,7 @@ const DetailedEventPage = () => {
 
     try {
       if (eventId !== NEW_EVENT_ID) {
+        const token = localStorage.getItem("token");
         // PUT operation for updating an existing article
        
          await axios.put(
@@ -92,6 +95,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -105,6 +109,7 @@ const DetailedEventPage = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
             },
           }
         );

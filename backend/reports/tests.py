@@ -4,10 +4,15 @@ Test file for reports
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 from rest_framework.test import APIClient
+
 from .models import Report
 from .serializers import ReportSerializer
+
+User = get_user_model()
 
 class ReportViewSetTestClass(TestCase):
     """
@@ -15,6 +20,7 @@ class ReportViewSetTestClass(TestCase):
     """
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username="testuser", password="testpass")
         self.report = Report.objects.create( title="Test Report",
             status="open",
             tags="environmental",
@@ -23,6 +29,7 @@ class ReportViewSetTestClass(TestCase):
             upvotes=0,
             latitude=40.7128,
             longitude=-74.0060)
+        self.client.login(username="testuser", password="testpass")
 
     def test_upvote(self):
         """
