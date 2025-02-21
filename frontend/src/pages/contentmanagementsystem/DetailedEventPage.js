@@ -37,7 +37,7 @@ const DetailedEventPage = () => {
       console.log("useEffect is running");
       console.log("event id received was", eventId);
       setIsEditing(false); // initially view preview when clicking box
-
+      const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article
       axios
         .get(`http://127.0.0.1:8000/events/${eventId}/`, {
