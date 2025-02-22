@@ -26,7 +26,7 @@ def preprocess_data(articles, events):
             "source": "article",
             "documents": [
                 (
-                    f"{a['title']} {a['description']} {a['content']} " 
+                    f"{a['title']} {a['description']} {a['content']}"
                     f"{a['author']} {a['published_date']}"
                 )
                 for a in articles
@@ -41,7 +41,7 @@ def preprocess_data(articles, events):
             "source": "event",
             "documents": [
                 (
-                    f"{e['title']} {e['description']} {e['location']} " 
+                    f"{e['title']} {e['description']} {e['location']}"
                     f"{e['date']} {e['time']}"
                 )
                 for e in events

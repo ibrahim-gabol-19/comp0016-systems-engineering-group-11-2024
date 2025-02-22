@@ -4,10 +4,11 @@ import MainEditor from "../../components/contentmanagementsystem/detailed/MainEd
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import axios from "axios";
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
+const API_URL = process.env.REACT_APP_API_URL;
 
-const NEW_ARTICLE_ID = "0"; 
+const NEW_ARTICLE_ID = "0";
 
 const DetailedArticlePage = () => {
   const { articleId } = useParams(); // Get the article ID from the route
@@ -31,9 +32,10 @@ const DetailedArticlePage = () => {
 
       const token = localStorage.getItem("token");
 
-axios.get(`http://127.0.0.1:8000/articles/${articleId}/`, {
-    headers: { Authorization: `Bearer ${token}` },  
-})
+      axios
+        .get(API_URL + `articles/${articleId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
 
         .then((response) => {
           const article = response.data;
@@ -44,6 +46,7 @@ axios.get(`http://127.0.0.1:8000/articles/${articleId}/`, {
           if (article.main_image) {
             setUploadedFiles([article.main_image]);
           }
+          setErrorMessage("");
         })
         .catch((error) => {
           console.error("Error fetching article:", error);
@@ -53,7 +56,7 @@ axios.get(`http://127.0.0.1:8000/articles/${articleId}/`, {
   }, [articleId]);
 
   const handleSave = async () => {
-    const token=localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -69,27 +72,24 @@ axios.get(`http://127.0.0.1:8000/articles/${articleId}/`, {
         // PUT operation for updating an existing article
         const token = localStorage.getItem("token");
 
-axios.put(
-    `http://127.0.0.1:8000/articles/${articleId}/`,
-    formData,
-    {
-        headers: {
+        axios.put(API_URL + `articles/${articleId}/`, formData, {
+          headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,  
-        },
-    }
-        );
+            Authorization: `Bearer ${token}`,
+          },
+        });
         alert("Article updated successfully!");
       } else {
         // POST operation for creating a new article
-        await axios.post("http://127.0.0.1:8000/articles/", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`, 
-                },
-            });
-            alert("Article saved successfully!");
+        await axios.post(API_URL + "articles/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert("Article saved successfully!");
       }
+      setErrorMessage("");
     } catch (error) {
       console.error("Error saving or updating article:", error);
       setErrorMessage("Error saving or updating article. Please try again.");
@@ -105,20 +105,20 @@ axios.put(
   };
 
   return (
-    <div>
-            <Header />            
-            <div className="pt-20"></div>
-      <div className="pl-6">
+    <div className="h-[calc(100vh-146px)] w-full">
+      <Header />
+      <div className="pt-20"></div>
+      <div className="flex justify-between px-5">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+          className="bg-blue-500 text-white justify-cetner font-bold rounded-lg  hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
           aria-label="Toggle edit/preview mode"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
         <button
           onClick={handleSave}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-green-500 text-white justify-cetner font-bold rounded-lg  hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
           aria-label="Save article"
         >
           Save
@@ -131,10 +131,11 @@ axios.put(
         </div>
       )}
 
-      <div className="flex justify-center items-center overflow-auto relative">
+      <div className="h-full flex justify-center items-center overflow-auto relative">
         {isEditing ? (
           <div className="w-screen h-full flex relative">
-            <div className="w-5/6 px-72 overflow-y-auto">
+            <div className="h-full w-1/6 " />
+            <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
               <TitleEditor
                 ref={quillRefTitle}
                 placeholderText="Title"
@@ -150,7 +151,8 @@ axios.put(
                 onTextChange={setMainContent}
               />
             </div>
-            <div className="w-1/6 px-16 overflow-hidden">
+            <div className="h-full w-1/6" />
+            <div className="w-2/6  px-3 pb-64 flex flex-col justify-center  overflow-hidden">
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Author"
@@ -193,7 +195,10 @@ axios.put(
               <p className="text-lg mt-6 text-gray-600 italic text-center">
                 {description}
               </p>
-              <p className="text-lg mt-4 text-gray-700 text-center">
+              <p
+                className="text-lg mt-4 text-gray-700 text-center"
+                style={{ whiteSpace: "pre-wrap" }}
+              >
                 {mainContent}
               </p>
             </div>

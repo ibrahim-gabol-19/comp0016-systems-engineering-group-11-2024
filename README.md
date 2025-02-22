@@ -26,6 +26,7 @@
 
 ## Run Development
 - Make sure you have nodejs install (whatever OS you are using)
+- Duplicate `.env.example` in `frontend/` and rename it to `.env`
 - `cd frontend`
 - `npm install tailwindcss`
 - `npm install tailwind`

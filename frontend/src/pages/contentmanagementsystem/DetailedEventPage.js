@@ -1,12 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
- 
+
+
+
+
+
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
   const quillRefTitle = useRef();
@@ -20,7 +24,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
- 
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
@@ -31,7 +35,7 @@ const DetailedEventPage = () => {
       const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`, {
+        .get(API_URL + `events/${eventId}/`, {
           headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
       })
         .then((response) => {
@@ -52,6 +56,7 @@ const DetailedEventPage = () => {
           alert("Failed to fetch article data. Please try again.");
         });
     }
+    // eslint-disable-next-line
   }, [eventId]);
 
   const handleFilesUploaded = (acceptedFiles) => {
@@ -88,9 +93,9 @@ const DetailedEventPage = () => {
       if (eventId !== NEW_EVENT_ID) {
         const token = localStorage.getItem("token");
         // PUT operation for updating an existing article
-       
-         await axios.put(
-          `http://127.0.0.1:8000/events/${eventId}/`,
+
+        await axios.put(
+          API_URL + `events/${eventId}/`,
           formData,
           {
             headers: {
@@ -101,10 +106,10 @@ const DetailedEventPage = () => {
         );
         alert("Event updated successfully!");
       } else {
-        
+
         // POST operation for creating a new article
         await axios.post(
-          "http://127.0.0.1:8000/events/",
+          API_URL + "events/",
           formData,
           {
             headers: {
@@ -113,7 +118,7 @@ const DetailedEventPage = () => {
             },
           }
         );
-      
+
         alert("Event saved successfully!");
       }
     } catch (error) {
@@ -124,7 +129,7 @@ const DetailedEventPage = () => {
 
   return (
     <div>
-      <Header />            
+      <Header />
       <div className="pt-20"></div>
       <div className="p-6">
         <button

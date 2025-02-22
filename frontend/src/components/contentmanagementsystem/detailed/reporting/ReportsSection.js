@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import MapComponent from "../../components/reporting/MapComponent";
-import SidebarReport from "../../components/reporting/SidebarReport";
+import MapComponent from "./MapComponent";
+import SidebarReport from "./SidebarReport";
 import axios from "axios";
-import Header from "../../components/Header";
 const API_URL = process.env.REACT_APP_API_URL;
 
-
-const ReportsPage = () => {
+const ReportsSection = ({userQuery}) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
@@ -25,12 +23,7 @@ const ReportsPage = () => {
 
   const fetchReports = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const headers = token ? { Authorization: `Bearer ${token}` } : {}; 
-
-      const response = await axios.get( API_URL + "reports/", {
-        headers, 
-    });
+      const response = await axios.get( API_URL + "reports/");
       const newReports = response.data;
       setReports(newReports);
 
@@ -59,12 +52,10 @@ const ReportsPage = () => {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col">
-      <Header />
-      <div className="pt-20"></div>
+    <div className="h-full w-full flex flex-col   py-1 px-2">
       <div className="h-full flex flex-col">
         <div className=" h-full w-full flex">
-          <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6">
+          <div className="bg-white  shadow-xl py-5 rounded-xl h-full w-2/6">
             <SidebarReport
               selectedMarker={selectedMarker}
               newMarker={newMarker}
@@ -89,6 +80,7 @@ const ReportsPage = () => {
               reports={reports}
               newMarker={newMarker}
               filter={filter}
+              userQuery={userQuery}
             ></MapComponent>
           </div>
         </div>
@@ -96,4 +88,4 @@ const ReportsPage = () => {
     </div>
   );
 };
-export default ReportsPage;
+export default ReportsSection;
