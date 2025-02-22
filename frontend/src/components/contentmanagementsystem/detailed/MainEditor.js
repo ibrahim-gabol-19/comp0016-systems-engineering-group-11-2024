@@ -50,8 +50,8 @@ const MainEditor = forwardRef(
       quill.root.style.fontFamily = "system-ui";
       quill.root.style.fontSize = "16px";
       quill.root.style.lineHeight = "1.5";
-      quill.root.style.minHeight = "900px";
-      quill.root.style.maxHeight = "900px";
+      quill.root.style.minHeight = "100%";
+      quill.root.style.maxHeight = "100%";
       quill.root.style.overflowY = "auto";
 
       // Set the default value if provided
@@ -79,7 +79,7 @@ const MainEditor = forwardRef(
       ref.current?.enable(!readOnly);
     }, [readOnly, ref]);
 
-    return <div className="pt-8" ref={containerRef}></div>;
+    return <div className="pb-10 pt-8 h-5/6" ref={containerRef}></div>;
   }
 );
 

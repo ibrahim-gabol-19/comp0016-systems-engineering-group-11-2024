@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import { useParams } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
@@ -20,7 +20,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-
+ const API_URL = process.env.REACT_APP_API_URL;
   // State for PDF and ICS extraction
   const [pdfFile, setPdfFile] = useState(null);
   const [icsFile, setIcsFile] = useState(null);
@@ -40,7 +40,7 @@ const DetailedEventPage = () => {
       const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`, {
+        .get(API_URL + `events/${eventId}/`, {
           headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
       })
         .then((response) => {
@@ -61,6 +61,7 @@ const DetailedEventPage = () => {
           alert("Failed to fetch article data. Please try again.");
         });
     }
+    // eslint-disable-next-line
   }, [eventId]);
 
   const handleFilesUploaded = (acceptedFiles) => {
@@ -97,8 +98,9 @@ const DetailedEventPage = () => {
       if (eventId !== NEW_EVENT_ID) {
         const token = localStorage.getItem("token");
         // PUT operation for updating an existing article
+
         await axios.put(
-          `http://127.0.0.1:8000/events/${eventId}/`,
+          API_URL + `events/${eventId}/`,
           formData,
           {
             headers: {
@@ -111,7 +113,7 @@ const DetailedEventPage = () => {
       } else {
         // POST operation for creating a new article
         await axios.post(
-          "http://127.0.0.1:8000/events/",
+          API_URL + "events/",
           formData,
           {
             headers: {
@@ -162,7 +164,7 @@ const DetailedEventPage = () => {
     formData.append("pdf_file", pdfFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload/event/", {
+      const response = await fetch(API_URL + "api/upload/event/", {
         method: "POST",
         body: formData,
       });
@@ -192,7 +194,7 @@ const DetailedEventPage = () => {
     formData.append("ics_file", icsFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload_ics/", {
+      const response = await fetch(API_URL + "api/upload_ics/", {
         method: "POST",
         body: formData,
       });
@@ -247,35 +249,37 @@ const DetailedEventPage = () => {
 
   return (
     <div>
-      <Header />            
+      <Header />
       <div className="pt-20"></div>
       <div className="p-6">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
-
+  
         <button
           onClick={handleSave}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
         >
           Save
         </button>
-
+  
         <button
           onClick={handleExtractFromPDFClick}
-          className="bg-purple-500 text-white px-4 py-2 rounded ml-4"
+          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
         >
           Extract From PDF
         </button>
+  
         <button
           onClick={handleExtractFromICSClick}
-          className="bg-teal-500 text-white px-4 py-2 rounded ml-4"
+          className="bg-teal-500 text-white justify-center font-bold rounded-lg hover:bg-teal-400 active:bg-teal-300 transition active:duration-100 duration-300 px-4 py-2"
         >
           Extract From ICS
         </button>
+  
         <input
           type="file"
           accept="application/pdf"
@@ -291,7 +295,7 @@ const DetailedEventPage = () => {
           style={{ display: "none" }}
         />
       </div>
-
+  
       {pdfFile && (
         <div className="p-6">
           <p>
@@ -302,7 +306,11 @@ const DetailedEventPage = () => {
             disabled={isUploading}
             className={`${
               isDataExtracted ? "bg-green-500" : "bg-orange-500"
-            } text-white px-4 py-2 rounded`}
+            } text-white justify-center font-bold rounded-lg hover:${
+              isDataExtracted ? "bg-green-400" : "bg-orange-400"
+            } active:${
+              isDataExtracted ? "bg-green-300" : "bg-orange-300"
+            } transition active:duration-100 duration-300 px-4 py-2`}
           >
             {isUploading
               ? "Uploading..."
@@ -312,7 +320,7 @@ const DetailedEventPage = () => {
           </button>
         </div>
       )}
-
+  
       {icsFile && (
         <div className="p-6">
           <p>
@@ -323,7 +331,11 @@ const DetailedEventPage = () => {
             disabled={isUploading}
             className={`${
               isDataExtracted ? "bg-green-500" : "bg-orange-500"
-            } text-white px-4 py-2 rounded`}
+            } text-white justify-center font-bold rounded-lg hover:${
+              isDataExtracted ? "bg-green-400" : "bg-orange-400"
+            } active:${
+              isDataExtracted ? "bg-green-300" : "bg-orange-300"
+            } transition active:duration-100 duration-300 px-4 py-2`}
           >
             {isUploading
               ? "Uploading..."
@@ -333,7 +345,7 @@ const DetailedEventPage = () => {
           </button>
         </div>
       )}
-
+  
       <div className="flex justify-center items-center overflow-hidden relative">
         {isEditing ? (
           <div>
@@ -350,7 +362,7 @@ const DetailedEventPage = () => {
               onDateChange={setDate}
               onTimeChange={setTime}
             />
-
+  
             <NoToolbarEditor
               ref={quillRefDescription}
               placeholderText="Description"
@@ -379,7 +391,7 @@ const DetailedEventPage = () => {
                   {date} {time}
                 </p>
               </div>
-
+  
               <div className="mt-4">
                 {uploadedFiles.length > 0 && uploadedFiles[0] && (
                   <img
@@ -393,17 +405,17 @@ const DetailedEventPage = () => {
                   />
                 )}
               </div>
-
+  
               {/* Description Section */}
               <p className="text-lg mt-6 text-gray-600 italic text-center">
                 {description}
               </p>
-
+  
               {/* Main Content Section */}
               <p className="text-lg mt-4 text-gray-700 text-center">
                 {location}
               </p>
-
+  
               {/* Images */}
               <div className="mt-6 flex justify-center flex-wrap gap-6">
                 {uploadedFiles.length > 1 &&
