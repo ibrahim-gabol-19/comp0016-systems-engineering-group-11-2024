@@ -5,5 +5,7 @@ pylint
 pylint_django
 sentence-transformers
 djangorestframework-simplejwt
+pymupdf
 spacy
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+ics==0.7.2
