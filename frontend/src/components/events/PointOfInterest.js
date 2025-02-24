@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 const PointOfInterest = () => {
   const [selectedCategory, setSelectedCategory] = useState("landmarks");
   const categories = ["landmarks", "museums", "parks", "other"];
-
   const [poiEvents, setPoiEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
 
   useEffect(() => {
     fetchPoiEvents();
@@ -17,7 +18,7 @@ const PointOfInterest = () => {
 
   const fetchPoiEvents = async () => {
     try {
-      const response = await fetch("http://localhost:8000/events/pois/");
+      const response = await fetch(API_URL + "events/pois/");
       if (!response.ok) throw new Error("Failed to fetch POI events");
       const data = await response.json();
       setPoiEvents(data); // Data is already grouped, so no transformation is needed

@@ -10,10 +10,12 @@ const DetailedEventPageView = () => {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);    
+    const API_URL = process.env.REACT_APP_API_URL;
+
   
     useEffect(() => {
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(API_URL + `events/${eventId}/`)
         .then((response) => {
             const event = response.data;
           setEvent(event);

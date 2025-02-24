@@ -10,6 +10,7 @@ const Calendar = () => {
   const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
 
   const today = dayjs(); // Get today's date
@@ -25,7 +26,7 @@ const Calendar = () => {
 
   const fetchScheduledEvents = async () => {
     try {
-      const response = await fetch("http://localhost:8000/events/scheduled/");
+      const response = await fetch(API_URL + "events/scheduled/");
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
       setEvents(data);

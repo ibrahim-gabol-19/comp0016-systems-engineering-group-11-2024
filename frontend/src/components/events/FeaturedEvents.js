@@ -7,11 +7,13 @@ const FeaturedEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
 
   useEffect(() => {
     const fetchFeaturedEvents = async () => {
       try {
-        const response = await fetch("http://localhost:8000/events/featured/");
+        const response = await fetch(API_URL + "events/featured/");
         if (!response.ok) throw new Error("Failed to fetch featured events");
         
         const data = await response.json();
