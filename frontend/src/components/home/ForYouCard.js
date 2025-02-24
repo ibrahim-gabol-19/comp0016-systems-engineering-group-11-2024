@@ -1,7 +1,7 @@
 import React from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
-import VolunteeringButton from "./VolunteeringButton";
+
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const ForYouCard = () => {
@@ -20,13 +20,7 @@ const ForYouCard = () => {
       comment: "Sounds interesting!",
       media: "https://via.placeholder.com/300x200",
     },
-    {
-      name: "Emily Smith",
-      tag: "Volunteering",
-      content: "Join us in making a difference in the community! 🌍",
-      comment: "It's a rewarding experience!",
-      media: "https://via.placeholder.com/300x200",
-    },
+    
   ];
 
   return (
@@ -62,8 +56,6 @@ const ForYouCard = () => {
                   <NewsButton />
                 ) : card.tag === "Event" ? (
                   <EventButton />
-                ) : card.tag === "Volunteering" ? (
-                  <VolunteeringButton />
                 ) : null}
               </div>
               <p className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
