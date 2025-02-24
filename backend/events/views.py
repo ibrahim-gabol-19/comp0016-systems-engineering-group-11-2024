@@ -121,3 +121,35 @@ class EventsViewSet(viewsets.ModelViewSet):
             for event in featured_events
         ]
         return Response(featured_event_list)
+
+    @action(detail=False, methods=['get'])
+    def search(self, request):  # For the /events/search/ endpoint
+        events = Event.objects.values(
+            "title", "event_type", "description", "location",
+            "date", "time", "opening_times", "poi_type", "is_featured"
+        )
+
+        event_list = [
+            {
+                "title": event["title"],
+                "event_type": event["event_type"],
+                "description": event["description"],
+                "location": event["location"],
+                "is_featured": event["is_featured"],
+                **(
+                    {  # Fields for Scheduled Events
+                        "date": event["date"],
+                        "time": event["time"]
+                    }
+                    if event["event_type"] == "scheduled" else  # Only include for scheduled events
+                    {  # Fields for POIs
+                        "opening_times": event["opening_times"] or "N/A",
+                        "poi_type": event["poi_type"]
+                    }
+                    if event["event_type"] == "poi" else {}  # Only include for POIs
+                )
+            }
+            for event in events
+        ]
+
+        return Response(event_list)
