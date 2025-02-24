@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext} from "react";
 import {
   MapContainer,
   TileLayer,
@@ -11,7 +11,7 @@ import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
+import { CompanyContext } from "../../context/CompanyContext";
 // Make default Icon show up for Markers
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -23,13 +23,13 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter }) => {
-  const mapCenter = [52.1864, 0.1145]; // Default center of the UK (London)
   const zoomLevel = 13;
   const [position, setPosition] = useState(null);
+  const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
-  const ukBounds = [
-    [49.5, -8], // Southwest coordinates (approx.)
-    [60, 2], // Northeast coordinates (approx.)
+  const bounds = [
+    [sw_lat, sw_lon], // Southwest coordinates
+    [ne_lat, ne_lon], // Northeast coordinates
   ];
 
   function NewReport() {
@@ -68,10 +68,10 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
 
   return (
     <MapContainer
-      center={mapCenter}
+      center={[0,0]}
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
-      maxBounds={ukBounds} // Restrict map movement to UK
+      maxBounds={bounds} 
       maxBoundsViscosity={1.0} // Ensures map stays within bounds
       minZoom={8} // Set minimum zoom level to allow zooming in further
       maxZoom={17} // Set maximum zoom level to zoom in further

@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
+import React, { useRef, useState, useEffect } from "react";
+// import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
+// import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import { useParams } from "react-router-dom"; // For dynamic routing
+import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -16,6 +19,17 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+ const API_URL = process.env.REACT_APP_API_URL;
+  // State for PDF and ICS extraction
+  const [pdfFile, setPdfFile] = useState(null);
+  const [icsFile, setIcsFile] = useState(null);
+  const [extractedData, setExtractedData] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDataExtracted, setIsDataExtracted] = useState(false);
+
+  // Refs for hidden file inputs
+  const hiddenFileInputPDF = useRef(null);
+  const hiddenFileInputICS = useRef(null);
   const [eventType, setEventType] = useState("");
   const [poiType, setPoiType] = useState("");
   const [openingTimes, setOpeningTimes] = useState("");
@@ -27,8 +41,15 @@ const DetailedEventPage = () => {
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
+      console.log("useEffect is running");
+      console.log("event id received was", eventId);
+      setIsEditing(false); // initially view preview when clicking box
+      const token = localStorage.getItem("token");
+      // Fetch article data when editing an existing article
       axios
-        .get(`http://127.0.0.1:8000/events/${eventId}/`)
+        .get(API_URL + `events/${eventId}/`, {
+          headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
+      })
         .then((response) => {
           const event = response.data;
           setTitle(event.title || "");
@@ -52,6 +73,7 @@ const DetailedEventPage = () => {
           alert("Failed to fetch event data. Please try again.");
         });
     }
+    // eslint-disable-next-line
   }, [eventId]);
 
 
@@ -64,6 +86,7 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
+  const token=localStorage.getItem('token');
     const newRequiredFields = {};
 
     if (eventType === "scheduled") {
@@ -110,14 +133,32 @@ const DetailedEventPage = () => {
 
     try {
       if (eventId !== NEW_EVENT_ID) {
-        await axios.put(`http://127.0.0.1:8000/events/${eventId}/`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const token = localStorage.getItem("token");
+        // PUT operation for updating an existing article
+
+        await axios.put(
+          API_URL + `events/${eventId}/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
+            },
+          }
+        );
         alert("Event updated successfully!");
       } else {
-        await axios.post("http://127.0.0.1:8000/events/", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        // POST operation for creating a new article
+        await axios.post(
+          API_URL + "events/",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`, 
+            },
+          }
+        );
         alert("Event saved successfully!");
       }
     } catch (error) {
@@ -125,6 +166,123 @@ const DetailedEventPage = () => {
       alert("Error saving or updating event. Please try again.");
     }
   };
+
+  const handleExtractFromPDFClick = () => {
+    hiddenFileInputPDF.current.click();
+    setIsDataExtracted(false);
+  };
+
+  const handleExtractFromICSClick = () => {
+    hiddenFileInputICS.current.click();
+    setIsDataExtracted(false);
+  };
+
+  const handlePDFUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setPdfFile(file);
+    }
+  };
+
+  const handleICSUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "text/calendar") {
+      setIcsFile(file);
+    }
+  };
+
+  const handleUploadPDF = async () => {
+    if (!pdfFile) {
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("pdf_file", pdfFile);
+
+    try {
+      const response = await fetch(API_URL + "api/upload/event/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setExtractedData(data);
+      populateFields(data);
+      setIsDataExtracted(true);
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUploadICS = async () => {
+    if (!icsFile) {
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("ics_file", icsFile);
+
+    try {
+      const response = await fetch(API_URL + "api/upload_ics/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setExtractedData(data);
+      populateFields(data);
+      setIsDataExtracted(true);
+    } catch (error) {
+      console.error("Error uploading ICS:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const populateFields = (data) => {
+    if (quillRefTitle.current) {
+      quillRefTitle.current.setContents([{ insert: data.title || "" }]);
+    }
+    if (quillRefDescription.current) {
+      quillRefDescription.current.setContents([{ insert: data.description || "" }]);
+    }
+    if (quillRefLocation.current) {
+      quillRefLocation.current.setContents([{ insert: data.location || "" }]);
+    }
+
+    if (data.date_of_event) {
+      // Convert date from dd/mm/yyyy to yyyy-mm-dd format for the date picker
+      const [day, month, year] = data.date_of_event.split("/");
+      const formattedDate = `${year}-${month}-${day}`;
+      setDate(formattedDate);
+    }
+
+    if (data.time_of_event) {
+      setTime(data.time_of_event);
+    }
+
+    if (data.images && data.images.length > 0) {
+      setUploadedFiles(data.images);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing && extractedData) {
+      populateFields(extractedData);
+    }
+  }, [isEditing, extractedData]);
 
   const fetchSuggestions = async (query) => {
     if (!query) return;
@@ -177,21 +335,135 @@ const DetailedEventPage = () => {
 
   return (
     <div>
+      <Header />
+      <div className="pt-20"></div>
       <div className="p-6 flex justify-end">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
-
+  
         <button
           onClick={handleSave}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
         >
           Save
         </button>
+  
+        <button
+          onClick={handleExtractFromPDFClick}
+          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+        >
+          Extract From PDF
+        </button>
+  
+        <button
+          onClick={handleExtractFromICSClick}
+          className="bg-teal-500 text-white justify-center font-bold rounded-lg hover:bg-teal-400 active:bg-teal-300 transition active:duration-100 duration-300 px-4 py-2"
+        >
+          Extract From ICS
+        </button>
+  
+        <input
+          type="file"
+          accept="application/pdf"
+          ref={hiddenFileInputPDF}
+          onChange={handlePDFUpload}
+          style={{ display: "none" }}
+        />
+        <input
+          type="file"
+          accept="text/calendar"
+          ref={hiddenFileInputICS}
+          onChange={handleICSUpload}
+          style={{ display: "none" }}
+        />
       </div>
+  
+      {pdfFile && (
+        <div className="p-6">
+          <p>
+            <strong>Selected PDF:</strong> {pdfFile.name}
+          </p>
+          <button
+            onClick={handleUploadPDF}
+            disabled={isUploading}
+            className={`${
+              isDataExtracted ? "bg-green-500" : "bg-orange-500"
+            } text-white justify-center font-bold rounded-lg hover:${
+              isDataExtracted ? "bg-green-400" : "bg-orange-400"
+            } active:${
+              isDataExtracted ? "bg-green-300" : "bg-orange-300"
+            } transition active:duration-100 duration-300 px-4 py-2`}
+          >
+            {isUploading
+              ? "Uploading..."
+              : isDataExtracted
+              ? "Data successfully extracted!"
+              : "Upload PDF"}
+          </button>
+        </div>
+      )}
+  
+      {icsFile && (
+        <div className="p-6">
+          <p>
+            <strong>Selected ICS:</strong> {icsFile.name}
+          </p>
+          <button
+            onClick={handleUploadICS}
+            disabled={isUploading}
+            className={`${
+              isDataExtracted ? "bg-green-500" : "bg-orange-500"
+            } text-white justify-center font-bold rounded-lg hover:${
+              isDataExtracted ? "bg-green-400" : "bg-orange-400"
+            } active:${
+              isDataExtracted ? "bg-green-300" : "bg-orange-300"
+            } transition active:duration-100 duration-300 px-4 py-2`}
+          >
+            {isUploading
+              ? "Uploading..."
+              : isDataExtracted
+              ? "Data successfully extracted!"
+              : "Upload ICS"}
+          </button>
+        </div>
+      )}
+  
+      <div className="flex justify-center items-center overflow-hidden relative">
+        {isEditing ? (
+          <div>
+            <TitleEditor
+              ref={quillRefTitle}
+              placeholderText="Title"
+              fontSize="16px"
+              defaultValue={title}
+              onTextChange={setTitle}
+            />
+            <DateTime
+              date={date}
+              time={time}
+              onDateChange={setDate}
+              onTimeChange={setTime}
+            />
+  
+            <NoToolbarEditor
+              ref={quillRefDescription}
+              placeholderText="Description"
+              fontSize="16px"
+              defaultValue={description}
+              onTextChange={setDescription}
+            />
+            <MainImage onFilesUploaded={handleFilesUploaded} />
+            <NoToolbarEditor
+              ref={quillRefLocation}
+              placeholderText="Location"
+              fontSize="16px"
+              defaultValue={location}
+              onTextChange={setLocation}
+            />
       {isEditing ? (
         <div className="flex justify-center items-center h-full w-full p-8">
           {/* Editing Section */}
@@ -460,3 +732,8 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
+
+
+
+
+

@@ -43,6 +43,7 @@ const TitleEditor = forwardRef(
       quill.root.style.fontSize = fontSizeRef.current;
       quill.root.style.lineHeight = "1.5";
       quill.root.style.textAlign = "center";
+      quill.root.style.justifyContent = "center";
       quill.root.style.fontWeight = "bold";
       quill.root.style.minHeight = "30px";
       quill.root.style.overflowY = "auto";
@@ -74,7 +75,7 @@ const TitleEditor = forwardRef(
       }
     }, [readOnly]);
 
-    return <div ref={containerRef}></div>;
+    return <div className="h-1/6" ref={containerRef}></div>;
   }
 );
 

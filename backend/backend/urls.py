@@ -28,7 +28,10 @@ urlpatterns = [
     path('articles/', include('articles.urls')),
     path('events/', include('events.urls')),
     path('search/', include('search.urls')),
+    path('api/auth/', include('accounts.urls')),
+    path('companyinformation/', include('companyinformation.urls')),
 ]
 
+# Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

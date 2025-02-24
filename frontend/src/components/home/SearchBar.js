@@ -3,6 +3,7 @@ import aiLogo from "../../assets/ai_icon.png";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -53,9 +54,12 @@ const SearchBar = () => {
     }
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search/`, {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(API_URL + `search/`, {
         params: { query: userQuery },
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+      
 
     // Check if the results field exists and set the state
     if (response.data && response.data.results) {
