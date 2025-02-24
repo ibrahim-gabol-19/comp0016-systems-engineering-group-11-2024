@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
 import VolunteeringButton from "./VolunteeringButton";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import CreatePostModal from "./CreatePostModal"; // Import the CreatePostModal component
 
 const ForYouCard = () => {
   const cards = [
@@ -29,9 +30,23 @@ const ForYouCard = () => {
     },
   ];
 
+  // State for Create Post Modal
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+
   return (
     <div className="p-6 font-sans">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">For You</h2>
+      {/* "For You" Section Header with Create Post Button */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-900">For You</h2>
+        <button
+          onClick={() => setIsCreatePostModalOpen(true)}
+          className="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105 flex items-center gap-1"
+        >
+          <span>+</span> Create Post
+        </button>
+      </div>
+
+      {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, index) => (
           <div
@@ -94,9 +109,14 @@ const ForYouCard = () => {
           </div>
         ))}
       </div>
+
+      {/* Create Post Modal */}
+      <CreatePostModal
+        isOpen={isCreatePostModalOpen}
+        onClose={() => setIsCreatePostModalOpen(false)}
+      />
     </div>
   );
 };
 
 export default ForYouCard;
-
