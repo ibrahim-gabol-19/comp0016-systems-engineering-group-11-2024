@@ -30,13 +30,12 @@ const DetailedEventPage = () => {
   // Refs for hidden file inputs
   const hiddenFileInputPDF = useRef(null);
   const hiddenFileInputICS = useRef(null);
-  const [eventType, setEventType] = useState("");
+  const [eventType, setEventType] = useState("scheduled");
   const [poiType, setPoiType] = useState("");
   const [openingTimes, setOpeningTimes] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
   const [requiredFields, setRequiredFields] = useState({});
-
 
 
   useEffect(() => {
@@ -254,15 +253,6 @@ const DetailedEventPage = () => {
   };
 
   const populateFields = (data) => {
-    // if (title.current) {
-    //   title.current.setContents([{ insert: data.title || "" }]);
-    // }
-    // if (description.current) {
-    //   description.current.setContents([{ insert: data.description || "" }]);
-    // }
-    // if (quillRefLocation.current) {
-    //   quillRefLocation.current.setContents([{ insert: data.location || "" }]);
-    // }
     setEventType("scheduled");
     setTitle(data.title || "");
     setDescription(data.description || "");
