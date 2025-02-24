@@ -93,6 +93,8 @@ const DetailedEventPage = () => {
       if (!date) newRequiredFields.date = true;
       if (!time) newRequiredFields.time = true;
       if (!description) newRequiredFields.description = true;
+      if (!location) newRequiredFields.location = true;
+
     } else if (eventType === "point_of_interest") {
       if (!title) newRequiredFields.title = true;
       if (!description) newRequiredFields.description = true;
