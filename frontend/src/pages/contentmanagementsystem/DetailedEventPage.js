@@ -145,7 +145,9 @@ const DetailedEventPage = () => {
               Authorization: `Bearer ${token}`, 
             },
           }
-        );
+          );
+        
+
         alert("Event updated successfully!");
       } else {
         // POST operation for creating a new article
@@ -252,15 +254,19 @@ const DetailedEventPage = () => {
   };
 
   const populateFields = (data) => {
-    if (quillRefTitle.current) {
-      quillRefTitle.current.setContents([{ insert: data.title || "" }]);
-    }
-    if (quillRefDescription.current) {
-      quillRefDescription.current.setContents([{ insert: data.description || "" }]);
-    }
-    if (quillRefLocation.current) {
-      quillRefLocation.current.setContents([{ insert: data.location || "" }]);
-    }
+    // if (title.current) {
+    //   title.current.setContents([{ insert: data.title || "" }]);
+    // }
+    // if (description.current) {
+    //   description.current.setContents([{ insert: data.description || "" }]);
+    // }
+    // if (quillRefLocation.current) {
+    //   quillRefLocation.current.setContents([{ insert: data.location || "" }]);
+    // }
+    setEventType("scheduled");
+    setTitle(data.title || "");
+    setDescription(data.description || "");
+    setLocation(data.location || "");
 
     if (data.date_of_event) {
       // Convert date from dd/mm/yyyy to yyyy-mm-dd format for the date picker
@@ -431,39 +437,6 @@ const DetailedEventPage = () => {
           </button>
         </div>
       )}
-  
-      <div className="flex justify-center items-center overflow-hidden relative">
-        {isEditing ? (
-          <div>
-            <TitleEditor
-              ref={quillRefTitle}
-              placeholderText="Title"
-              fontSize="16px"
-              defaultValue={title}
-              onTextChange={setTitle}
-            />
-            <DateTime
-              date={date}
-              time={time}
-              onDateChange={setDate}
-              onTimeChange={setTime}
-            />
-  
-            <NoToolbarEditor
-              ref={quillRefDescription}
-              placeholderText="Description"
-              fontSize="16px"
-              defaultValue={description}
-              onTextChange={setDescription}
-            />
-            <MainImage onFilesUploaded={handleFilesUploaded} />
-            <NoToolbarEditor
-              ref={quillRefLocation}
-              placeholderText="Location"
-              fontSize="16px"
-              defaultValue={location}
-              onTextChange={setLocation}
-            />
       {isEditing ? (
         <div className="flex justify-center items-center h-full w-full p-8">
           {/* Editing Section */}
@@ -638,7 +611,6 @@ const DetailedEventPage = () => {
             </div>
           </div>
         </div>
-
       ) : (
         <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
           {/* Preview Event */}
@@ -732,8 +704,3 @@ const DetailedEventPage = () => {
 };
 
 export default DetailedEventPage;
-
-
-
-
-

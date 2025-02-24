@@ -64,7 +64,6 @@ const ContentManagementSystem = () => {
     ],
   };
   const refreshData = async () => {
-  const refreshData = async () => {
     if (selectedCategory === "Articles") {
       axios.get(API_URL + "articles/", {
         headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
@@ -85,8 +84,9 @@ const ContentManagementSystem = () => {
         })
         .then((response) => {
           console.log("DEBUG: Events API Response:", response.data);
-          setEvents(Array.isArray(response.data) ? response.data : []);
-          setStarredCards(response.data.filter(event => event.is_featured).map(event => event.id));
+          setEvents(response.data);
+          // setEvents(Array.isArray(response.data) ? response.data : []);
+          // setStarredCards(response.data.filter(event => event.is_featured).map(event => event.id));
           updateStarredCards(response.data);
         })
         .catch((error) => {
@@ -261,34 +261,9 @@ const ContentManagementSystem = () => {
     }
   };
 
-
-
-  const handleDeleteSingular = async (item) => {
-    // Ask the user for confirmation
-    const isConfirmed = window.confirm(`Are you sure you want to delete ${item.title}?`);
-
-    if (isConfirmed) {
-      try {
-        const response = await axios.delete(
-          `${API_URL}${selectedCategory.toLowerCase()}/${item.id}/`,
-        );
-
-        if (response.status === 204) {
-          console.log(`${selectedCategory} deleted successfully`);
-          refreshData();
-        }
-      } catch (err) {
-        console.log(err.message);
-      }
-    } else {
-      console.log("Delete action cancelled.");
-    }
-  };
-
   const handleSelectAll = () => {
     const allCards = (
       selectedCategory === "Articles" ? articles : sampleData[selectedCategory]
-    )?.map((_, index) => _);
     )?.map((_, index) => _);
     setSelectedCards(allCards);
   };

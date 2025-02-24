@@ -11,9 +11,9 @@ import SignUp from "./pages/account/SignUp";
 import Login from "./pages/account/Login";
 import ProtectedRoute from "./pages/account/ProtectedRoute";
 import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
+import DetailedEventPageView from "./pages/events/DetailedEventPageView";
 
 const API_URL = process.env.REACT_APP_API_URL;
-import DetailedEventPageView from "./pages/events/DetailedEventPageView";
 
 
 const App = () => {
@@ -70,6 +70,10 @@ const App = () => {
                   <Route
                     path="/contentmanagementsystem/details/articles/:articleId"
                     element={<DetailedArticlePage />}
+                  />
+                  <Route 
+                    path="/events/:eventId" 
+                    element={<DetailedEventPageView />} 
                   />
                   <Route
                     path="/contentmanagementsystem/details/events/:eventId"
