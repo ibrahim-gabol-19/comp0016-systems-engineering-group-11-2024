@@ -86,7 +86,6 @@ const PointOfInterest = () => {
                 key={index}
                 className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
                 onClick={() => handleCardClick(event.id)}
-                style={{ minHeight: "250px", maxHeight: "250px" }}
               >
                 {event.main_image && (
                   <img
@@ -96,9 +95,9 @@ const PointOfInterest = () => {
                   />
                 )}
                 <div className="p-4">
-                  <h4 className="font-bold text-lg">{event.title}</h4>
-                  <p className="text-sm text-gray-600">{event.openTimes}</p>
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                  <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-1">{event.title}</h4>
+                  <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">{event.openTimes}</p>
+                  <p className="text-sm text-gray-500 mt-2 line-clamp-3">
                     {event.description}
                   </p>
                 </div>

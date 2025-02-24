@@ -59,9 +59,17 @@ const FeaturedEvents = () => {
                 />
               )}
               <div className="p-4">
-                <h4 className="font-bold text-lg">{event.title}</h4>
-                <p className="text-sm text-gray-600">{event.openTimes}</p>
-                <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-1">{event.title}</h4>
+                {event.eventType === "scheduled" ? (
+                  <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                    {event.date}, {event.time}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                    {event.openTimes}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3">
                   {event.description}
                 </p>
               </div>

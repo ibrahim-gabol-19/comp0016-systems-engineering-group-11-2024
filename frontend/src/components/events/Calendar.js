@@ -173,9 +173,9 @@ const Calendar = () => {
 
           {/* Event Details */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-2">{selectedEvent.title}</h3>
+            <h3 className="text-lg font-bold mb-2 overflow-hidden break-words line-clamp-2">{selectedEvent.title}</h3>
             <p className="text-sm text-gray-500 mb-4">{selectedEvent.time}</p>
-            <p className="text-gray-700 mb-6">{selectedEvent.description}</p>
+            <p className="text-gray-700 mb-6 overflow-hidden break-words line-clamp-3">{selectedEvent.description}</p>
           </div>
 
           {/* More Info Button */}

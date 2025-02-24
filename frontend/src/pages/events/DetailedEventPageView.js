@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // For dynamic routing
+import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -10,6 +10,7 @@ const DetailedEventPageView = () => {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);    
+    const navigate = useNavigate();
     const API_URL = process.env.REACT_APP_API_URL;
 
   
@@ -45,10 +46,17 @@ const DetailedEventPageView = () => {
       longitude,
     } = event;
 
+    const handleBack = () => { navigate(-1); };
 
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
         <div className="max-w-7xl w-full bg-white p-6 rounded-md shadow-md">
+            {/* Back Button */}
+            <button
+            onClick={handleBack}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
+                ←
+            </button>
         {/* Title Section */}
         <div className="flex items-center justify-between">
             <h1 className="text-4xl font-bold text-gray-900 text-center flex-1">

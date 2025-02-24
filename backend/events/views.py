@@ -103,7 +103,7 @@ class EventsViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def featured(self, request): #For the /events/featured/ endpoint
         featured_events = Event.objects.filter(is_featured=True).values(
-            "id", "title", "opening_times", "description", "main_image", "event_type", "location"
+            "id", "title", "opening_times", "description", "main_image", "event_type", "location", "date", "time"
         )
         featured_event_list = [
             {
@@ -112,8 +112,11 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "openTimes": event["opening_times"] or "N/A",
                 "description": event["description"],
                 "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
-                "event_type": event["event_type"],
-                "location": event["location"]
+                "eventType": event["event_type"],
+                "location": event["location"],
+                "date": event["date"].strftime("%Y-%m-%d") if event["date"] else None,
+                "time": event["time"].strftime("%I:%M") if event["time"] else None
+
             }
             for event in featured_events
         ]
