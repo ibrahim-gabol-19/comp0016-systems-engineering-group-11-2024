@@ -143,7 +143,7 @@ const ContentManagementSystem = () => {
 
  
     try {
-      const response = await fetch(API_URL+`events/${eventId}/`, {
+      await fetch(API_URL+`events/${eventId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
