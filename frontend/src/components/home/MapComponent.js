@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
 
@@ -14,13 +15,14 @@ const MapResizeFix = () => {
 };
 
 const MapComponent = ({ filters, dates, reports }) => {
+  const navigate = useNavigate();
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center: London
   const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level
 
   const ukBounds = [
-    [49.5, -8],  // Southwest UK
-    [60, 2],     // Northeast UK
+    [49.5, -8], // Southwest UK
+    [60, 2], // Northeast UK
   ];
 
   useEffect(() => {
@@ -46,8 +48,6 @@ const MapComponent = ({ filters, dates, reports }) => {
         lat: parseFloat(report.latitude), // Ensure lat/lng are numbers
         lng: parseFloat(report.longitude),
         status: report.status,
-
-        
       }))
     ];
 
@@ -55,8 +55,8 @@ const MapComponent = ({ filters, dates, reports }) => {
 
     const filtered = combinedData.filter((item) => {
       const isSelected =
-        (filters.events && item.type === "events" ) ||
-        (filters.issues && item.type === "issues" && item.status==="open");
+        (filters.events && item.type === "events") ||
+        (filters.issues && item.type === "issues" && item.status === "open");
 
       const isWithinDateRange =
         (!dates.from || new Date(item.date) >= new Date(dates.from)) &&
@@ -68,13 +68,16 @@ const MapComponent = ({ filters, dates, reports }) => {
     setFilteredItems(filtered);
   }, [filters, dates, reports]);
 
+  const handleRedirect = (issue) => {
+    navigate("/reporting", { state: { selectedIssue: issue } });
+  };
+
   return (
     <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6" style={{ overflow: "hidden" }}>
-      
       <MapContainer
         center={mapCenter}
         zoom={zoomLevel}
-        style={{ width: "100%", height: "500px",zIndex:0 }}
+        style={{ width: "100%", height: "500px", zIndex: 0 }}
         maxBounds={ukBounds}
         maxBoundsViscosity={1.0}
         minZoom={6}
@@ -94,7 +97,17 @@ const MapComponent = ({ filters, dates, reports }) => {
               html: `<span style="font-size: 25px;">${item.emoji || "⚠️"}</span>`,
             })}
           >
-            <Popup>{item.name}</Popup>
+            <Popup>
+              <div>
+                <h3>{item.name}</h3>
+                <button
+                  onClick={() => handleRedirect(item)}
+                  className="bg-blue-500 text-white px-2 py-1 rounded mt-2"
+                >
+                  View Report
+                </button>
+              </div>
+            </Popup>
           </Marker>
         ))}
       </MapContainer>
