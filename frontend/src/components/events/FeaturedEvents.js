@@ -42,7 +42,7 @@ const FeaturedEvents = () => {
             <div className="mt-8 border-t-2 border-gray-300 w-1/2"></div>
           </div>
           <div className="mt-8 flex justify-center">
-            <div className="flex justify-center flex-col md:flex-row gap-6 w-full px-6">
+            <div className="flex justify-center flex-col md:flex-row gap-6 w-full px-6 sm:px-10">
               {loading ? (
                 <p>Loading...</p>
               ) : error ? (
@@ -51,7 +51,7 @@ const FeaturedEvents = () => {
                 featuredEvents.map((event, index) => (
                   <div
                     key={index}
-                    className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer w-full md:w-2/5"
+                    className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer w-full md:w-3/5"
                     onClick={() => handleEventClick(event.id)}
                   >
                     <div className="w-full">
@@ -63,7 +63,7 @@ const FeaturedEvents = () => {
                         />
                       )}
                       <div className="p-4 text-center">
-                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2">{event.title}</h4>
+                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
                         {event.eventType === "scheduled" ? (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
                             {event.date}, {event.time}
