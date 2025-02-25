@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -12,7 +11,8 @@ const Calendar = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;  
-
+  const [currentDay, setCurrentDay] = useState(dayjs()); // State for mobile day view
+  const [isMobileView] = useState(window.innerWidth <= 768); // Detect mobile
 
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
@@ -61,8 +61,6 @@ const Calendar = () => {
     });
   };
   
-  
-
   const closeEventDetails = () => {
     setSelectedEvent(null);
     setSelectedEventPosition(null);
@@ -74,11 +72,22 @@ const Calendar = () => {
     );
   };
 
+  // Mobile view navigation
+  const handleNextDay = () => {
+    setCurrentDay((prevDay) => prevDay.add(1, "day"));
+  };
+
+  const handlePrevDay = () => {
+    setCurrentDay((prevDay) => prevDay.subtract(1, "day"));
+  };
+
+  const dayKey = currentDay.format("YYYY-MM-DD");
+  const todayEvents = events[dayKey] || [];
 
   return (
     <div className="max-w-6xxl mx-auto mt-10">
-      {/* Navigation */}
-      <div className="flex justify-between items-center mb-4">
+      {/* Navigation for Desktop */}
+      <div className="hidden md:flex justify-between items-center mb-4">
       <div className="text-center ml-8">
           <h2 className="text-md">
             Week of {startOfWeek.format("DD MMM YYYY")}
@@ -107,11 +116,46 @@ const Calendar = () => {
         </div>
       </div>
 
-      {/* Display loading state */}
+      {/* Mobile View */}
+      <div className="md:hidden">
+        <div className="flex justify-between items-center mb-4">
+          <button onClick={handlePrevDay} className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10">
+            &lt;
+          </button>
+          <h2 className="text-lg font-bold">{currentDay.format("DD MMM YYYY")}</h2>
+          <button onClick={handleNextDay} className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10">
+            &gt;
+            </button>
+        </div>
+        {loading ? (
+          <p className="text-center text-gray-500">Loading events...</p>
+        ) : (
+          <div className="rounded-lg p-4 bg-gray-100">
+            {todayEvents.length > 0 ? (
+              todayEvents.map((event, index) => (
+                <div
+                  key={index}
+                  className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
+                  onClick={(e) => isMobileView ? handleEventClick(event.id) : openEventDetails(event, e)}
+                >
+                  <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
+                    {event.title}
+                  </p>
+                  <p className="text-sm text-gray-600 text-center">{event.time}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-400">No events</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop View Display loading state */}
       {loading ? (
         <p className="text-center text-gray-500">Loading events...</p>
       ) : (
-        <div className="grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6" style={{ height: "400px" }}>
+        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6" style={{ height: "400px" }}> 
           {daysOfWeek.map((day) => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
@@ -133,7 +177,7 @@ const Calendar = () => {
                     dayEvents.map((event, index) => (
                       <div
                         key={index}
-                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
+                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full min-h-[75px] flex flex-col justify-center"
                         onClick={(e) => openEventDetails(event, e)}
                       >
                         <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>

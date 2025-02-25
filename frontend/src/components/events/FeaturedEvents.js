@@ -36,13 +36,13 @@ const FeaturedEvents = () => {
   return (
     <>
       {featuredEvents.length > 0 ? (
-        <div className="max-w-6xl mx-auto mt-14">
+        <div className="max-w-6xl mx-auto mt-14 md:px-13">
           <h2 className="text-2xl font-bold px-6 mt-8 flex justify-center">Featured Events</h2>
           <div className="flex justify-center">
             <div className="mt-8 border-t-2 border-gray-300 w-1/2"></div>
           </div>
           <div className="mt-8 flex justify-center">
-            <div className="flex justify-center flex-col md:flex-row gap-6 w-full px-6 sm:px-10">
+            <div className="flex justify-center flex-col md:flex-row gap-6 w-full px-6">
               {loading ? (
                 <p>Loading...</p>
               ) : error ? (
