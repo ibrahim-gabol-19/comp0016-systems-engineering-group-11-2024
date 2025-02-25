@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const CreatePostModal = ({ isOpen, onClose }) => {
+const API_URL = process.env.REACT_APP_API_URL;
+
+const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
@@ -9,25 +11,9 @@ const CreatePostModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("tags", tags);
-    if (media) formData.append("media", media);
-
-    try {
-      const response = await axios.post("/api/posts", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("Post created:", response.data);
-      onClose(); // Close the modal after successful submission
-    } catch (error) {
-      console.error("Error creating post:", error);
-    }
+    const postData = { title, content, tags, media };
+    onSubmit(postData); // Call the onSubmit function passed from the parent
+    onClose(); // Close the modal
   };
 
   if (!isOpen) return null;
