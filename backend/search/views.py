@@ -40,8 +40,10 @@ def preprocess_data(articles, events):
         datasets.append({
             "source": "event",
             "documents": [
-                f"{e.get('title', '')} {e.get('event_type', '')} {e.get('description', '')} {e.get('location', '')} {e.get('date', '')} {e.get('time', '')} {e.get('opening_times', '')} {e.get('poi_type', '')}"
-                for e in events  # No filtering needed here as the search endpoint already structures the data
+                f"{e.get('title', '')} {e.get('event_type', '')} {e.get('description', '')} 
+                {e.get('location', '')} {e.get('date', '')} {e.get('time', '')} 
+                {e.get('opening_times', '')} {e.get('poi_type', '')}"
+                for e in events
             ],
             "entries": events,
         })
@@ -63,7 +65,7 @@ def perform_semantic_search(query, datasets):
         # Compute cosine similarity for each dataset
         embeddings = model.encode(dataset["documents"])
         # Check if embeddings is empty after encoding
-        if not embeddings.any(): #embeddings may be an empty array if all documents are empty strings.
+        if not embeddings.any(): #embeddings may be empty if all documents are empty.
             continue
         similarities = cosine_similarity(query_embedding, embeddings).flatten()
 

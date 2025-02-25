@@ -1,12 +1,11 @@
 """
 Views for events
 """
-
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from .models import Event
 from .serializers import EventSerializer
-from rest_framework.decorators import action
 
 
 
@@ -14,9 +13,13 @@ class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def list(self, request):  # For the /events/ endpoint
+    def list(self, request): 
+        """
+        For the /events/ endpoint
+        """
         events = Event.objects.values(
-            "id", "title", "event_type", "description", "main_image", "location", "longitude", "latitude",
+            "id", "title", "event_type", "description", "main_image", 
+            "location", "longitude", "latitude",
             "date", "time", "opening_times", "poi_type", "is_featured"
         )
 
@@ -26,7 +29,8 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "title": event["title"],
                 "event_type": event["event_type"],
                 "description": event["description"],
-                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
+                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" 
+                if event["main_image"] else "https://picsum.photos/550",
                 "location": event["location"],
                 "longitude": event["longitude"],
                 "latitude": event["latitude"],
@@ -51,8 +55,12 @@ class EventsViewSet(viewsets.ModelViewSet):
 
 
     @action(detail=False, methods=['get'])
-    def scheduled(self, request): #For the /events/scheduled/ endpoint
-        events = Event.objects.all().values("id", "title", "date", "time", "description", "location")
+    def scheduled(self, request):
+        """
+        For the /events/scheduled/ endpoint
+        """
+        events = Event.objects.all().values("id", "title", 
+                                            "date", "time", "description", "location")
         event_dict = {}
 
         for event in events:
@@ -77,12 +85,16 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "description": event["description"],
                 "location": event["location"]
             })
-
         return Response(event_dict)
     
     @action(detail=False, methods=['get'])
-    def pois(self, request): #For the /events/pois/ endpoint
-        pois = Event.objects.filter(event_type="point_of_interest").values("id", "title", "opening_times", "description", "poi_type", "main_image")
+    def pois(self, request):
+        """
+        For the /events/pois/ endpoint
+        """
+
+        pois = Event.objects.filter(event_type="point_of_interest").values(
+            "id", "title", "opening_times", "description", "poi_type", "main_image")
         poi_dict = {}
 
         for poi in pois:
@@ -94,16 +106,21 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "title": poi["title"],
                 "openTimes": poi["opening_times"] or "No opening hours available",
                 "description": poi["description"],
-                "main_image": f"http://127.0.0.1:8000/media/{poi['main_image']}" if poi["main_image"] else "https://picsum.photos/550",
+                "main_image": f"http://127.0.0.1:8000/media/{poi['main_image']}" 
+                if poi["main_image"] else "https://picsum.photos/550",
                 "category": category
             })
 
         return Response(poi_dict)
 
     @action(detail=False, methods=['get'])
-    def featured(self, request): #For the /events/featured/ endpoint
+    def featured(self, request):
+        """
+        For the /events/featured/ endpoint
+        """
         featured_events = Event.objects.filter(is_featured=True).values(
-            "id", "title", "opening_times", "description", "main_image", "event_type", "location", "date", "time"
+            "id", "title", "opening_times", "description", "main_image", 
+            "event_type", "location", "date", "time"
         )
         featured_event_list = [
             {
@@ -111,7 +128,8 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "title": event["title"],
                 "openTimes": event["opening_times"] or "N/A",
                 "description": event["description"],
-                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" if event["main_image"] else "https://picsum.photos/550",
+                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}"
+                  if event["main_image"] else "https://picsum.photos/550",
                 "eventType": event["event_type"],
                 "location": event["location"],
                 "date": event["date"].strftime("%Y-%m-%d") if event["date"] else None,
@@ -123,7 +141,10 @@ class EventsViewSet(viewsets.ModelViewSet):
         return Response(featured_event_list)
 
     @action(detail=False, methods=['get'])
-    def search(self, request):  # For the /events/search/ endpoint
+    def search(self, request): 
+        """
+        For the /events/search/ endpoint
+        """
         events = Event.objects.values(
             "title", "event_type", "description", "location",
             "date", "time", "opening_times", "poi_type", "is_featured"
