@@ -46,6 +46,9 @@ const MapComponent = ({ filters, dates, reports }) => {
         emoji: "⚠️", // Default emoji
         lat: parseFloat(report.latitude), // Ensure lat/lng are numbers
         lng: parseFloat(report.longitude),
+        status: report.status,
+
+        
       }))
     ];
 
@@ -53,10 +56,8 @@ const MapComponent = ({ filters, dates, reports }) => {
 
     const filtered = combinedData.filter((item) => {
       const isSelected =
-        (filters.volunteering && item.type === "volunteering") ||
-        (filters.events && item.type === "events") ||
-        (filters.news && item.type === "news") ||
-        (filters.issues && item.type === "issues");
+        (filters.events && item.type === "events" ) ||
+        (filters.issues && item.type === "issues" && item.status==="open");
 
       const isWithinDateRange =
         (!dates.from || new Date(item.date) >= new Date(dates.from)) &&
@@ -90,7 +91,7 @@ const MapComponent = ({ filters, dates, reports }) => {
             position={[item.lat, item.lng]} // Ensure lat/lng exist
             icon={new L.DivIcon({
               className: "emoji-icon",
-              html: `<span style="font-size: 30px;">${item.emoji || "⚠️"}</span>`,
+              html: `<span style="font-size: 25px;">${item.emoji || "⚠️"}</span>`,
             })}
           >
             <Popup>{item.name}</Popup>
