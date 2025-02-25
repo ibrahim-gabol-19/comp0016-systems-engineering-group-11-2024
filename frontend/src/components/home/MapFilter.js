@@ -11,7 +11,7 @@ const MapFilter = ({ onFilterChange, onDateChange }) => {
 
   const [dates, setDates] = useState({
     from: today, // Default "From" date: Today
-    to: today,   // Default "To" date: Today
+    to: "",   // Default "To" date: Any time in the future
   });
 
   useEffect(() => {
