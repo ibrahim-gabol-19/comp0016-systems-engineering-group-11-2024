@@ -114,15 +114,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-        (API_URL + "reports/",
+        `${API_URL}reports/`, 
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // To send files and form data
-            Authorization: `Bearer ${token}`, 
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
-      ));
+      );
+      
       if (response.status === 201) {
         fetchReports();
       }
@@ -133,7 +134,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       setDescription("");
       setSelectedTag("environmental"); // Reset the tag after submission
     } catch (err) {
-      console.log("Error creating report:", err.message);
+      console.log("Error creating report:", err.message, " to", API_URL );
     }
   };
   const lightenColor = (color, percent) => {
