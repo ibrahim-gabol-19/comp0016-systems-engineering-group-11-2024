@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'events',
     'search',
     'accounts',
+    'forums',
     'companyinformation'
 ]
 
