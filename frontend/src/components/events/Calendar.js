@@ -96,7 +96,7 @@ const Calendar = () => {
       <p className="text-2xl font-bold">This Week's Events</p>
         <div className="flex items-center space-x-4 px-8">
           <button
-            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"
+            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold scale-125 hover:scale-150"
             onClick={handlePrevWeek}
           >
             &lt;
@@ -108,7 +108,7 @@ const Calendar = () => {
           Today
         </button>
           <button
-            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"
+            className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold scale-125 hover:scale-150"
             onClick={handleNextWeek}
           >
             &gt;
