@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const Calendar = () => {
@@ -10,7 +11,7 @@ const Calendar = () => {
   const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;  
 
 
   const today = dayjs(); // Get today's date
@@ -21,21 +22,19 @@ const Calendar = () => {
   );
 
   useEffect(() => {
-    fetchScheduledEvents();
+    axios
+      .get(API_URL + `events/scheduled/`)
+      .then((response) => {
+          const event = response.data;
+        setEvents(event);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+        setLoading(false);
+      });
+    // eslint-disable-next-line
   }, []);
-
-  const fetchScheduledEvents = async () => {
-    try {
-      const response = await fetch(API_URL + "events/scheduled/");
-      if (!response.ok) throw new Error("Failed to fetch events");
-      const data = await response.json();
-      setEvents(data);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleNextWeek = () => {
     setCurrentWeek((prevWeek) => prevWeek.add(7, "day"));

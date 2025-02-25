@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const PointOfInterest = () => {
@@ -11,26 +12,21 @@ const PointOfInterest = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
-
   useEffect(() => {
-    fetchPoiEvents();
+    axios
+      .get(API_URL + `events/pois/`)
+      .then((response) => {
+          const event = response.data;
+        setPoiEvents(event);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+        setError("Failed to load POI events.");
+        setLoading(false);
+      });
+    // eslint-disable-next-line
   }, []);
-
-  const fetchPoiEvents = async () => {
-    try {
-      const response = await fetch(API_URL + "events/pois/");
-      if (!response.ok) throw new Error("Failed to fetch POI events");
-      const data = await response.json();
-      setPoiEvents(data); // Data is already grouped, so no transformation is needed
-    } catch (error) {
-      console.error("Error fetching POIs:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);

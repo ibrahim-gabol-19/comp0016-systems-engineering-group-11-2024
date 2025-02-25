@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const FeaturedEvents = () => {
@@ -9,24 +10,20 @@ const FeaturedEvents = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
-
   useEffect(() => {
-    const fetchFeaturedEvents = async () => {
-      try {
-        const response = await fetch(API_URL + "events/featured/");
-        if (!response.ok) throw new Error("Failed to fetch featured events");
-        
-        const data = await response.json();
-        setFeaturedEvents(data);
-      } catch (error) {
-        console.error("Error fetching featured events:", error);
-        setError(error.message);
-      } finally {
+    axios
+      .get(API_URL + `events/featured/`)
+      .then((response) => {
+          const event = response.data;
+        setFeaturedEvents(event);
         setLoading(false);
-      }
-    };
-
-    fetchFeaturedEvents();
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+        setError("Failed to load featured events.");
+        setLoading(false);
+      });
+    // eslint-disable-next-line
   }, []);
 
   // Handle click on a featured event
@@ -59,7 +56,7 @@ const FeaturedEvents = () => {
                 />
               )}
               <div className="p-4">
-                <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-1">{event.title}</h4>
+                <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2">{event.title}</h4>
                 {event.eventType === "scheduled" ? (
                   <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
                     {event.date}, {event.time}
