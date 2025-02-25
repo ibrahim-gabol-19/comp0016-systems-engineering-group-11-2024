@@ -48,7 +48,7 @@ const SignUp = () => {
     const passwordErrors = validatePassword(password);
 
     if (passwordErrors.length > 0) {
-      setError(["", ...passwordErrors]);
+      setError(passwordErrors); // Remove the empty string
       return;
     }
 
@@ -64,6 +64,7 @@ const SignUp = () => {
     } catch (error) {
       setError(["Signup failed. Please try again."]);
       console.error("Error signing up:", error);
+      console.log("Errors:", error); // Add this inside the component to log the errors
     }
   };
 
