@@ -12,7 +12,7 @@ const Calendar = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;  
   const [currentDay, setCurrentDay] = useState(dayjs()); // State for mobile day view
-  const [isMobileView] = useState(window.innerWidth <= 768); // Detect mobile
+  const [isMobileView] = useState(window.innerWidth <= 1000); // Detect mobile
 
   const today = dayjs(); // Get today's date
   const [highlightToday, setHighlightToday] = useState(false);
@@ -85,16 +85,11 @@ const Calendar = () => {
   const todayEvents = events[dayKey] || [];
 
   return (
-    <div className="max-w-6xxl mx-auto mt-10">
+    <div className="max-w-6xxl mx-auto mt-10 flex flex-col items-center">
+      <p className="text-2xl font-bold mb-4">This Week's Events</p>
       {/* Navigation for Desktop */}
-      <div className="hidden md:flex justify-between items-center mb-4">
-      <div className="text-center ml-8">
-          <h2 className="text-md">
-            Week of {startOfWeek.format("DD MMM YYYY")}
-          </h2>
-        </div>
-      <p className="text-2xl font-bold">This Week's Events</p>
-        <div className="flex items-center space-x-4 px-8">
+      <div className="hidden md:block w-[80%]">
+        <div className="flex justify-center space-x-4 mb-4">
           <button
             className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold scale-125 hover:scale-150"
             onClick={handlePrevWeek}
@@ -155,7 +150,7 @@ const Calendar = () => {
       {loading ? (
         <p className="text-center text-gray-500">Loading events...</p>
       ) : (
-        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6" style={{ height: "400px" }}> 
+        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", maxWidth: "80%" }}> 
           {daysOfWeek.map((day) => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
@@ -177,10 +172,10 @@ const Calendar = () => {
                     dayEvents.map((event, index) => (
                       <div
                         key={index}
-                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full min-h-[75px] flex flex-col justify-center"
+                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full h-[90px] flex flex-col justify-center"
                         onClick={(e) => openEventDetails(event, e)}
                       >
-                        <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
+                        <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center break-words" title={event.title}>
                           {event.title}
                         </p>
                         <p className="text-sm text-gray-600 text-center">{event.time}</p>
@@ -216,7 +211,7 @@ const Calendar = () => {
 
           {/* Event Details */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-2 overflow-hidden break-words line-clamp-2">{selectedEvent.title}</h3>
+            <h3 className="text-lg font-bold mb-2 overflow-hidden break-words mt-4">{selectedEvent.title}</h3>
             <p className="text-sm text-gray-500 mb-4">{selectedEvent.time}</p>
             <p className="text-gray-700 mb-6 overflow-hidden break-words line-clamp-3">{selectedEvent.description}</p>
           </div>
