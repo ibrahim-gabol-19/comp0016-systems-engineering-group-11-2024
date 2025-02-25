@@ -23,7 +23,7 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter }) => {
-  const zoomLevel = 13;
+  const zoomLevel = 11;
   const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
