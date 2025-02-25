@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const MapFilter = ({ onFilterChange, onDateChange }) => {
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+
   const [filters, setFilters] = useState({
     events: true,
     issues: true,
   });
-  const [dates, setDates] = useState({ from: "", to: "" });
+
+  const [dates, setDates] = useState({
+    from: today, // Default "From" date: Today
+    to: today,   // Default "To" date: Today
+  });
+
+  useEffect(() => {
+    // Set default date filters when component mounts
+    onDateChange(dates);
+  }, [dates, onDateChange]); 
 
   const handleCheckboxChange = (e) => {
     const newFilters = { ...filters, [e.target.name]: e.target.checked };

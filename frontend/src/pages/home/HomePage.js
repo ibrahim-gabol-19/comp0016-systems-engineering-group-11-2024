@@ -6,6 +6,7 @@ import MapFilter from "../../components/home/MapFilter";
 import MapComponent from "../../components/home/MapComponent";
 import Header from "../../components/Header";
 
+
 const HomePage = () => {
   const [filters, setFilters] = useState({
     volunteering: true,
@@ -14,10 +15,12 @@ const HomePage = () => {
     issues: true,
   });
 
-  const [dates, setDates] = useState({
-    from: "",
-    to: "",
-  });
+  const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
+
+const [dates, setDates] = useState({
+  from: today,  // Default to today's date
+  to: "",       // Allow all future dates
+});
 
   const [reports, setReports] = useState([]); // Store fetched reports
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
-import axios from "axios";
 
 const MapResizeFix = () => {
   const map = useMap();
@@ -70,11 +69,12 @@ const MapComponent = ({ filters, dates, reports }) => {
   }, [filters, dates, reports]);
 
   return (
-    <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6">
+    <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6" style={{ overflow: "hidden" }}>
+      
       <MapContainer
         center={mapCenter}
         zoom={zoomLevel}
-        style={{ width: "100%", height: "500px" }}
+        style={{ width: "100%", height: "500px",zIndex:0 }}
         maxBounds={ukBounds}
         maxBoundsViscosity={1.0}
         minZoom={6}
