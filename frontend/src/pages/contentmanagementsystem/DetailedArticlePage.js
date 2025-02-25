@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import Header from "../../components/Header";
 const API_URL = process.env.REACT_APP_API_URL;
-
 const NEW_ARTICLE_ID = "0";
 
 const DetailedArticlePage = () => {
@@ -24,6 +23,15 @@ const DetailedArticlePage = () => {
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // State for PDF extraction
+  const [pdfFile, setPdfFile] = useState(null);
+  const [extractedData, setExtractedData] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDataExtracted, setIsDataExtracted] = useState(false);
+
+  // Ref for hidden file input
+  const hiddenFileInput = useRef(null);
 
   // Fetch article data when editing an existing article
   useEffect(() => {
@@ -104,6 +112,72 @@ const DetailedArticlePage = () => {
     setUploadedFiles([acceptedFiles[0]]);
   };
 
+  const handleExtractFromPDFClick = () => {
+    hiddenFileInput.current.click();
+    setIsDataExtracted(false);
+  };
+
+  const handlePDFUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setPdfFile(file);
+    }
+  };
+
+  const handleUploadPDF = async () => {
+    if (!pdfFile) {
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("pdf_file", pdfFile);
+
+    try {
+      const response = await fetch(`${API_URL}/api/upload/article/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setExtractedData(data);
+      populateFields(data);
+      setIsDataExtracted(true);
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const populateFields = (data) => {
+    if (quillRefTitle.current) {
+      quillRefTitle.current.setContents([{ insert: data.title || "" }]);
+    }
+    if (quillRefAuthor.current) {
+      quillRefAuthor.current.setContents([{ insert: data.author || "" }]);
+    }
+    if (quillRefMain.current) {
+      quillRefMain.current.setContents([{ insert: data.main_content || "" }]);
+    }
+    if (quillRefDescription.current) {
+      quillRefDescription.current.setContents([{ insert: data.description || "" }]);
+    }
+    if (data.images && data.images.length > 0) {
+      setUploadedFiles(data.images);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing && extractedData) {
+      populateFields(extractedData);
+    }
+  }, [isEditing, extractedData]);
+
   return (
     <div className="h-[calc(100vh-146px)] w-full">
       <Header />
@@ -111,30 +185,69 @@ const DetailedArticlePage = () => {
       <div className="flex justify-between px-5">
         <button
           onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white justify-cetner font-bold rounded-lg  hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
+          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
           aria-label="Toggle edit/preview mode"
         >
           {isEditing ? "Switch to Preview" : "Switch to Edit"}
         </button>
         <button
           onClick={handleSave}
-          className="bg-green-500 text-white justify-cetner font-bold rounded-lg  hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2  mr-4"
+          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
           aria-label="Save article"
         >
           Save
         </button>
+        <button
+          onClick={handleExtractFromPDFClick}
+          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2"
+          aria-label="Extract from PDF"
+        >
+          Extract From PDF
+        </button>
+        <input
+          type="file"
+          accept="application/pdf"
+          ref={hiddenFileInput}
+          onChange={handlePDFUpload}
+          style={{ display: "none" }}
+        />
       </div>
-
+  
+      {pdfFile && (
+        <div className="pl-6">
+          <p>
+            <strong>Selected PDF:</strong> {pdfFile.name}
+          </p>
+          <button
+            onClick={handleUploadPDF}
+            disabled={isUploading}
+            className={`${
+              isDataExtracted ? "bg-green-500" : "bg-orange-500"
+            } text-white justify-center font-bold rounded-lg hover:${
+              isDataExtracted ? "bg-green-400" : "bg-orange-400"
+            } active:${
+              isDataExtracted ? "bg-green-300" : "bg-orange-300"
+            } transition active:duration-100 duration-300 px-4 py-2`}
+          >
+            {isUploading
+              ? "Uploading..."
+              : isDataExtracted
+              ? "Data successfully extracted!"
+              : "Upload PDF"}
+          </button>
+        </div>
+      )}
+  
       {errorMessage && (
         <div className="bg-red-500 text-white p-2 rounded mt-4">
           {errorMessage}
         </div>
       )}
-
+  
       <div className="h-full flex justify-center items-center overflow-auto relative">
         {isEditing ? (
           <div className="w-screen h-full flex relative">
-            <div className="h-full w-1/6 " />
+            <div className="h-full w-1/6" />
             <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
               <TitleEditor
                 ref={quillRefTitle}
@@ -152,7 +265,7 @@ const DetailedArticlePage = () => {
               />
             </div>
             <div className="h-full w-1/6" />
-            <div className="w-2/6  px-3 pb-64 flex flex-col justify-center  overflow-hidden">
+            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden">
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Author"
