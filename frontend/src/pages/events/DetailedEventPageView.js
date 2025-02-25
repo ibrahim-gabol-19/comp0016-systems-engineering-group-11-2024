@@ -3,8 +3,6 @@ import { useParams, useNavigate } from "react-router-dom"; // For dynamic routin
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { FaArrowLeft } from 'react-icons/fa';
-
 
 const DetailedEventPageView = () => {
     const { eventId } = useParams();
