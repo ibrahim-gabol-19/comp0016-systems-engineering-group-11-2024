@@ -83,7 +83,7 @@ const SearchBar = () => {
     const messages = [
       {
         role: "system",
-        content: `You are an AI assistant chatbot for GreenEarth Inc., a company focused on sustainability and environmental conservation.
+        content: `You are an AI assistant chatbot for Central London Council.
     
         Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
         
