@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom"; // For dynamic routin
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { FaArrowLeft } from 'react-icons/fa';
+
 
 const DetailedEventPageView = () => {
     const { eventId } = useParams();
@@ -27,6 +29,7 @@ const DetailedEventPageView = () => {
           setError("Failed to load event. It may not exist.");
           setLoading(false);
         });
+        // eslint-disable-next-line
     }, [eventId]);
   
     if (loading) return <p className="text-center text-lg">Loading event details...</p>;
@@ -55,7 +58,20 @@ const DetailedEventPageView = () => {
             <button
             onClick={handleBack}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
-                ←
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                >
+                    <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                </svg>
             </button>
         {/* Title Section */}
         <div className="flex items-center justify-between">

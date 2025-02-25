@@ -79,13 +79,13 @@ const Calendar = () => {
     <div className="max-w-6xxl mx-auto mt-10">
       {/* Navigation */}
       <div className="flex justify-between items-center mb-4">
-        <div className="text-center">
-          <p className="text-2xl font-bold px-6">This Week's Events</p>
+      <div className="text-center ml-8">
           <h2 className="text-md">
             Week of {startOfWeek.format("DD MMM YYYY")}
           </h2>
         </div>
-        <div className="flex items-center space-x-4 px-6">
+      <p className="text-2xl font-bold">This Week's Events</p>
+        <div className="flex items-center space-x-4 px-8">
           <button
             className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold hover:scale-110"
             onClick={handlePrevWeek}
@@ -136,10 +136,10 @@ const Calendar = () => {
                         className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full"
                         onClick={(e) => openEventDetails(event, e)}
                       >
-                        <p className="font-semibold text-md line-clamp-2 overflow-hidden" title={event.title}>
+                        <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
                           {event.title}
                         </p>
-                        <p className="text-sm text-gray-600">{event.time}</p>
+                        <p className="text-sm text-gray-600 text-center">{event.time}</p>
                       </div>
                     ))
                   ) : (

@@ -40,11 +40,11 @@ const PointOfInterest = () => {
 
   return (
     <div className="max-w-6xxl mx-auto mt-14">
-      <h2 className="text-2xl font-bold px-6 mb-8">Points of Interest</h2>
+      <h2 className="text-2xl font-bold px-6 mb-8 flex justify-center">Points of Interest</h2>
       <div className="flex">
         {/* Sidebar */}
         <div className="w-1/6 bg-white flex flex-col justify-top">
-          <ul className="space-y-3">
+          <ul className="">
             {categories.map((category) => (
               <li
                 key={category}
@@ -62,7 +62,7 @@ const PointOfInterest = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 bg-white p-6 rounded-xl">
+        <div className="w-5/6 bg-white p-6">
           <h3 className="text-xl font-bold mb-4">{selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}</h3>
           <div
             className="grid grid-cols-3 gap-6 overflow-y-auto"
@@ -90,7 +90,7 @@ const PointOfInterest = () => {
                     className="w-full h-32 object-cover"
                   />
                 )}
-                <div className="p-4">
+                <div className="p-4 text-center">
                   <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-1">{event.title}</h4>
                   <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">{event.openTimes}</p>
                   <p className="text-sm text-gray-500 mt-2 line-clamp-3">
