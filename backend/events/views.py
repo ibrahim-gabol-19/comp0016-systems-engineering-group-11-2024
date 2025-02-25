@@ -10,10 +10,13 @@ from .serializers import EventSerializer
 
 
 class EventsViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for Events
+    """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def list(self, request): 
+    def list(self, request):
         """
         For the /events/ endpoint
         """
@@ -23,33 +26,33 @@ class EventsViewSet(viewsets.ModelViewSet):
             "date", "time", "opening_times", "poi_type", "is_featured"
         )
 
-        event_list = [
-            {
+        event_list = []
+        for event in events:
+            event_data = {
                 "id": event["id"],
                 "title": event["title"],
                 "event_type": event["event_type"],
                 "description": event["description"],
-                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}" 
+                "main_image": f"http://127.0.0.1:8000/media/{event['main_image']}"
                 if event["main_image"] else "https://picsum.photos/550",
                 "location": event["location"],
                 "longitude": event["longitude"],
                 "latitude": event["latitude"],
                 "is_featured": event["is_featured"],
-                **(
-                    {  # Fields for Scheduled Events
-                        "date": event["date"],
-                        "time": event["time"]
-                    }
-                    if event["event_type"] == "scheduled" else  # Only include for scheduled events
-                    {  # Fields for POIs
-                        "opening_times": event["opening_times"] or "N/A",
-                        "poi_type": event["poi_type"]
-                    }
-                    if event["event_type"] == "poi" else {}  # Only include for POIs
-                )
             }
-            for event in events
-        ]
+
+            if event["event_type"] == "scheduled":
+                event_data.update({  # Use .update() to add dictionary items
+                    "date": event["date"],
+                    "time": event["time"]
+                })
+            elif event["event_type"] == "poi":
+                event_data.update({
+                    "opening_times": event["opening_times"] or "N/A",
+                    "poi_type": event["poi_type"]
+                })
+
+            event_list.append(event_data) # Append after building event_data
 
         return Response(event_list)
 
@@ -59,7 +62,7 @@ class EventsViewSet(viewsets.ModelViewSet):
         """
         For the /events/scheduled/ endpoint
         """
-        events = Event.objects.all().values("id", "title", 
+        events = Event.objects.all().values("id", "title",
                                             "date", "time", "description", "location")
         event_dict = {}
 
@@ -86,7 +89,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                 "location": event["location"]
             })
         return Response(event_dict)
-    
+
     @action(detail=False, methods=['get'])
     def pois(self, request):
         """
@@ -141,7 +144,7 @@ class EventsViewSet(viewsets.ModelViewSet):
         return Response(featured_event_list)
 
     @action(detail=False, methods=['get'])
-    def search(self, request): 
+    def search(self, request):
         """
         For the /events/search/ endpoint
         """
