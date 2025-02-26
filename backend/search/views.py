@@ -40,9 +40,9 @@ def preprocess_data(articles, events):
         datasets.append({
             "source": "event",
             "documents": [
-                f"{e.get('title', '')} {e.get('event_type', '')} {e.get('description', '')} 
-                {e.get('location', '')} {e.get('date', '')} {e.get('time', '')} 
-                {e.get('opening_times', '')} {e.get('poi_type', '')}"
+                f"{e.get('title', '')} {e.get('event_type', '')} {e.get('description', '')} "
+                f"{e.get('location', '')} {e.get('date', '')} {e.get('time', '')} "
+                f"{e.get('opening_times', '')} {e.get('poi_type', '')}"
                 for e in events
             ],
             "entries": events,
