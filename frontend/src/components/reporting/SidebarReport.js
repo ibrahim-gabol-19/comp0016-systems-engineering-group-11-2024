@@ -114,7 +114,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
     try {
       const response = await axios.post(
-        (API_URL + "reports/",
+        API_URL + "reports/",
         formData,
         {
           headers: {
@@ -122,7 +122,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             Authorization: `Bearer ${token}`, 
           },
         }
-      ));
+      );
       if (response.status === 201) {
         fetchReports();
       }
