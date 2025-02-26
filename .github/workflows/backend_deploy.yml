@@ -1,4 +1,4 @@
-name: Build and deploy Python app to Azure Web App - backendsysenggroup11
+name: Build and deploy Python app to Azure Web App - sysengbackendazuregroup11
 
 on:
   push:
@@ -77,5 +77,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'backendsysenggroup11'
+          app-name: 'sysengbackendazuregroup11'
           slot-name: 'Production'
