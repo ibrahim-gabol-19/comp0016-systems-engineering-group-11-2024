@@ -14,6 +14,7 @@ const ReportsPage = () => {
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
   const [filter, setFilter] = useState("open");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
@@ -21,11 +22,13 @@ const ReportsPage = () => {
   const handleMarkerSelected = (item) => {
     setSelectedMarker(item);
     setNewMarker(null);
+    setIsSidebarOpen(true);
   };
 
   const handleNewMarkerSelected = (item) => {
     setNewMarker(item);
     setSelectedMarker(null);
+    setIsSidebarOpen(true);
   };
 
   const fetchReports = async () => {
@@ -73,7 +76,14 @@ const ReportsPage = () => {
       }
       setSelectedMarker(null);
       setNewMarker(null);
+      setIsSidebarOpen(false);
     }
+  };
+
+  const handleSidebarClose = () => {
+    setSelectedMarker(null);
+    setNewMarker(null);
+    setIsSidebarOpen(false); // Close sidebar when X button is clicked
   };
 
   return (
@@ -81,8 +91,14 @@ const ReportsPage = () => {
       <Header/>
       <div className="pt-20"></div>
       <div className="h-full flex">
-          {(selectedMarker || newMarker) && (
-          <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6" ref={sidebarRef}>
+          {isSidebarOpen && (
+          <div className="bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full w-2/6 relative" ref={sidebarRef}>
+            <button
+              className="absolute top-4 right-5 text-3xl scale-150"
+              onClick={handleSidebarClose}
+            >
+              &times;
+            </button>
             <SidebarReport
               selectedMarker={selectedMarker}
               newMarker={newMarker}
