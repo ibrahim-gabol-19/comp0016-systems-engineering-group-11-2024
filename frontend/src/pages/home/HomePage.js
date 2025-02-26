@@ -23,25 +23,34 @@ const [dates, setDates] = useState({
 });
 
   const [reports, setReports] = useState([]); // Store fetched reports
+  const [events, setEvents] = useState([]); // Store fetched events
 
   // Fetch reports from API
   useEffect(() => {
-    const fetchReports = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await axios.get(process.env.REACT_APP_API_URL + "reports/", { headers });
+        const [reportsResponse,eventsResponse] = await Promise.all([ 
+          axios.get(process.env.REACT_APP_API_URL + "reports/", { headers }),
+          axios.get(process.env.REACT_APP_API_URL + "events/", { headers }),]);
 
-        if (response.status === 200) {
-          setReports(response.data); // Store reports in state
+
+        if (reportsResponse.status === 200) {
+          setReports(reportsResponse.data); // Store reports in state
+        }
+        if (eventsResponse.status === 200) {
+          setEvents(eventsResponse.data);
         }
       } catch (error) {
-        console.error("Error fetching reports:", error);
+        console.error("Error fetching data:", error);
       }
+
+
     };
 
-    fetchReports();
+    fetchData();
   }, []); // Runs once when component mounts
 
   const handleFilterChange = (newFilters) => {
@@ -63,11 +72,11 @@ const [dates, setDates] = useState({
       <div className="container mx-auto px-0 py-8">
         {/* Centering the map and filter */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          {/* MapComponent - comes first (left side) */}
+          {/* MapComponent */}
           <div className="w-full md:w-3/4">
-            <MapComponent filters={filters} dates={dates} reports={reports} />
+            <MapComponent filters={filters} dates={dates} reports={reports} events={events} />
           </div>
-          {/* MapFilter - moved to the right */}
+          {/* MapFilter  */}
           <div className="w-full md:w-1/4 flex justify-center">
             <MapFilter
               onFilterChange={handleFilterChange}
