@@ -293,7 +293,14 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   <p className="font-semibold">{discussion.author}</p>
                   <p className="">{discussion.message}</p>
                   <p className="text-gray-500 text-sm">
-                    {new Date(discussion.created_at).toLocaleString()}
+                  {new Date(discussion.created_at).toLocaleString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                  })}
                   </p>
                 </div>
               </div>
