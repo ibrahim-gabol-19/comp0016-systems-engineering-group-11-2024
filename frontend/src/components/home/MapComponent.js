@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
-
+import { CompanyContext } from "../../context/CompanyContext";
 const MapResizeFix = () => {
   const map = useMap();
   useEffect(() => {
@@ -19,11 +19,13 @@ const MapComponent = ({ filters, dates, reports }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center: London
   const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level
+  const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
-  const ukBounds = [
-    [49.5, -8], // Southwest UK
-    [60, 2], // Northeast UK
+  const bounds = [
+    [sw_lat, sw_lon], // Southwest coordinates
+    [ne_lat, ne_lon], // Northeast coordinates
   ];
+
 
   useEffect(() => {
     console.log("Reports in MapComponent:", reports);
@@ -72,7 +74,7 @@ const MapComponent = ({ filters, dates, reports }) => {
         center={mapCenter}
         zoom={zoomLevel}
         style={{ width: "100%", height: "500px", zIndex: 0 }}
-        maxBounds={ukBounds}
+        maxBounds={bounds} // Restrict map movement to company-defined bounds
         maxBoundsViscosity={1.0}
         minZoom={6}
         maxZoom={15}
