@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { CompanyContext } from "../../context/CompanyContext";
 
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
@@ -10,7 +11,7 @@ const Calendar = () => {
   const [events, setEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;  
+  const API_URL = process.env.REACT_APP_API_URL;
   const [currentDay, setCurrentDay] = useState(dayjs()); // State for mobile day view
   const [isMobileView] = useState(window.innerWidth <= 1000); // Detect mobile
 
@@ -20,12 +21,13 @@ const Calendar = () => {
   const daysOfWeek = Array.from({ length: 7 }, (_, index) =>
     startOfWeek.add(index, "day")
   );
+  const { main_color } = useContext(CompanyContext);
 
   useEffect(() => {
     axios
       .get(API_URL + `events/scheduled/`)
       .then((response) => {
-          const event = response.data;
+        const event = response.data;
         setEvents(event);
         setLoading(false);
       })
@@ -45,22 +47,22 @@ const Calendar = () => {
   };
 
   const handleToday = () => {
-    setCurrentWeek(today); 
-    setHighlightToday(true); 
+    setCurrentWeek(today);
+    setHighlightToday(true);
     setTimeout(() => setHighlightToday(false), 2000);
   };
   const openEventDetails = (eventData, e) => {
     const eventRect = e.target.getBoundingClientRect(); // Get the event's position
     const topPosition = eventRect.top + window.scrollY + 50; // Adjusted Y offset
     const leftPosition = eventRect.left + window.scrollX; // Keep X-axis unchanged
-  
+
     setSelectedEvent(eventData);
     setSelectedEventPosition({
       top: topPosition, // Use adjusted top
       left: leftPosition,
     });
   };
-  
+
   const closeEventDetails = () => {
     setSelectedEvent(null);
     setSelectedEventPosition(null);
@@ -84,6 +86,27 @@ const Calendar = () => {
   const dayKey = currentDay.format("YYYY-MM-DD");
   const todayEvents = events[dayKey] || [];
 
+  const lightenColor = (color, percent) => {
+    const num = parseInt(color.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = ((num >> 8) & 0x00ff) + amt;
+    const B = (num & 0x0000ff) + amt;
+
+    return (
+      "#" +
+      (
+        0x1000000 +
+        (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+        (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+        (B < 255 ? (B < 1 ? 0 : B) : 255)
+      )
+        .toString(16)
+        .slice(1)
+    );
+  };
+
+
   return (
     <div className="max-w-6xxl mx-auto mt-10 flex flex-col items-center">
       <p className="text-2xl font-bold mb-4">This Week's Events</p>
@@ -97,11 +120,42 @@ const Calendar = () => {
             &lt;
           </button>
           <button
-          className="px-4 py-2 bg-white font-bold text-green-500 outline rounded-lg hover:bg-green-500 hover:text-white hover:scale-110 hover:outline transition duration-500"
-          onClick={handleToday}
-        >
-          Today
-        </button>
+            className="px-4 py-2  rounded-lg font-bold text-black hover:scale-110  transition active:duration-100 hover:duration-500 duration-500"
+            style={{
+              color: main_color,
+              outline: "solid " + main_color,
+              backgroundColor: "white", // Default background color
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "white";
+              e.currentTarget.style.outline = "none" ;
+              e.currentTarget.style.backgroundColor = lightenColor(
+                main_color,
+                20
+              ); // Lighter background on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = main_color;
+              e.currentTarget.style.outline = "solid " + main_color;
+              e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.style.color = "white";
+              e.currentTarget.style.backgroundColor = lightenColor(
+                main_color,
+                60
+              ); // Even lighter background on active
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.backgroundColor = lightenColor(
+                main_color,
+                20
+              ); // Reset to hover state on mouse up
+            }}
+            onClick={handleToday}
+          >
+            Today
+          </button>
           <button
             className="text-gray-600 text-2xl hover:text-gray-800 focus:outline-none font-bold scale-125 hover:scale-150"
             onClick={handleNextWeek}
@@ -120,7 +174,7 @@ const Calendar = () => {
           <h2 className="text-lg font-bold">{currentDay.format("DD MMM YYYY")}</h2>
           <button onClick={handleNextDay} className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10">
             &gt;
-            </button>
+          </button>
         </div>
         {loading ? (
           <p className="text-center text-gray-500">Loading events...</p>
@@ -130,8 +184,29 @@ const Calendar = () => {
               todayEvents.map((event, index) => (
                 <div
                   key={index}
-                  className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
+                  className="p-2  rounded-lg  cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
                   onClick={(e) => isMobileView ? handleEventClick(event.id) : openEventDetails(event, e)}
+                  style={{
+                    color: "black",
+                    backgroundColor: main_color, // Default background color
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = lightenColor(
+                      main_color,
+                      20
+                    ); // Lighter background on hover
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
+                  }}
+
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.backgroundColor = lightenColor(
+                      main_color,
+                      20
+                    ); // Reset to hover state on mouse up
+                  }}
+                
                 >
                   <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
                     {event.title}
@@ -150,7 +225,7 @@ const Calendar = () => {
       {loading ? (
         <p className="text-center text-gray-500">Loading events...</p>
       ) : (
-        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", minWidth: "80%", maxWidth: "80%" }}> 
+        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", minWidth: "80%", maxWidth: "80%" }}>
           {daysOfWeek.map((day) => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
@@ -159,9 +234,8 @@ const Calendar = () => {
             return (
               <div
                 key={dayKey}
-                className={`border rounded-lg shadow p-4 flex flex-col ${
-                  isToday && highlightToday ? "bg-green-200" : "bg-white"
-                }`}
+                className={`border rounded-lg shadow p-4 flex flex-col ${isToday && highlightToday ? "bg-green-200" : "bg-white"
+                  }`}
                 style={{ height: "100%" }}
               >
                 <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
