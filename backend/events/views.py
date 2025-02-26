@@ -16,7 +16,7 @@ class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def list(self, request):
+    def list(self, request, *args, **kwargs):
         """
         For the /events/ endpoint
         """
