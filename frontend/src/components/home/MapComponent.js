@@ -31,29 +31,23 @@ const MapComponent = ({ filters, dates, reports }) => {
     setMapCenter([51.5074, -0.1278]);
     setZoomLevel(6);
 
-    const data = [
-      { id: 1, name: "Volunteering Event", type: "volunteering", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278 }, // London
-      { id: 2, name: "News Update", type: "news", date: "2024-12-10", emoji: "📰", lat: 53.4084, lng: -2.9916 }, // Manchester
-    ];
-
-    // Merge dummy data and API reports
-    const combinedData = [
-      ...data, // Keep existing events
-      ...reports.map(report => ({
+    const validReports = reports
+      .filter(report => report.latitude !== undefined && report.longitude !== undefined)
+      .map(report => ({
         id: report.id,
-        name: report.title, // Use report title
-        type: "issues", // Assuming all reports are issues
+        name: report.title, 
+        type: "issues", 
         date: report.published_date || "Unknown Date",
         emoji: "⚠️", // Default emoji
-        lat: parseFloat(report.latitude), // Ensure lat/lng are numbers
+        lat: parseFloat(report.latitude), 
         lng: parseFloat(report.longitude),
         status: report.status,
-      }))
-    ];
+        tags: report.tags,
+      }));
 
-    console.log("Combined Data for Map:", combinedData);
+    console.log("Filtered API Data for Map:", validReports);
 
-    const filtered = combinedData.filter((item) => {
+    const filtered = validReports.filter((item) => {
       const isSelected =
         (filters.events && item.type === "events") ||
         (filters.issues && item.type === "issues" && item.status === "open");

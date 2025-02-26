@@ -4,11 +4,13 @@ import MapComponent from "../../components/reporting/MapComponent";
 import SidebarReport from "../../components/reporting/SidebarReport";
 import axios from "axios";
 import Header from "../../components/Header";
+import { useLocation} from "react-router-dom";
 const API_URL = process.env.REACT_APP_API_URL;
 
 
 const ReportsPage = () => {
-  const [selectedMarker, setSelectedMarker] = useState(null);
+  const location = useLocation();
+  const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
   const [filter, setFilter] = useState("open");
@@ -89,6 +91,7 @@ const ReportsPage = () => {
               reports={reports}
               newMarker={newMarker}
               filter={filter}
+              selectedMarker={selectedMarker}
             ></MapComponent>
           </div>
         </div>
