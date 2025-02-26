@@ -7,13 +7,11 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css"; 
-
+import "leaflet/dist/leaflet.css";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { CompanyContext } from "../../context/CompanyContext";
 
-// Make default Icon show up for Markers
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -23,14 +21,14 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, selectedMarker }) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, selectedMarker, mapRef }) => { // Add mapRef prop
   const zoomLevel = 13;
   const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
   const bounds = [
-    [sw_lat, sw_lon], // Southwest coordinates
-    [ne_lat, ne_lon], // Northeast coordinates
+    [sw_lat, sw_lon],
+    [ne_lat, ne_lon],
   ];
 
   function RecenterMap({ selectedMarker }) {
@@ -41,23 +39,16 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
         map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
     }, [selectedMarker, map]);
-    
+
     return null;
   }
 
   function NewReport() {
     const map = useMapEvents({
       click(e) {
-        // Close any open popups
         map.closePopup();
-
-        // Update position for the new marker
         setPosition(e.latlng);
-
-        // Optionally, fly to the clicked location
         map.flyTo(e.latlng, map.getZoom());
-
-        // Notify parent component of new marker
         onNewMarkerSelected(e);
       },
       locationfound(e) {
@@ -79,9 +70,10 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       zoom={zoomLevel}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
       maxBounds={bounds}
-      maxBoundsViscosity={1.0} // Ensures map stays within bounds
-      minZoom={8} // Set minimum zoom level to allow zooming in further
-      maxZoom={17} // Set maximum zoom level to zoom in further
+      maxBoundsViscosity={1.0}
+      minZoom={8}
+      maxZoom={17}
+      ref={mapRef} // Attach the ref to MapContainer
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

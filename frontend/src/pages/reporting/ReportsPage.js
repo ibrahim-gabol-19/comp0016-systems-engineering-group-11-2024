@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import MapComponent from "../../components/reporting/MapComponent";
 import SidebarReport from "../../components/reporting/SidebarReport";
@@ -14,6 +14,9 @@ const ReportsPage = () => {
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
   const [filter, setFilter] = useState("open");
+
+  const sidebarRef = useRef(null);
+  const mapRef = useRef(null);
 
   const handleMarkerSelected = (item) => {
     setSelectedMarker(item);
@@ -60,20 +63,34 @@ const ReportsPage = () => {
     // eslint-disable-next-line
   }, []);
 
+  const handleOutsideClick = (event) => {
+    if (selectedMarker || newMarker) {
+      if (sidebarRef.current && sidebarRef.current.contains(event.target)) {
+        return; // Click inside sidebar
+      }
+      if (mapRef.current && mapRef.current.getContainer().contains(event.target)) { // Access the DOM container
+        return; // Click inside map
+      }
+      setSelectedMarker(null);
+      setNewMarker(null);
+    }
+  };
+
   return (
-    <div className="h-screen flex flex-col">
-      <Header />
+    <div className="h-screen flex flex-col" onClick={handleOutsideClick}>
+      <Header/>
       <div className="pt-20"></div>
-      <div className="h-full flex flex-col">
-        <div className=" h-full w-full flex">
-          <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6">
+      <div className="h-full flex">
+          {(selectedMarker || newMarker) && (
+          <div className="bg-[#f9f9f9]  shadow-2xl py-5 rounded-xl h-full w-2/6" ref={sidebarRef}>
             <SidebarReport
               selectedMarker={selectedMarker}
               newMarker={newMarker}
               fetchReports={fetchReports}
             ></SidebarReport>
           </div>
-          <div className=" h-full flex flex-col w-4/6 pb-9">
+          )}
+          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6' : 'flex-grow min-w-0'} pb-9`}>
             <div className="text-sm justify-center text-center font-bold pb-2">
               <select
                 value={filter}
@@ -92,9 +109,9 @@ const ReportsPage = () => {
               newMarker={newMarker}
               filter={filter}
               selectedMarker={selectedMarker}
+              mapRef={mapRef}
             ></MapComponent>
           </div>
-        </div>
       </div>
     </div>
   );
