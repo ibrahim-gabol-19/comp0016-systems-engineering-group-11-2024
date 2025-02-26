@@ -1,99 +1,173 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { CompanyContext } from "../../context/CompanyContext";
+
 
 const PointOfInterest = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Landmarks");
+  const [selectedCategory, setSelectedCategory] = useState("landmarks");
+  const categories = ["landmarks", "museums", "parks", "other"];
+  const [poiEvents, setPoiEvents] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { main_color } = useContext(CompanyContext);
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  const categories = ["Landmarks", "Museums", "Parks", "Other"];
-
-  // Sample events data for each category
-  const poiEvents = {
-    Landmarks: [
-      { title: "Big Ben", openTimes: "9:00 AM - 6:00 PM", description: "Iconic clock tower located in London.", image: "https://picsum.photos/850" },
-      { title: "Tower of London", openTimes: "10:00 AM - 5:30 PM", description: "Historic castle on the River Thames.", image: "https://picsum.photos/750" },
-      { title: "London Eye", openTimes: "10:00 AM - 8:00 PM", description: "Famous observation wheel offering panoramic views.", image: "https://picsum.photos/1000" },
-      { title: "The Shard", openTimes: "9:00 AM - 10:00 PM", description: "Tallest building in London with an observation deck.", image: "https://picsum.photos/915" },
-      { title: "Buckingham Palace", openTimes: "9:00 AM - 7:00 PM", description: "The official residence of the British monarch.", image: "https://picsum.photos/910" },
-      { title: "Stonehenge", openTimes: "9:00 AM - 5:00 PM", description: "Prehistoric monument consisting of large stone circles.", image: "https://picsum.photos/1500" },
-      { title: "Westminster Abbey", openTimes: "9:30 AM - 3:30 PM", description: "Historic church and burial site of many monarchs.", image: "https://picsum.photos/720" },
-      { title: "London Bridge", openTimes: "Open 24 hours", description: "Iconic bridge spanning the River Thames.", image: "https://picsum.photos/760#" },
-    ],
-    Museums: [
-      { title: "British Museum", openTimes: "10:00 AM - 6:00 PM", description: "Explore world history and culture.", image: "https://picsum.photos/150" },
-      { title: "Natural History Museum", openTimes: "10:00 AM - 5:50 PM", description: "Discover the wonders of the natural world.", image: "https://picsum.photos/6750" },
-    ],
-    Parks: [
-      { title: "Hyde Park", openTimes: "Open 24 hours", description: "Relax in one of London's largest parks.", image: "https://picsum.photos/950" },
-    ],
-    Other: [
-      { title: "Camden Market", openTimes: "10:00 AM - 7:00 PM", description: "Browse eclectic shops and food stalls.", image: "https://picsum.photos/550" },
-    ],
-  };
+  useEffect(() => {
+    axios
+      .get(API_URL + `events/pois/`)
+      .then((response) => {
+        const event = response.data;
+        setPoiEvents(event);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+        setError("Failed to load POI events.");
+        setLoading(false);
+      });
+    // eslint-disable-next-line
+  }, []);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
 
-  const openEventDetails = (event) => {
-    alert(`Redirecting to detailed page for: ${event.title}`);
+  const handleCardClick = (id) => {
+    navigate(
+      `/events/${id}`
+    );
   };
 
   return (
     <div className="max-w-6xxl mx-auto mt-14">
-      <h2 className="text-2xl font-bold px-6 mb-8">Points of Interest</h2>
+      <h2 className="text-2xl font-bold px-6 mb-8 flex justify-center">Points of Interest</h2>
+      {/* Category Tabs (Mobile Only) */}
+      <div className="bg-white h-1/6 md:hidden flex flex-wrap justify-center gap-4 px-4">
+        {categories.map((category) => (
+          <button
+            key={category}
+            className="p-4 text-center font-bold cursor-pointer flex-grow"
+            style={
+              selectedCategory === category
+                ? {
+                  backgroundColor: "#e5e7eb",
+                  color: main_color,
+                  borderBottom: "4px solid " + main_color
+                }
+                : {
+                  backgroundColor: "white",
+                  color: "gray",
+
+                }
+            }
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#e5e7eb";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+            }}
+
+            onMouseUp={(e) => {
+              e.currentTarget.style.backgroundColor = "white"
+            }}
+
+
+            onClick={() => handleCategoryClick(category)}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
+      </div>
+
       <div className="flex">
-        {/* Sidebar */}
-        <div className="w-1/6 bg-white flex flex-col justify-top">
-          <ul className="space-y-3">
+        {/* Sidebar (Hidden on Mobile) */}
+        <div className="w-1/6 bg-white flex flex-col justify-top md:flex md:w-1/6 hidden">
+          <ul className="">
             {categories.map((category) => (
               <li
                 key={category}
-                className={`p-4 text-center font-bold cursor-pointer ${
+                className="p-4 text-center font-bold cursor-pointer"
+                style={
                   selectedCategory === category
-                    ? "bg-gray-200 text-green-600 border-r-4 border-green-600"
-                    : "bg-white text-gray-600 hover:bg-gray-200"
-                }`}
+                    ? {
+                      backgroundColor: "#e5e7eb",
+                      color: main_color,
+                      borderBottom: "4px solid " + main_color
+                    }
+                    : {
+                      backgroundColor: "white",
+                      color: "gray",
+
+                    }
+                }
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#e5e7eb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+                }}
+
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = "white"
+                }}
                 onClick={() => handleCategoryClick(category)}
               >
-                {category}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
               </li>
             ))}
           </ul>
         </div>
 
         {/* Main Content */}
-        <div className="w-5/6 bg-white p-6 rounded-xl">
-          <h3 className="text-xl font-bold mb-4">{selectedCategory}</h3>
-          <div
-            className="grid grid-cols-3 gap-6 overflow-y-auto"
-            style={{
-              height: "525px",
-              overflowY: "auto",
-              alignContent: "start",
-            }}
-          >
-            {poiEvents[selectedCategory]?.map((event, index) => (
-              <div
-                key={index}
-                className="bg-green-200 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-                onClick={() => openEventDetails(event)}
-                style={{ minHeight: "250px", maxHeight: "250px" }}
-              >
-                {event.image && (
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-32 object-cover"
-                  />
-                )}
-                <div className="p-4">
-                  <h4 className="font-bold text-lg">{event.title}</h4>
-                  <p className="text-sm text-gray-600">{event.openTimes}</p>
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                    {event.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+        <div className="w-5/6 bg-white p-6 md:pl-6" style={{ width: "100%" }}>
+          <h3 className="text-xl font-bold mb-4 md:block hidden">
+            {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+          </h3>
+          <div className="mt-8" style={{ minHeight: "525px" }}>
+            <div className="flex flex-col md:flex-row flex-wrap gap-6 w-full px-6 sm:px-8">
+              {loading ? (
+                <p>Loading...</p>
+              ) : error ? (
+                <p className="text-red-500">Error: {error}</p>
+              ) : poiEvents[selectedCategory] && poiEvents[selectedCategory].length > 0 ? (
+                poiEvents[selectedCategory].map((event, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer w-full lg:w-[24%] "
+                    onClick={() => handleCardClick(event.id)}
+                    style={{
+
+                      backgroundColor: main_color, // Default background color
+                    }}
+                  >
+                    <div className="w-full">
+                      {event.main_image && (
+                        <img
+                          src={event.main_image}
+                          alt={event.title}
+                          className="w-full h-32 object-cover"
+                        />
+                      )}
+                      <div className="p-4 text-center">
+                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">
+                          {event.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                          {event.openTimes}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3">
+                          {event.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-400">No events.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

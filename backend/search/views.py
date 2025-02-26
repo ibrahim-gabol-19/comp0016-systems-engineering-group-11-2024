@@ -40,16 +40,13 @@ def preprocess_data(articles, events):
         datasets.append({
             "source": "event",
             "documents": [
-                (
-                    f"{e['title']} {e['description']} {e['location']}"
-                    f"{e['date']} {e['time']}"
-                )
+                f"{e.get('title', '')} {e.get('event_type', '')} {e.get('description', '')} "
+                f"{e.get('location', '')} {e.get('date', '')} {e.get('time', '')} "
+                f"{e.get('opening_times', '')} {e.get('poi_type', '')}"
                 for e in events
-                if all(key in e for key in ["title", "description", "location", "date", "time"])
             ],
-            "entries": events,  # Keep full event data for frontend use
+            "entries": events,
         })
-
     return datasets
 
 
@@ -61,17 +58,27 @@ def perform_semantic_search(query, datasets):
     results = []
 
     for dataset in datasets:
+        if not dataset["documents"]:  # Check if documents list is empty
+            continue  # Skip this dataset if it has no documents
+
         # Compute cosine similarity for each dataset
         embeddings = model.encode(dataset["documents"])
+        # Check if embeddings is empty after encoding
+        if not embeddings.any(): #embeddings may be empty if all documents are empty.
+            continue
         similarities = cosine_similarity(query_embedding, embeddings).flatten()
 
         # Append top 3 results from this dataset with full details
         top_3_indices = similarities.argsort()[-3:][::-1]
         for idx in top_3_indices:
-            result_entry = dataset["entries"][idx]
-            result_entry["similarity_score"] = float(similarities[idx])
-            result_entry["source"] = dataset["source"]
-            results.append(result_entry)
+            try:  # Handle potential IndexError if fewer than 3 results
+                result_entry = dataset["entries"][idx]
+                result_entry["similarity_score"] = float(similarities[idx])
+                result_entry["source"] = dataset["source"]
+                results.append(result_entry)
+            except IndexError:
+                pass #If there are less than 3 results for a dataset, ignore the error
+
 
     # Sort all results by similarity score and return top 3 overall
     results = sorted(results, key=lambda x: x["similarity_score"],reverse=True)[:3]
@@ -97,7 +104,7 @@ def search(request):
             "http://127.0.0.1:8000/articles/", headers=headers, timeout=10
         ).json()
         events = requests.get(
-            "http://127.0.0.1:8000/events/", headers=headers, timeout=10
+            "http://127.0.0.1:8000/events/search/", headers=headers, timeout=10
         ).json()
     except requests.exceptions.RequestException as e:
         return JsonResponse(

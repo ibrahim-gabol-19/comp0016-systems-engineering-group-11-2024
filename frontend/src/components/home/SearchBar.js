@@ -63,7 +63,7 @@ const SearchBar = () => {
 
     // Check if the results field exists and set the state
     if (response.data && response.data.results) {
-      setSearchResult(response.data.results); // No JSON.parse needed
+      setSearchResult(response.data.results);
     } else {
       setSearchResult([]); // Handle the case where no results are returned
     }    
