@@ -69,7 +69,13 @@ const Header = () => {
         {auth.user?.is_superuser && (
           <Link
             to="/contentmanagementsystem"
-            className="ml-8 text-lg text-black hover:text-green-500 hover:scale-110 transition duration-300"
+            style={{
+              color: "black", // Default color
+              transition: "color 0.3s, transform 0.3s",
+            }}
+            className="ml-8 text-lg hover:scale-110"
+            onMouseEnter={(e) => (e.target.style.color = main_color)} // Set hover color
+            onMouseLeave={(e) => (e.target.style.color = "black")} // Reset to default
           >
             Manage
           </Link>
