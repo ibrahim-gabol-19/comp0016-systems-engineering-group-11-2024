@@ -150,7 +150,7 @@ const Calendar = () => {
       {loading ? (
         <p className="text-center text-gray-500">Loading events...</p>
       ) : (
-        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", maxWidth: "80%" }}> 
+        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", minWidth: "80%", maxWidth: "80%" }}> 
           {daysOfWeek.map((day) => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
