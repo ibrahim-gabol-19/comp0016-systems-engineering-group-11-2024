@@ -14,6 +14,7 @@ const MapResizeFix = () => {
   return null;
 };
 
+
 const MapComponent = ({ filters, dates, reports }) => {
   const navigate = useNavigate();
   const [filteredItems, setFilteredItems] = useState([]);
