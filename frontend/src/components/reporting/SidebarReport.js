@@ -381,7 +381,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-full h-1/4 text-center justify-center">
                 <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+                  Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
             </div>

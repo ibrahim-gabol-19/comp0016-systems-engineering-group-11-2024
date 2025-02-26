@@ -21,10 +21,11 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, filter, selectedMarker, mapRef }) => { // Add mapRef prop
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
   const zoomLevel = 13;
   const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+
 
   const bounds = [
     [sw_lat, sw_lon],
@@ -62,13 +63,14 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
     );
   }
 
-  const filteredReports = reports.filter((item) => item.status === filter);
+  const filteredReports = reports.filter((item) => activeFilters.includes(item.status));
 
   return (
+    <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}>
     <MapContainer
       center={[0, 0]}
       zoom={zoomLevel}
-      style={{ width: "100%", minHeight: "100%", height: "100%" }}
+      style={{ width: "100%", minHeight: "100%", height: "100%"}}
       maxBounds={bounds}
       maxBoundsViscosity={1.0}
       minZoom={8}
@@ -93,6 +95,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       <NewReport />
       <RecenterMap selectedMarker={selectedMarker} />
     </MapContainer>
+    </div>
   );
 };
 

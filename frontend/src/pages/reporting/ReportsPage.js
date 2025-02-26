@@ -13,11 +13,16 @@ const ReportsPage = () => {
   const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
-  const [filter, setFilter] = useState("open");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
+
+  const [filterToggles, setFilterToggles] = useState({
+    open: true,
+    resolved: false,
+    closed: false,
+  });
 
   const handleMarkerSelected = (item) => {
     setSelectedMarker(item);
@@ -57,10 +62,6 @@ const ReportsPage = () => {
     }
   };
 
-  const filterChange = (event) => {
-    setFilter(event.target.value);
-  };
-
   useEffect(() => {
     fetchReports();
     // eslint-disable-next-line
@@ -86,6 +87,18 @@ const ReportsPage = () => {
     setIsSidebarOpen(false); // Close sidebar when X button is clicked
   };
 
+  const handleToggleChange = (filterName) => {
+    setFilterToggles((prevToggles) => ({
+      ...prevToggles,
+      [filterName]: !prevToggles[filterName],
+    }));
+  };
+
+  const getActiveFilters = () => {
+    return Object.keys(filterToggles).filter((key) => filterToggles[key]);
+  };
+
+
   return (
     <div className="h-screen flex flex-col" onClick={handleOutsideClick}>
       <Header/>
@@ -106,28 +119,37 @@ const ReportsPage = () => {
             ></SidebarReport>
           </div>
           )}
-          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6' : 'flex-grow min-w-0'} pb-9`}>
-            <div className="text-sm justify-center text-center font-bold pb-2">
-              <select
-                value={filter}
-                onChange={filterChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="open">Open Issues</option>
-                <option value="resolved">Resolved Issues</option>
-                <option value="closed">Closed Issues</option>
-              </select>
-            </div>
+          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6' : 'flex-grow min-w-0'} pb-9 relative`}>
             <MapComponent
               onMarkerSelected={handleMarkerSelected}
               onNewMarkerSelected={handleNewMarkerSelected}
               reports={reports}
               newMarker={newMarker}
-              filter={filter}
+              activeFilters={getActiveFilters()}
               selectedMarker={selectedMarker}
               mapRef={mapRef}
             ></MapComponent>
+            <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-10 mb-10">
+              <button
+                className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.open ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-200'}`}
+                onClick={() => handleToggleChange('open')}
+              >
+                Unresolved
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.resolved ? 'bg-green-500 text-white border-green-500' : 'bg-gray-200'}`}
+                onClick={() => handleToggleChange('resolved')}
+              >
+                Resolved
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.closed ? 'bg-red-500 text-white border-red-500' : 'bg-gray-200'}`}
+                onClick={() => handleToggleChange('closed')}
+              >
+                Closed
+              </button>
           </div>
+        </div>
       </div>
     </div>
   );
