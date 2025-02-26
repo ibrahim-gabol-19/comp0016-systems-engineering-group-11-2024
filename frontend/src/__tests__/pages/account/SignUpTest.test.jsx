@@ -4,22 +4,24 @@ import userEvent from "@testing-library/user-event";
 import SignUp from "../../../pages/account/SignUp";
 import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../../context/AuthContext"; // Import useAuth
-
+import { useAuth } from "../../../context/AuthContext";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 
 // Mock axios
-jest.mock("axios");
+vi.mock("axios");
 
 // Mock AuthContext
-jest.mock("../../../context/AuthContext", () => ({
-    useAuth: jest.fn(),
+vi.mock("../../../context/AuthContext", () => ({
+    useAuth: vi.fn(),
 }));
 
+// Mock import.meta.env
+vi.stubEnv("VITE_API_URL", "http://localhost:8000/api");
 
 describe("SignUp Component", () => {
     beforeEach(() => {
         // Clear all mocks before each test
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test("renders the sign-up form", () => {
@@ -64,9 +66,6 @@ describe("SignUp Component", () => {
                 screen.getByText(/password must be at least 8 characters long/i)
             ).toBeInTheDocument();
             expect(
-                screen.getByText(/password must be at least 8 characters long/i)
-            ).toBeInTheDocument();
-            expect(
                 screen.getByText(/password must contain at least one uppercase letter/i)
             ).toBeInTheDocument();
             expect(
@@ -77,6 +76,7 @@ describe("SignUp Component", () => {
             ).toBeInTheDocument();
         });
     });
+
     test("submits the form successfully with valid data", async () => {
         // Mock a successful API response
         axios.post.mockResolvedValueOnce({ data: {} });
@@ -101,8 +101,7 @@ describe("SignUp Component", () => {
         // Check if the API was called with the correct data
         await waitFor(() => {
             expect(axios.post).toHaveBeenCalledWith(
-                // Match any URL (importing the .env doesn't work in jest - Ibrahim)
-                expect.any(String), 
+                `${import.meta.env.VITE_API_URL}/auth/signup/`, // Use the environment variable
                 {
                     username: "testuser",
                     email: "test@example.com",

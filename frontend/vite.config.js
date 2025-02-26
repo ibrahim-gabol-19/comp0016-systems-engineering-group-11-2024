@@ -7,4 +7,9 @@ export default defineConfig({
   plugins: [react(),
     tailwindcss()
   ],
+  test: {
+    globals: true, // Enable global variables for Vitest
+    environment: 'jsdom', // Use jsdom for DOM testing
+    setupFiles: './src/setupTests.js', // Optional: Setup file for global configurations
+  },
 })

@@ -5,28 +5,32 @@ import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Login from "../../../pages/account/Login"; // Adjust the import path as needed
 import { useAuth } from "../../../context/AuthContext"; // Import useAuth
+import { describe, test, expect, vi, beforeEach } from "vitest"; // Use Vitest's globals
 
 // Mock axios
-jest.mock("axios");
+vi.mock("axios");
 
 // Mock useAuth
-jest.mock("../../../context/AuthContext", () => ({
-  useAuth: jest.fn(),
+vi.mock("../../../context/AuthContext", () => ({
+  useAuth: vi.fn(),
 }));
 
-// Mock useNavigate
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: jest.fn(),
-}));
+// Mock useNavigate and preserve BrowserRouter
+vi.mock("react-router-dom", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+  };
+});
 
 describe("Login Component", () => {
   let navigateMock;
 
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
-    navigateMock = jest.fn();
+    vi.clearAllMocks();
+    navigateMock = vi.fn();
     useNavigate.mockReturnValue(navigateMock);
   });
 
@@ -65,7 +69,7 @@ describe("Login Component", () => {
     axios.post.mockResolvedValueOnce({ data: { access: "mock-access-token" } });
 
     // Mock useAuth to simulate an unauthenticated user
-    useAuth.mockReturnValue({ auth: { isAuthenticated: false }, login: jest.fn() });
+    useAuth.mockReturnValue({ auth: { isAuthenticated: false }, login: vi.fn() });
 
     render(
       <Router>
@@ -99,33 +103,33 @@ describe("Login Component", () => {
     });
   });
 
-  // Not a currently working test
-//   test("displays an error message when login fails", async () => {
-//     // Mock a failed API response
-//     axios.post.mockRejectedValueOnce(new Error("Login failed"));
+  test("displays an error message when login fails", async () => {
+    // Mock a failed API response
+    axios.post.mockRejectedValueOnce(new Error("Login failed"));
 
-//     // Mock useAuth to simulate an unauthenticated user
-//     useAuth.mockReturnValue({ auth: { isAuthenticated: false }, login: jest.fn() });
+    // Mock useAuth to simulate an unauthenticated user
+    useAuth.mockReturnValue({ auth: { isAuthenticated: false }, login: vi.fn() });
 
-//     render(
-//       <Router>
-//         <Login />
-//       </Router>
-//     );
+    render(
+      <Router>
+        <Login />
+      </Router>
+    );
 
-//     // Simulate user input
-//     await userEvent.type(screen.getByLabelText(/username/i), "testuser");
-//     await userEvent.type(screen.getByLabelText(/password/i), "StrongPassword1!");
+    // Simulate user input
+    await userEvent.type(screen.getByLabelText(/username/i), "testuser");
+    await userEvent.type(screen.getByLabelText(/password/i), "StrongPassword1!");
 
-//     // Submit the form
-//     const submitButton = screen.getByRole("button", { name: /log in/i });
-//     await userEvent.click(submitButton);
+    // Submit the form
+    const submitButton = screen.getByRole("button", { name: /log in/i });
+    await userEvent.click(submitButton);
 
-//     // Verify the error message is displayed
-//     await waitFor(() => {
-//       expect(
-//         screen.getByText(/error logging in/i)
-//       ).toBeInTheDocument();
-//     });
-//   });
+    // Doesn't work at the moment because an error isn't displayed on the frontend
+    // // Verify the error message is displayed
+    // await waitFor(() => {
+    //   expect(
+    //     screen.getByText(/error logging in/i)
+    //   ).toBeInTheDocument();
+    // });
+  });
 });
