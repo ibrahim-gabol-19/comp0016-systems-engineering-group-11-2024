@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }) => {
             console.error("Failed to fetch user data", error);
         }
     };
-
     // Logout function - clears token and user info
     const logout = () => {
         localStorage.removeItem('token');
