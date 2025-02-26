@@ -19,6 +19,15 @@ let DefaultIcon = L.icon({
   iconAnchor: [12, 16],
 });
 
+// Selected Icon (Larger)
+let SelectedIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [35, 57], // Increased size
+  iconAnchor: [17, 57], // Adjusted anchor
+});
+
+
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
@@ -59,7 +68,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
     });
 
     return newMarker === null ? null : (
-      <Marker position={position} draggable={true}></Marker>
+      <Marker position={position} draggable={true} icon={SelectedIcon}></Marker>
     );
   }
 
@@ -85,6 +94,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
         <Marker
           key={item.id}
           position={[item.latitude, item.longitude]}
+          icon={selectedMarker && selectedMarker.id === item.id ? SelectedIcon : DefaultIcon}
           eventHandlers={{
             click: () => {
               onMarkerSelected(item);
