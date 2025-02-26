@@ -84,25 +84,33 @@ const MapComponent = ({ filters, dates, reports }) => {
         />
         {filteredItems.map((item) => (
           <Marker
-            key={item.id}
-            position={[item.lat, item.lng]} // Ensure lat/lng exist
-            icon={new L.DivIcon({
-              className: "emoji-icon",
-              html: `<span style="font-size: 25px;">${item.emoji || "⚠️"}</span>`,
-            })}
-          >
-            <Popup>
-              <div>
-                <h3>{item.name}</h3>
-                <button
-                  onClick={() => handleRedirect(item)}
-                  className="bg-blue-500 text-white px-2 py-1 rounded mt-2"
-                >
-                  View Report
-                </button>
-              </div>
-            </Popup>
-          </Marker>
+  key={item.id}
+  position={[item.lat, item.lng]} // Ensure lat/lng exist
+  icon={new L.DivIcon({
+    className: "emoji-icon",
+    html: `<span style="font-size: 20px;">${item.emoji || "⚠️"}</span>`,
+  })}
+>
+  <Popup offset={[0, -10]}> {/* Adjusts popup position */}
+    <div className="p-2 w-48 text-sm">
+      <h3 className="text-base font-semibold text-gray-800">{item.name}</h3>
+
+      {item.tags && (
+        <div className="bg-gray-200 text-gray-700 text-xs font-medium px-1 py-0.5 rounded mt-1">
+          #{item.tags}
+        </div>
+      )}
+
+      <button
+        onClick={() => handleRedirect(item)}
+        className="mt-2 w-full bg-blue-500 text-white text-xs font-medium py-1 rounded transition-all duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+      >
+        🔍 View Report
+      </button>
+    </div>
+  </Popup>
+</Marker>
+
         ))}
       </MapContainer>
     </div>
