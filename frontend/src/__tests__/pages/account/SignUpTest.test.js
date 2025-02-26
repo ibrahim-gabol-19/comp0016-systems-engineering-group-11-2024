@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext"; // Import useAuth
 
+
 // Mock axios
 jest.mock("axios");
 
@@ -14,10 +15,12 @@ jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn(),
 }));
 
+
 describe("SignUp Component", () => {
     beforeEach(() => {
         // Clear all mocks before each test
         jest.clearAllMocks();
+        const API_URL = import.meta.env.VITE_API_URL;
     });
 
     test("renders the sign-up form", () => {
@@ -47,6 +50,8 @@ describe("SignUp Component", () => {
         );
 
         // Simulate user input
+        await userEvent.type(screen.getByLabelText(/username/i), "testuser");
+        await userEvent.type(screen.getByLabelText(/email address/i), "test@example.com");
         const passwordInput = screen.getByLabelText(/password/i);
         await userEvent.type(passwordInput, "weak");
 
@@ -59,21 +64,18 @@ describe("SignUp Component", () => {
             expect(
                 screen.getByText(/password must be at least 8 characters long/i)
             ).toBeInTheDocument();
-            //     expect(
-            //     screen.getByText(/password must be at least 8 characters long/i)
-            //   ).toBeInTheDocument();
-            //   expect(
-            //     screen.getByText(/password must contain at least one uppercase letter/i)
-            //   ).toBeInTheDocument();
-            //   expect(
-            //     screen.getByText(/password must contain at least one lowercase letter/i)
-            //   ).toBeInTheDocument();
-            //   expect(
-            //     screen.getByText(/password must contain at least one number/i)
-            //   ).toBeInTheDocument();
-            //   expect(
-            //     screen.getByText(/password must contain at least one special character/i)
-            //   ).toBeInTheDocument();
+            expect(
+                screen.getByText(/password must be at least 8 characters long/i)
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(/password must contain at least one uppercase letter/i)
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(/password must contain at least one number/i)
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(/password must contain at least one special character/i)
+            ).toBeInTheDocument();
         });
     });
     test("submits the form successfully with valid data", async () => {
@@ -100,7 +102,7 @@ describe("SignUp Component", () => {
         // Check if the API was called with the correct data
         await waitFor(() => {
             expect(axios.post).toHaveBeenCalledWith(
-                "http://localhost:8000/api/auth/signup/",
+                "http://localhost:3000/api/auth/signup/",
                 {
                     username: "testuser",
                     email: "test@example.com",
