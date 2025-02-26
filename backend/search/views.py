@@ -46,8 +46,7 @@ def preprocess_data(articles, events):
                 for e in events
             ],
             "entries": events,
-        })
-        
+        }) 
     return datasets
 
 
