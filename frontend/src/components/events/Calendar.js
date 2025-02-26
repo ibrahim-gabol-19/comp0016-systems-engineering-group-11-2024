@@ -254,15 +254,12 @@ const Calendar = () => {
                         onClick={(e) => openEventDetails(event, e)}
                         style={{
                           color: "black",
-                          backgroundColor: lightenColor(
-                            main_color,
-                            40
-                          )
+                          backgroundColor: main_color,
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = lightenColor(
                             main_color,
-                            60
+                            20
                           ); // Lighter background on hover
                         }}
                         onMouseLeave={(e) => {
@@ -270,10 +267,7 @@ const Calendar = () => {
                         }}
 
                         onMouseUp={(e) => {
-                          e.currentTarget.style.backgroundColor = lightenColor(
-                            main_color,
-                            20
-                          ); // Reset to hover state on mouse up
+                          e.currentTarget.style.backgroundColor = main_color;
                         }}
 
                       >
