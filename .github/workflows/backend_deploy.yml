@@ -3,7 +3,7 @@ name: Build and deploy Python app to Azure Web App - backendsysenggroup11
 on:
   push:
     branches:
-      - main
+      - 62-azure-live-host
   workflow_dispatch:
 
 jobs:
