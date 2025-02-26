@@ -128,7 +128,7 @@ const Calendar = () => {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "white";
-              e.currentTarget.style.outline = "none" ;
+              e.currentTarget.style.outline = "none";
               e.currentTarget.style.backgroundColor = lightenColor(
                 main_color,
                 20
@@ -206,7 +206,7 @@ const Calendar = () => {
                       20
                     ); // Reset to hover state on mouse up
                   }}
-                
+
                 >
                   <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
                     {event.title}
@@ -234,10 +234,14 @@ const Calendar = () => {
             return (
               <div
                 key={dayKey}
-                className={`border rounded-lg shadow p-4 flex flex-col ${isToday && highlightToday ? "bg-green-200" : "bg-white"
-                  }`}
-                style={{ height: "100%" }}
+                className="border rounded-lg shadow p-4 flex flex-col"
+                style={
+                  isToday && highlightToday
+                    ? { backgroundColor: lightenColor(main_color, 40), height: "100%" }
+                    : { backgroundColor: "white" }
+                }
               >
+
                 <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
                 <p className="font-bold text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
 
@@ -246,8 +250,32 @@ const Calendar = () => {
                     dayEvents.map((event, index) => (
                       <div
                         key={index}
-                        className="p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer w-full h-[90px] flex flex-col justify-center"
+                        className="p-2  rounded-lg  cursor-pointer w-full h-[90px] flex flex-col justify-center"
                         onClick={(e) => openEventDetails(event, e)}
+                        style={{
+                          color: "black",
+                          backgroundColor: lightenColor(
+                            main_color,
+                            40
+                          )
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = lightenColor(
+                            main_color,
+                            60
+                          ); // Lighter background on hover
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
+                        }}
+
+                        onMouseUp={(e) => {
+                          e.currentTarget.style.backgroundColor = lightenColor(
+                            main_color,
+                            20
+                          ); // Reset to hover state on mouse up
+                        }}
+
                       >
                         <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center break-words" title={event.title}>
                           {event.title}
