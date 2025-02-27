@@ -111,13 +111,27 @@ const SearchBar = () => {
         Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
         
         Be polite, professional, and ensure responses are concise and user-friendly. 
-
+    
+        ---
+        **IMPORTANT**: When responding to event-related queries, follow these rules:
+        - Identify which results are events by checking if they have a "date" field.
+        - Convert the date string into a comparable format.
+        - Compare each event's date to today's date.
+        - **Only return upcoming events (dates after today).**
+        - If multiple upcoming events exist, sort them from soonest to latest
+    
+        Today's date: ${new Date().toISOString().split("T")[0]}
+    
+        ---
+        **Event Data (JSON Format)**
+        ${JSON.stringify(searchResult, null, 2)}
         
-        Here are the search results:
-        ${JSON.stringify(searchResult)}`,
+        Based on this data, answer the user's question appropriately.
+        `,
       },
       { role: "user", content: userQuery },
     ];
+    
 
     try {
       const chunks = await engine.chat.completions.create({
@@ -164,7 +178,7 @@ const SearchBar = () => {
         <div className="w-full max-w-3xl rounded-3xl bg-white border border-gray-200 shadow-lg transition-all duration-300">
           {/* User Message */}
           <div className="flex justify-end my-3 px-6">
-            <div className="max-w-3/4 px-4 py-3 bg-green-100 rounded-2xl shadow-md">
+            <div className="max-w-full px-4 py-3 bg-green-100 rounded-2xl shadow-md">
               <p className="text-right text-gray-800">{fullUserQuery}</p>
             </div>
             <svg
@@ -180,42 +194,54 @@ const SearchBar = () => {
               <path d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
           </div>
+{/* Search Results */}
+<div className="grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl">
+  {Array.isArray(searchResult) ? searchResult.map((item, index) => (
+    <div
+      key={index}
+      className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+      onClick={() => handleRedirect(item)}
+    >
+      {/* Title */}
+      <p className="font-bold text-lg text-gray-900 tracking-wide break-words">{item.title}</p>
+      
+      {/* Source */}
+      <span className="text-xs font-medium text-gray-500 uppercase">{item.source}</span>
+      
+      {/* Score */}
+      <p className="text-sm text-gray-600 mt-1">🔢 Score: 
+        <span className="font-medium"> {item.similarity_score.toFixed(3)}</span>
+      </p>
+      
+      {/* Conditional Content */}
+      <div className="overflow-hidden text-ellipsis flex-grow">
+        {item.source === "event" && (
+          <>
+            <p className="text-sm text-gray-700 mt-2">📅 <span className="font-medium">Date:</span> {item.date}</p>
+            <p className="text-sm text-gray-700">⏰ <span className="font-medium">Time:</span> {item.time}</p>
+            <p className="text-sm text-gray-700">📍 <span className="font-medium">Location:</span> {item.location}</p>
+            <p className="text-sm text-gray-700 line-clamp-2">📖 <span className="font-medium">Description:</span> {item.description}</p>
+          </>
+        )}
+        {item.source === "article" && (
+          <>
+            <p className="text-sm text-gray-700 mt-2">✍️ <span className="font-medium">Author:</span> {item.author}</p>
+            <p className="text-sm text-gray-700">📅 <span className="font-medium">Published:</span> {item.published_date}</p>
+            <p className="text-sm text-gray-700 line-clamp-2">📖 <span className="font-medium">Description:</span> {item.description}</p>
+          </>
+        )}
+        {item.source === "report" && (
+          <>
+            <p className="text-sm text-gray-700 mt-2">📅 <span className="font-medium">Date:</span> {item.published_date}</p>
+            <p className="text-sm text-gray-700">🏷️ <span className="font-medium">Tag:</span> {item.tags}</p>
+            <p className="text-sm text-gray-700 line-clamp-2">📖 <span className="font-medium">Description:</span> {item.description}</p>
+          </>
+        )}
+      </div>
+    </div>
+  )) : null}
+</div>
 
-          {/* Search Results */}
-          <div className="grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl">
-            {Array.isArray(searchResult) ? searchResult.map((item, index) => (
-              <div
-                key={index}
-                className="p-5 bg-blue-50  rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all"
-                onClick={() => handleRedirect(item)}
-              >
-                <p className="font-bold text-lg text-gray-900 tracking-wide">{item.title}</p>
-                <span className="text-xs font-medium text-gray-500 uppercase">{item.source}</span>
-                <p className="text-sm text-gray-600 mt-1">🔢 Score: <span className="font-medium">{item.similarity_score.toFixed(3)}</span></p>
-                
-                {item.source === "event" && (
-                  <>
-                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">📅 <span className="font-medium">Date:</span> {item.date}</p>
-                    <p className="text-sm text-gray-700 flex items-center gap-1">⏰ <span className="font-medium">Time:</span> {item.time}</p>
-                    <p className="text-sm text-gray-700 flex items-center gap-1">📍 <span className="font-medium">Location:</span> {item.location}</p>
-                  </>
-                )}
-                {item.source === "article" && (
-                  <>
-                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">✍️ <span className="font-medium">Author:</span> {item.author}</p>
-                    <p className="text-sm text-gray-700 flex items-center gap-1">📅 <span className="font-medium">Published:</span> {item.published_date}</p>
-                  </>
-                )}
-                {item.source === "report" && (
-                  <>
-                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">📅 <span className="font-medium">Date:</span> {item.published_date}</p>
-                    <p className="text-sm text-gray-700 flex items-center gap-1">⏰ <span className="font-medium">Tag:</span> {item.tags}</p>
-               
-                  </>
-                )}
-              </div>
-            )) : null}
-          </div>
 
           {/* AI Response */}
           <div className="flex my-4 px-6 items-start">
@@ -231,7 +257,7 @@ const SearchBar = () => {
             >
               <path d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
             </svg>
-            <div className="max-w-3/4 px-4 py-3 bg-blue-100 rounded-2xl shadow-md">
+            <div className="max-w-full px-4 py-3 bg-blue-100 rounded-2xl shadow-md">
               <ReactMarkdown className="text-gray-800">{modelReply}</ReactMarkdown>
             </div>
           </div>
