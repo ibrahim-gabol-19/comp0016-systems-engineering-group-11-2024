@@ -15,7 +15,7 @@ import requests  # pylint: disable=E0401
 model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
 
 
-def preprocess_data(articles, events):
+def preprocess_data(articles, events,reports):
     """
     Preprocess the data for semantic search by concatenating relevant fields.
     """
@@ -45,7 +45,19 @@ def preprocess_data(articles, events):
                 f"{e.get('opening_times', '')} {e.get('poi_type', '')}"
                 for e in events
             ],
-            "entries": events,
+            "entries": events, })    
+    if reports:
+        datasets.append({
+            "source": "report",
+            "documents": [
+                (
+                    f"{a.get('title', '')} {a.get('description', '')} {a.get('content', '')} "
+                    f"{a.get('author', '')} {a.get('tags', '')} {a.get('published_date', '')}"
+                ).strip()  # Strip extra spaces in case of missing fields
+                for a in reports
+                if "id" in a and "title" in a and "description" in a
+            ],
+            "entries": reports ,
         })
     return datasets
 
@@ -104,8 +116,11 @@ def search(request):
             "http://127.0.0.1:8000/articles/", headers=headers, timeout=10
         ).json()
         events = requests.get(
-            "http://127.0.0.1:8000/events/search/", headers=headers, timeout=10
+            "http://127.0.0.1:8000/events/", headers=headers, timeout=10
         ).json()
+        reports = requests.get(
+            "http://127.0.0.1:8000/reports/", headers=headers, timeout=10
+            ).json()
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"error": "Failed to fetch data.", "details": str(e)},
@@ -116,7 +131,7 @@ def search(request):
         return JsonResponse({"error": "No data available for search."}, status=404)
 
     # Preprocess the data and perform semantic search
-    datasets = preprocess_data(articles, events)
+    datasets = preprocess_data(articles, events,reports)
     results = perform_semantic_search(query, datasets)
 
     return JsonResponse({"query": query, "results": results})
