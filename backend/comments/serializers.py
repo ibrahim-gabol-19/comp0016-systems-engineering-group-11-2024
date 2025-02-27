@@ -1,18 +1,30 @@
 from rest_framework import serializers
+from django.contrib.contenttypes.models import ContentType
 from .models import Comment
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
     like_count = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
-    post_id = serializers.IntegerField(write_only=True)  # Add this line
+    # Accept generic fields from the frontend
+    content_type = serializers.CharField(write_only=True)
+    object_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'author', 'post_id', 'parent_comment', 'created_at', 'updated_at', 'likes', 'like_count', 'replies']
+        fields = [
+            'id',
+            'content',
+            'author',
+            'content_type',
+            'object_id',
+            'parent_comment',
+            'created_at',
+            'updated_at',
+            'likes',
+            'like_count',
+            'replies'
+        ]
         read_only_fields = ['author', 'created_at', 'updated_at', 'likes']
 
     def get_like_count(self, obj):
@@ -23,6 +35,24 @@ class CommentSerializer(serializers.ModelSerializer):
         return CommentSerializer(replies, many=True).data
 
     def create(self, validated_data):
+        request_data = self.context['request'].data
         user = self.context['request'].user
         validated_data['author'] = user
+
+        # Convert content_type string (e.g. "forums.forumpost") to a ContentType instance
+        content_type_str = validated_data.pop('content_type')
+        try:
+            app_label, model = content_type_str.split('.')
+            ct = ContentType.objects.get(app_label=app_label, model=model)
+        except Exception:
+            raise serializers.ValidationError(
+                "Invalid content_type format. Expected 'app_label.model'."
+            )
+        validated_data['content_type'] = ct
+
+        # If a reply is being made, map the frontend's "reply_to" field to parent_comment
+        reply_to = request_data.get('reply_to')
+        if reply_to:
+            validated_data['parent_comment_id'] = reply_to
+
         return Comment.objects.create(**validated_data)

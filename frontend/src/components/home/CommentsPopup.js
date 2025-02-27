@@ -9,12 +9,15 @@ const CommentsPopup = ({ postId, onClose }) => {
   const [newComment, setNewComment] = useState(""); // State for new comment input
   const [replyTo, setReplyTo] = useState(null); // State to track which comment is being replied to
 
-  // Fetch comments for the selected post
+  // Fetch comments for the selected forum post using generic fields
   const fetchComments = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}comments/`, {
-        params: { post_id: postId }, // Pass the post ID as a query parameter
+        params: { 
+          content_type: "forums.forumpost", 
+          object_id: postId 
+        },
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       setComments(response.data); // Update the state with fetched comments
@@ -23,7 +26,7 @@ const CommentsPopup = ({ postId, onClose }) => {
     }
   };
 
-  // Fetch comments when the component mounts
+  // Fetch comments when the component mounts or when postId changes
   useEffect(() => {
     fetchComments();
   }, [postId]);
@@ -34,17 +37,17 @@ const CommentsPopup = ({ postId, onClose }) => {
     try {
       const token = localStorage.getItem("token");
 
-      // Log the payload before sending the request
       const payload = {
         content: newComment,
-        post_id: postId, // Include the post ID in the payload
-        reply_to: replyTo, // Include the reply_to field if it exists
+        content_type: "forums.forumpost", // Generic content type for forum posts
+        object_id: postId,              // Forum post ID
+        reply_to: replyTo,              // Optional: reply to a specific comment
       };
       console.log("Payload being sent:", payload);
 
       const response = await axios.post(
         `${API_URL}comments/`,
-        payload, // Send the payload
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,8 +58,8 @@ const CommentsPopup = ({ postId, onClose }) => {
       console.log("Response from backend:", response.data);
 
       setNewComment(""); // Clear the input field
-      setReplyTo(null); // Reset replyTo
-      fetchComments(); // Refresh the comments list
+      setReplyTo(null);  // Reset replyTo
+      fetchComments();   // Refresh the comments list
     } catch (error) {
       console.error("Error submitting comment:", error);
       if (error.response) {
@@ -94,7 +97,7 @@ const CommentsPopup = ({ postId, onClose }) => {
             <div key={index} className="mb-4">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                  {comment.author[0]} {/* Display the first letter of the author's username */}
+                  {comment.author[0]}
                 </div>
                 <p className="font-semibold text-gray-800">{comment.author}</p>
               </div>

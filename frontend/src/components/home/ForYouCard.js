@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
 import VolunteeringButton from "./VolunteeringButton";
-import { FaThumbsUp, FaThumbsDown, FaComment } from "react-icons/fa"; // Added FaComment for the comment icon
-import CreatePostModal from "./CreatePostModal"; // Import the CreatePostModal component
-import CommentsPopup from "./CommentsPopup"; // Import the CommentsPopup component
+import { FaThumbsUp, FaThumbsDown, FaComment } from "react-icons/fa";
+import CreatePostModal from "./CreatePostModal";
+import CommentsPopup from "./CommentsPopup";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ForYouCard = () => {
-  const [cards, setCards] = useState([]); // State to store forum posts
+  const [cards, setCards] = useState([]); // Forum posts state
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState(null); // Track which post's comments are being viewed
+  const [selectedPostId, setSelectedPostId] = useState(null); // Which post's comments to show
 
   // Fetch forum posts from the backend
   const fetchForumPosts = async () => {
@@ -21,13 +21,12 @@ const ForYouCard = () => {
       const response = await axios.get(`${API_URL}forums/`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      setCards(response.data); // Update the state with fetched posts
+      setCards(response.data);
     } catch (error) {
       console.error("Error fetching forum posts:", error);
     }
   };
 
-  // Fetch posts when the component mounts
   useEffect(() => {
     fetchForumPosts();
   }, []);
@@ -49,35 +48,31 @@ const ForYouCard = () => {
         },
       });
 
-      // Refresh the list of posts after creating a new one
       fetchForumPosts();
     } catch (error) {
       console.error("Error creating forum post:", error);
     }
   };
 
-  // Function to format date as dd/mm/yyyy
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
 
-  // Handle opening the comments popup
   const handleOpenComments = (postId) => {
     setSelectedPostId(postId);
   };
 
-  // Handle closing the comments popup
   const handleCloseComments = () => {
     setSelectedPostId(null);
   };
 
   return (
     <div className="p-6 font-sans">
-      {/* "For You" Section Header with Create Post Button */}
+      {/* "For You" Section Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">For You</h2>
         <button
@@ -90,13 +85,11 @@ const ForYouCard = () => {
 
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Display forum posts */}
         {cards.map((card, index) => (
           <div
             key={index}
             className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
           >
-            {/* Media Section */}
             {card.media && (
               <img
                 src={card.media}
@@ -104,16 +97,14 @@ const ForYouCard = () => {
                 className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
               />
             )}
-
-            {/* Content Section */}
             <div className="p-4 flex-1">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3 group-hover:bg-gray-500 transition-colors duration-300">
-                    {card.author[0]} {/* Display the first letter of the author's username */}
+                    {card.author[0]}
                   </div>
                   <p className="font-semibold text-lg text-gray-800 group-hover:text-gray-900 transition-colors duration-300">
-                    {card.author} {/* Display the author's username */}
+                    {card.author}
                   </p>
                 </div>
                 {card.tags === "News" ? (
@@ -128,21 +119,16 @@ const ForYouCard = () => {
                 {card.content}
               </p>
               <p className="text-gray-500 text-sm mt-2 italic group-hover:text-gray-700 transition-colors duration-300">
-                {formatDate(card.created_at)} {/* Display the post creation date in dd/mm/yyyy format */}
+                {formatDate(card.created_at)}
               </p>
-
-              {/* Comment and Thumbs-Up/Down in the Same Line */}
               <div className="flex items-center justify-between mt-3">
-                {/* Comment Icon with Count */}
                 <button
-                  onClick={() => handleOpenComments(card.id)} // Open comments popup
+                  onClick={() => handleOpenComments(card.id)}
                   className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                 >
                   <FaComment className="text-xl" />
-                  <span className="text-sm">{card.comments?.length || 0}</span> {/* Display comment count */}
+                  <span className="text-sm">{card.comments?.length || 0}</span>
                 </button>
-
-                {/* Thumbs-Up and Thumbs-Down */}
                 <div className="flex space-x-2">
                   <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
                     <FaThumbsUp className="text-xl" />
@@ -156,18 +142,18 @@ const ForYouCard = () => {
           </div>
         ))}
 
-        {/* Display existing cards */}
+        {/* Existing dummy cards */}
         {[
           {
-            id: 997, // Add an ID for the example card
+            id: 997,
             name: "Jane Doe",
             tag: "News",
-            content: "Green Inc are proud to launch their first prototype!  😁",
+            content: "Green Inc are proud to launch their first prototype! 😁",
             comment: "Awesome news!",
-            media: "https://via.placeholder.com/300x200", // Media image URL
+            media: "https://via.placeholder.com/300x200",
           },
           {
-            id: 998, // Add an ID for the example card
+            id: 998,
             name: "John Doe",
             tag: "Event",
             content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
@@ -175,7 +161,7 @@ const ForYouCard = () => {
             media: "https://via.placeholder.com/300x200",
           },
           {
-            id: 999, // Add an ID for the example card
+            id: 999,
             name: "Emily Smith",
             tag: "Volunteering",
             content: "Join us in making a difference in the community! 🌍",
@@ -187,7 +173,6 @@ const ForYouCard = () => {
             key={`existing-${index}`}
             className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
           >
-            {/* Media Section */}
             {card.media && (
               <img
                 src={card.media}
@@ -195,8 +180,6 @@ const ForYouCard = () => {
                 className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
               />
             )}
-
-            {/* Content Section */}
             <div className="p-4 flex-1">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
@@ -221,19 +204,14 @@ const ForYouCard = () => {
               <p className="text-gray-500 text-sm mt-2 italic group-hover:text-gray-700 transition-colors duration-300">
                 {card.comment}
               </p>
-
-              {/* Comment and Thumbs-Up/Down in the Same Line */}
               <div className="flex items-center justify-between mt-3">
-                {/* Comment Icon with Count */}
                 <button
-                  onClick={() => handleOpenComments(card.id)} // Open comments popup
+                  onClick={() => handleOpenComments(card.id)}
                   className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                 >
                   <FaComment className="text-xl" />
-                  <span className="text-sm">{card.comments?.length || 0}</span> {/* Display comment count */}
+                  <span className="text-sm">{card.comments?.length || 0}</span>
                 </button>
-
-                {/* Thumbs-Up and Thumbs-Down */}
                 <div className="flex space-x-2">
                   <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
                     <FaThumbsUp className="text-xl" />
@@ -252,7 +230,7 @@ const ForYouCard = () => {
       <CreatePostModal
         isOpen={isCreatePostModalOpen}
         onClose={() => setIsCreatePostModalOpen(false)}
-        onSubmit={handleCreatePost} // Pass the handleCreatePost function to the modal
+        onSubmit={handleCreatePost}
       />
 
       {/* Comments Popup */}
