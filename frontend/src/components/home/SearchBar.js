@@ -40,7 +40,7 @@ const SearchBar = () => {
       navigate(`/articles/${item.id}`);
     }
     else{
-      console.log("NOTWORKING");
+      console.log("Did not match any source");
     }
     
   };
