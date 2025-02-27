@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
 import VolunteeringButton from "./VolunteeringButton";
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown, FaComment } from "react-icons/fa"; // Added FaComment for the comment icon
 import CreatePostModal from "./CreatePostModal"; // Import the CreatePostModal component
+import CommentsPopup from "./CommentsPopup"; // Import the CommentsPopup component
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -11,6 +12,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 const ForYouCard = () => {
   const [cards, setCards] = useState([]); // State to store forum posts
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null); // Track which post's comments are being viewed
 
   // Fetch forum posts from the backend
   const fetchForumPosts = async () => {
@@ -61,6 +63,16 @@ const ForYouCard = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
+  };
+
+  // Handle opening the comments popup
+  const handleOpenComments = (postId) => {
+    setSelectedPostId(postId);
+  };
+
+  // Handle closing the comments popup
+  const handleCloseComments = () => {
+    setSelectedPostId(null);
   };
 
   return (
@@ -119,11 +131,15 @@ const ForYouCard = () => {
                 {formatDate(card.created_at)} {/* Display the post creation date in dd/mm/yyyy format */}
               </p>
 
-              {/* Reply and Thumbs-Up/Down in the Same Line */}
+              {/* Comment and Thumbs-Up/Down in the Same Line */}
               <div className="flex items-center justify-between mt-3">
-                {/* Reply Button */}
-                <button className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105">
-                  Reply
+                {/* Comment Icon with Count */}
+                <button
+                  onClick={() => handleOpenComments(card.id)} // Open comments popup
+                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
+                >
+                  <FaComment className="text-xl" />
+                  <span className="text-sm">{card.comments?.length || 0}</span> {/* Display comment count */}
                 </button>
 
                 {/* Thumbs-Up and Thumbs-Down */}
@@ -143,6 +159,7 @@ const ForYouCard = () => {
         {/* Display existing cards */}
         {[
           {
+            id: 997, // Add an ID for the example card
             name: "Jane Doe",
             tag: "News",
             content: "Green Inc are proud to launch their first prototype!  😁",
@@ -150,6 +167,7 @@ const ForYouCard = () => {
             media: "https://via.placeholder.com/300x200", // Media image URL
           },
           {
+            id: 998, // Add an ID for the example card
             name: "John Doe",
             tag: "Event",
             content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
@@ -157,6 +175,7 @@ const ForYouCard = () => {
             media: "https://via.placeholder.com/300x200",
           },
           {
+            id: 999, // Add an ID for the example card
             name: "Emily Smith",
             tag: "Volunteering",
             content: "Join us in making a difference in the community! 🌍",
@@ -203,11 +222,15 @@ const ForYouCard = () => {
                 {card.comment}
               </p>
 
-              {/* Reply and Thumbs-Up/Down in the Same Line */}
+              {/* Comment and Thumbs-Up/Down in the Same Line */}
               <div className="flex items-center justify-between mt-3">
-                {/* Reply Button */}
-                <button className="bg-blue-500 text-white text-sm font-semibold py-1 px-3 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105">
-                  Reply
+                {/* Comment Icon with Count */}
+                <button
+                  onClick={() => handleOpenComments(card.id)} // Open comments popup
+                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
+                >
+                  <FaComment className="text-xl" />
+                  <span className="text-sm">{card.comments?.length || 0}</span> {/* Display comment count */}
                 </button>
 
                 {/* Thumbs-Up and Thumbs-Down */}
@@ -231,6 +254,11 @@ const ForYouCard = () => {
         onClose={() => setIsCreatePostModalOpen(false)}
         onSubmit={handleCreatePost} // Pass the handleCreatePost function to the modal
       />
+
+      {/* Comments Popup */}
+      {selectedPostId && (
+        <CommentsPopup postId={selectedPostId} onClose={handleCloseComments} />
+      )}
     </div>
   );
 };
