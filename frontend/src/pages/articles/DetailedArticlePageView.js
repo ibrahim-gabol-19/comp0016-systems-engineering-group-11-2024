@@ -78,10 +78,10 @@ const DetailedArticlePageView = () => {
           </div>
         )}
 
-        {/* Description */}
-        {description && (
-          <p className="text-lg mt-6 text-gray-700 italic text-center">{description}</p>
-        )}
+         {/* Description Section */}
+         <p className="text-lg mt-6 text-gray-900 text-center break-words overflow-hidden">
+            {description}
+        </p>
 
         {/* Main Content */}
         <p className="text-lg mt-6 text-gray-800 text-center" style={{ whiteSpace: "pre-wrap" }}>
