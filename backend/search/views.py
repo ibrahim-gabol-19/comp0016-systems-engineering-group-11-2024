@@ -45,9 +45,7 @@ def preprocess_data(articles, events,reports):
                 f"{e.get('opening_times', '')} {e.get('poi_type', '')}"
                 for e in events
             ],
-            "entries": events,
-        })
-    
+            "entries": events, })    
     if reports:
         datasets.append({
             "source": "report",
@@ -60,10 +58,7 @@ def preprocess_data(articles, events,reports):
                 if "id" in a and "title" in a and "description" in a
             ],
             "entries": reports ,
-            
         })
-
-        
     return datasets
 
 
@@ -126,7 +121,6 @@ def search(request):
         reports = requests.get(
             "http://127.0.0.1:8000/reports/", headers=headers, timeout=10
             ).json()
-        
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"error": "Failed to fetch data.", "details": str(e)},
