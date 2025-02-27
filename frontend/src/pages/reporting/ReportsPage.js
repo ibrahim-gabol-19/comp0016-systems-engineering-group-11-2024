@@ -105,7 +105,9 @@ const ReportsPage = () => {
       <div className="pt-20"></div>
       <div className="h-full flex">
           {isSidebarOpen && (
-          <div className="bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full w-2/6 relative" ref={sidebarRef}>
+          <div className={`bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full ${isSidebarOpen ? "w-full" : "w-2/6"} relative sm:w-2/6`} ref={sidebarRef}>
+          {/* <div className="bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full w-2/6 relative" ref={sidebarRef}> */}
+
             <button
               className="absolute top-4 right-5 text-3xl scale-150"
               onClick={handleSidebarClose}
@@ -119,7 +121,12 @@ const ReportsPage = () => {
             ></SidebarReport>
           </div>
           )}
-          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6' : 'flex-grow min-w-0'} pb-9 relative`}>
+          {/* <div
+            className={`h-full flex flex-col ${
+            isSidebarOpen ? "hidden sm:flex" : "flex-grow min-w-0"
+            } pb-9 relative`}> */}
+          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} pb-9 relative`}>
+
             <MapComponent
               onMarkerSelected={handleMarkerSelected}
               onNewMarkerSelected={handleNewMarkerSelected}
@@ -129,7 +136,9 @@ const ReportsPage = () => {
               selectedMarker={selectedMarker}
               mapRef={mapRef}
             ></MapComponent>
-            <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-10 mb-10">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10 mb-10">
+            {/* <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-10 mb-10"> */}
+
               <button
                 className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.open ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-200'}`}
                 onClick={() => handleToggleChange('open')}
