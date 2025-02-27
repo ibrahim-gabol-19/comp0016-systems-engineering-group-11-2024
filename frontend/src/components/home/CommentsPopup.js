@@ -4,62 +4,62 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const CommentsPopup = ({ postId, onClose }) => {
-  const [comments, setComments] = useState([]); // State to store comments
-  const [newComment, setNewComment] = useState(""); // State for new comment input
-  const [replyTo, setReplyTo] = useState(null); // State to track which comment is being replied to
+const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
+  const [comments, setComments] = useState([]); // All comments for this post
+  const [newComment, setNewComment] = useState(""); // New comment text
+  const [replyTo, setReplyTo] = useState(null); // Which comment is being replied to
+  const [visibleReplies, setVisibleReplies] = useState({}); // Tracks which main comment's replies are visible
+
+  // Format date as dd/mm/yyyy
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   // Fetch comments for the selected forum post using generic fields
   const fetchComments = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}comments/`, {
-        params: { 
-          content_type: "forums.forumpost", 
-          object_id: postId 
+        params: {
+          content_type: "forums.forumpost",
+          object_id: postId,
         },
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      setComments(response.data); // Update the state with fetched comments
+      setComments(response.data); // API returns nested replies in each comment's "replies" field
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
   };
 
-  // Fetch comments when the component mounts or when postId changes
   useEffect(() => {
     fetchComments();
   }, [postId]);
 
-  // Handle submitting a new comment
+  // Handle submitting a new comment or reply
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-
       const payload = {
         content: newComment,
-        content_type: "forums.forumpost", // Generic content type for forum posts
+        content_type: "forums.forumpost", // Generic content type
         object_id: postId,              // Forum post ID
-        reply_to: replyTo,              // Optional: reply to a specific comment
+        reply_to: replyTo,              // Parent comment ID (if replying)
       };
-      console.log("Payload being sent:", payload);
-
-      const response = await axios.post(
-        `${API_URL}comments/`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Response from backend:", response.data);
-
-      setNewComment(""); // Clear the input field
-      setReplyTo(null);  // Reset replyTo
-      fetchComments();   // Refresh the comments list
+      await axios.post(`${API_URL}comments/`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNewComment(""); // Clear input
+      setReplyTo(null);  // Reset reply target
+      fetchComments();   // Refresh comments
+      if (onCommentAdded) {
+        onCommentAdded();
+      }
     } catch (error) {
       console.error("Error submitting comment:", error);
       if (error.response) {
@@ -73,19 +73,111 @@ const CommentsPopup = ({ postId, onClose }) => {
   const handleLikeComment = async (commentId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_URL}comments/${commentId}/like/`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchComments(); // Refresh the comments list
+      await axios.post(`${API_URL}comments/${commentId}/like/`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchComments(); // Refresh after like
     } catch (error) {
       console.error("Error liking comment:", error);
     }
+  };
+
+  // Toggle the visibility of replies for a given main comment
+  const toggleReplies = (commentId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  // Flatten nested replies into a single array
+  const flattenReplies = (replies) => {
+    let result = [];
+    replies.forEach((reply) => {
+      result.push(reply);
+      if (reply.replies && reply.replies.length > 0) {
+        result = result.concat(flattenReplies(reply.replies));
+      }
+    });
+    return result;
+  };
+
+  // Render a main comment along with a toggle to show/hide its replies.
+  const renderTopLevelComment = (comment) => {
+    const replies = comment.replies ? flattenReplies(comment.replies) : [];
+    return (
+      <div key={comment.id} className="mb-4">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+            {comment.author[0]}
+          </div>
+          <p className="font-semibold text-gray-800">{comment.author}</p>
+        </div>
+        <p className="text-gray-700 mt-1">{comment.content}</p>
+        <p className="text-gray-500 text-sm mt-1">{formatDate(comment.created_at)}</p>
+        <div className="flex items-center gap-2 mt-2">
+          <button
+            onClick={() => {
+              setReplyTo(comment.id);
+              setNewComment(`@${comment.author} `);
+            }}
+            className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
+          >
+            Reply
+          </button>
+          <button
+            onClick={() => handleLikeComment(comment.id)}
+            className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
+          >
+            <FaThumbsUp className="text-xl" />
+          </button>
+        </div>
+        {replies.length > 0 && (
+          <div className="mt-2">
+            {visibleReplies[comment.id] ? (
+              <>
+                {replies.map((reply) => (
+                  <div key={reply.id} className="mb-2 ml-8 border-l pl-4">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                        {reply.author[0]}
+                      </div>
+                      <p className="font-semibold text-gray-800">{reply.author}</p>
+                    </div>
+                    <p className="text-gray-700 mt-1">{reply.content}</p>
+                    <p className="text-gray-500 text-sm mt-1">{formatDate(reply.created_at)}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => {
+                          setReplyTo(reply.id);
+                          setNewComment(`@${reply.author} `);
+                        }}
+                        className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
+                      >
+                        Reply
+                      </button>
+                      <button
+                        onClick={() => handleLikeComment(reply.id)}
+                        className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
+                      >
+                        <FaThumbsUp className="text-xl" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button onClick={() => toggleReplies(comment.id)} className="text-blue-500 text-sm">
+                  Hide Replies
+                </button>
+              </>
+            ) : (
+              <button onClick={() => toggleReplies(comment.id)} className="text-blue-500 text-sm">
+                View Replies ({replies.length})
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -93,34 +185,9 @@ const CommentsPopup = ({ postId, onClose }) => {
       <div className="bg-white p-6 rounded-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Comments</h2>
         <div className="max-h-96 overflow-y-auto mb-4">
-          {comments.map((comment, index) => (
-            <div key={index} className="mb-4">
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                  {comment.author[0]}
-                </div>
-                <p className="font-semibold text-gray-800">{comment.author}</p>
-              </div>
-              <p className="text-gray-700 mt-1">{comment.content}</p>
-              <p className="text-gray-500 text-sm mt-1">
-                {new Date(comment.created_at).toLocaleDateString()}
-              </p>
-              <div className="flex items-center gap-2 mt-2">
-                <button
-                  onClick={() => handleLikeComment(comment.id)}
-                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
-                >
-                  <FaThumbsUp className="text-xl" />
-                </button>
-                <button
-                  onClick={() => setReplyTo(comment.id)}
-                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
-                >
-                  Reply
-                </button>
-              </div>
-            </div>
-          ))}
+          {comments
+            .filter((comment) => comment.parent_comment === null)
+            .map((comment) => renderTopLevelComment(comment))}
         </div>
         <form onSubmit={handleSubmitComment} className="flex items-center">
           <input
@@ -131,17 +198,11 @@ const CommentsPopup = ({ postId, onClose }) => {
             className="w-full p-2 border rounded"
             required
           />
-          <button
-            type="submit"
-            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
+          <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Post
           </button>
         </form>
-        <button
-          onClick={onClose}
-          className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
+        <button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
           Close
         </button>
       </div>

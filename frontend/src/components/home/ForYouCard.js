@@ -14,14 +14,34 @@ const ForYouCard = () => {
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null); // Which post's comments to show
 
-  // Fetch forum posts from the backend
+  // Fetch forum posts and then, for each post, fetch its comment count.
   const fetchForumPosts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}forums/`, {
+      const forumRes = await axios.get(`${API_URL}forums/`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      setCards(response.data);
+      const posts = forumRes.data;
+      
+      // For each post, fetch its comment count from the comments API.
+      const postsWithCommentCount = await Promise.all(
+        posts.map(async (post) => {
+          try {
+            const commentRes = await axios.get(`${API_URL}comments/`, {
+              params: {
+                content_type: "forums.forumpost",
+                object_id: post.id,
+              },
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            return { ...post, commentCount: commentRes.data.length };
+          } catch (error) {
+            console.error("Error fetching comment count for post", post.id, error);
+            return { ...post, commentCount: 0 };
+          }
+        })
+      );
+      setCards(postsWithCommentCount);
     } catch (error) {
       console.error("Error fetching forum posts:", error);
     }
@@ -68,6 +88,18 @@ const ForYouCard = () => {
 
   const handleCloseComments = () => {
     setSelectedPostId(null);
+  };
+
+  // When a comment is added, update the comment count for that post locally
+  const handleCommentAdded = () => {
+    setCards((prevCards) =>
+      prevCards.map((card) => {
+        if (card.id === selectedPostId) {
+          return { ...card, commentCount: (card.commentCount || 0) + 1 };
+        }
+        return card;
+      })
+    );
   };
 
   return (
@@ -127,7 +159,7 @@ const ForYouCard = () => {
                   className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                 >
                   <FaComment className="text-xl" />
-                  <span className="text-sm">{card.comments?.length || 0}</span>
+                  <span className="text-sm">{card.commentCount || 0}</span>
                 </button>
                 <div className="flex space-x-2">
                   <button className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full">
@@ -235,7 +267,11 @@ const ForYouCard = () => {
 
       {/* Comments Popup */}
       {selectedPostId && (
-        <CommentsPopup postId={selectedPostId} onClose={handleCloseComments} />
+        <CommentsPopup
+          postId={selectedPostId}
+          onClose={handleCloseComments}
+          onCommentAdded={handleCommentAdded}
+        />
       )}
     </div>
   );
