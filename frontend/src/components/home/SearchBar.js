@@ -173,6 +173,13 @@ const SearchBar = () => {
                     <p className="text-sm text-gray-700 flex items-center gap-1">📅 <span className="font-medium">Published:</span> {item.published_date}</p>
                   </>
                 )}
+                {item.source === "report" && (
+                  <>
+                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">📅 <span className="font-medium">Date:</span> {item.published_date}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1">⏰ <span className="font-medium">Tag:</span> {item.tags}</p>
+               
+                  </>
+                )}
               </div>
             )) : null}
           </div>
