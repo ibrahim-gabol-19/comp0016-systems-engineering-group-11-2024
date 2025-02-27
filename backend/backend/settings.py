@@ -23,13 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or "aojdwoaiwjdoiajwdoij"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["sysengbackendazuregroup11-e3c8a6dtexeqh3am.ukwest-01.azurewebsites.net"]
-
+ALLOWED_HOSTS = ["sysengbackendazuregroup11-e3c8a6dtexeqh3am.ukwest-01.azurewebsites.net", "*"]
+STATIC_ROOT = "./static/"
 
 # Application definition
 
