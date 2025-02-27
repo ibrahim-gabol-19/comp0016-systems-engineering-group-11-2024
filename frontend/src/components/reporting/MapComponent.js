@@ -84,7 +84,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       maxBoundsViscosity={1.0}
       minZoom={8}
       maxZoom={17}
-      ref={mapRef} // Attach the ref to MapContainer
+      ref={mapRef}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

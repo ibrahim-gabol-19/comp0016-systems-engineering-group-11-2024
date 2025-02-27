@@ -243,25 +243,37 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-full h-1/4 text-center justify-center">
                 <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+                  Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
             </div>
             {/* Status + Tags */}
+            {selectedMarker.status !== "open" ? (
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
               </p>
 
-              <p className="text-center font-bold mx-4">●</p>
+              <p className="text-center font-bold mx-4 text-gray-300">|</p>
 
+
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+               {selectedMarker.tags.charAt(0).toUpperCase() +
+                  selectedMarker.tags.slice(1).replace("_", " ")}
+              </p>
+            </div>
+                 ) : (
+              <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
+          )}
           </div>
+
+
           {/**Discussion */}
           <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
             {selectedMarker.discussions.map((discussion, index) => (
@@ -393,17 +405,28 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
             </div>
             {/* Status + Tags */}
-            <div className="w-full h-1/4 flex justify-center items-center">
+            {selectedMarker.status !== "open" ? (
+              <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
               </p>
-              <p className="text-center font-bold mx-4">●</p>
+
+              <p className="text-center font-bold mx-4 text-gray-300">|</p>
+
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+               {selectedMarker.tags.charAt(0).toUpperCase() +
+                  selectedMarker.tags.slice(1).replace("_", " ")}
+              </p>
+              </div>
+              ) : (
+            <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
+          )}
           </div>
           {/*Image*/}
           <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
