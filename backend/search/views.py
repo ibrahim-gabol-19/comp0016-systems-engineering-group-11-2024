@@ -116,7 +116,7 @@ def search(request):
             "http://127.0.0.1:8000/articles/", headers=headers, timeout=10
         ).json()
         events = requests.get(
-            "http://127.0.0.1:8000/events/search/", headers=headers, timeout=10
+            "http://127.0.0.1:8000/events/", headers=headers, timeout=10
         ).json()
         reports = requests.get(
             "http://127.0.0.1:8000/reports/", headers=headers, timeout=10

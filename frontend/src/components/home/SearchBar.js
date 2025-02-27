@@ -32,6 +32,16 @@ const SearchBar = () => {
     if(item.source ==="report"){
       navigate("/reporting", { state: { selectedIssue: item } });
     }
+    else if(item.source ==="event"){
+      
+      navigate(`/events/${item.id}`);
+     }
+    else if(item.source==="article"){
+      navigate(`/articles/${item.id}`);
+    }
+    else{
+      console.log("NOTWORKING");
+    }
     
   };
 
@@ -69,6 +79,8 @@ const SearchBar = () => {
         params: { query: userQuery },
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+      console.log("Search results:", response.data.results);
+
 
       
 
