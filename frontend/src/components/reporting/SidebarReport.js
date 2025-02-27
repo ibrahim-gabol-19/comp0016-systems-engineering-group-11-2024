@@ -325,7 +325,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               {/* Text Input Form */}
               <textarea
                 className="w-full h-full p-2 border rounded-lg resize-none"
-                placeholder="Type your discussion message here..."
+                placeholder="Type your message here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)} // Use state to manage input
               ></textarea>
