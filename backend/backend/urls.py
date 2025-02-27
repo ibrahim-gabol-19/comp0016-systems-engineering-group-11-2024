@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
     path('companyinformation/', include('companyinformation.urls')),
     path('forums/', include('forums.urls')),
+    path('comments/', include('comments.urls')),
 ]
 
 # Serve media files during development

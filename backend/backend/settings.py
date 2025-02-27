@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'search',
     'accounts',
     'forums',
+    'comments',
     'companyinformation'
 ]
 
