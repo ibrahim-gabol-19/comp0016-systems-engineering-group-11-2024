@@ -122,137 +122,98 @@ const SearchBar = () => {
   return (
     <div className="flex flex-col items-center w-full mt-8">
       {/* Header with AI Logo and Title */}
-      <div className="flex items-center justify-center mb-4">
-        <img src={aiLogo} alt="AI Logo" className="w-10 h-10 mr-3" />
-        <h1 className="text-3xl font-bold text-gray-800">Ask AI</h1>
+      <div className="flex items-center justify-center mb-6">
+        <img src={aiLogo} alt="AI Logo" className="w-12 h-12 mr-3 drop-shadow-md" />
+        <h1 className="text-4xl font-extrabold text-gray-900">Ask AI</h1>
       </div>
 
-      {/*Large Chat Box*/}
-      {fullUserQuery !== "" && (
-        <div
-          className={` w-full rounded-3xl bg-white border border-gray-300 flex flex-col transition-all duration-200  ${
-            fullUserQuery === ""
-              ? "max-h-0 opacity-0 pointer-events-none select-none"
-              : "h-[650px] max-h-[650px] opacity-100 pointer-events-auto select-auto"
-          }  `}
-        >
-          {/*User message*/}
-          <div className=" w-3/4 max-h-1/6 ml-auto my-2 justify-end flex items-center">
-            <div className="max-w-5/6 max-h-20 px-3  text-wrap truncate rounded-full bg-green-100 ">
-              <p class="text-right text-sm  py-4 "> {fullUserQuery}</p>
+      {/* Chat Box */}
+      {fullUserQuery && (
+        <div className="w-full max-w-3xl rounded-3xl bg-white border border-gray-200 shadow-lg transition-all duration-300">
+          {/* User Message */}
+          <div className="flex justify-end my-3 px-6">
+            <div className="max-w-3/4 px-4 py-3 bg-green-100 rounded-2xl shadow-md">
+              <p className="text-right text-gray-800">{fullUserQuery}</p>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
+              className="w-10 h-10 ml-4 text-gray-600"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
+              fill="none"
               stroke="currentColor"
-              className="size-6 w-10 h-10 ml-4"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
+              <path d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
           </div>
-          {/*Cards*/}
-          <div className="w-3/4 h-2/6 my-4 mx-4 flex ">
-            {searchResult && searchResult.length > 0 && searchResult.map((item, index) => (
+
+          {/* Search Results */}
+          <div className="grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl">
+            {Array.isArray(searchResult) ? searchResult.map((item, index) => (
               <div
                 key={index}
-                className="w-1/3  h-full mx-4 px-2 py-2 rounded-3xl shadow-md bg-blue-50 overflow-hidden"
+                className="p-5 bg-blue-50  rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all"
               >
-                <p className="font-bold">{item.title}</p>
-                <span className="text-sm text-gray-500 capitalize">{item.source}</span>
-                {/* Need to comment the line below out after done testing */}
-                <p className="text-sm">Score: {item.similarity_score.toFixed(3)}</p> 
-
-                {/* Conditionally render fields based on the source */}
-                {item.source === "event" ? (
+                <p className="font-bold text-lg text-gray-900 tracking-wide">{item.title}</p>
+                <span className="text-xs font-medium text-gray-500 uppercase">{item.source}</span>
+                <p className="text-sm text-gray-600 mt-1">🔢 Score: <span className="font-medium">{item.similarity_score.toFixed(3)}</span></p>
+                
+                {item.source === "event" && (
                   <>
-                    <p className="text-sm">Date: {item.date}</p>
-                    <p className="text-sm">Time: {item.time}</p>
-                    <p className="text-sm">Location: {item.location}</p>
-                    <p className="text-sm">Description: {item.description}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">📅 <span className="font-medium">Date:</span> {item.date}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1">⏰ <span className="font-medium">Time:</span> {item.time}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1">📍 <span className="font-medium">Location:</span> {item.location}</p>
                   </>
-                ) : item.source === "article" ? (
+                )}
+                {item.source === "article" && (
                   <>
-                    <p className="text-sm">Author: {item.author}</p>
-                    <p className="text-sm">Published Date: {item.published_date}</p>
-                    <p className="text-sm">Description: {item.description}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1 mt-2">✍️ <span className="font-medium">Author:</span> {item.author}</p>
+                    <p className="text-sm text-gray-700 flex items-center gap-1">📅 <span className="font-medium">Published:</span> {item.published_date}</p>
                   </>
-                ) : null}
+                )}
               </div>
-            ))}
+            )) : null}
           </div>
 
-          {/*AI Response*/}
-          <div
-            className={`w-3/4 max-h-2/6 justify-start items-center max-h-4/6 my-2  ml-1 flex`}
-          >
+          {/* AI Response */}
+          <div className="flex my-4 px-6 items-start">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
+              className="w-10 h-10 mr-4 text-gray-600 flex-shrink-0"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
+              fill="none"
               stroke="currentColor"
-              className="size-6 min-w-10 min-h-10 w-10 h-10 mr-4"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
-              />
+              <path d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
             </svg>
-            <div className="max-w-5/6  px-3  text-wrap font-sm text-sm truncate rounded-3xl bg-blue-100 ">
-              {/* <p class="py-4">{modelReply}</p> */}
-              <ReactMarkdown className="font-sm py-4">{modelReply}</ReactMarkdown>
+            <div className="max-w-3/4 px-4 py-3 bg-blue-100 rounded-2xl shadow-md">
+              <ReactMarkdown className="text-gray-800">{modelReply}</ReactMarkdown>
             </div>
           </div>
         </div>
       )}
+
+      {/* Input Box */}
       <div
-        className={`flex transition-all h-12 duration-300 ease-in-out rounded-full bg-white text-black border border-gray-300 items-center ${
-          isFocused ? "w-8/12 outline-none ring-2 ring-blue-500" : "w-5/12"
-        }`}
+        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${isFocused ? "ring-2 ring-blue-500" : ""}`}
       >
-        <div className="w-1/12 ml-1 flex justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 text-gray-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 19a7 7 0 117-7 7 7 0 01-7 7zm0 0l-6 6"
-            />
-          </svg>
-        </div>
-        <div className="w-full h-full">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full h-full flex outline-none bg-transparent text-black transition-all"
-          >
-            <input
-              type="text"
-              placeholder={
-                isFocused ? "" : "When is the next volunteering event?"
-              }
-              className="w-full h-full outline-none bg-transparent text-black transition-all"
-              value={userQuery}
-              onChange={(e) => setUserQuery(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              aria-label="Search for volunteering events"
-            />
-          </form>
-        </div>
+        <form onSubmit={handleSubmit} className="w-full h-full flex items-center">
+          <input
+            type="text"
+            placeholder={isFocused ? "" : "When is the next volunteering event?"}
+            className="w-full h-full outline-none bg-transparent text-gray-900 px-3"
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            aria-label="Search for volunteering events"
+          />
+        </form>
       </div>
     </div>
   );
