@@ -3,9 +3,11 @@ import aiLogo from "../../assets/ai_icon.png";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchBar = () => {
+  const navigate =useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [modelReply, setModelReply] = useState("");
   const [engine, setEngine] = useState(null);
@@ -23,6 +25,14 @@ const SearchBar = () => {
 
     setFullUserQuery(userQuery);
     setUserQuery("");
+  };
+
+  const handleRedirect = (item) => {
+    console.log("Item clicked was",item);
+    if(item.source ==="report"){
+      navigate("/reporting", { state: { selectedIssue: item } });
+    }
+    
   };
 
   useEffect(() => {
@@ -59,6 +69,7 @@ const SearchBar = () => {
         params: { query: userQuery },
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+
       
 
     // Check if the results field exists and set the state
@@ -123,9 +134,18 @@ const SearchBar = () => {
     <div className="flex flex-col items-center w-full mt-8">
       {/* Header with AI Logo and Title */}
       <div className="flex items-center justify-center mb-6">
-        <img src={aiLogo} alt="AI Logo" className="w-12 h-12 mr-3 drop-shadow-md" />
-        <h1 className="text-4xl font-extrabold text-gray-900">Ask AI</h1>
-      </div>
+  <img
+    src={aiLogo}
+    alt="AI Logo"
+    className="w-12 h-12 mr-3 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
+    style={{
+      animation: "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
+    }}
+  />
+  <h1 className="text-4xl font-extrabold text-gray-900">Ask AI</h1>
+</div>
+
+
 
       {/* Chat Box */}
       {fullUserQuery && (
@@ -155,6 +175,7 @@ const SearchBar = () => {
               <div
                 key={index}
                 className="p-5 bg-blue-50  rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all"
+                onClick={() => handleRedirect(item)}
               >
                 <p className="font-bold text-lg text-gray-900 tracking-wide">{item.title}</p>
                 <span className="text-xs font-medium text-gray-500 uppercase">{item.source}</span>
