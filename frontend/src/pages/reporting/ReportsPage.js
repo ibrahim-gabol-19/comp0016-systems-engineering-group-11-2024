@@ -103,7 +103,7 @@ const ReportsPage = () => {
     <div className="h-screen flex flex-col" onClick={handleOutsideClick}>
       <Header/>
       <div className="pt-20"></div>
-      <div className="h-full flex">
+      <div className="h-full flex mt-4">
           {isSidebarOpen && (
           <div className={`bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full ${isSidebarOpen ? "w-full" : "w-2/6"} relative sm:w-2/6`} ref={sidebarRef}>
             <button
@@ -120,7 +120,7 @@ const ReportsPage = () => {
           </div>
           )}
 
-          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} pb-9 relative`}>
+          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} relative mt-4`}>
             <MapComponent
               onMarkerSelected={handleMarkerSelected}
               onNewMarkerSelected={handleNewMarkerSelected}
