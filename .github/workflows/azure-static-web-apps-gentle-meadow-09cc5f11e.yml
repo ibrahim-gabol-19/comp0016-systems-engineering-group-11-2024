@@ -19,6 +19,9 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Create .env file
+        run: |
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > ./frontend/.env
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
