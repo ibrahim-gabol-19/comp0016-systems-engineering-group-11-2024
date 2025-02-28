@@ -120,7 +120,7 @@ const ReportsPage = () => {
           </div>
           )}
 
-          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} relative mt-4`}>
+          <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} relative`}>
             <MapComponent
               onMarkerSelected={handleMarkerSelected}
               onNewMarkerSelected={handleNewMarkerSelected}
