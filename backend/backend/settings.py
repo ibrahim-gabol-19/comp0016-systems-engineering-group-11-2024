@@ -28,7 +28,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or "aawdawdawd213413549623----gh--f-
 DEBUG = False
 
 ALLOWED_HOSTS = ["sysengbackendazuregroup11-e3c8a6dtexeqh3am.ukwest-01.azurewebsites.net", "*"]
-STATIC_ROOT = "./static/"
 
 # Application definition
 
