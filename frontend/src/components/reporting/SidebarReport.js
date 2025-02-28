@@ -400,10 +400,10 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mt-4 mb-4">{selectedMarker.title}</p>
               </div>
-              <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
+              <div className="w-full h-1/4 flex flex-col text-center justify-center">
+                <p className="text-gray-500 text-m mb-4">
                   Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
@@ -411,21 +411,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Status + Tags */}
             {selectedMarker.status !== "open" ? (
               <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
+              <p className="text-center text-purple-600 font-bold w-1/3 pr-4 mb-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
               </p>
 
-              <p className="text-center font-bold mx-4 text-gray-300">|</p>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
 
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
               </div>
               ) : (
             <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
