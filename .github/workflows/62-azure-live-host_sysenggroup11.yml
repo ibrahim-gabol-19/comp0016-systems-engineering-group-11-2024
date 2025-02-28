@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: release.zip
+          path: backend/release.zip
 
   deploy:
     runs-on: ubuntu-latest
