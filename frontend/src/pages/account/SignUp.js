@@ -56,7 +56,7 @@ const SignUp = () => {
     setError([]); // Clear errors if password is valid
 
     try {
-      await axios.post(`${API_URL}api/auth/signup`, {
+      await axios.post(`${API_URL}api/auth/signup/`, {
         username,
         email,
         password,
