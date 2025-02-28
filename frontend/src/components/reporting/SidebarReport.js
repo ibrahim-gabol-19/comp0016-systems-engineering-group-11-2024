@@ -275,117 +275,121 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
 
           {/**Discussion */}
-{/**Discussion */}
-<div className="w-full h-auto overflow-y-auto border border-gray-300 ">
-  {selectedMarker.discussions.map((discussion, index) => (
-    <div
-      key={index}
-      className={`flex px-4 h-auto w-full min-h-16 border border-gray-200 ${
-        discussion.author === "Business" ? "bg-yellow-200" : ""
-      }`}
-    >
-      {/* Profile Picture (SVG Icon) */}
-      <div className="w-1/6 h-full flex justify-center items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-10 h-10 text-gray-600"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-          />
-        </svg>
-      </div>
-      <div className="w-5/6 break-words py-3">
-        <p className="font-semibold">{discussion.author}</p>
-        <p className="">{discussion.message}</p>
-        <p className="text-gray-500 text-sm">
-          {new Date(discussion.created_at).toLocaleString(undefined, {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-          })}
-        </p>
-      </div>
-    </div>
-  ))}
-</div>
-
-          {/*New Discussion Message */}
-          <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
-            <div className="w-full h-2/4 py-2 ">
-              {/* Text Input Form */}
-              <textarea
-                className="w-full h-full p-2 border rounded-lg resize-none"
-                placeholder="Type your message here..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)} // Use state to manage input
-              ></textarea>
-            </div>
-            <div className="w-full h-1/4">
-              <button
-                className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-                onClick={handleSubmitNewDiscussionMessage} // Submit handler
+          <div className="w-full h-auto overflow-y-auto border border-gray-300 ">
+            {selectedMarker.discussions.map((discussion, index) => (
+              <div
+                key={index}
+                className={`flex px-4 h-auto w-full min-h-16 border border-gray-200 ${
+                  discussion.author === "Business" ? "bg-yellow-200" : ""
+                }`}
               >
-                Submit Message
-              </button>
-            </div>
-            {/*View Overview*/}
-            <div className="w-full shadow-md h-1/4">
-              <button
-                className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
-                style={{
-                  color: main_color, // Dynamic text color
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = lightenColor(
-                    main_color,
-                    40
-                  ); // Lighter background on hover
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = lightenColor(
-                    main_color,
-                    60
-                  ); // Even lighter background on active
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor = lightenColor(
-                    main_color,
-                    40
-                  ); // Reset to hover state on mouse up
-                }}
-                onClick={() => setViewingDiscussion(false)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-                  />
-                </svg>
-                Back
-              </button>
-            </div>
+                {/* Profile Picture (SVG Icon) */}
+                <div className="w-1/6 h-full flex justify-center items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-10 h-10 text-gray-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
+                </div>
+                <div className="w-5/6 break-words py-3">
+                  <p className="font-semibold">{discussion.author}</p>
+                  <p className="">{discussion.message}</p>
+                  <p className="text-gray-500 text-sm">
+                    {new Date(discussion.created_at).toLocaleString(undefined, {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
+          {/*New Discussion Message */}
+          {selectedMarker.status === "open" ? (
+            <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
+              <div className="w-full h-2/4 py-2 ">
+                {/* Text Input Form */}
+                <textarea
+                  className="w-full h-full p-2 border rounded-lg resize-none"
+                  placeholder="Type your message here..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                ></textarea>
+              </div>
+              <div className="w-full h-1/4">
+                <button
+                  className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                  onClick={handleSubmitNewDiscussionMessage}
+                >
+                  Submit Message
+                </button>
+              </div>
+              {/*View Overview*/}
+              <div className="w-full shadow-md h-1/4">
+                <button
+                  className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
+                  style={{
+                    color: main_color,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = lightenColor(
+                      main_color,
+                      40
+                    );
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "white";
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.backgroundColor = lightenColor(
+                      main_color,
+                      60
+                    );
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.backgroundColor = lightenColor(
+                      main_color,
+                      40
+                    );
+                  }}
+                  onClick={() => setViewingDiscussion(false)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                    />
+                  </svg>
+                  Back
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full h-2/6 px-3 py-3 pb-6 flex justify-center mt-4 text-gray-500">
+                    <p>This report is {selectedMarker.status}. Further Messages are not allowed.</p>
+          </div>
+          )}
         </div>
       );
     } else {
