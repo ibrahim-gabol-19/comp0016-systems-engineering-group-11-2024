@@ -31,7 +31,6 @@ SECRET_KEY = "aodajodoaij onion[hna]hdnanndn"
 
 env = environ.Env()
 environ.Env.read_env()
-print(os.getenv('DEBUG'))
 if os.getenv('DEBUG') == "False":
     DEBUG = False
 else:
