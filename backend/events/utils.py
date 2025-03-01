@@ -1,3 +1,6 @@
+"""
+events/utils.py
+"""
 from .models import Event
 from .serializers import EventSerializer
 

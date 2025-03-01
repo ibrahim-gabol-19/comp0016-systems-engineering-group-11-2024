@@ -1,3 +1,7 @@
+"""
+articles/utils.py
+"""
+
 from .models import Article
 from .serializers import ArticleSerializer
 

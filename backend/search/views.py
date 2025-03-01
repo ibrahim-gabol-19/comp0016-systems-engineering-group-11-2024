@@ -9,8 +9,6 @@ SentenceTransformer model.
 from sentence_transformers import SentenceTransformer  # pylint: disable=E0401
 from sklearn.metrics.pairwise import cosine_similarity  # pylint: disable=E0401
 from django.http import JsonResponse
-import requests  # pylint: disable=E0401
-from django.http import JsonResponse
 from articles.utils import get_articles
 from events.utils import get_events
 from reports.utils import get_reports
@@ -113,7 +111,7 @@ def search(request):
         articles = get_articles()
         events = get_events()
         reports = get_reports()
-    except Exception as e:
+    except Exception as e: # pylint: disable=W0718
         return JsonResponse(
             {"error": "Failed to fetch data.", "details": str(e)},
             status=500
