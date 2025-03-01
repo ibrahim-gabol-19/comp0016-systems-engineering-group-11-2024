@@ -15,7 +15,7 @@ const MapResizeFix = () => {
 };
 
 
-const MapComponent = ({ filters, dates, reports }) => {
+const MapComponent = ({ filters, dates, reports, events }) => {
   const navigate = useNavigate();
   const [filteredItems, setFilteredItems] = useState([]);
   const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center: London
@@ -30,6 +30,7 @@ const MapComponent = ({ filters, dates, reports }) => {
 
   useEffect(() => {
     console.log("Reports in MapComponent:", reports);
+    console.log("Events in MapComponent:", events);
 
     setMapCenter([51.5074, -0.1278]);
     setZoomLevel(6);
@@ -48,9 +49,25 @@ const MapComponent = ({ filters, dates, reports }) => {
         tags: report.tags,
       }));
 
-    console.log("Filtered API Data for Map:", validReports);
 
-    const filtered = validReports.filter((item) => {
+      const validEvents = events
+      .filter((event) => event.latitude !== undefined && event.longitude !== undefined)
+      .map((event) => ({
+        id: event.id,
+        name: event.title,
+        type: "events",
+        date: event.date,
+        emoji: "📍", // Icon for events
+        lat: parseFloat(event.latitude),
+        lng: parseFloat(event.longitude),
+        status: "active",
+        
+      }));
+
+    console.log("Filtered API Data for Map:", validReports);
+    console.log("Filtered API Data for Events:", validEvents);
+
+    const filtered = [...validReports, ...validEvents].filter((item) => {
       const isSelected =
         (filters.events && item.type === "events") ||
         (filters.issues && item.type === "issues" && item.status === "open");
@@ -63,11 +80,17 @@ const MapComponent = ({ filters, dates, reports }) => {
     });
 
     setFilteredItems(filtered);
-  }, [filters, dates, reports]);
+  }, [filters, dates, reports, events]);
 
-  const handleRedirect = (issue) => {
-    navigate("/reporting", { state: { selectedIssue: issue } });
-  };
+  const handleRedirect = (item) => {
+    if(item.type ==="issues"){
+      navigate("/reporting", { state: { selectedIssue: item } });
+    }
+    else{
+      
+      navigate(`/events/${item.id}`);
+     }
+    };
 
   return (
     <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6" style={{ overflow: "hidden" }}>
@@ -108,7 +131,7 @@ const MapComponent = ({ filters, dates, reports }) => {
         onClick={() => handleRedirect(item)}
         className="mt-2 w-full bg-blue-500 text-white text-xs font-medium py-1 rounded transition-all duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
       >
-        🔍 View Report
+        🔍 View {item.type === "issues"? "Report" : "Event"}
       </button>
     </div>
   </Popup>

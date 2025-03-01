@@ -1,6 +1,6 @@
 import React from "react";
 
-const DateTime = ({ date, time, onDateChange, onTimeChange }) => {
+const DateTime = ({ date, time, onDateChange, onTimeChange, dateClassName, timeClassName }) => {
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     onDateChange(newDate); // Pass the date back to the parent
@@ -26,7 +26,7 @@ const DateTime = ({ date, time, onDateChange, onTimeChange }) => {
           id="date-picker"
           value={date || ""} // Controlled input
           onChange={handleDateChange}
-          className="bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48"
+          className= {`${dateClassName} bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48`}
         />
       </div>
 
@@ -43,7 +43,7 @@ const DateTime = ({ date, time, onDateChange, onTimeChange }) => {
           id="time-picker"
           value={time || ""} 
           onChange={handleTimeChange}
-          className="bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48"
+          className={`${timeClassName}bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-48`}
         />
       </div>
     </div>

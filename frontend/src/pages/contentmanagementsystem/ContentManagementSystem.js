@@ -60,7 +60,7 @@ const ContentManagementSystem = () => {
         openTimes: "10:00 AM - 7:00 PM",
         description: "Browse eclectic shops and food stalls.",
         main_image: "https://picsum.photos/150",
-      },
+      }
     ],
   };
   const refreshData = async () => {
@@ -84,7 +84,10 @@ const ContentManagementSystem = () => {
         })
         .then((response) => {
           console.log("DEBUG: Events API Response:", response.data);
-          setEvents(Array.isArray(response.data) ? response.data : []);
+          setEvents(response.data);
+          // setEvents(Array.isArray(response.data) ? response.data : []);
+          // setStarredCards(response.data.filter(event => event.is_featured).map(event => event.id));
+          updateStarredCards(response.data);
         })
         .catch((error) => {
           console.error("Error fetching events:", error.response?.data);
@@ -101,8 +104,16 @@ const ContentManagementSystem = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setSelectedCards([]);
-    setStarredCards([]);
   };
+
+  const updateStarredCards = (events) => {
+    const starredEventIds = events
+      .filter(event => event.is_featured) // Find events that are starred
+      .map(event => event.id); // Extract their IDs
+  
+    setStarredCards(starredEventIds); // Update state
+  };
+  
 
   const handleCardClick = (index) => {
     navigate(
@@ -118,13 +129,42 @@ const ContentManagementSystem = () => {
     );
   };
 
-  const toggleStarSelection = (index) => {
-    setStarredCards((prevStarred) =>
-      prevStarred.includes(index)
-        ? prevStarred.filter((i) => i !== index)
-        : [...prevStarred, index]
-    );
+  const toggleStarSelection = async (eventId) => {
+    const isCurrentlyStarred = starredCards.includes(eventId);
+ 
+    if (!isCurrentlyStarred && starredCards.length >= 3) {
+      alert("You can only star up to 3 events.");
+      return;
+    }
+ 
+    const updatedStarredCards = isCurrentlyStarred
+      ? starredCards.filter((id) => id !== eventId)
+      : [...starredCards, eventId];
+
+ 
+    try {
+      await fetch(API_URL+`events/${eventId}/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_featured: !isCurrentlyStarred }),
+      });
+
+      setStarredCards(updatedStarredCards);
+
+        // Update the event in the state
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === eventId ? { ...event, is_featured: !isCurrentlyStarred } : event
+        )
+      );
+
+    } catch (error) {
+      console.error("Error updating star status:", error);
+    }
   };
+
 
   /*
   const handleAddCardClicked = () => {
@@ -221,12 +261,6 @@ const ContentManagementSystem = () => {
     }
   };
 
-  const handleStar = () => {
-    const allCards = selectedCards?.map((_, index) => index);
-    allCards.forEach((cardIndex) => toggleStarSelection(cardIndex));
-    handleCancel();
-  };
-
   const handleSelectAll = () => {
     const allCards = (
       selectedCategory === "Articles" ? articles : sampleData[selectedCategory]
@@ -278,7 +312,6 @@ const ContentManagementSystem = () => {
   <SelectTopBar
     selectedCards={selectedCards}
     onDelete={handleDeleteMultiple}
-    onStar={handleStar}
     onSelectAll={handleSelectAll}
     onCancel={handleCancel}
   />
@@ -300,9 +333,8 @@ const ContentManagementSystem = () => {
       >
         <input {...getInputProps()} ref={fileInputRef} />
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${
-            isDragging ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 pointer-events-none transition-opacity ${isDragging ? "opacity-100" : "opacity-0"
+            }`}
         >
           <p className="text-gray-500 font-semibold text-center">
             Drag and drop files here to upload
@@ -416,37 +448,36 @@ const ContentManagementSystem = () => {
                       ✓
                     </button>
 
-                    {/* Conditional Star Button */}
-                    {selectedCategory !== "Articles" && (
-                      <button
-                        className={`absolute top-2 right-2 w-9 h-9 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
-                          starredCards.includes(index)
-                            ? "bg-yellow-500 text-white"
-                            : "opacity-60"
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent the click event from triggering the card click
-                          toggleStarSelection(event);
-                        }}
-                      >
-                        ★
-                      </button>
-                    )}
-
-                    {/* Delete Button */}
+                  {/* Conditional Star Button */}
+                  {selectedCategory === "Events" && (
                     <button
-                      className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                      className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
+                        ? "bg-yellow-500 text-white"
+                        : "opacity-60"
+                        }`}
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
-                        handleDeleteSingular(event);
+                        toggleStarSelection(event.id);
                       }}
                     >
-                      ✕
+                      ★
                     </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  )}
+
+                  {/* Delete Button */}
+                  <button
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      handleDeleteSingular(event);
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

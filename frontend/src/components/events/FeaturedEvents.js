@@ -1,62 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const FeaturedEvents = () => {
-  // Placeholder data for Featured Events
-  const featuredEvents = [
-    {
-      title: "Tech Conference 2024",
-      openTimes: "9:00 AM - 5:00 PM",
-      description: "A premier conference showcasing cutting-edge technology.",
-      image: "https://picsum.photos/550",
-    },
-    {
-      title: "Food Festival",
-      openTimes: "11:00 AM - 9:00 PM",
-      description: "Taste the best dishes from around the world.",
-      image: "https://picsum.photos/840",
-    },
-    {
-      title: "Music Concert",
-      openTimes: "6:00 PM - 11:00 PM",
-      description: "Enjoy live music performances from top artists.",
-      image: "https://picsum.photos/830",
-    },
-  ];
+  const [featuredEvents, setFeaturedEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    axios
+      .get(API_URL + `events/featured/`)
+      .then((response) => {
+          const event = response.data;
+        setFeaturedEvents(event);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+        setError("Failed to load featured events.");
+        setLoading(false);
+      });
+    // eslint-disable-next-line
+  }, []);
 
   // Handle click on a featured event
-  const handleEventClick = (event) => {
-    alert(`Redirecting to detailed page for: ${event.title}`);
+  const handleEventClick = (id) => {
+    navigate(
+      `/events/${id}`
+    );
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-14">
-      <h2 className="text-2xl font-bold px-6 mb-8">Featured Events</h2>
-      <div className="grid grid-cols-3 rows-1 gap-6">
-        {featuredEvents.map((event, index) => (
-          <div
-            key={index}
-            className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer"
-            onClick={() => handleEventClick(event)}
-          >
-            {event.image && (
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-32 object-cover"
-              />
-            )}
-            <div className="p-4">
-              <h4 className="font-bold text-lg">{event.title}</h4>
-              <p className="text-sm text-gray-600">{event.openTimes}</p>
-              <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                {event.description}
-              </p>
+    <>
+      {featuredEvents.length > 0 ? (
+        <div className="max-w-6xl mx-auto mt-14 md:px-13">
+          <h2 className="text-2xl font-bold px-6 mt-8 flex justify-center">Featured Events</h2>
+          <div className="flex justify-center">
+            <div className="mt-8 border-t-2 border-gray-300 w-1/2"></div>
+          </div>
+          <div className="mt-8 flex justify-center">
+            <div className="flex justify-center flex-col md:flex-row gap-6 w-full px-6">
+              {loading ? (
+                <p>Loading...</p>
+              ) : error ? (
+                <p className="text-red-500">Error: {error}</p>
+              ) : (
+                featuredEvents.map((event, index) => (
+                  <div
+                    key={index}
+                    className="bg-yellow-100 border-2 border-yellow-400 rounded-lg overflow-hidden shadow-lg hover:shadow-xl cursor-pointer w-full md:w-3/5"
+                    onClick={() => handleEventClick(event.id)}
+                  >
+                    <div className="w-full">
+                      {event.main_image && (
+                        <img
+                          src={event.main_image}
+                          alt={event.title}
+                          className="w-full h-32 object-cover"
+                        />
+                      )}
+                      <div className="p-4 text-center">
+                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
+                        {event.eventType === "scheduled" ? (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {event.date}, {event.time}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {event.openTimes}
+                          </p>
+                        )}
+                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3">
+                          {event.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+          <div className="flex justify-center">
+            <div className="mt-8 border-t-2 border-gray-300 w-1/2"></div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
+
 
 export default FeaturedEvents;

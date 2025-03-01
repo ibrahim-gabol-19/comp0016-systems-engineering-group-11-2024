@@ -11,8 +11,11 @@ import SignUp from "./pages/account/SignUp";
 import Login from "./pages/account/Login";
 import ProtectedRoute from "./pages/account/ProtectedRoute";
 import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
+import DetailedEventPageView from "./pages/events/DetailedEventPageView";
+import DetailedArticlePageView from "./pages/articles/DetailedArticlePageView";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
 
 const App = () => {
   const [font, setFont] = useState(null);
@@ -66,8 +69,16 @@ const App = () => {
                     element={<ContentManagementSystem />}
                   />
                   <Route
+                    path="/articles/:articleId"
+                    element={<DetailedArticlePageView />}
+                  />
+                  <Route
                     path="/contentmanagementsystem/details/articles/:articleId"
                     element={<DetailedArticlePage />}
+                  />
+                  <Route 
+                    path="/events/:eventId" 
+                    element={<DetailedEventPageView />} 
                   />
                   <Route
                     path="/contentmanagementsystem/details/events/:eventId"
