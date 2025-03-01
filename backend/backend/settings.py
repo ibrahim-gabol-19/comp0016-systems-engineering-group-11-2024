@@ -167,7 +167,6 @@ USE_TZ = True
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # settings.py
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 AZURE_ACCOUNT_NAME = 'storagesysengblob'
 AZURE_ACCOUNT_KEY = 'Rh5HvgVgGZiGG/DggJ0RBD1/mTDAqmN+P5uwwWQH+ZEFTzmfGyjcTXXvRGedomyX + \
                     "4ZuGccfM3833+AStk3lzfw=='
