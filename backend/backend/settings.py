@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 from datetime import timedelta
-import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,13 +27,7 @@ LOGGING = {
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "aodajodoaij onion[hna]hdnanndn"
 
-
-env = environ.Env()
-environ.Env.read_env()
-if os.getenv('DEBUG') == "False":
-    DEBUG = False
-else:
-    DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["sysengbackendazuregroup11-e3c8a6dtexeqh3am.ukwest-01.azurewebsites.net", "*"]
 
