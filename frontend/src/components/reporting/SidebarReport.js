@@ -242,7 +242,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
               </div>
               <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
+                <p className="text-gray-500 text-m mb-4">
                   Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
               </div>
@@ -449,7 +449,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl mt-4 mb-4">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
               </div>
               <div className="w-full h-1/4 flex flex-col text-center justify-center">
                 <p className="text-gray-500 text-m mb-4">
