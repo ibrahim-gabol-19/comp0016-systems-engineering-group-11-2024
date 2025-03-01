@@ -7,10 +7,14 @@ import { CompanyContext } from "../../context/CompanyContext";
 const MapResizeFix = () => {
   const map = useMap();
   useEffect(() => {
-    setTimeout(() => {
-      map.invalidateSize();
+    const timeoutId = setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+      }
     }, 500);
+    return () => clearTimeout(timeoutId); // Clear the timeout on cleanup
   }, [map]);
+  
   return null;
 };
 
@@ -29,8 +33,6 @@ const MapComponent = ({ filters, dates, reports, events }) => {
 
 
   useEffect(() => {
-    console.log("Reports in MapComponent:", reports);
-    console.log("Events in MapComponent:", events);
 
     setMapCenter([51.5074, -0.1278]);
     setZoomLevel(6);

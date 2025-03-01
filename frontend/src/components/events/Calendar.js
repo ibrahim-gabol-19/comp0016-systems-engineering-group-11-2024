@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const Calendar = () => {
   const [currentWeek, setCurrentWeek] = useState(dayjs());
@@ -211,7 +213,7 @@ const Calendar = () => {
                   <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
                     {event.title}
                   </p>
-                  <p className="text-sm text-gray-600 text-center">{event.time}</p>
+                  <p className="text-sm text-gray-600 text-center">{dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
                 </div>
               ))
             ) : (
@@ -274,7 +276,7 @@ const Calendar = () => {
                         <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center break-words" title={event.title}>
                           {event.title}
                         </p>
-                        <p className="text-sm text-gray-600 text-center">{event.time}</p>
+                        <p className="text-sm text-gray-600 text-center">{dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
                       </div>
                     ))
                   ) : (
@@ -308,7 +310,7 @@ const Calendar = () => {
           {/* Event Details */}
           <div className="text-center">
             <h3 className="text-lg font-bold mb-2 overflow-hidden break-words mt-4">{selectedEvent.title}</h3>
-            <p className="text-sm text-gray-500 mb-4">{selectedEvent.time}</p>
+            <p className="text-sm text-gray-500 mb-4">{dayjs(selectedEvent.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
             <p className="text-gray-700 mb-6 overflow-hidden break-words line-clamp-3">{selectedEvent.description}</p>
           </div>
 
