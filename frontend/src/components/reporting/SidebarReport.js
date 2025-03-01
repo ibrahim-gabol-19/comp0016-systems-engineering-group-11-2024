@@ -239,7 +239,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
               </div>
               <div className="w-full h-1/4 text-center justify-center">
                 <p className="text-gray-500 text-m">
@@ -386,8 +386,57 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
             </div>
           ) : (
+            <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
             <div className="w-full h-2/6 px-3 py-3 pb-6 flex justify-center mt-4 text-gray-500">
                     <p>This report is {selectedMarker.status}. Further Messages are not allowed.</p>
+            </div>
+            {/*View Overview*/}
+            <div className="w-full shadow-md h-1/4">
+            <button
+              className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
+              style={{
+                color: main_color,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = lightenColor(
+                  main_color,
+                  40
+                );
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "white";
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.backgroundColor = lightenColor(
+                  main_color,
+                  60
+                );
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.backgroundColor = lightenColor(
+                  main_color,
+                  40
+                );
+              }}
+              onClick={() => setViewingDiscussion(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                />
+              </svg>
+              Back
+            </button>
+          </div>
           </div>
           )}
         </div>
