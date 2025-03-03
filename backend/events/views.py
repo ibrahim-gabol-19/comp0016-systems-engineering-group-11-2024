@@ -48,7 +48,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                 })
             elif event["event_type"] == "poi":
                 event_data.update({
-                    "opening_times": event["opening_times"] or "N/A",
+                    "opening_times": event["opening_times"],
                     "poi_type": event["poi_type"]
                 })
 
