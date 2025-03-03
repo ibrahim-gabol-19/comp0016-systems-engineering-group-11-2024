@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext"; // Assuming you have an aut
 const SignUp = () => {
   const { auth } = useAuth(); // Get authentication status from context
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -55,7 +56,7 @@ const SignUp = () => {
     setError([]); // Clear errors if password is valid
 
     try {
-      await axios.post("http://localhost:8000/api/auth/signup/", {
+      await axios.post(`${API_URL}api/auth/signup/`, {
         username,
         email,
         password,

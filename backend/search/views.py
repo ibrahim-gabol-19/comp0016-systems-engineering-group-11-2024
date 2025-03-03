@@ -9,7 +9,9 @@ SentenceTransformer model.
 from sentence_transformers import SentenceTransformer  # pylint: disable=E0401
 from sklearn.metrics.pairwise import cosine_similarity  # pylint: disable=E0401
 from django.http import JsonResponse
-import requests  # pylint: disable=E0401
+from articles.utils import get_articles
+from events.utils import get_events
+from reports.utils import get_reports
 
 # Load the model
 model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
@@ -96,7 +98,6 @@ def perform_semantic_search(query, datasets):
     results = sorted(results, key=lambda x: x["similarity_score"],reverse=True)[:3]
     return results
 
-
 def search(request):
     """
     Main search function.
@@ -105,23 +106,12 @@ def search(request):
     if not query:
         return JsonResponse({"error": "Please provide a query."}, status=400)
 
-    # Retrieve the token from the incoming request (if provided)
-    auth_header = request.headers.get("Authorization")
-    headers = {}
-    if auth_header:
-        headers["Authorization"] = auth_header
-
     try:
-        articles = requests.get(
-            "http://127.0.0.1:8000/articles/", headers=headers, timeout=10
-        ).json()
-        events = requests.get(
-            "http://127.0.0.1:8000/events/", headers=headers, timeout=10
-        ).json()
-        reports = requests.get(
-            "http://127.0.0.1:8000/reports/", headers=headers, timeout=10
-            ).json()
-    except requests.exceptions.RequestException as e:
+        # Directly call the functions to retrieve data
+        articles = get_articles()
+        events = get_events()
+        reports = get_reports()
+    except Exception as e: # pylint: disable=W0718
         return JsonResponse(
             {"error": "Failed to fetch data.", "details": str(e)},
             status=500
