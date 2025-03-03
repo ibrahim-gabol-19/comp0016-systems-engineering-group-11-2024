@@ -424,15 +424,15 @@ const ContentManagementSystem = () => {
                     )}
                     <div className="p-4 text-center flex flex-col justify-center">
                         <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
-                        {event.eventType === "point_of_interest" ? (
+                        {event.event_type === "point_of_interest" ? (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
                             {event.opening_times}
                           </p>
-                        ) : (
+                        ) : event.event_type === "scheduled" ? (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
                             {event.date}, {event.time}
                           </p>
-                        )}
+                        ): null}
                         <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 flex-1 ml-6 mr-6">
                           {event.description}
                         </p>
