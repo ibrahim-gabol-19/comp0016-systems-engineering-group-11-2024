@@ -642,7 +642,18 @@ const DetailedEventPage = () => {
 
             {eventType === "scheduled" && (
                 <p className="text-lg mt-4 text-gray-900 text-center">
-                <b>Event Date & Time:</b> On {date} at {time}
+                <b>Event Date & Time: </b>
+
+                  {new Date(date + 'T' + time).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                  })} at {new Date(date + 'T' + time).toLocaleTimeString(undefined, {
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                  })}
                 </p>)
               }
               {eventType === "point_of_interest" && (
