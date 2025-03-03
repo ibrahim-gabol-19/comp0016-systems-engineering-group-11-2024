@@ -445,13 +445,24 @@ const ContentManagementSystem = () => {
                         toggleCardSelection(event);
                       }}
                     >
-                      ✓
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-5 h-5" // Adjust size as needed
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
                     </button>
 
                   {/* Conditional Star Button */}
                   {selectedCategory === "Events" && (
                     <button
-                      className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
+                      className={`absolute top-2 right-10 w-9 h-9 mr-2 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
                         ? "bg-yellow-500 text-white"
                         : "opacity-60"
                         }`}
@@ -460,19 +471,43 @@ const ContentManagementSystem = () => {
                         toggleStarSelection(event.id);
                       }}
                     >
-                      ★
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 18.03 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
                     </button>
                   )}
 
                   {/* Delete Button */}
                   <button
-                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent the click event from triggering the card click
                       handleDeleteSingular(event);
                     }}
                   >
-                    ✕
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-5 h-5"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+
                   </button>
                 </div>
               ))}
