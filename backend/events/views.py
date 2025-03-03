@@ -75,7 +75,7 @@ class EventsViewSet(viewsets.ModelViewSet):
 
             # Handle missing or None time
             if event["time"]:
-                time_str = event["time"].strftime("%I:%M")  # Convert to 12-hour format
+                time_str = event["time"].strftime("%H:%M") 
             else:
                 time_str = ""  # Default for missing time
 
