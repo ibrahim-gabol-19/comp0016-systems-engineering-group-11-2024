@@ -46,7 +46,7 @@ class EventsViewSet(viewsets.ModelViewSet):
                     "date": event["date"],
                     "time": event["time"]
                 })
-            elif event["event_type"] == "poi":
+            elif event["event_type"] == "point_of_interest":
                 event_data.update({
                     "opening_times": event["opening_times"],
                     "poi_type": event["poi_type"]
