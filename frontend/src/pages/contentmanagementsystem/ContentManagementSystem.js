@@ -371,7 +371,7 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
-              <div className="grid grid-cols-4 gap-8 p-4 h-1/2" style={{ gridAutoRows: '80%' }}>
+              <div className="grid grid-cols-4 gap-8 p-4 pl-8 pr-8 pt-8 h-1/2" style={{ gridAutoRows: '80%' }}>
                 {(selectedCategory === "Articles"
                   ? filterItems(articles, userQuery)
                   : selectedCategory === "Events"
