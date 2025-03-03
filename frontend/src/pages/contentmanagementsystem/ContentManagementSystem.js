@@ -430,7 +430,7 @@ const ContentManagementSystem = () => {
                           </p>
                         ) : (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
-                            {event.openTimes}
+                            {event.opening_times}
                           </p>
                         )}
                         <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 flex-1 ml-6 mr-6">
