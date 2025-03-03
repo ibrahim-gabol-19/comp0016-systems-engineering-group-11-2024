@@ -52,7 +52,7 @@ def login():
         print("Login successful. Authorization token obtained.")
         return token
     else:
-        print(f"Login failed with status code {response.status_code}: {response.text}")
+        print(f"Login failed with status code {response.status_code}: {response.text} {response}")
         return None
 
 
@@ -193,6 +193,67 @@ reports_data = [
     {"title": "Sustainability of London's Food Systems", "content": "London's food systems are facing sustainability challenges, including food waste, food insecurity, and the environmental impact of food transportation. There are growing calls for local food sourcing and reducing the carbon footprint of food consumption."}
 ]
 
+events = [
+    {
+        "event_title": "Thames River Cleanup",
+        "event_description": "Join us for a community-driven Thames River cleanup! Help us remove waste and protect London's iconic river while learning about local water ecosystems.",
+        "location": "South Bank",
+        "time": "09:00",
+        "theme": "Sustainability"
+    },
+    {
+        "event_title": "AI Walk: Exploring Smart City Solutions in London",
+        "event_description": "Take part in a guided walk through central London and discover how AI is being used to make the city smarter and more sustainable. Visit areas implementing innovative tech like smart lighting and waste management.",
+        "location": "Covent Garden",
+        "time": "11:00",
+        "theme": "AI"
+    },
+    {
+        "event_title": "Green Spaces Walk: Exploring Sustainable Gardens in London",
+        "event_description": "Join us for a relaxing walk through some of London’s most sustainable green spaces. From urban gardens to eco-conscious parks, learn how nature and sustainability coexist in the heart of the city.",
+        "location": "Hyde Park",
+        "time": "14:00",
+        "theme": "Sustainability"
+    },
+    {
+        "event_title": "Community Litter Pick at Regent’s Canal",
+        "event_description": "Help us keep Regent’s Canal clean and beautiful by joining our community litter pick. Together, we can help protect London's waterways and promote a cleaner, greener city.",
+        "location": "Regent's Canal",
+        "time": "10:00",
+        "theme": "Sustainability"
+    },
+    {
+        "event_title": "Green London Walking Tour: Eco-Innovations and Urban Sustainability",
+        "event_description": "Join a guided walking tour through London’s greenest streets, learning about the city’s sustainability projects, from green roofs to zero-waste initiatives. See how London is becoming a model for eco-friendly urban living.",
+        "location": "Shoreditch",
+        "time": "13:30",
+        "theme": "Sustainability"
+    },
+    {
+        "event_title": "Smart Cities Hackathon: Building the Future of London",
+        "event_description": "A hands-on hackathon where tech enthusiasts can come together to solve real-world urban challenges using AI. Teams will work on projects that make London a more sustainable and tech-forward city.",
+        "location": "King’s Cross",
+        "time": "09:30",
+        "theme": "AI"
+    },
+    {
+        "event_title": "Urban Gardening Workshop",
+        "event_description": "Learn how to create your own urban garden in this hands-on workshop. From rooftop gardens to balcony plants, discover sustainable ways to grow your own food in the heart of London.",
+        "location": "Camden",
+        "time": "16:00",
+        "theme": "Sustainability"
+    },
+    {
+        "event_title": "Tree Planting in the City: A Green Initiative",
+        "event_description": "Be part of London’s green future by helping to plant trees in one of the city’s many open spaces. This event is a great opportunity to make a tangible impact on the environment while enjoying the outdoors.",
+        "location": "Victoria Park",
+        "time": "10:30",
+        "theme": "Sustainability"
+    }
+]
+
+company_data = {"title"}
+
 # Function to create events with dynamic titles and descriptions
 def create_event(token, title, description, location, event_time):
     headers = {"Authorization": f"Bearer {token}"}
@@ -261,10 +322,8 @@ def main():
     if token:
         # Create 5 events with dynamic titles and descriptions
         for i in range(5):
-            event_title = f"London Adventure {i+1}"
-            event_description = f"Join us for a special event in the heart of London at {LONDON_LOCATIONS[i]['name']}."
-            create_event(token, event_title, event_description, LONDON_LOCATIONS[i], "11:11")
-
+            event = events[i]
+            create_event(token, event["event_title"], event["event_description"], event["location"], event["time"])
         # Create 5 articles
         for i in range(5):
             article = articles_data[i]
