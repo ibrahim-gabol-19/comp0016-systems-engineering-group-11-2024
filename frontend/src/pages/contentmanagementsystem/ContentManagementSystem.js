@@ -430,7 +430,16 @@ const ContentManagementSystem = () => {
                           </p>
                         ) : event.event_type === "scheduled" ? (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
-                            {event.date}, {event.time}
+                                {new Date(event.date + 'T' + event.time).toLocaleDateString(undefined, {
+                                  weekday: 'short', // e.g., "Mon"
+                                  month: 'short',   // e.g., "Jan"
+                                  day: 'numeric',   // e.g., "15"
+                                  year: 'numeric'  // e.g., "2024"
+                              })} at {new Date(event.date + 'T' + event.time).toLocaleTimeString(undefined, {
+                                  hour: 'numeric',    // e.g., "3"
+                                  minute: 'numeric',  // e.g., "30"
+                                  hour12: true       // e.g., "AM/PM"
+                              })}
                           </p>
                         ): null}
                         <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 flex-1 ml-6 mr-6">

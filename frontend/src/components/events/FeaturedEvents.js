@@ -66,7 +66,16 @@ const FeaturedEvents = () => {
                         <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
                         {event.eventType === "scheduled" ? (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
-                            {event.date}, {event.time}
+                              {new Date(event.date + 'T' + event.time).toLocaleDateString(undefined, {
+                                  weekday: 'short', // e.g., "Mon"
+                                  month: 'short',   // e.g., "Jan"
+                                  day: 'numeric',   // e.g., "15"
+                                  year: 'numeric'  // e.g., "2024"
+                              })} at {new Date(event.date + 'T' + event.time).toLocaleTimeString(undefined, {
+                                  hour: 'numeric',    // e.g., "3"
+                                  minute: 'numeric',  // e.g., "30"
+                                  hour12: true       // e.g., "AM/PM"
+                              })}
                           </p>
                         ) : (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
