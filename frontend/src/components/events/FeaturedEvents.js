@@ -73,7 +73,7 @@ const FeaturedEvents = () => {
                             {event.openTimes}
                           </p>
                         )}
-                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3">
+                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 ml-6 mr-6">
                           {event.description}
                         </p>
                       </div>

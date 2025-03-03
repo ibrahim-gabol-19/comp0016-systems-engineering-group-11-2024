@@ -371,7 +371,7 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
-              <div className="grid grid-cols-4 gap-8 p-4">
+              <div className="grid grid-cols-4 gap-8 p-4 h-1/2" style={{ gridAutoRows: '80%' }}>
                 {(selectedCategory === "Articles"
                   ? filterItems(articles, userQuery)
                   : selectedCategory === "Events"
@@ -422,17 +422,21 @@ const ContentManagementSystem = () => {
                         className="w-full h-1/2 object-cover rounded-lg"
                       />
                     )}
-                    <div className="p-2 flex flex-col h-1/2 text-center">
-                      <h1 className="font-bold text-2xl text-gray-800 truncate">
-                        {event.title}
-                      </h1>
-                      <p className="text-sm text-gray-500 truncate">
-                        {event.openTimes}
-                      </p>
-                      <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
-                        {event.description}
-                      </p>
-                    </div>
+                    <div className="p-4 text-center flex flex-col justify-center">
+                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
+                        {event.eventType === "scheduled" ? (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {event.date}, {event.time}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {event.openTimes}
+                          </p>
+                        )}
+                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 flex-1 ml-6 mr-6">
+                          {event.description}
+                        </p>
+                      </div>
 
                     <button
                       className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
