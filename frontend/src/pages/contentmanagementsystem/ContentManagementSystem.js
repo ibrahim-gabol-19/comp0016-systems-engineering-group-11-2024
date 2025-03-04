@@ -340,8 +340,8 @@ const ContentManagementSystem = () => {
               <li
                 key={category}
                 className={`p-4  text-center font-semibold cursor-pointer transition-colors ${selectedCategory === category
-                    ? "bg-gray-200 border-r-4" // Base styles for selected category
-                    : "text-gray-600 hover:bg-gray-200" // Base styles for unselected category
+                  ? "bg-gray-200 border-r-4" // Base styles for selected category
+                  : "text-gray-600 hover:bg-gray-200" // Base styles for unselected category
                   }`}
                 style={{
                   color: selectedCategory === category ? main_color : "inherit", // Dynamic text color
@@ -360,113 +360,112 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Reporting" && (
             <ReportsSection userQuery={userQuery} />
           )}
-          {selectedCategory !== "Reporting" &&
-            selectedCategory !== "Miscellaneous" && (
-              <div className="grid grid-cols-4 gap-8 p-4">
-                {(selectedCategory === "Articles"
-                  ? filterItems(articles, userQuery)
-                  : selectedCategory === "Events"
-                    ? filterItems(events, userQuery)
-                    : sampleData[selectedCategory]
-                )?.map((event, index) => (
-                  <div
-                    key={index}
-                    className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(event)
-                        ? "border border-transparent border-8" // Keep the border styles
-                        : "bg-white"
-                      }`}
-                    style={{
-                      minHeight: "300px",
-                      backgroundColor: selectedCards.includes(event)
-                        ? lightenColor(main_color, 80)
-                        : "white", // Dynamic background color
-                      transition: "background-color 0.3s, transform 0.3s", // Smooth transitions
-                    }}
-                    onClick={() => {
-                      if (selectedCards.length === 0) {
-                        handleCardClick(event.id);
-                        console.log("Event id clicked is", event.id);
-                      } else {
-                        toggleCardSelection(event);
-                      }
-                    }}
-                    onMouseEnter={(e) => {
-                      // if (!selectedCards.includes(event)) {
-                      //   e.currentTarget.style.backgroundColor = main_color; // Set hover background color
-                      // }
-                      e.currentTarget.style.transform = "scale(1.02)"; // Optional: Add a slight scale effect
-                    }}
-                    onMouseLeave={(e) => {
-                      // if (!selectedCards.includes(event)) {
-                      //   e.currentTarget.style.backgroundColor = "white"; // Reset background color
-                      // }
-                      e.currentTarget.style.transform = "scale(1)"; // Reset scale
+          {selectedCategory !== "Reporting" && (
+            <div className="grid grid-cols-4 gap-8 p-4">
+              {(selectedCategory === "Articles"
+                ? filterItems(articles, userQuery)
+                : selectedCategory === "Events"
+                  ? filterItems(events, userQuery)
+                  : sampleData[selectedCategory]
+              )?.map((event, index) => (
+                <div
+                  key={index}
+                  className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(event)
+                    ? "border border-transparent border-8" // Keep the border styles
+                    : "bg-white"
+                    }`}
+                  style={{
+                    minHeight: "300px",
+                    backgroundColor: selectedCards.includes(event)
+                      ? lightenColor(main_color, 80)
+                      : "white", // Dynamic background color
+                    transition: "background-color 0.3s, transform 0.3s", // Smooth transitions
+                  }}
+                  onClick={() => {
+                    if (selectedCards.length === 0) {
+                      handleCardClick(event.id);
+                      console.log("Event id clicked is", event.id);
+                    } else {
+                      toggleCardSelection(event);
+                    }
+                  }}
+                  onMouseEnter={(e) => {
+                    // if (!selectedCards.includes(event)) {
+                    //   e.currentTarget.style.backgroundColor = main_color; // Set hover background color
+                    // }
+                    e.currentTarget.style.transform = "scale(1.02)"; // Optional: Add a slight scale effect
+                  }}
+                  onMouseLeave={(e) => {
+                    // if (!selectedCards.includes(event)) {
+                    //   e.currentTarget.style.backgroundColor = "white"; // Reset background color
+                    // }
+                    e.currentTarget.style.transform = "scale(1)"; // Reset scale
+                  }}
+                >
+                  {/* Content inside the div */}
+
+                  {event.main_image && (
+                    <img
+                      src={event.main_image}
+                      alt={event.title}
+                      className="w-full h-1/2 object-cover rounded-lg"
+                    />
+                  )}
+                  <div className="p-2 flex flex-col h-1/2 text-center">
+                    <h1 className="font-bold text-2xl text-gray-800 truncate">
+                      {event.title}
+                    </h1>
+                    <p className="text-sm text-gray-500 truncate">
+                      {event.openTimes}
+                    </p>
+                    <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
+                      {event.description}
+                    </p>
+                  </div>
+
+                  <button
+                    className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
+                      ? "opacity-100 bg-gray-600 font-bold text-white"
+                      : "opacity-60"
+                      } group-hover:opacity-100 transition-opacity`}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      toggleCardSelection(event);
                     }}
                   >
-                    {/* Content inside the div */}
+                    ✓
+                  </button>
 
-                    {event.main_image && (
-                      <img
-                        src={event.main_image}
-                        alt={event.title}
-                        className="w-full h-1/2 object-cover rounded-lg"
-                      />
-                    )}
-                    <div className="p-2 flex flex-col h-1/2 text-center">
-                      <h1 className="font-bold text-2xl text-gray-800 truncate">
-                        {event.title}
-                      </h1>
-                      <p className="text-sm text-gray-500 truncate">
-                        {event.openTimes}
-                      </p>
-                      <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
-                        {event.description}
-                      </p>
-                    </div>
-
+                  {/* Conditional Star Button */}
+                  {selectedCategory === "Events" && (
                     <button
-                      className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
-                          ? "opacity-100 bg-gray-600 font-bold text-white"
-                          : "opacity-60"
-                        } group-hover:opacity-100 transition-opacity`}
+                      className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
+                        ? "bg-yellow-500 text-white"
+                        : "opacity-60"
+                        }`}
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
-                        toggleCardSelection(event);
+                        toggleStarSelection(event.id);
                       }}
                     >
-                      ✓
+                      ★
                     </button>
+                  )}
 
-                    {/* Conditional Star Button */}
-                    {selectedCategory === "Events" && (
-                      <button
-                        className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
-                          ? "bg-yellow-500 text-white"
-                          : "opacity-60"
-                          }`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent the click event from triggering the card click
-                          toggleStarSelection(event.id);
-                        }}
-                      >
-                        ★
-                      </button>
-                    )}
-
-                    {/* Delete Button */}
-                    <button
-                      className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent the click event from triggering the card click
-                        handleDeleteSingular(event);
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  {/* Delete Button */}
+                  <button
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      handleDeleteSingular(event);
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
