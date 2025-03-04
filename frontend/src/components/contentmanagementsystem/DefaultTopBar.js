@@ -34,7 +34,7 @@ const DefaultTopBar = ({ onManual, setUserQuery, selectedCategory = "hi" }) => {
       <div className="w-3/12"></div>
 
       {/* New Button (Bottom Right) */}
-      <div className="fixed bottom-4 right-4">
+      <div className="fixed bottom-8 right-8">
         <button
           className="w-16 h-16 rounded-full flex items-center justify-center text-white"
           style={{
@@ -63,6 +63,7 @@ const DefaultTopBar = ({ onManual, setUserQuery, selectedCategory = "hi" }) => {
           }}
           onClick={onManual}
         >
+          <div className="flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -75,6 +76,7 @@ const DefaultTopBar = ({ onManual, setUserQuery, selectedCategory = "hi" }) => {
               clipRule="evenodd"
             />
           </svg>
+          </div>
         </button>
       </div>
     </div>

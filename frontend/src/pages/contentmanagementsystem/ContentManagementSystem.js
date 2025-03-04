@@ -371,7 +371,7 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
-              <div className="grid grid-cols-4 gap-8 p-4 pl-8 pr-8 pt-8 h-1/2" style={{ gridAutoRows: '80%' }}>
+              <div className="grid grid-cols-4 gap-8 p-4 pl-8 pr-8 pt-8 pb-8 max-h-[50vh]" style={{ gridAutoRows: '80%' }}>
                 {(selectedCategory === "Articles"
                   ? filterItems(articles, userQuery)
                   : selectedCategory === "Events"
@@ -401,15 +401,9 @@ const ContentManagementSystem = () => {
                       }
                     }}
                     onMouseEnter={(e) => {
-                      // if (!selectedCards.includes(event)) {
-                      //   e.currentTarget.style.backgroundColor = main_color; // Set hover background color
-                      // }
                       e.currentTarget.style.transform = "scale(1.02)"; // Optional: Add a slight scale effect
                     }}
                     onMouseLeave={(e) => {
-                      // if (!selectedCards.includes(event)) {
-                      //   e.currentTarget.style.backgroundColor = "white"; // Reset background color
-                      // }
                       e.currentTarget.style.transform = "scale(1)"; // Reset scale
                     }}
                   >
@@ -447,7 +441,8 @@ const ContentManagementSystem = () => {
                         </p>
                       </div>
 
-                    <button
+                    {/* Conditional Checkmark Button */}
+                    <button 
                       className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
                         selectedCards.includes(event)
                           ? "opacity-100 bg-gray-600 font-bold text-white"
