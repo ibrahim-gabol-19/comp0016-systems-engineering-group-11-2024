@@ -13,7 +13,7 @@ import ProtectedRoute from "./pages/account/ProtectedRoute";
 import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
 import DetailedEventPageView from "./pages/events/DetailedEventPageView";
 import DetailedArticlePageView from "./pages/articles/DetailedArticlePageView";
-import MiscellaneousSection from "./pages/settings/MiscellaneousSection";
+import MiscellaneousSection from "./pages/settings/MiscellaneousSectionPage";
 
 const API_URL = process.env.REACT_APP_API_URL;
 

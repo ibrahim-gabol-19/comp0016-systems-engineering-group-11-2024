@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 import MapComponent from "../../components/settings/MapComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -15,6 +16,7 @@ const MiscellaneousSection = () => {
   const [neLat, setNeLat] = useState(60);
   const [neLon, setNeLon] = useState(2);
   const [feedback, setFeedback] = useState({ message: "", color: "" });
+  const navigate = useNavigate();
 
   const handleSwLatChange = (e) => setSwLat(parseFloat(e.target.value));
   const handleSwLonChange = (e) => setSwLon(parseFloat(e.target.value));
@@ -23,6 +25,7 @@ const MiscellaneousSection = () => {
 
   useEffect(() => {
     fetchCompanyInformation();
+    navigate(-1);
   }, []);
 
   const handleImageUpload = (e) => {
