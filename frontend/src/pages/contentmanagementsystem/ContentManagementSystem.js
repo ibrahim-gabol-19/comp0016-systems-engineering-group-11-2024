@@ -5,7 +5,7 @@ import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar"
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
-import MiscellaneousSection from "../../components/contentmanagementsystem/detailed/miscellaneous/MiscellaneousSection";
+import MiscellaneousSection from "../settings/MiscellaneousSection";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
 
@@ -24,7 +24,7 @@ const ContentManagementSystem = () => {
   const [userQuery, setUserQuery] = useState("");
   const { main_color } = useContext(CompanyContext);
   const token = localStorage.getItem("token");
-  const categories = ["Articles", "Events", "Reporting", "Miscellaneous"];
+  const categories = ["Articles", "Events", "Reporting"];
   const navigate = useNavigate();
 
   const sampleData = {

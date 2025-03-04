@@ -1,4 +1,4 @@
-import React, {useContext } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Assuming the AuthContext is in this path
 import { CompanyContext } from "../context/CompanyContext";
@@ -67,18 +67,32 @@ const Header = () => {
 
         {/* Only show "Manage" if user is superuser */}
         {auth.user?.is_superuser && (
-          <Link
-            to="/contentmanagementsystem"
-            style={{
-              color: "black", // Default color
-              transition: "color 0.3s, transform 0.3s",
-            }}
-            className="ml-8 text-lg hover:scale-110"
-            onMouseEnter={(e) => (e.target.style.color = main_color)} // Set hover color
-            onMouseLeave={(e) => (e.target.style.color = "black")} // Reset to default
-          >
-            Manage
-          </Link>
+          <div className="flex">
+            <Link
+              to="/contentmanagementsystem"
+              style={{
+                color: "black", // Default color
+                transition: "color 0.3s, transform 0.3s",
+              }}
+              className="ml-8 text-lg hover:scale-110"
+              onMouseEnter={(e) => (e.target.style.color = main_color)} // Set hover color
+              onMouseLeave={(e) => (e.target.style.color = "black")} // Reset to default
+            >
+              Manage
+            </Link>
+            <Link
+              to="/miscellaneous"
+              style={{
+                color: "black", // Default color
+                transition: "color 0.3s, transform 0.3s",
+              }}
+              className="ml-8 text-lg hover:scale-110"
+              onMouseEnter={(e) => (e.target.style.color = main_color)} // Set hover color
+              onMouseLeave={(e) => (e.target.style.color = "black")} // Reset to default
+            >
+              Settings
+            </Link>
+          </div>
         )}
 
         {auth.isAuthenticated && (
@@ -96,7 +110,7 @@ const Header = () => {
           </button>
         )}
       </nav>
-    </header>
+    </header >
   );
 };
 

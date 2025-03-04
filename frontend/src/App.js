@@ -13,6 +13,7 @@ import ProtectedRoute from "./pages/account/ProtectedRoute";
 import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
 import DetailedEventPageView from "./pages/events/DetailedEventPageView";
 import DetailedArticlePageView from "./pages/articles/DetailedArticlePageView";
+import MiscellaneousSection from "./pages/settings/MiscellaneousSection";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -85,6 +86,10 @@ const App = () => {
                     element={<DetailedEventPage />}
                   />
                   <Route path="/reporting" element={<ReportsPage />} />
+                  <Route
+                    path="/miscellaneous"
+                    element={<MiscellaneousSection />}
+                  />
                 </Route>
               </Routes>
             </div>

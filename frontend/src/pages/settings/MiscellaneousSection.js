@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import MapComponent from "./MapComponent";
+import MapComponent from "../../components/settings/MapComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
