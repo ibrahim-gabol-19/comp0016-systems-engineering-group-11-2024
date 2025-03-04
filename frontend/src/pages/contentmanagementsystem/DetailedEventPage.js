@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 // import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
-import { useParams } from "react-router-dom"; // For dynamic routing
+import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -37,6 +37,8 @@ const DetailedEventPage = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
   const [requiredFields, setRequiredFields] = useState({});
+  const navigate = useNavigate();
+  
 
 
   useEffect(() => {
@@ -332,10 +334,31 @@ const DetailedEventPage = () => {
 
   const isFieldRequired = (fieldName) => requiredFields[fieldName];
 
+  const handleBack = () => { navigate(-1); };
+
   return (
     <div>
       <Header />
       <div className="pt-20"></div>
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4 ml-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+      </svg>
+      </button>
       <div className="flex justify-between px-5">
         <div>
           <DropdownExtract

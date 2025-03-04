@@ -51,7 +51,7 @@ const DetailedEventPageView = () => {
 
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
-        <div className="max-w-7xl w-full bg-white p-6 rounded-md shadow-md">
+        <div className="max-w-7xl w-full bg-white p-6 rounded-lg shadow-md">
             {/* Back Button */}
             <button
             onClick={handleBack}
