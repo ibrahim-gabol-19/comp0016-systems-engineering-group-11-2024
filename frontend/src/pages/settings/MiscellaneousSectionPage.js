@@ -87,13 +87,13 @@ const MiscellaneousSection = () => {
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
 
-      <div className="w-3xl w-full bg-white p-6 rounded-md shadow-md">
-      {/* Feedback Message */}
-      {feedback.message && (
-        <div className={`py-2 w-full bg-green-100 text-center text-xl  text-${feedback.color}-600`}>
-          {feedback.message}
-        </div>
-      )}
+      <div className="w-5/6 bg-white p-6 rounded-md shadow-md">
+        {/* Feedback Message */}
+        {feedback.message && (
+          <div className={`py-2 w-full bg-green-100 text-center text-xl  text-${feedback.color}-600`}>
+            {feedback.message}
+          </div>
+        )}
 
         <div className="flex justify-between h-full">
 
@@ -116,6 +116,8 @@ const MiscellaneousSection = () => {
               />
             </svg>
           </button>
+          <h2 className="py-2 font-bold text-5xl flex items-center justify-center">Company Information</h2>
+
           {/* Save Button (Anchored to Top Right) */}
           <button
             type="submit"
@@ -125,87 +127,90 @@ const MiscellaneousSection = () => {
             Save
           </button>
         </div>
-        <h2 className="py-2 font-bold text-4xl">Company Information</h2>
         <div>
           <form onSubmit={handleSubmit}>
+            <div className="py-6">
+              
+            </div>
             {/* Name */}
-            <div className="overflow-auto px-2 py-2">
-              <h3 className="text-xl text-gray-600 mb-2">Title</h3>
+            <div className="overflow-auto px-2 py-2 w-full">
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name"
-                className="w-full text-3xl border rounded-lg p-2"
+                className="w-full flex text-center items-center justify-center text-5xl border rounded-lg p-2"
               />
             </div>
 
-            {/* About */}
-            <div className="overflow-auto px-2 py-2">
-              <h3 className="text-xl text-gray-600 mb-2">About</h3>
-              <textarea
-                id="about"
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                placeholder="About"
-                className="w-full h-32 text-lg border rounded-lg p-2 resize-none"
-              />
-            </div>
+            <div className="grid grid-flow-col grid-rows-2 gap-4 h-[32rem] px-4 items-center">
+              {/* About */}
+              <div className="overflow-auto px-2 py-2 w-3/4">
+                <h3 className="text-xl text-gray-600 mb-2">About</h3>
+                <textarea
+                  id="about"
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  placeholder="About"
+                  className="w-full h-32 text-lg border rounded-lg p-2 resize-none"
+                />
+              </div>
 
-            {/* Image Upload */}
-            <div className="px-2 py-2">
-              <h3 className="text-xl text-gray-600 mb-2">Logo</h3>
-              {image ? (
-                <div>
-                  <img
-                    src={URL.createObjectURL(image)} // Use URL.createObjectURL for preview
-                    alt="Uploaded"
-                    className="w-48 h-48 object-cover rounded-lg border"
-                  />
-                </div>
-              ) : (
-                <p className="text-gray-500">No image uploaded</p>
-              )}
-              <input
-                type="file"
-                className="mt-2"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </div>
+              {/* Font Selector */}
+              <div className="px-2 py-2 w-3/4">
+                <h3 className="text-xl text-gray-600 mb-2">Font</h3>
+                <select
+                  id="font"
+                  value={font}
+                  onChange={(e) => setFont(e.target.value)}
+                  className="w-full text-xl border rounded-lg p-2"
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Tahoma">Tahoma</option>
+                </select>
+              </div>
 
-            {/* Color Picker */}
-            <div className="px-2 py-2">
-              <h3 className="text-xl text-gray-600 mb-2">Main Color</h3>
-              <input
-                type="color"
-                id="color"
-                value={mainColor}
-                onChange={(e) => setMainColor(e.target.value)}
-                className="w-full"
-              />
-            </div>
 
-            {/* Font Selector */}
-            <div className="px-2 py-2">
-              <h3 className="text-xl text-gray-600 mb-2">Font</h3>
-              <select
-                id="font"
-                value={font}
-                onChange={(e) => setFont(e.target.value)}
-                className="w-full text-xl border rounded-lg p-2"
-              >
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Tahoma">Tahoma</option>
-              </select>
+              {/* Image Upload */}
+              <div className="px-2 py-2 w-1/4">
+                <h3 className="text-xl text-gray-600 mb-2">Logo</h3>
+                {image ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(image)} // Use URL.createObjectURL for preview
+                      alt="Uploaded"
+                      className="w-48 h-48 object-cover rounded-lg border"
+                    />
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No image uploaded</p>
+                )}
+                <input
+                  type="file"
+                  className="mt-2"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
+        
+              {/* Color Picker */}
+              <div className="px-2 py-2">
+                <h3 className="text-xl text-gray-600 mb-2">Main Color</h3>
+                <input
+                  type="color"
+                  id="color"
+                  value={mainColor}
+                  onChange={(e) => setMainColor(e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
-
             {/* Divider */}
             <hr className="my-6 border-t border-gray-300" />
 
