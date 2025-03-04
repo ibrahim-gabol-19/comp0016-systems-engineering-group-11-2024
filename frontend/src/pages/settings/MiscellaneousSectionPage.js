@@ -25,7 +25,7 @@ const MiscellaneousSection = () => {
 
   useEffect(() => {
     fetchCompanyInformation();
-    navigate(-1);
+    // navigate(-1);
   }, []);
 
   const handleImageUpload = (e) => {
@@ -81,24 +81,50 @@ const MiscellaneousSection = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
-    <div className="h-full w-full px-1 py-1">
-         {/* Feedback Message */}
-         {feedback.message && (
-              <div className={`py-2 w-full bg-green-100 text-center text-xl  text-${feedback.color}-600`}>
-                {feedback.message}
-              </div>
-            )}
-      <div className="bg-white border shadow-2xl overflow-auto px-5 py-5 rounded-xl relative">
-        {/* Save Button (Anchored to Top Right) */}
-        <button
-          type="submit"
-          onClick={handleSubmit}
-          className="absolute top-4 right-4 py-2 px-6 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition duration-300"
-        >
-          Save
-        </button>
+    <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
 
+      <div className="w-3xl w-full bg-white p-6 rounded-md shadow-md">
+      {/* Feedback Message */}
+      {feedback.message && (
+        <div className={`py-2 w-full bg-green-100 text-center text-xl  text-${feedback.color}-600`}>
+          {feedback.message}
+        </div>
+      )}
+
+        <div className="flex justify-between h-full">
+
+          {/* Back Button */}
+          <button
+            onClick={handleBack}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </button>
+          {/* Save Button (Anchored to Top Right) */}
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="bg-green-500 hover:bg-green-300 text-white font-bold py-2 px-4 rounded mb-4"
+          >
+            Save
+          </button>
+        </div>
         <h2 className="py-2 font-bold text-4xl">Company Information</h2>
         <div>
           <form onSubmit={handleSubmit}>
@@ -254,7 +280,7 @@ const MiscellaneousSection = () => {
               </div>
             </div>
 
-         
+
           </form>
         </div>
       </div>
