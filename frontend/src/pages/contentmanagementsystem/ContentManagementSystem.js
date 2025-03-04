@@ -5,7 +5,6 @@ import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar"
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
-import MiscellaneousSection from "../settings/MiscellaneousSection";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
 
@@ -68,20 +67,20 @@ const ContentManagementSystem = () => {
       axios.get(API_URL + "articles/", {
         headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
       })
-      .then((response) => {
-        console.log("DEBUG: Articles API Response:", response.data);
-        setArticles(Array.isArray(response.data) ? response.data : []);
-      })
-      .catch((error) => {
-        console.error("Error fetching articles:", error.response?.data);
-        setArticles([]);  // Prevents breaking UI
-      });
+        .then((response) => {
+          console.log("DEBUG: Articles API Response:", response.data);
+          setArticles(Array.isArray(response.data) ? response.data : []);
+        })
+        .catch((error) => {
+          console.error("Error fetching articles:", error.response?.data);
+          setArticles([]);  // Prevents breaking UI
+        });
     }
-  
+
     if (selectedCategory === "Events") {
       axios.get(API_URL + "events/", {
-          headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
-        })
+        headers: { Authorization: `Bearer ${token}` },  // ✅ Send token
+      })
         .then((response) => {
           console.log("DEBUG: Events API Response:", response.data);
           setEvents(response.data);
@@ -110,10 +109,10 @@ const ContentManagementSystem = () => {
     const starredEventIds = events
       .filter(event => event.is_featured) // Find events that are starred
       .map(event => event.id); // Extract their IDs
-  
+
     setStarredCards(starredEventIds); // Update state
   };
-  
+
 
   const handleCardClick = (index) => {
     navigate(
@@ -131,19 +130,19 @@ const ContentManagementSystem = () => {
 
   const toggleStarSelection = async (eventId) => {
     const isCurrentlyStarred = starredCards.includes(eventId);
- 
+
     if (!isCurrentlyStarred && starredCards.length >= 3) {
       alert("You can only star up to 3 events.");
       return;
     }
- 
+
     const updatedStarredCards = isCurrentlyStarred
       ? starredCards.filter((id) => id !== eventId)
       : [...starredCards, eventId];
 
- 
+
     try {
-      await fetch(API_URL+`events/${eventId}/`, {
+      await fetch(API_URL + `events/${eventId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -153,7 +152,7 @@ const ContentManagementSystem = () => {
 
       setStarredCards(updatedStarredCards);
 
-        // Update the event in the state
+      // Update the event in the state
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.id === eventId ? { ...event, is_featured: !isCurrentlyStarred } : event
@@ -176,8 +175,7 @@ const ContentManagementSystem = () => {
       navigate(`/reporting/`);
     } else {
       navigate(
-        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
-          sampleData[selectedCategory].length - 1
+        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${sampleData[selectedCategory].length - 1
         }`
       );
     }
@@ -309,24 +307,20 @@ const ContentManagementSystem = () => {
       <Header />
       <div className="pt-20"></div>
       {selectedCards.length > 0 ? (
-  <SelectTopBar
-    selectedCards={selectedCards}
-    onDelete={handleDeleteMultiple}
-    onSelectAll={handleSelectAll}
-    onCancel={handleCancel}
-  />
-) : selectedCategory === "Miscellaneous" ? (
-  <div className="h-14 pb-2 text-white border-b-2  flex flex-row justify-center items-center z-10 relative">
-    
-  </div>
-) : (
-  <DefaultTopBar
-    onManual={handleManualClicked}
-    onUpload={handleFileUploadClick}
-    setUserQuery={setUserQuery}
-    selectedCategory={selectedCategory}
-  />
-)}
+        <SelectTopBar
+          selectedCards={selectedCards}
+          onDelete={handleDeleteMultiple}
+          onSelectAll={handleSelectAll}
+          onCancel={handleCancel}
+        />
+      ) : (
+        <DefaultTopBar
+          onManual={handleManualClicked}
+          onUpload={handleFileUploadClick}
+          setUserQuery={setUserQuery}
+          selectedCategory={selectedCategory}
+        />
+      )}
       <div
         {...getRootProps()}
         className="w-screen h-full flex overflow-hidden relative"
@@ -345,11 +339,10 @@ const ContentManagementSystem = () => {
             {categories.map((category, index) => (
               <li
                 key={category}
-                className={`p-4  text-center font-semibold cursor-pointer transition-colors ${
-                  selectedCategory === category
+                className={`p-4  text-center font-semibold cursor-pointer transition-colors ${selectedCategory === category
                     ? "bg-gray-200 border-r-4" // Base styles for selected category
                     : "text-gray-600 hover:bg-gray-200" // Base styles for unselected category
-                }`}
+                  }`}
                 style={{
                   color: selectedCategory === category ? main_color : "inherit", // Dynamic text color
                   borderColor:
@@ -368,23 +361,21 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Reporting" && (
             <ReportsSection userQuery={userQuery} />
           )}
-          {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
               <div className="grid grid-cols-4 gap-8 p-4">
                 {(selectedCategory === "Articles"
                   ? filterItems(articles, userQuery)
                   : selectedCategory === "Events"
-                  ? filterItems(events, userQuery)
-                  : sampleData[selectedCategory]
+                    ? filterItems(events, userQuery)
+                    : sampleData[selectedCategory]
                 )?.map((event, index) => (
                   <div
                     key={index}
-                    className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${
-                      selectedCards.includes(event)
+                    className={`relative rounded-lg overflow-visible shadow-lg cursor-pointer transition-all duration-100 group ${selectedCards.includes(event)
                         ? "border border-transparent border-8" // Keep the border styles
                         : "bg-white"
-                    }`}
+                      }`}
                     style={{
                       minHeight: "300px",
                       backgroundColor: selectedCards.includes(event)
@@ -435,11 +426,10 @@ const ContentManagementSystem = () => {
                     </div>
 
                     <button
-                      className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
-                        selectedCards.includes(event)
+                      className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${selectedCards.includes(event)
                           ? "opacity-100 bg-gray-600 font-bold text-white"
                           : "opacity-60"
-                      } group-hover:opacity-100 transition-opacity`}
+                        } group-hover:opacity-100 transition-opacity`}
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
                         toggleCardSelection(event);
@@ -448,36 +438,36 @@ const ContentManagementSystem = () => {
                       ✓
                     </button>
 
-                  {/* Conditional Star Button */}
-                  {selectedCategory === "Events" && (
+                    {/* Conditional Star Button */}
+                    {selectedCategory === "Events" && (
+                      <button
+                        className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
+                          ? "bg-yellow-500 text-white"
+                          : "opacity-60"
+                          }`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent the click event from triggering the card click
+                          toggleStarSelection(event.id);
+                        }}
+                      >
+                        ★
+                      </button>
+                    )}
+
+                    {/* Delete Button */}
                     <button
-                      className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${starredCards.includes(event.id)
-                        ? "bg-yellow-500 text-white"
-                        : "opacity-60"
-                        }`}
+                      className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the click event from triggering the card click
-                        toggleStarSelection(event.id);
+                        handleDeleteSingular(event);
                       }}
                     >
-                      ★
+                      ✕
                     </button>
-                  )}
-
-                  {/* Delete Button */}
-                  <button
-                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent the click event from triggering the card click
-                      handleDeleteSingular(event);
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            )}
         </div>
       </div>
     </div>
