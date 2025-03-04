@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import DropdownExtract from "../../components/contentmanagementsystem/detailed/DropdownExtractEvents";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -335,7 +336,14 @@ const DetailedEventPage = () => {
     <div>
       <Header />
       <div className="pt-20"></div>
-      <div className="p-6 flex justify-end">
+      <div className="flex justify-between px-5">
+        <div>
+          <DropdownExtract
+          handleExtractFromPDFClick={handleExtractFromPDFClick}
+          handleExtractFromICSClick={handleExtractFromICSClick}
+        />
+        </div>
+        <div>
         <button
           onClick={() => setIsEditing((prev) => !prev)}
           className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
@@ -349,20 +357,7 @@ const DetailedEventPage = () => {
         >
           Save
         </button>
-  
-        <button
-          onClick={handleExtractFromPDFClick}
-          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-        >
-          Extract From PDF
-        </button>
-  
-        <button
-          onClick={handleExtractFromICSClick}
-          className="bg-teal-500 text-white justify-center font-bold rounded-lg hover:bg-teal-400 active:bg-teal-300 transition active:duration-100 duration-300 px-4 py-2"
-        >
-          Extract From ICS
-        </button>
+        </div>
   
         <input
           type="file"
@@ -381,8 +376,8 @@ const DetailedEventPage = () => {
       </div>
   
       {pdfFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected PDF:</strong> {pdfFile.name}
           </p>
           <button
@@ -406,8 +401,8 @@ const DetailedEventPage = () => {
       )}
   
       {icsFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected ICS:</strong> {icsFile.name}
           </p>
           <button
