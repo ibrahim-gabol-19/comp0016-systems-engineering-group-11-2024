@@ -29,6 +29,8 @@ const DetailedArticlePage = () => {
   const [extractedData, setExtractedData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDataExtracted, setIsDataExtracted] = useState(false);
+    const [requiredFields, setRequiredFields] = useState({});
+  
 
   // Ref for hidden file input
   const hiddenFileInput = useRef(null);
@@ -65,6 +67,20 @@ const DetailedArticlePage = () => {
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
+    const newRequiredFields = {};
+
+    if (!title) newRequiredFields.title = true;
+    if (!mainContent) newRequiredFields.mainContent = true;
+    if (!author) newRequiredFields.author = true;
+    if (!description) newRequiredFields.description = true;
+
+    setRequiredFields(newRequiredFields);
+
+    if (Object.keys(newRequiredFields).length > 0) {
+      alert("Please fill in all necessary fields.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -178,6 +194,8 @@ const DetailedArticlePage = () => {
     }
   }, [isEditing, extractedData]);
 
+  const isFieldRequired = (fieldName) => requiredFields[fieldName];
+
   return (
     <div className="h-[calc(100vh-146px)] w-full">
       <Header />
@@ -247,8 +265,9 @@ const DetailedArticlePage = () => {
       <div className="h-full flex justify-center items-center overflow-auto relative">
         {isEditing ? (
           <div className="w-screen h-full flex relative">
-            <div className="h-full w-1/6" />
-            <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
+            <div className="h-full w-1/6 border-0"/>
+            <div className="w-3/6 pt-4">
+            <div className={ ` ${isFieldRequired("title") ? "border-red-500 border-2": null}`}>
               <TitleEditor
                 ref={quillRefTitle}
                 placeholderText="Title"
@@ -256,6 +275,8 @@ const DetailedArticlePage = () => {
                 defaultValue={title}
                 onTextChange={setTitle}
               />
+              </div>
+              <div className={`flex flex-col h-full overflow-y-auto ${isFieldRequired("mainContent") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <MainEditor
                 ref={quillRefMain}
                 placeholderText="Main Content"
@@ -263,9 +284,11 @@ const DetailedArticlePage = () => {
                 defaultValue={mainContent}
                 onTextChange={setMainContent}
               />
+              </div>
             </div>
             <div className="h-full w-1/6" />
-            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden">
+            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden pr-8">
+            <div className={ `${isFieldRequired("author") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Author"
@@ -273,6 +296,8 @@ const DetailedArticlePage = () => {
                 defaultValue={author}
                 onTextChange={setAuthor}
               />
+              </div>
+              <div className={ `${isFieldRequired("description") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <NoToolbarEditor
                 ref={quillRefDescription}
                 placeholderText="Description"
@@ -280,6 +305,7 @@ const DetailedArticlePage = () => {
                 defaultValue={description}
                 onTextChange={setDescription}
               />
+              </div>
               <MainImage onFilesUploaded={handleFilesUploaded} />
             </div>
           </div>
