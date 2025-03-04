@@ -335,7 +335,7 @@ const ContentManagementSystem = () => {
           </p>
         </div>
         <div className="w-1/6 bg-[#f9f9f9] flex flex-col text-black shadow-lg">
-          <ul className="space-y-2 py-4 flex flex-col h-full justify-between">
+          <ul className="space-y-2 py-4 flex flex-col h-full ">
             {categories.map((category, index) => (
               <li
                 key={category}
@@ -347,7 +347,6 @@ const ContentManagementSystem = () => {
                   color: selectedCategory === category ? main_color : "inherit", // Dynamic text color
                   borderColor:
                     selectedCategory === category ? main_color : "transparent", // Dynamic border color
-                  marginTop: category === "Miscellaneous" ? "auto" : "0", // Push "Miscellaneous" to the bottom
                 }}
                 onClick={() => handleCategoryClick(category)}
               >
