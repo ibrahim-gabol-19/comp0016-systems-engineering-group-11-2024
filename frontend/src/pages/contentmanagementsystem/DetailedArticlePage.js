@@ -202,20 +202,6 @@ const DetailedArticlePage = () => {
       <div className="pt-20"></div>
       <div className="flex justify-between px-5">
         <button
-          onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-          aria-label="Toggle edit/preview mode"
-        >
-          {isEditing ? "Switch to Preview" : "Switch to Edit"}
-        </button>
-        <button
-          onClick={handleSave}
-          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-          aria-label="Save article"
-        >
-          Save
-        </button>
-        <button
           onClick={handleExtractFromPDFClick}
           className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2"
           aria-label="Extract from PDF"
@@ -229,11 +215,27 @@ const DetailedArticlePage = () => {
           onChange={handlePDFUpload}
           style={{ display: "none" }}
         />
+        <div>
+        <button
+          onClick={() => setIsEditing((prev) => !prev)}
+          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          aria-label="Toggle edit/preview mode"
+        >
+          {isEditing ? "Switch to Preview" : "Switch to Edit"}
+        </button>
+        <button
+          onClick={handleSave}
+          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          aria-label="Save article"
+        >
+          Save
+        </button>
+        </div>
       </div>
   
       {pdfFile && (
-        <div className="pl-6">
-          <p>
+        <div className="pl-6 mt-6">
+          <p className="mb-2">
             <strong>Selected PDF:</strong> {pdfFile.name}
           </p>
           <button
