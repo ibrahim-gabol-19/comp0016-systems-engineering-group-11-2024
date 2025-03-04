@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import MapComponent from "../../components/settings/MapComponent";
-
+import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const MiscellaneousSection = () => {
@@ -130,7 +130,7 @@ const MiscellaneousSection = () => {
         <div>
           <form onSubmit={handleSubmit}>
             <div className="py-6">
-              
+
             </div>
             {/* Name */}
             <div className="overflow-auto px-2 py-2 w-full">
@@ -144,42 +144,9 @@ const MiscellaneousSection = () => {
               />
             </div>
 
-            <div className="grid grid-flow-col grid-rows-2 gap-4 h-[32rem] px-4 items-center">
-              {/* About */}
-              <div className="overflow-auto px-2 py-2 w-3/4">
-                <h3 className="text-xl text-gray-600 mb-2">About</h3>
-                <textarea
-                  id="about"
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
-                  placeholder="About"
-                  className="w-full h-32 text-lg border rounded-lg p-2 resize-none"
-                />
-              </div>
-
-              {/* Font Selector */}
-              <div className="px-2 py-2 w-3/4">
-                <h3 className="text-xl text-gray-600 mb-2">Font</h3>
-                <select
-                  id="font"
-                  value={font}
-                  onChange={(e) => setFont(e.target.value)}
-                  className="w-full text-xl border rounded-lg p-2"
-                >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Courier New">Courier New</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Tahoma">Tahoma</option>
-                </select>
-              </div>
-
-
-              {/* Image Upload */}
-              <div className="px-2 py-2 w-1/4">
-                <h3 className="text-xl text-gray-600 mb-2">Logo</h3>
+             {/* Image Upload */}
+             <div className="px-2 py-2 bg-green-100 w-full">
+                <h3 className="text-xl text-center text-gray-600 mb-2">Logo</h3>
                 {image ? (
                   <div>
                     <img
@@ -197,10 +164,78 @@ const MiscellaneousSection = () => {
                   accept="image/*"
                   onChange={handleImageUpload}
                 />
+              </div>            <div className="grid grid-flow-col grid-rows-2  h-[32rem] px-4 items-center">
+              {/* About Company */}
+              <div className="overflow-auto px-2 py-2 w-3/4">
+                <h3 className="text-xl text-center text-gray-600 mb-2">About</h3>
+                <textarea
+                  id="about"
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  placeholder="About"
+                  className="w-full h-32 text-lg border rounded-lg p-2 resize-none"
+                />
               </div>
-        
+
+              {/* Font Selector */}
+              <div className="px-2 py-2 w-3/4">
+                <h3 className="text-xl text-center text-gray-600 mb-2">Site-wide Font</h3>
+                <select
+                  id="font"
+                  value={font}
+                  onChange={(e) => setFont(e.target.value)}
+                  className="w-full text-center text-xl border rounded-lg p-2"
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Tahoma">Tahoma</option>
+                </select>
+              </div>
+
+
+              {/* Image Upload
+              <div className="flex justify-center items-center w-full py-6">
+                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 w-96">
+                  <h3 className="text-xl text-center text-gray-700 mb-4 font-semibold">Upload Logo</h3>
+
+                  {image ? (
+                    <div className="mb-4 flex justify-center">
+                      <img
+                        src={URL.createObjectURL(image)} // Use URL.createObjectURL for preview
+                        alt="Uploaded"
+                        className="w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center border-2 border-gray-300 border-dashed rounded-lg p-8 mb-4">
+                      <p className="text-gray-500">No image uploaded</p>
+                    </div>
+                  )}
+
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer bg-blue-500 text-white text-center px-4 py-2 rounded-lg w-full block text-sm font-medium hover:bg-blue-600 transition duration-200"
+                  >
+                    {image ? "Change Image" : "Upload Image"}
+                  </label>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </div>
+              </div> */}
+              <MainImage/>
+
+
               {/* Color Picker */}
-              <div className="px-2 py-2">
+              <div className="px-2 py-2 w-full">
                 <h3 className="text-xl text-gray-600 mb-2">Main Color</h3>
                 <input
                   type="color"
