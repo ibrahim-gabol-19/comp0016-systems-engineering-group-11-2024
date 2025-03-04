@@ -9,6 +9,22 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
   const [newComment, setNewComment] = useState(""); // New comment text
   const [replyTo, setReplyTo] = useState(null); // Which comment is being replied to
   const [visibleReplies, setVisibleReplies] = useState({}); // Tracks which main comment's replies are visible
+  const [editingCommentId, setEditingCommentId] = useState(null); // ID of comment being edited
+  const [editingCommentContent, setEditingCommentContent] = useState(""); // Edited text
+  const [currentUser, setCurrentUser] = useState(""); // Current user's username
+
+  // Fetch current user details from the accounts endpoint
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get(`${API_URL}accounts/user/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setCurrentUser(res.data.username))
+        .catch((err) => console.error("Error fetching current user:", err));
+    }
+  }, []);
 
   // Format date as dd/mm/yyyy
   const formatDate = (dateString) => {
@@ -57,9 +73,7 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
       setNewComment(""); // Clear input
       setReplyTo(null);  // Reset reply target
       fetchComments();   // Refresh comments
-      if (onCommentAdded) {
-        onCommentAdded();
-      }
+      if (onCommentAdded) onCommentAdded();
     } catch (error) {
       console.error("Error submitting comment:", error);
       if (error.response) {
@@ -73,13 +87,53 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
   const handleLikeComment = async (commentId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`${API_URL}comments/${commentId}/like/`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        `${API_URL}comments/${commentId}/like/`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       fetchComments(); // Refresh after like
     } catch (error) {
       console.error("Error liking comment:", error);
     }
+  };
+
+  // Handle deleting a comment (or reply)
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}comments/${commentId}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchComments();
+      if (onCommentAdded) onCommentAdded();
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  // Handle saving an edited comment
+  const handleSaveEdit = async (commentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `${API_URL}comments/${commentId}/`,
+        { content: editingCommentContent },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditingCommentId(null);
+      setEditingCommentContent("");
+      fetchComments();
+      if (onCommentAdded) onCommentAdded();
+    } catch (error) {
+      console.error("Error updating comment:", error);
+    }
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingCommentContent("");
   };
 
   // Toggle the visibility of replies for a given main comment
@@ -102,18 +156,42 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
     return result;
   };
 
-  // Render a main comment along with a toggle to show/hide its replies.
-  const renderTopLevelComment = (comment) => {
-    const replies = comment.replies ? flattenReplies(comment.replies) : [];
+  // Render a single comment (or reply) with edit and delete options if applicable
+  const renderCommentComponent = (comment, indentClass = "") => {
     return (
-      <div key={comment.id} className="mb-4">
+      <div className={`${indentClass} mb-2`} key={comment.id}>
         <div className="flex items-center">
           <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
             {comment.author[0]}
           </div>
           <p className="font-semibold text-gray-800">{comment.author}</p>
         </div>
-        <p className="text-gray-700 mt-1">{comment.content}</p>
+        {editingCommentId === comment.id ? (
+          <div className="mt-1">
+            <input
+              type="text"
+              value={editingCommentContent}
+              onChange={(e) => setEditingCommentContent(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            <div className="mt-1 flex gap-2">
+              <button
+                onClick={() => handleSaveEdit(comment.id)}
+                className="px-2 py-1 bg-green-500 text-white rounded text-sm"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancelEdit}
+                className="px-2 py-1 bg-gray-300 text-black rounded text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-700 mt-1">{comment.content}</p>
+        )}
         <p className="text-gray-500 text-sm mt-1">{formatDate(comment.created_at)}</p>
         <div className="flex items-center gap-2 mt-2">
           <button
@@ -131,38 +209,44 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
           >
             <FaThumbsUp className="text-xl" />
           </button>
+          {comment.author === currentUser && (
+            <>
+              <button
+                onClick={() => {
+                  setEditingCommentId(comment.id);
+                  setEditingCommentContent(comment.content);
+                }}
+                className="text-blue-500 hover:text-blue-600 transform transition-all duration-300 p-1 rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                className="text-red-500 hover:text-red-600 transform transition-all duration-300 p-1 rounded"
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
+      </div>
+    );
+  };
+
+  // Render a top-level comment along with a toggle to show/hide its replies.
+  // Replies are flattened and rendered at a fixed indent level (depth = 1).
+  const renderTopLevelComment = (comment) => {
+    const replies = comment.replies ? flattenReplies(comment.replies) : [];
+    return (
+      <div key={comment.id} className="mb-4">
+        {renderCommentComponent(comment)}
         {replies.length > 0 && (
           <div className="mt-2">
             {visibleReplies[comment.id] ? (
               <>
                 {replies.map((reply) => (
-                  <div key={reply.id} className="mb-2 ml-8 border-l pl-4">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                        {reply.author[0]}
-                      </div>
-                      <p className="font-semibold text-gray-800">{reply.author}</p>
-                    </div>
-                    <p className="text-gray-700 mt-1">{reply.content}</p>
-                    <p className="text-gray-500 text-sm mt-1">{formatDate(reply.created_at)}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() => {
-                          setReplyTo(reply.id);
-                          setNewComment(`@${reply.author} `);
-                        }}
-                        className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
-                      >
-                        Reply
-                      </button>
-                      <button
-                        onClick={() => handleLikeComment(reply.id)}
-                        className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
-                      >
-                        <FaThumbsUp className="text-xl" />
-                      </button>
-                    </div>
+                  <div key={reply.id} className="ml-8 border-l pl-4 mb-2">
+                    {renderCommentComponent(reply)}
                   </div>
                 ))}
                 <button onClick={() => toggleReplies(comment.id)} className="text-blue-500 text-sm">

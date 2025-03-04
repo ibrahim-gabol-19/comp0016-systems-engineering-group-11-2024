@@ -58,7 +58,7 @@ const ForYouCard = () => {
       const formData = new FormData();
       formData.append("title", postData.title);
       formData.append("content", postData.content);
-      formData.append("tags", postData.tags);
+      formData.append("tags", postData.tags); // Save tags here
       if (postData.media) formData.append("media", postData.media);
 
       await axios.post(`${API_URL}forums/`, formData, {
@@ -150,6 +150,9 @@ const ForYouCard = () => {
               <p className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
                 {card.content}
               </p>
+              <p className="text-gray-500 text-sm mt-1 italic">
+                Tags: {card.tags}
+              </p>
               <p className="text-gray-500 text-sm mt-2 italic group-hover:text-gray-700 transition-colors duration-300">
                 {formatDate(card.created_at)}
               </p>
@@ -174,12 +177,12 @@ const ForYouCard = () => {
           </div>
         ))}
 
-        {/* Existing dummy cards */}
+        {/* Dummy posts for testing (make sure to use "tags" here) */}
         {[
           {
             id: 997,
             name: "Jane Doe",
-            tag: "News",
+            tags: "News",
             content: "Green Inc are proud to launch their first prototype! 😁",
             comment: "Awesome news!",
             media: "https://via.placeholder.com/300x200",
@@ -187,7 +190,7 @@ const ForYouCard = () => {
           {
             id: 998,
             name: "John Doe",
-            tag: "Event",
+            tags: "Event",
             content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
             comment: "Sounds interesting!",
             media: "https://via.placeholder.com/300x200",
@@ -195,7 +198,7 @@ const ForYouCard = () => {
           {
             id: 999,
             name: "Emily Smith",
-            tag: "Volunteering",
+            tags: "Volunteering",
             content: "Join us in making a difference in the community! 🌍",
             comment: "It's a rewarding experience!",
             media: "https://via.placeholder.com/300x200",
@@ -222,11 +225,11 @@ const ForYouCard = () => {
                     {card.name}
                   </p>
                 </div>
-                {card.tag === "News" ? (
+                {card.tags === "News" ? (
                   <NewsButton />
-                ) : card.tag === "Event" ? (
+                ) : card.tags === "Event" ? (
                   <EventButton />
-                ) : card.tag === "Volunteering" ? (
+                ) : card.tags === "Volunteering" ? (
                   <VolunteeringButton />
                 ) : null}
               </div>
