@@ -276,7 +276,7 @@ const DetailedArticlePage = () => {
                 onTextChange={setTitle}
               />
               </div>
-              <div className={`flex flex-col h-full overflow-y-auto ${isFieldRequired("mainContent") ? "border-red-500 border-2" : "border-gray-300}"}`}>
+              <div className={`flex flex-col h-full overflow-y-auto mt-4 ${isFieldRequired("mainContent") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <MainEditor
                 ref={quillRefMain}
                 placeholderText="Main Content"
@@ -287,8 +287,8 @@ const DetailedArticlePage = () => {
               </div>
             </div>
             <div className="h-full w-1/6" />
-            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden pr-8">
-            <div className={ `${isFieldRequired("author") ? "border-red-500 border-2" : "border-gray-300}"}`}>
+            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden pr-8 mt-4">
+            <div className={ ` h-1/6 mb-4 overflow-y-auto ${isFieldRequired("author") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <NoToolbarEditor
                 ref={quillRefAuthor}
                 placeholderText="Author"
@@ -297,7 +297,7 @@ const DetailedArticlePage = () => {
                 onTextChange={setAuthor}
               />
               </div>
-              <div className={ `${isFieldRequired("description") ? "border-red-500 border-2" : "border-gray-300}"}`}>
+              <div className={ `h-1/6 mb-4 overflow-y-auto ${isFieldRequired("description") ? "border-red-500 border-2" : "border-gray-300}"}`}>
               <NoToolbarEditor
                 ref={quillRefDescription}
                 placeholderText="Description"
