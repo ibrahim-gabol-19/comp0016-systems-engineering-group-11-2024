@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MapComponent from "../../components/settings/MapComponent";
-import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
+import MainImage from "../../components/settings/MainImage";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const MiscellaneousSection = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
+  const [companyLogo, setCompanyLogo] = useState(null);
   const [about, setAbout] = useState("");
   const [mainColor, setMainColor] = useState("#000000");
   const [font, setFont] = useState("Arial");
@@ -28,12 +29,13 @@ const MiscellaneousSection = () => {
     // navigate(-1);
   }, []);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (uploadedFiles) => {
+    const file = uploadedFiles[0]; // Since we are only allowing 1 file to be uploaded
     if (file) {
       setImage(file); // Store the File object in state
     }
   };
+
 
   const fetchCompanyInformation = async () => {
     try {
@@ -43,6 +45,7 @@ const MiscellaneousSection = () => {
       setName(data.name || "");
       setAbout(data.about || "");
       setMainColor(data.main_color || "#000000");
+      setCompanyLogo(data.logo);
       setFont(data.font || "Arial");
       setSwLat(data.sw_lat || 49.5);
       setSwLon(data.sw_lon || -8);
@@ -133,38 +136,17 @@ const MiscellaneousSection = () => {
 
             </div>
             {/* Name */}
-            <div className="overflow-auto px-2 py-2 w-full">
+            <div className="overflow-auto flex justify-center text-center items-center px-2 py-2 w-full">
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name"
-                className="w-full flex text-center items-center justify-center text-5xl border rounded-lg p-2"
+                className="w-3/4 flex text-center items-center justify-center text-4xl font-semibold border rounded-lg p-2"
               />
             </div>
-
-             {/* Image Upload */}
-             <div className="px-2 py-2 bg-green-100 w-full">
-                <h3 className="text-xl text-center text-gray-600 mb-2">Logo</h3>
-                {image ? (
-                  <div>
-                    <img
-                      src={URL.createObjectURL(image)} // Use URL.createObjectURL for preview
-                      alt="Uploaded"
-                      className="w-48 h-48 object-cover rounded-lg border"
-                    />
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No image uploaded</p>
-                )}
-                <input
-                  type="file"
-                  className="mt-2"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </div>            <div className="grid grid-flow-col grid-rows-2  h-[32rem] px-4 items-center">
+            <div className="grid grid-flow-col grid-rows-2 h-[32rem] px-4 justify-items-center items-center">
               {/* About Company */}
               <div className="overflow-auto px-2 py-2 w-3/4">
                 <h3 className="text-xl text-center text-gray-600 mb-2">About</h3>
@@ -179,70 +161,41 @@ const MiscellaneousSection = () => {
 
               {/* Font Selector */}
               <div className="px-2 py-2 w-3/4">
-                <h3 className="text-xl text-center text-gray-600 mb-2">Site-wide Font</h3>
+                <h3 className="text-xl text-center text-gray-600 ">Font</h3>
                 <select
                   id="font"
                   value={font}
                   onChange={(e) => setFont(e.target.value)}
                   className="w-full text-center text-xl border rounded-lg p-2"
+                  style={{ fontFamily: font }} // Apply the selected font to the dropdown
                 >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Courier New">Courier New</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Tahoma">Tahoma</option>
+                  <option value="Arial" style={{ fontFamily: "Arial" }}>Arial</option>
+                  <option value="Helvetica" style={{ fontFamily: "Helvetica" }}>Helvetica</option>
+                  <option value="Times New Roman" style={{ fontFamily: "Times New Roman" }}>Times New Roman</option>
+                  <option value="Courier New" style={{ fontFamily: "Courier New" }}>Courier New</option>
+                  <option value="Verdana" style={{ fontFamily: "Verdana" }}>Verdana</option>
+                  <option value="Georgia" style={{ fontFamily: "Georgia" }}>Georgia</option>
+                  <option value="Tahoma" style={{ fontFamily: "Tahoma" }}>Tahoma</option>
                 </select>
               </div>
 
 
-              {/* Image Upload
-              <div className="flex justify-center items-center w-full py-6">
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 w-96">
-                  <h3 className="text-xl text-center text-gray-700 mb-4 font-semibold">Upload Logo</h3>
+              <div className="flex flex-col justify-center items-center w-3/4   ">
+                <h3 className="text-xl text-center text-gray-600 ">Logo</h3>
 
-                  {image ? (
-                    <div className="mb-4 flex justify-center">
-                      <img
-                        src={URL.createObjectURL(image)} // Use URL.createObjectURL for preview
-                        alt="Uploaded"
-                        className="w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex justify-center items-center border-2 border-gray-300 border-dashed rounded-lg p-8 mb-4">
-                      <p className="text-gray-500">No image uploaded</p>
-                    </div>
-                  )}
-
-                  <label
-                    htmlFor="file-upload"
-                    className="cursor-pointer bg-blue-500 text-white text-center px-4 py-2 rounded-lg w-full block text-sm font-medium hover:bg-blue-600 transition duration-200"
-                  >
-                    {image ? "Change Image" : "Upload Image"}
-                  </label>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                </div>
-              </div> */}
-              <MainImage/>
+                <MainImage onFilesUploaded={handleImageUpload} defaultLogo={companyLogo} />
+              </div>
 
 
               {/* Color Picker */}
-              <div className="px-2 py-2 w-full">
-                <h3 className="text-xl text-gray-600 mb-2">Main Color</h3>
+              <div className="flex flex-col items-center justify-center px-2 py-2 w-full">
+                <h3 className="text-xl text-center text-gray-600 ">Colour</h3>
                 <input
                   type="color"
                   id="color"
                   value={mainColor}
                   onChange={(e) => setMainColor(e.target.value)}
-                  className="w-full"
+                  className="w-1/2 rounded-full"
                 />
               </div>
             </div>
