@@ -235,13 +235,13 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     if (viewingDiscussion) {
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full  h-1/6 px-3">
+          <div className="w-full h-1/6 px-3">
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
               </div>
-              <div className="w-full h-1/4 text-center justify-center">
+              <div className="w-full h-1/4 flex flex-col text-center justify-center">
                 <p className="text-gray-500 text-m mb-4">
                   Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
@@ -250,22 +250,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Status + Tags */}
             {selectedMarker.status !== "open" ? (
             <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
+              <p className="text-center text-purple-600 font-bold w-1/3 pr-4 mb-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
               </p>
 
-              <p className="text-center font-bold mx-4 text-gray-300">|</p>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
 
-
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
                  ) : (
               <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
@@ -275,7 +274,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
 
           {/**Discussion */}
-          <div className="w-full h-auto overflow-y-auto border border-gray-300 ">
+          <div className="w-full max-h-[450px] overflow-y-auto border border-gray-300 ">
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
@@ -449,7 +448,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2 ">{selectedMarker.title}</p>
               </div>
               <div className="w-full h-1/4 flex flex-col text-center justify-center">
                 <p className="text-gray-500 text-m mb-4">
@@ -459,7 +458,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             </div>
             {/* Status + Tags */}
             {selectedMarker.status !== "open" ? (
-              <div className="w-full h-1/4 flex justify-center items-center">
+            <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4 mb-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
@@ -471,8 +470,8 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
-              </div>
-              ) : (
+            </div>
+            ) : (
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
@@ -482,18 +481,18 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           )}
           </div>
           {/*Image*/}
-          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+          <div className="w-full h-[200px] flex  justify-center items-center border border-gray-300">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain p-6"
               />
             ) : (
               <img
                 src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain"
               />
             )}
           </div>
@@ -503,7 +502,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Poster and Date Section */}
 
             {/* Description Text */}
-            <div className="w-full h-3/6 mb-3 overflow-auto">
+            <div className="w-full h-[300px] mb-3 overflow-auto">
               <p class="text-lg">{selectedMarker.description}</p>
             </div>
             {/*Poster*/}
