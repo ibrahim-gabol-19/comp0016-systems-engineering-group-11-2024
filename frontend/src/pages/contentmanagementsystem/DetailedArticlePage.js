@@ -201,7 +201,7 @@ const DetailedArticlePage = () => {
   const handleBack = () => { navigate(-1); };
 
   return (
-    <div className="h-[calc(100vh-146px)] w-full">
+    <div className=" w-full overflow-auto">
       <Header />
       <div className="pt-20"></div>
       {/* Back Button */}
@@ -289,9 +289,10 @@ const DetailedArticlePage = () => {
   
       <div className="flex justify-center items-center h-full w-full p-8">
         {isEditing ? (
+          <div className="w-screen h-full flex justify-center items-start">
           <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-          <div className="flex flex-col items-center"> {/* Use flex and items-center for centering */}
-            <div className="w-3/6 pt-4">
+          <div className="flex flex-col items-center">
+            <div className="w-3/4 pt-4">
               <div className={`max-h-[10rem] overflow-y-auto ${isFieldRequired("title") ? "border-red-500 border-2" : null}`}>
                 <TitleEditor
                   ref={quillRefTitle}
@@ -311,7 +312,7 @@ const DetailedArticlePage = () => {
                 />
               </div>
             </div>
-            <div className="w-2/6 flex flex-col justify-center overflow-hidden mt-4 space-y-4">
+            <div className="w-1/2 flex flex-col justify-center overflow-hidden mt-4 space-y-4">
               <div className={`max-h-[4rem] overflow-y-auto ${isFieldRequired("author") ? "border-red-500 border-2" : "border-gray-300"}`}>
                 <NoToolbarEditor
                   ref={quillRefAuthor}
@@ -334,9 +335,10 @@ const DetailedArticlePage = () => {
             </div>
           </div>
         </div>
+        </div>
         ) : (
           <div className="w-screen h-full flex justify-center items-start overflow-auto">
-            <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+            <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md flex-1">
               <div className="flex items-center justify-between">
                 <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">
                   {title}
