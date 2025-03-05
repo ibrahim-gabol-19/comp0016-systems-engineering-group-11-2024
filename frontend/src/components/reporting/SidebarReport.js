@@ -567,7 +567,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
             </div>
 
-            <div className="w-full h-1/6 shadow-md">
+            <div className="w-full h-1/4 shadow-md">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 style={{
@@ -602,7 +602,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-7"
+                  className="size-6"
                 >
                   <path
                     strokeLinecap="round"
