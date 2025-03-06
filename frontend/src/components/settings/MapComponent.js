@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
-  Rectangle,
+  Circle,
   Marker,
 } from "react-leaflet";
 import L from "leaflet";
@@ -26,27 +26,40 @@ const MapComponent = ({ bounds, setExternalBounds }) => {
   const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
   const centerLon = (bounds[0][1] + bounds[1][1]) / 2;
 
+  const radius = Math.max(
+    Math.abs(bounds[1][0] - bounds[0][0]),
+    Math.abs(bounds[1][1] - bounds[0][1])
+  ) / 2 * 100000  // Convert to meters for the radius
+  
   const [position, setPosition] = useState([centerLat, centerLon]); // State to track marker position
 
-  const rectangleRef = useRef();
+  const circleRef = useRef();
   const markerRef = useRef();
 
   useEffect(() => {
-    if (rectangleRef.current) {
-      // Update position when rectangle is dragged
-      rectangleRef.current.on("drag", (e) => {
-        const newBounds = e.target.getBounds();
-        const newCenter = newBounds.getCenter();
-        setExternalBounds(newBounds);
-        setPosition([newCenter.lat, newCenter.lng]); // Update marker position to the center of the rectangle
+    if (circleRef.current) {
+      // Update position when circle is dragged
+      circleRef.current.on("drag", (e) => {
+        const newCenter = e.target.getLatLng();
+        setPosition([newCenter.lat, newCenter.lng]); // Update marker position to the center of the circle
 
         // Optionally, update external bounds
         if (setExternalBounds) {
-          setExternalBounds(newBounds);
+          setExternalBounds([
+            [
+              newCenter.lat - radius / 100000,  // Calculate the new bounds based on radius
+              newCenter.lng - radius / 100000,
+            ],
+            [
+              newCenter.lat + radius / 100000,
+              newCenter.lng + radius / 100000,
+            ]
+          ]);
         }
       });
     }
-  }, [bounds, setExternalBounds]); // This effect will run when bounds change
+  }, [bounds, setExternalBounds, radius]);
+
   useEffect(() => {
     const newCenterLat = (bounds[0][0] + bounds[1][0]) / 2;
     const newCenterLon = (bounds[0][1] + bounds[1][1]) / 2;
@@ -65,16 +78,17 @@ const MapComponent = ({ bounds, setExternalBounds }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
 
-      {/* Draggable Rectangle */}
-      <Rectangle
-        ref={rectangleRef}
-        bounds={bounds}
+      {/* Draggable Circle */}
+      <Circle
+        ref={circleRef}
+        center={position}
+        radius={radius}
         color="blue"
         weight={2}
         draggable={true}
       />
 
-      {/* Marker placed at the center of the rectangle */}
+      {/* Marker placed at the center of the circle */}
       <Marker
         ref={markerRef}
         position={position}
@@ -84,11 +98,11 @@ const MapComponent = ({ bounds, setExternalBounds }) => {
           dragend: (e) => {
             const newLatLng = e.target.getLatLng();
             const newBounds = [
-              [newLatLng.lat - (bounds[1][0] - bounds[0][0]) / 2, newLatLng.lng - (bounds[1][1] - bounds[0][1]) / 2],
-              [newLatLng.lat + (bounds[1][0] - bounds[0][0]) / 2, newLatLng.lng + (bounds[1][1] - bounds[0][1]) / 2],
+              [newLatLng.lat - radius / 100000, newLatLng.lng - radius / 100000],
+              [newLatLng.lat + radius / 100000, newLatLng.lng + radius / 100000],
             ];
             setPosition([newLatLng.lat, newLatLng.lng]); // Update marker position
-            setExternalBounds(newBounds); // Update rectangle bounds based on the marker's new position
+            setExternalBounds(newBounds); // Update bounds based on the marker's new position
 
             // Optionally, update external bounds
             if (setExternalBounds) {
