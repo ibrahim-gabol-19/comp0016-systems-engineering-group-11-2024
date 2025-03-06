@@ -40,7 +40,7 @@ const Header = () => {
       <a
         href="/"
         style={{ color: main_color }}
-        className="text-3xl font-extrabold hover:scale-110 transition duration-500 flex items-center"
+        className=" text-xl md:text-3xl font-extrabold hover:scale-110 transition duration-500 flex items-center"
       >
         {logo ? (
           <img alt="Logo" src={logo} className="w-8 h-8 mr-2" />
