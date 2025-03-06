@@ -23,7 +23,6 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ bounds, setExternalBounds }) => {
   // Calculate the center from initialBounds
-  console.log(bounds);
   const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
   const centerLon = (bounds[0][1] + bounds[1][1]) / 2;
 
@@ -48,11 +47,16 @@ const MapComponent = ({ bounds, setExternalBounds }) => {
       });
     }
   }, [bounds, setExternalBounds]); // This effect will run when bounds change
+  useEffect(() => {
+    const newCenterLat = (bounds[0][0] + bounds[1][0]) / 2;
+    const newCenterLon = (bounds[0][1] + bounds[1][1]) / 2;
+    setPosition([newCenterLat, newCenterLon]); // Set the initial marker position based on bounds
+  }, [bounds]); // Re-run when bounds change
 
   return (
     <MapContainer
       center={position}
-      zoom={13}
+      zoom={2}
       style={{ width: "100%", minHeight: "100%", height: "100%" }}
       maxZoom={17}
     >

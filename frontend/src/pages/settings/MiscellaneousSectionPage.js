@@ -271,7 +271,6 @@ const MiscellaneousSection = () => {
                     bounds={bounds} setExternalBounds={setBounds}
                   />
                 </div>
-                <div className="h-64 w-64" onClick={() => console.log(bounds)}></div>
 
               </div>
             </div>
