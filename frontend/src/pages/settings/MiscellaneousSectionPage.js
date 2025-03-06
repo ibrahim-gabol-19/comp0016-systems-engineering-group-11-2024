@@ -180,7 +180,7 @@ const MiscellaneousSection = () => {
                 className="w-3/4 flex text-center items-center justify-center text-4xl font-semibold border rounded-lg p-2"
               />
             </div>
-            <div className="grid grid-flow-col grid-rows-2 h-[32rem] px-4 justify-items-center items-center">
+            <div className="grid grid-flow-col grid-rows-2 h-[25rem] px-4 justify-items-center items-center">
               {/* About Company */}
               <div className="overflow-auto px-2 py-2 w-3/4">
                 <h3 className="text-xl text-center text-gray-600 mb-2">About</h3>
@@ -242,22 +242,22 @@ const MiscellaneousSection = () => {
 
                 {/* Radius Section */}
                 <div className="px-2 py-4 w-1/6">
-  <div className="text-center mb-6">
-    <input
-      type="range"
-      min="0"
-      max="3"
-      orient="vertical"
-      step="0.0001"
-      value={radius}
-      onChange={handleRadiusChange}
-      className="w-full h-full bg-gray-300 rounded-lg"
-    />
-    <div className="mt-2 text-lg">
-      {((radius / 5) * 100).toFixed(2)}% {/* This converts the radius to a percentage */}
-    </div>
-  </div>
-</div>
+                  <div className="text-center mb-6">
+                    <input
+                      type="range"
+                      min="0"
+                      max="3"
+                      orient="vertical"
+                      step="0.0001"
+                      value={radius}
+                      onChange={handleRadiusChange}
+                      className="w-full h-full bg-gray-300 rounded-lg"
+                    />
+                    <div className="mt-2 text-lg">
+                      {((radius / 5) * 100).toFixed(2)}% {/* This converts the radius to a percentage */}
+                    </div>
+                  </div>
+                </div>
 
 
                 {/* Map Section */}
