@@ -25,7 +25,7 @@ const MainImage = ({ onFilesUploaded, defaultLogo }) => {
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const {  getInputProps } = useDropzone({
     onDrop,
     maxFiles: 1,
     accept: {

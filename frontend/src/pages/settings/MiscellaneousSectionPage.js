@@ -16,12 +16,6 @@ const MiscellaneousSection = () => {
   const [feedback, setFeedback] = useState({ message: "", color: "" });
   const navigate = useNavigate();
   const [radius, setRadius] = useState(0);
-  const [centerLat, setCenterLat] = useState(0);
-  const [centerLon, setCenterLon] = useState(0);
-  const [neLat, setNeLat] = useState(0);
-  const [swLat, setSwLat] = useState(0);
-  const [neLon, setNeLon] = useState(0);
-  const [swLon, setSwLon] = useState(0);
   const [bounds, setBounds] = useState([
     [51.0, -0.1], // Initial SW lat, lon
     [51.1, -0.05], // Initial NE lat, lon
@@ -78,10 +72,6 @@ const MiscellaneousSection = () => {
       setMainColor(data.main_color || "#000000");
       setCompanyLogo(data.logo);
       setFont(data.font || "Arial");
-      setSwLat(fetchedSwLat);
-      setSwLon(fetchedSwLon);
-      setNeLat(fetchedNeLat);
-      setNeLon(fetchedNeLon);
       setBounds(newBounds);  // Update bounds here
     } catch (err) {
       setFeedback({ message: "Failed to fetch company information.", color: "red" });
