@@ -283,7 +283,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 }`}
               >
                 {/* Profile Picture (SVG Icon) */}
-                <div className="w-1/6 h-full flex justify-center items-center">
+                <div className="w-1/6 flex justify-center items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -318,7 +318,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           </div>
           {/*New Discussion Message */}
           {selectedMarker.status === "open" ? (
-            <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
+            <div className="w-full flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
               <div className="w-full h-2/4 py-2 ">
                 {/* Text Input Form */}
                 <textarea
@@ -330,7 +330,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-full h-1/4">
                 <button
-                  className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                  className="w-full h-2/3 py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                   onClick={handleSubmitNewDiscussionMessage}
                 >
                   Submit Message
@@ -444,9 +444,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       /*Existing Report Overview*/
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full h-1/6 px-3 ">
+          <div className="w-full h-1/6 px-3">
             {/*Title*/}
-            <div className="w-full h-3/4 ">
+            <div className="w-full h-3/4">
               <div className="w-full h-3/4 text-center justify-center">
                 <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2 ">{selectedMarker.title}</p>
               </div>
@@ -481,7 +481,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           )}
           </div>
           {/*Image*/}
-          <div className="w-full h-[200px] flex  justify-center items-center border border-gray-300">
+          <div className="w-full h-[200px] flex justify-center items-center border border-gray-300">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}

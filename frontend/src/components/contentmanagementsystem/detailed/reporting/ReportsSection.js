@@ -11,7 +11,6 @@ const ReportsSection = ({userQuery}) => {
   const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
-  const [filter, setFilter] = useState("open");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const sidebarRef = useRef(null);
@@ -54,10 +53,6 @@ const ReportsSection = ({userQuery}) => {
     } catch (err) {
       console.log(err.message);
     }
-  };
-
-  const filterChange = (event) => {
-    setFilter(event.target.value);
   };
 
   useEffect(() => {

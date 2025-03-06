@@ -255,7 +255,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             <div>
               <button
                 type="submit"
-                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                className="w-full h-1/2 py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
               >
                 Submit
               </button>
@@ -337,16 +337,16 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             </div>
           </div>
           {/**Discussion */}
-          <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
+          <div className="w-full max-h-[450px] overflow-y-auto border border-gray-300 ">
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${
+                className={`flex px-4 h-auto w-full min-h-16 border border-gray-200 ${
                   discussion.author === "Business" ? "bg-yellow-200" : ""
                 }`}
               >
                 {/* Profile Picture (SVG Icon) */}
-                <div className="w-1/6 h-full flex justify-center items-center">
+                <div className="w-1/6 flex justify-center items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -362,17 +362,24 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                     />
                   </svg>
                 </div>
-                <div className="w-4/6 overflow-y-auto break-words py-3">
+                <div className="w-5/6 break-words py-3">
                   <p className="font-semibold">{discussion.author}</p>
                   <p className="">{discussion.message}</p>
                   <p className="text-gray-500 text-sm">
-                    {new Date(discussion.created_at).toLocaleString()}
+                    {new Date(discussion.created_at).toLocaleString(undefined, {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      })}
                   </p>
                 </div>
 
-                <div className="w-1/6 overflow-auto">
+                <div className="w-1/6">
                   <button
-                    className="justify-center items-center w-1/2 h-1/4 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                    className="justify-center items-center w-8 h-8 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500 mt-4 ml-2"
                     onClick={() => handleDeleteDiscussion(discussion.id)}
                   >
                     <svg
@@ -396,20 +403,20 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           </div>
 
           {/*New Discussion Message */}
-          <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
+          <div className="w-full flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
             <div className="w-full h-2/4 py-2 ">
               {/* Text Input Form */}
               <textarea
                 className="w-full h-full p-2 border rounded-lg resize-none"
                 placeholder="Type your anouncement message here..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)} // Use state to manage input
+                onChange={(e) => setMessage(e.target.value)}
               ></textarea>
             </div>
             <div className="w-full h-1/4">
               <button
-                className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-                onClick={handleSubmitNewDiscussionMessage} // Submit handler
+                className="w-full h-2/3 py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                onClick={handleSubmitNewDiscussionMessage}
               >
                 Submit Anouncement
               </button>
@@ -468,7 +475,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       /*Existing Report Overview*/
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full h-1/6 px-3 ">
+          <div className="w-full h-1/6 px-3">
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
@@ -512,7 +519,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </select>
               <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
 
-              <div className=" h-1/2 mb-4">
+              <div className="h-1/2 mb-4">
                 <button
                   className="px-1 py-1 border rounded-lg focus:outline-none bg-red-500 font-bold text-white hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
@@ -536,18 +543,18 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             </div>
           </div>
           {/*Image*/}
-          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+          <div className="w-full h-[200px] flex justify-center items-center border border-gray-300">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain p-6"
               />
             ) : (
               <img
                 src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain"
               />
             )}
           </div>
@@ -557,7 +564,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Poster and Date Section */}
 
             {/* Description Text */}
-            <div className="w-full h-3/6 mb-3 overflow-auto">
+            <div className="w-full h-[300px] mb-3 overflow-auto">
               <p class="text-lg">{selectedMarker.description}</p>
             </div>
             {/*Poster*/}
@@ -602,7 +609,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <div className="w-1/2 justify-center"></div>
             </div>
             {/*View discussion*/}
-            <div className="w-full h-1/6 shadow-md">
+            <div className="w-full h-1/4 shadow-md">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 style={{
@@ -637,7 +644,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-7"
+                  className="size-6"
                 >
                   <path
                     strokeLinecap="round"
