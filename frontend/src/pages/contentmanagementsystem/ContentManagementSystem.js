@@ -364,7 +364,7 @@ const ContentManagementSystem = () => {
           </ul>
         </div>
 
-        <div className="w-5/6 h-full bg-white overflow-auto">
+        <div className={`w-5/6 h-full bg-white ${selectedCategory !== "Reporting" ? "overflow-auto" : ""}`}>
           {selectedCategory === "Reporting" && (
             <ReportsSection userQuery={userQuery} />
           )}

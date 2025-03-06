@@ -94,8 +94,7 @@ const ReportsSection = ({userQuery}) => {
 
   return (
     <div className="h-screen flex flex-col" onClick={handleOutsideClick}>
-      <div className="pt-20"></div>
-      <div className="h-full flex mt-4">
+      <div className="h-full flex">
           {isSidebarOpen && (
           <div className={`bg-[#f9f9f9] shadow-2xl py-5 rounded-xl h-full ${isSidebarOpen ? "w-full" : "w-2/6"} relative sm:w-2/6`} ref={sidebarRef}>
             <button
@@ -123,7 +122,7 @@ const ReportsSection = ({userQuery}) => {
               mapRef={mapRef}
               userQuery={userQuery}
             ></MapComponent>
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30 mb-10">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20 mb-40 ">
               <button
                 className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.open ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-200'}`}
                 onClick={() => handleToggleChange('open')}
