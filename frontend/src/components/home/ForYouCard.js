@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
-
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import CreatePostModal from "./CreatePostModal";
 import CommentsPopup from "./CommentsPopup";
@@ -154,14 +153,21 @@ const ForYouCard = () => {
             )}
             <div className="p-4 flex-1">
               <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                    {card.author[0]}
-                  </div>
+                {(card.tags === "News" || card.tags === "Event") ? (
+                  // For News and Event cards, show a title (no profile picture).
                   <p className="font-semibold text-lg text-gray-800">
-                    {card.author}
+                    {card.title || card.name}
                   </p>
-                </div>
+                ) : (
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                      {card.author[0]}
+                    </div>
+                    <p className="font-semibold text-lg text-gray-800">
+                      {card.author}
+                    </p>
+                  </div>
+                )}
                 {card.tags === "News" ? (
                   <NewsButton />
                 ) : card.tags === "Event" ? (
@@ -203,6 +209,7 @@ const ForYouCard = () => {
             id: 997,
             name: "Jane Doe",
             tags: "News",
+            title: "Prototype Launch",
             content: "Green Inc are proud to launch their first prototype! 😁",
             comment: "Awesome news!",
             media: "https://via.placeholder.com/300x200",
@@ -211,6 +218,7 @@ const ForYouCard = () => {
             id: 998,
             name: "John Doe",
             tags: "Event",
+            title: "Annual Conference",
             content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
             comment: "Sounds interesting!",
             media: "https://via.placeholder.com/300x200",
@@ -237,19 +245,24 @@ const ForYouCard = () => {
             )}
             <div className="p-4 flex-1">
               <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                    {card.name[0]}
-                  </div>
+                {(card.tags === "News" || card.tags === "Event") ? (
                   <p className="font-semibold text-lg text-gray-800">
-                    {card.name}
+                    {card.title || card.name}
                   </p>
-                </div>
+                ) : (
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                      {card.name[0]}
+                    </div>
+                    <p className="font-semibold text-lg text-gray-800">
+                      {card.name}
+                    </p>
+                  </div>
+                )}
                 {card.tags === "News" ? (
                   <NewsButton />
                 ) : card.tags === "Event" ? (
                   <EventButton />
-
                 ) : null}
               </div>
               <p className="text-gray-700">{card.content}</p>
@@ -266,9 +279,13 @@ const ForYouCard = () => {
                 </button>
                 <div className="flex space-x-2">
                   <button
-                    className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
+                    onClick={() => handleToggleLike(card.id)}
+                    className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
+                      card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
+                    }`}
                   >
                     <FaThumbsUp className="text-xl" />
+                    <span className="text-sm">{card.likeCount || 0}</span>
                   </button>
                   {/* Dislike button removed */} 
                 </div>
@@ -296,4 +313,3 @@ const ForYouCard = () => {
 };
 
 export default ForYouCard;
-
