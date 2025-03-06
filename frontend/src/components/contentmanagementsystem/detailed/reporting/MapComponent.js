@@ -75,7 +75,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
   const filteredReports = reports.filter((item) => activeFilters.includes(item.status));
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}>
+    <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 10 }}>
     <MapContainer
       center={[0, 0]}
       zoom={zoomLevel}

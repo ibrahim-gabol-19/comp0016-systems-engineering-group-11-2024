@@ -127,7 +127,7 @@ const ReportsSection = ({userQuery}) => {
               selectedMarker={selectedMarker}
               mapRef={mapRef}
             ></MapComponent>
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10 mb-10">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30 mb-10">
               <button
                 className={`px-4 py-2 rounded-lg border-2 border-gray-400 ${filterToggles.open ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-200'}`}
                 onClick={() => handleToggleChange('open')}
