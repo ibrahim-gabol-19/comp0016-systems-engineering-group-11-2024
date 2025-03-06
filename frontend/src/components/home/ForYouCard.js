@@ -8,6 +8,12 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+// Helper function to truncate text to a specified limit.
+const truncateText = (text, limit) => {
+  if (!text) return "";
+  return text.length > limit ? text.slice(0, limit) + "..." : text;
+};
+
 // Transformation functions for each type of post.
 const transformForumPost = (post, token) => ({
   id: post.id,
@@ -34,7 +40,7 @@ const transformArticle = (article) => ({
   commentCount: 0, // Default if not implemented for articles
   likeCount: 0,
   liked: false,
-  tags: "News"
+  tags: "Article"
 });
 
 const transformEvent = (event) => ({
@@ -186,65 +192,74 @@ const ForYouCard = () => {
           <span>+</span> Create Post
         </button>
       </div>
-
+  
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card) => (
-          <div
-            key={card.id}
-            className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
-          >
-            {card.image && (
-              <img
-                src={card.image}
-                alt="Media content"
-                className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            )}
-            <div className="p-4 flex-1">
-              <div className="flex justify-between items-center mb-2">
-                {card.type === "forum" ? (
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                      {card.author[0]}
+        {cards.map((card) => {
+          // For all posts, truncate the content to a maximum of 100 characters.
+          const displayContent = truncateText(card.content, 100);
+          // Determine if the card is a forum post.
+          const isForum = card.type === "forum";
+  
+          return (
+            <div
+              key={card.id}
+              className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
+            >
+              {card.image && (
+                <img
+                  src={card.image}
+                  alt="Media content"
+                  className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              )}
+              <div className="p-4 flex-1">
+                <div className="flex justify-between items-center mb-2">
+                  {isForum ? (
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                        {card.author[0]}
+                      </div>
+                      <p className="font-semibold text-lg text-gray-800">{card.author}</p>
                     </div>
-                    <p className="font-semibold text-lg text-gray-800">{card.author}</p>
-                  </div>
-                ) : (
-                  // For articles and events, show title only.
-                  <p className="font-semibold text-lg text-gray-800">{card.title}</p>
+                  ) : (
+                    // For articles and events, show title only.
+                    <p className="font-semibold text-lg text-gray-800">{card.title}</p>
+                  )}
+                  {card.tags === "News" ? (
+                    <NewsButton />
+                  ) : card.tags === "Event" ? (
+                    <EventButton />
+                  ) : null}
+                </div>
+                <p className="text-gray-700">{displayContent}</p>
+                {isForum && (
+                  <p className="text-gray-500 text-sm mt-1 italic">Tags: {card.tags}</p>
                 )}
-                {card.tags === "News" ? (
-                  <NewsButton />
-                ) : card.tags === "Event" ? (
-                  <EventButton />
-                ) : null}
-              </div>
-              <p className="text-gray-700">{card.content}</p>
-              <p className="text-gray-500 text-sm mt-1 italic">Tags: {card.tags}</p>
-              <p className="text-gray-500 text-sm mt-2 italic">{formatDate(card.created_at)}</p>
-              <div className="flex items-center justify-between mt-3">
-                <button
-                  onClick={() => handleOpenComments(card.id)}
-                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
-                >
-                  <FaComment className="text-xl" />
-                  <span className="text-sm">{card.commentCount || 0}</span>
-                </button>
-                <button
-                  onClick={() => handleToggleLike(card.id)}
-                  className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
-                    card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
-                  }`}
-                >
-                  <FaThumbsUp className="text-xl" />
-                  <span className="text-sm">{card.likeCount || 0}</span>
-                </button>
+                <p className="text-gray-500 text-sm mt-2 italic">{formatDate(card.created_at)}</p>
+                <div className="flex items-center justify-between mt-3">
+                  <button
+                    onClick={() => handleOpenComments(card.id)}
+                    className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
+                  >
+                    <FaComment className="text-xl" />
+                    <span className="text-sm">{card.commentCount || 0}</span>
+                  </button>
+                  <button
+                    onClick={() => handleToggleLike(card.id)}
+                    className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
+                      card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
+                    }`}
+                  >
+                    <FaThumbsUp className="text-xl" />
+                    <span className="text-sm">{card.likeCount || 0}</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-
+          );
+        })}
+  
         {/* Dummy posts for testing */}
         {[
           {
@@ -273,61 +288,67 @@ const ForYouCard = () => {
             comment: "It's a rewarding experience!",
             image: "https://via.placeholder.com/300x200",
           },
-        ].map((card, index) => (
-          <div
-            key={`existing-${index}`}
-            className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
-          >
-            {card.image && (
-              <img
-                src={card.image}
-                alt="Media content"
-                className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            )}
-            <div className="p-4 flex-1">
-              <div className="flex justify-between items-center mb-2">
-                {card.tags === "News" || card.tags === "Event" ? (
-                  <p className="font-semibold text-lg text-gray-800">{card.title || card.name}</p>
-                ) : (
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                      {card.name[0]}
+        ].map((card, index) => {
+          const isForum = !card.tags || (card.tags !== "News" && card.tags !== "Event" && card.tags !== "Article");
+          const displayContent = truncateText(card.content, 100);
+          return (
+            <div
+              key={`existing-${index}`}
+              className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
+            >
+              {card.image && (
+                <img
+                  src={card.image}
+                  alt="Media content"
+                  className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              )}
+              <div className="p-4 flex-1">
+                <div className="flex justify-between items-center mb-2">
+                  {card.tags === "News" || card.tags === "Event" ? (
+                    <p className="font-semibold text-lg text-gray-800">{card.title || card.name}</p>
+                  ) : (
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                        {card.name[0]}
+                      </div>
+                      <p className="font-semibold text-lg text-gray-800">{card.name}</p>
                     </div>
-                    <p className="font-semibold text-lg text-gray-800">{card.name}</p>
-                  </div>
+                  )}
+                  {card.tags === "News" ? (
+                    <NewsButton />
+                  ) : card.tags === "Event" ? (
+                    <EventButton />
+                  ) : null}
+                </div>
+                <p className="text-gray-700">{displayContent}</p>
+                {isForum && (
+                  <p className="text-gray-500 text-sm mt-2 italic">{card.comment}</p>
                 )}
-                {card.tags === "News" ? (
-                  <NewsButton />
-                ) : card.tags === "Event" ? (
-                  <EventButton />
-                ) : null}
-              </div>
-              <p className="text-gray-700">{card.content}</p>
-              <p className="text-gray-500 text-sm mt-2 italic">{card.comment}</p>
-              <div className="flex items-center justify-between mt-3">
-                <button
-                  onClick={() => handleOpenComments(card.id)}
-                  className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
-                >
-                  <FaComment className="text-xl" />
-                  <span className="text-sm">{card.comments?.length || 0}</span>
-                </button>
-                <div className="flex space-x-2">
+                <div className="flex items-center justify-between mt-3">
                   <button
-                    onClick={() => handleToggleLike(card.id)}
-                    className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
-                      card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
-                    }`}
+                    onClick={() => handleOpenComments(card.id)}
+                    className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                   >
-                    <FaThumbsUp className="text-xl" />
-                    <span className="text-sm">{card.likeCount || 0}</span>
+                    <FaComment className="text-xl" />
+                    <span className="text-sm">{card.comments?.length || 0}</span>
                   </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleToggleLike(card.id)}
+                      className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
+                        card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
+                      }`}
+                    >
+                      <FaThumbsUp className="text-xl" />
+                      <span className="text-sm">{card.likeCount || 0}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}      
+          );
+        })}
       </div>
   
       <CreatePostModal
