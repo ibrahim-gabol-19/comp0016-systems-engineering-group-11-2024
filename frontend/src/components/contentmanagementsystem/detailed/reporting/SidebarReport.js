@@ -271,22 +271,51 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         <div className="w-full h-full flex flex-col">
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
-            <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-2/4 h-1/2 ">
-                <div className="w-full h-3/4 text-center justify-center overflow-auto">
-                  <p class="font-semibold text-3xl">{selectedMarker.title}</p>
+            <div className="w-full h-3/4 ">
+                <div className="w-full h-3/4 text-center justify-center">
+                  <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
                 </div>
-                <div className="w-full h-1/4 text-center justify-center">
-                  <p className="text-gray-500 text-m">
-                    {new Date(
+                <div className="w-full h-1/4 flex flex-col text-center justify-center">
+                  <p className="text-gray-500 text-m mb-4">
+                    Date Reported: {new Date(
                       selectedMarker.published_date
                     ).toLocaleDateString()}
                   </p>
                 </div>
-              </div>
-              <div className="w-1/4 h-1/2">
+            </div>
+            {/* Status + Tags */}
+            <div className="w-full flex justify-center items-center">
+              <select
+                value={selectedMarker.status}
+                onChange={handleStatusChange}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600 mb-4"
+              >
+                <option value="open">Open</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
+              <select
+                value={selectedMarker.tags}
+                onChange={handleTagsChange}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-sky-400 mb-4 "
+              >
+                <option value="road">Road</option>
+                <option value="environmental">Environmental</option>
+                <option value="pollution">Pollution</option>
+                <option value="wildlife_conservation">
+                  Wildlife Conservation
+                </option>
+                <option value="climate_change">Climate Change</option>
+                <option value="waste_management">Waste Management</option>
+                <option value="health_safety">Health & Safety</option>
+                <option value="urban_development">Urban Development</option>
+              </select>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
+
+              <div className=" h-1/2 mb-4">
                 <button
-                  className="justify-center items-center w-1/2 h-full ml-16 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="px-1 py-1 border rounded-lg focus:outline-none bg-red-500 font-bold text-white hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
@@ -305,36 +334,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   </svg>
                 </button>
               </div>
-            </div>
-            {/* Status + Tags */}
-            <div className="w-full h-1/4 flex justify-center items-center">
-              <select
-                value={selectedMarker.status}
-                onChange={handleStatusChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600"
-              >
-                <option value="open">Open</option>
-                <option value="resolved">Resolved</option>
-                <option value="closed">Closed</option>
-              </select>
-              <p className="text-center font-bold mx-4">●</p>
-
-              <select
-                value={selectedMarker.tags}
-                onChange={handleTagsChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center  text-sky-400 "
-              >
-                <option value="road">Road</option>
-                <option value="environmental">Environmental</option>
-                <option value="pollution">Pollution</option>
-                <option value="wildlife_conservation">
-                  Wildlife Conservation
-                </option>
-                <option value="climate_change">Climate Change</option>
-                <option value="waste_management">Waste Management</option>
-                <option value="health_safety">Health & Safety</option>
-                <option value="urban_development">Urban Development</option>
-              </select>
             </div>
           </div>
           {/**Discussion */}
@@ -471,22 +470,51 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         <div className="w-full h-full flex flex-col">
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
-            <div className="w-full h-3/4 flex justify-center items-center ">
-              <div className="w-2/4 h-1/2 ">
-                <div className="w-full h-3/4 text-center justify-center overflow-auto">
-                  <p class="font-semibold text-3xl">{selectedMarker.title}</p>
-                </div>
-                <div className="w-full h-1/4 text-center justify-center">
-                  <p className="text-gray-500 text-m">
-                    {new Date(
-                      selectedMarker.published_date
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
+            <div className="w-full h-3/4 ">
+              <div className="w-full h-3/4 text-center justify-center">
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
               </div>
-              <div className="w-1/4 h-1/2">
+              <div className="w-full h-1/4 flex flex-col text-center justify-center">
+                <p className="text-gray-500 text-m mb-4">
+                  Date Reported: {new Date(
+                    selectedMarker.published_date
+                  ).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+            {/* Status + Tags */}
+            <div className="w-full flex justify-center items-center">
+              <select
+                value={selectedMarker.status}
+                onChange={handleStatusChange}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600 mb-4"
+              >
+                <option value="open">Open</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
+              <select
+                value={selectedMarker.tags}
+                onChange={handleTagsChange}
+                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-sky-400 mb-4 "
+              >
+                <option value="road">Road</option>
+                <option value="environmental">Environmental</option>
+                <option value="pollution">Pollution</option>
+                <option value="wildlife_conservation">
+                  Wildlife Conservation
+                </option>
+                <option value="climate_change">Climate Change</option>
+                <option value="waste_management">Waste Management</option>
+                <option value="health_safety">Health & Safety</option>
+                <option value="urban_development">Urban Development</option>
+              </select>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
+
+              <div className=" h-1/2 mb-4">
                 <button
-                  className="justify-center items-center w-1/2 h-full ml-16 flex flex-row py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
+                  className="px-1 py-1 border rounded-lg focus:outline-none bg-red-500 font-bold text-white hover:bg-red-400 active:bg-red-300 transition active:duration-100 duration-500"
                   onClick={handleDeleteReport}
                 >
                   <svg
@@ -505,36 +533,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   </svg>
                 </button>
               </div>
-            </div>
-            {/* Status + Tags */}
-            <div className="w-full h-1/4 flex justify-center items-center">
-              <select
-                value={selectedMarker.status}
-                onChange={handleStatusChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center text-purple-600"
-              >
-                <option value="open">Open</option>
-                <option value="resolved">Resolved</option>
-                <option value="closed">Closed</option>
-              </select>
-              <p className="text-center font-bold mx-4">●</p>
-
-              <select
-                value={selectedMarker.tags}
-                onChange={handleTagsChange}
-                className="px-1 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-m font-semibold text-center  text-sky-400 "
-              >
-                <option value="road">Road</option>
-                <option value="environmental">Environmental</option>
-                <option value="pollution">Pollution</option>
-                <option value="wildlife_conservation">
-                  Wildlife Conservation
-                </option>
-                <option value="climate_change">Climate Change</option>
-                <option value="waste_management">Waste Management</option>
-                <option value="health_safety">Health & Safety</option>
-                <option value="urban_development">Urban Development</option>
-              </select>
             </div>
           </div>
           {/*Image*/}
