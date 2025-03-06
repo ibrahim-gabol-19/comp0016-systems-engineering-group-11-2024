@@ -8,11 +8,11 @@ import { useLocation } from "react-router-dom";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ReportsPage = () => {
-    const location = useLocation();
-    const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
-    const [newMarker, setNewMarker] = useState(null);
-    const [reports, setReports] = useState([]);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(!!location.state?.selectedIssue); // Initialize sidebar based on navigation state
+  const location = useLocation();
+  const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
+  const [newMarker, setNewMarker] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!!location.state?.selectedIssue); 
 
     const sidebarRef = useRef(null);
     const mapRef = useRef(null);
