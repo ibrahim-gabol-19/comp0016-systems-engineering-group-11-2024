@@ -30,10 +30,16 @@ const MiscellaneousSection = () => {
   const handleRadiusChange = (event) => {
     const newRadius = parseFloat(event.target.value);
     setRadius(newRadius);
+    const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
+    const centerLon = (bounds[0][1] + bounds[1][1]) / 2;
     // setNeLat(centerLat + newRadius);
     // setSwLat(centerLat - newRadius);
     // setNeLon(centerLon + newRadius);
     // setSwLon(centerLon - newRadius);
+    setBounds([
+      [centerLat - newRadius, centerLon - newRadius], // SW corner
+      [centerLat + newRadius, centerLon + newRadius], // NE corner
+    ]);
   };
 
   useEffect(() => {
@@ -52,21 +58,21 @@ const MiscellaneousSection = () => {
     try {
       const response = await axios.get(API_URL + "companyinformation/");
       const data = response.data[0];
-  
+
       const fetchedSwLat = data.sw_lat || 49.5;
       const fetchedSwLon = data.sw_lon || -8;
       const fetchedNeLat = data.ne_lat || 60;
       const fetchedNeLon = data.ne_lon || 2;
-  
+
       // Directly set bounds based on fetched data
       const newBounds = [
         [parseFloat(fetchedSwLat), parseFloat(fetchedSwLon)],
         [parseFloat(fetchedNeLat), parseFloat(fetchedNeLon)],
       ];
-  
+
       // Log bounds before setting state
       console.log(newBounds);
-  
+
       // Set state with fetched data
       setName(data.name || "");
       setAbout(data.about || "");
@@ -82,7 +88,7 @@ const MiscellaneousSection = () => {
       setFeedback({ message: "Failed to fetch company information.", color: "red" });
     }
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -240,8 +246,8 @@ const MiscellaneousSection = () => {
                     <input
                       type="range"
                       min="0"
-                      max="10000"
-                      step="0.1"
+                      max="5"
+                      step="0.001"
                       value={radius}
                       onChange={handleRadiusChange}
                       className="w-full"
