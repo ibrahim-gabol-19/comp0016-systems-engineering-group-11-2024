@@ -351,7 +351,9 @@ const ContentManagementSystem = () => {
         {/* Main Content */}
         <div className={`w-full md:w-5/6 h-full bg-white ${selectedCategory !== "Reporting" ? "overflow-auto" : ""}`}>
           {selectedCategory === "Reporting" && (
-            <ReportsSection userQuery={userQuery} />
+            <div style={{ maxHeight: 'calc(100vh - 8000px)' }}>
+              <ReportsSection userQuery={userQuery} />
+            </div>
           )}
           {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
