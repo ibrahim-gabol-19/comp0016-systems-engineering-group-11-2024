@@ -16,7 +16,6 @@ const ContentManagementSystem = () => {
   const [starredCards, setStarredCards] = useState([]);
   const [articles, setArticles] = useState([]);
   const [events, setEvents] = useState([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
@@ -165,7 +164,6 @@ const ContentManagementSystem = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-      setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false);
       alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
     },
