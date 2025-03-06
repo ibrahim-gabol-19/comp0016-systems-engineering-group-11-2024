@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
-import VolunteeringButton from "./VolunteeringButton";
+
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import CreatePostModal from "./CreatePostModal";
 import CommentsPopup from "./CommentsPopup";
@@ -166,8 +166,6 @@ const ForYouCard = () => {
                   <NewsButton />
                 ) : card.tags === "Event" ? (
                   <EventButton />
-                ) : card.tags === "Volunteering" ? (
-                  <VolunteeringButton />
                 ) : null}
               </div>
               <p className="text-gray-700">{card.content}</p>
@@ -251,8 +249,7 @@ const ForYouCard = () => {
                   <NewsButton />
                 ) : card.tags === "Event" ? (
                   <EventButton />
-                ) : card.tags === "Volunteering" ? (
-                  <VolunteeringButton />
+
                 ) : null}
               </div>
               <p className="text-gray-700">{card.content}</p>

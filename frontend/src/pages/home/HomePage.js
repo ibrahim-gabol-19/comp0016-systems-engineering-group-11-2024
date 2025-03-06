@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import SearchBar from "../../components/home/SearchBar"; // Import the SearchBar component
 import ForYouCard from "../../components/home/ForYouCard";
 import MapFilter from "../../components/home/MapFilter";
@@ -13,40 +14,70 @@ const HomePage = () => {
     news: true,
     issues: true,
   });
-  const [dates, setDates] = useState({
-    from: "",
-    to: "",
-  });
+
+  const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
+
+const [dates, setDates] = useState({
+  from: today,  // Default to today's date
+  to: "",       // Allow all future dates
+});
+
+  const [reports, setReports] = useState([]); // Store fetched reports
+  const [events, setEvents] = useState([]); // Store fetched events
+
+  // Fetch reports from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const [reportsResponse,eventsResponse] = await Promise.all([ 
+          axios.get(process.env.REACT_APP_API_URL + "reports/", { headers }),
+          axios.get(process.env.REACT_APP_API_URL + "events/", { headers }),]);
+
+
+        if (reportsResponse.status === 200) {
+          setReports(reportsResponse.data); // Store reports in state
+        }
+        if (eventsResponse.status === 200) {
+          setEvents(eventsResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+
+
+    };
+
+    fetchData();
+  }, []); // Runs once when component mounts
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
+
   const handleDateChange = (newDates) => {
     setDates(newDates);
   };
+
   return (
-    
     <div>
-      <Header />            
+      <Header />
       <div className="pt-20"></div>
       {/* Add SearchBar component below the Header */}
       <div className="container mx-auto px-4 py-4">
         <SearchBar />
       </div>
       <div className="container mx-auto px-0 py-8">
-        {" "}
-        {/* Removed max-width */}
-        <div className="flex flex-col md:flex-row gap-6">
-          {" "}
-          {/* Flex layout for full width */}
-          <div className="w-full md:w-4/5">
-            {" "}
-            {/* MapComponent takes 4/5th of the width */}
-            <MapComponent filters={filters} dates={dates} />
+        {/* Centering the map and filter */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+          {/* MapComponent */}
+          <div className="w-full md:w-3/4">
+            <MapComponent filters={filters} dates={dates} reports={reports} events={events} />
           </div>
-          <div className="w-full md:w-1/5">
-            {" "}
-            {/* MapFilter takes 1/5th */}
+          {/* MapFilter  */}
+          <div className="w-full md:w-1/4 flex justify-center">
             <MapFilter
               onFilterChange={handleFilterChange}
               onDateChange={handleDateChange}
@@ -58,4 +89,5 @@ const HomePage = () => {
     </div>
   );
 };
+
 export default HomePage;

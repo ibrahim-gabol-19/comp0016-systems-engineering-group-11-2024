@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.8",
     "dayjs": "^1.11.13",
+    "leaflet": "^1.9.4",
     "quill": "^2.0.3",
     "quilljs": "^0.18.1",
     "react": "^18.3.1",

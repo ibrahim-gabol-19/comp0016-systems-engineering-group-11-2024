@@ -10,11 +10,6 @@ const EventsPage = () => {
     <div>
       <Header />
       <div className="pt-20"></div>
-      <div className="flex justify-center">
-        <title className="px-5 font-bold text-3xl flex text-center">
-          Events
-        </title>
-      </div>
       <FeaturedEvents />
       <Calendar />
       <PointOfInterest />

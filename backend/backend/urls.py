@@ -34,6 +34,6 @@ urlpatterns = [
     path('comments/', include('comments.urls')),
 ]
 
-# Serve media files during development
+# Serve media files during development or production (not recommended for large projects)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
