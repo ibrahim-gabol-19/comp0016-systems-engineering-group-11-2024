@@ -40,7 +40,7 @@ const transformArticle = (article) => ({
   commentCount: 0, // Default if not implemented for articles
   likeCount: 0,
   liked: false,
-  tags: "Article"
+  tags: "News"
 });
 
 const transformEvent = (event) => ({
@@ -61,6 +61,7 @@ const ForYouCard = () => {
   const [cards, setCards] = useState([]); // All posts from forums, articles, events
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null); // Which post's comments to show
+  const [selectedPostType, setSelectedPostType] = useState(null); // "forum", "article", or "event"
 
   // Unified fetch function: fetch forums, articles, events and merge them.
   const fetchAllPosts = async () => {
@@ -145,12 +146,15 @@ const ForYouCard = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleOpenComments = (postId) => {
+  // Modified to accept both postId and postType.
+  const handleOpenComments = (postId, postType) => {
     setSelectedPostId(postId);
+    setSelectedPostType(postType);
   };
 
   const handleCloseComments = () => {
     setSelectedPostId(null);
+    setSelectedPostType(null);
   };
 
   // When a comment is added, update the comment count for that post locally.
@@ -178,6 +182,14 @@ const ForYouCard = () => {
         return card;
       })
     );
+  };
+
+  // Determine content_type for CommentsPopup based on post type.
+  const getContentType = (type) => {
+    if (type === "forum") return "forums.forumpost";
+    if (type === "article") return "articles.article";
+    if (type === "event") return "events.event";
+    return "forums.forumpost";
   };
 
   return (
@@ -239,7 +251,7 @@ const ForYouCard = () => {
                 <p className="text-gray-500 text-sm mt-2 italic">{formatDate(card.created_at)}</p>
                 <div className="flex items-center justify-between mt-3">
                   <button
-                    onClick={() => handleOpenComments(card.id)}
+                    onClick={() => handleOpenComments(card.id, card.type)}
                     className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                   >
                     <FaComment className="text-xl" />
@@ -291,6 +303,13 @@ const ForYouCard = () => {
         ].map((card, index) => {
           const isForum = !card.tags || (card.tags !== "News" && card.tags !== "Event" && card.tags !== "Article");
           const displayContent = truncateText(card.content, 100);
+          // For dummy posts, determine type based on tags.
+          const dummyType =
+            card.tags === "News"
+              ? "article"
+              : card.tags === "Event"
+              ? "event"
+              : "forum";
           return (
             <div
               key={`existing-${index}`}
@@ -327,7 +346,7 @@ const ForYouCard = () => {
                 )}
                 <div className="flex items-center justify-between mt-3">
                   <button
-                    onClick={() => handleOpenComments(card.id)}
+                    onClick={() => handleOpenComments(card.id, dummyType)}  
                     className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                   >
                     <FaComment className="text-xl" />
@@ -360,6 +379,14 @@ const ForYouCard = () => {
       {selectedPostId && (
         <CommentsPopup
           postId={selectedPostId}
+          // Pass the correct content type based on selectedPostType
+          contentType={selectedPostType === "forum"
+            ? "forums.forumpost"
+            : selectedPostType === "article"
+            ? "articles.article"
+            : selectedPostType === "event"
+            ? "events.event"
+            : "forums.forumpost"}
           onClose={handleCloseComments}
           onCommentAdded={handleCommentAdded}
         />

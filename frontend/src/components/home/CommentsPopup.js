@@ -4,7 +4,7 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
+const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   const [comments, setComments] = useState([]); // All comments for this post
   const [newComment, setNewComment] = useState(""); // New comment text
   const [replyTo, setReplyTo] = useState(null); // Which comment is being replied to
@@ -35,13 +35,13 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Fetch comments for the selected forum post using generic fields
+  // Fetch comments using the passed contentType prop
   const fetchComments = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}comments/`, {
         params: {
-          content_type: "forums.forumpost",
+          content_type: contentType,
           object_id: postId,
         },
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -54,7 +54,7 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
 
   useEffect(() => {
     fetchComments();
-  }, [postId]);
+  }, [postId, contentType]);
 
   // Handle submitting a new comment or reply
   const handleSubmitComment = async (e) => {
@@ -63,9 +63,9 @@ const CommentsPopup = ({ postId, onClose, onCommentAdded }) => {
       const token = localStorage.getItem("token");
       const payload = {
         content: newComment,
-        content_type: "forums.forumpost", // Generic content type
-        object_id: postId,              // Forum post ID
-        reply_to: replyTo,              // Parent comment ID (if replying)
+        content_type: contentType, // Use the passed contentType prop
+        object_id: postId,         // The post ID
+        reply_to: replyTo,         // Parent comment ID (if replying)
       };
       await axios.post(`${API_URL}comments/`, payload, {
         headers: { Authorization: `Bearer ${token}` },
