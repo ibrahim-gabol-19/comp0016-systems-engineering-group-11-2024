@@ -68,7 +68,6 @@ const ContentManagementSystem = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          console.log("DEBUG: Articles API Response:", response.data);
           setArticles(Array.isArray(response.data) ? response.data : []);
         })
         .catch((error) => {
@@ -82,7 +81,6 @@ const ContentManagementSystem = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          console.log("DEBUG: Events API Response:", response.data);
           setEvents(response.data);
           updateStarredCards(response.data);
         })
@@ -170,7 +168,6 @@ const ContentManagementSystem = () => {
       setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false);
       alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
-      console.log(uploadedFiles);
     },
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
@@ -377,7 +374,6 @@ const ContentManagementSystem = () => {
                     onClick={() => {
                       if (selectedCards.length === 0) {
                         handleCardClick(event.id);
-                        console.log("Event id clicked is", event.id);
                       } else {
                         toggleCardSelection(event);
                       }

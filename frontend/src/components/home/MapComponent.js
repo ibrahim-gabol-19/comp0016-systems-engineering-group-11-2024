@@ -70,8 +70,6 @@ const MapComponent = ({ filters, dates, reports, events }) => {
         status: "active",
       }));
 
-    console.log("Filtered API Data for Map:", validReports);
-    console.log("Filtered API Data for Events:", validEvents);
 
     const filtered = [...validReports, ...validEvents].filter((item) => {
       const isSelected =

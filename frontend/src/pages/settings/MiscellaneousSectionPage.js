@@ -63,9 +63,6 @@ const MiscellaneousSection = () => {
         [parseFloat(fetchedNeLat), parseFloat(fetchedNeLon)],
       ];
 
-      // Log bounds before setting state
-      console.log(newBounds);
-
       // Set state with fetched data
       setName(data.name || "");
       setAbout(data.about || "");

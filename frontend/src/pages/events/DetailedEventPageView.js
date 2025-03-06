@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 
 const DetailedEventPageView = () => {
     const { eventId } = useParams();
-    console.log("Event ID from URL:", eventId);
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);    
