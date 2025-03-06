@@ -12,17 +12,29 @@ const MiscellaneousSection = () => {
   const [about, setAbout] = useState("");
   const [mainColor, setMainColor] = useState("#000000");
   const [font, setFont] = useState("Arial");
-  const [swLat, setSwLat] = useState(49.5);
-  const [swLon, setSwLon] = useState(-8);
-  const [neLat, setNeLat] = useState(60);
-  const [neLon, setNeLon] = useState(2);
+
   const [feedback, setFeedback] = useState({ message: "", color: "" });
   const navigate = useNavigate();
+  const [radius, setRadius] = useState(0);
+  const [centerLat, setCenterLat] = useState(0);
+  const [centerLon, setCenterLon] = useState(0);
+  const [neLat, setNeLat] = useState(0);
+  const [swLat, setSwLat] = useState(0);
+  const [neLon, setNeLon] = useState(0);
+  const [swLon, setSwLon] = useState(0);
+  const [bounds, setBounds] = useState([
+    [51.0, -0.1], // Initial SW lat, lon
+    [51.1, -0.05], // Initial NE lat, lon
+  ]);
 
-  const handleSwLatChange = (e) => setSwLat(parseFloat(e.target.value));
-  const handleSwLonChange = (e) => setSwLon(parseFloat(e.target.value));
-  const handleNeLatChange = (e) => setNeLat(parseFloat(e.target.value));
-  const handleNeLonChange = (e) => setNeLon(parseFloat(e.target.value));
+  const handleRadiusChange = (event) => {
+    const newRadius = parseFloat(event.target.value);
+    setRadius(newRadius);
+    // setNeLat(centerLat + newRadius);
+    // setSwLat(centerLat - newRadius);
+    // setNeLon(centerLon + newRadius);
+    // setSwLon(centerLon - newRadius);
+  };
 
   useEffect(() => {
     fetchCompanyInformation();
@@ -36,25 +48,41 @@ const MiscellaneousSection = () => {
     }
   };
 
-
   const fetchCompanyInformation = async () => {
     try {
       const response = await axios.get(API_URL + "companyinformation/");
       const data = response.data[0];
-
+  
+      const fetchedSwLat = data.sw_lat || 49.5;
+      const fetchedSwLon = data.sw_lon || -8;
+      const fetchedNeLat = data.ne_lat || 60;
+      const fetchedNeLon = data.ne_lon || 2;
+  
+      // Directly set bounds based on fetched data
+      const newBounds = [
+        [parseFloat(fetchedSwLat), parseFloat(fetchedSwLon)],
+        [parseFloat(fetchedNeLat), parseFloat(fetchedNeLon)],
+      ];
+  
+      // Log bounds before setting state
+      console.log(newBounds);
+  
+      // Set state with fetched data
       setName(data.name || "");
       setAbout(data.about || "");
       setMainColor(data.main_color || "#000000");
       setCompanyLogo(data.logo);
       setFont(data.font || "Arial");
-      setSwLat(data.sw_lat || 49.5);
-      setSwLon(data.sw_lon || -8);
-      setNeLat(data.ne_lat || 60);
-      setNeLon(data.ne_lon || 2);
+      setSwLat(fetchedSwLat);
+      setSwLon(fetchedSwLon);
+      setNeLat(fetchedNeLat);
+      setNeLon(fetchedNeLon);
+      setBounds(newBounds);  // Update bounds here
     } catch (err) {
       setFeedback({ message: "Failed to fetch company information.", color: "red" });
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,10 +95,10 @@ const MiscellaneousSection = () => {
     formData.append("about", about);
     formData.append("main_color", mainColor);
     formData.append("font", font);
-    formData.append("sw_lat", swLat);
-    formData.append("sw_lon", swLon);
-    formData.append("ne_lat", neLat);
-    formData.append("ne_lon", neLon);
+    formData.append("sw_lat", parseFloat(bounds[0][0].toFixed(6)));
+    formData.append("sw_lon", parseFloat(bounds[0][1].toFixed(6)));
+    formData.append("ne_lat", parseFloat(bounds[1][0].toFixed(6)));
+    formData.append("ne_lon", parseFloat(bounds[1][1].toFixed(6)));
 
     try {
       await axios.put(API_URL + "companyinformation/1/", formData, {
@@ -208,68 +236,43 @@ const MiscellaneousSection = () => {
               <div className="flex">
                 <div className="w-1/2 pr-4">
                   <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Top Side</h3>
+                    <h3 className="text-xl text-gray-600 mb-2">Radius</h3>
                     <input
                       type="range"
-                      min="-90"
-                      max="90"
-                      step="0.05"
-                      value={neLat}
-                      onChange={handleNeLatChange}
+                      min="0"
+                      max="10000"
+                      step="0.1"
+                      value={radius}
+                      onChange={handleRadiusChange}
                       className="w-full"
                     />
-                    <span>{neLat}°</span>
+                    <span>{radius}°</span>
+                  </div>
+                  <div className="mb-4">
+                    <h3 className="text-xl text-gray-600 mb-2">Top Side</h3>
+                    <span>{(bounds[1][0].toFixed(6))}°</span>
                   </div>
                   <div className="mb-4">
                     <h3 className="text-xl text-gray-600 mb-2">Bottom Side</h3>
-                    <input
-                      type="range"
-                      min="-90"
-                      max="90"
-                      step="0.05"
-                      value={swLat}
-                      onChange={handleSwLatChange}
-                      className="w-full"
-                    />
-                    <span>{swLat}°</span>
+                    <span>{(bounds[0][0].toFixed(6))}°</span>
                   </div>
                   <div className="mb-4">
                     <h3 className="text-xl text-gray-600 mb-2">Left Side</h3>
-                    <input
-                      type="range"
-                      min="-180"
-                      max="180"
-                      step="0.05"
-                      value={swLon}
-                      onChange={handleSwLonChange}
-                      className="w-full"
-                    />
-                    <span>{swLon}°</span>
+                    <span>{(bounds[0][1].toFixed(6))}°</span>
                   </div>
                   <div className="mb-4">
                     <h3 className="text-xl text-gray-600 mb-2">Right Side</h3>
-                    <input
-                      type="range"
-                      min="-180"
-                      max="180"
-                      step="0.05"
-                      value={neLon}
-                      onChange={handleNeLonChange}
-                      className="w-full"
-                    />
-                    <span>{neLon}°</span>
+                    <span>{(bounds[1][1].toFixed(6))}°</span>
                   </div>
                 </div>
-
                 {/* Map Component */}
                 <div className="w-1/2 h-96">
                   <MapComponent
-                    bounds={[
-                      [swLat, swLon],
-                      [neLat, neLon],
-                    ]}
+                    bounds={bounds} setExternalBounds={setBounds}
                   />
                 </div>
+                <div className="h-64 w-64" onClick={() => console.log(bounds)}></div>
+
               </div>
             </div>
 
