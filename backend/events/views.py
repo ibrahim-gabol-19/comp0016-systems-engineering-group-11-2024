@@ -4,11 +4,11 @@ Views for events
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.conf import settings
 from .models import Event
 from .serializers import EventSerializer
 
 
-from django.conf import settings
 
 class EventsViewSet(viewsets.ModelViewSet):
     """
