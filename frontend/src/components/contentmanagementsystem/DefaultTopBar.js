@@ -1,11 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import SearchBar from "./SearchBar";
 import { CompanyContext } from "../../context/CompanyContext";
 
 const DefaultTopBar = ({
   onManual,
   setUserQuery,
-  selectedCategory = "hi",
 }) => {
   const { main_color } = useContext(CompanyContext);
 
@@ -43,7 +42,6 @@ const DefaultTopBar = ({
           className="w-16 h-16 rounded-full flex items-center justify-center text-white"
           style={{
             backgroundColor: main_color,
-            backgroundColor: main_color,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = lightenColor(
@@ -52,7 +50,6 @@ const DefaultTopBar = ({
             );
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = main_color;
             e.currentTarget.style.backgroundColor = main_color;
           }}
           onMouseDown={(e) => {
