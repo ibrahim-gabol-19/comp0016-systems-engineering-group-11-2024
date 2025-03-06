@@ -44,7 +44,6 @@ const MiscellaneousSection = () => {
 
   useEffect(() => {
     fetchCompanyInformation();
-    // navigate(-1);
   }, []);
 
   const handleImageUpload = (uploadedFiles) => {
@@ -120,6 +119,7 @@ const MiscellaneousSection = () => {
 
   const handleBack = () => {
     navigate(-1);
+    window.location.reload();
   };
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
@@ -213,7 +213,6 @@ const MiscellaneousSection = () => {
                 </select>
               </div>
 
-
               <div className="flex flex-col justify-center items-center w-3/4   ">
                 <h3 className="text-xl text-center text-gray-600 ">Logo</h3>
 
@@ -246,7 +245,7 @@ const MiscellaneousSection = () => {
                     <input
                       type="range"
                       min="0"
-                      max="3"
+                      max="2"
                       orient="vertical"
                       step="0.0001"
                       value={radius}
@@ -254,7 +253,7 @@ const MiscellaneousSection = () => {
                       className="w-full h-full bg-gray-300 rounded-lg"
                     />
                     <div className="mt-2 text-lg">
-                      {((radius / 5) * 100).toFixed(2)}% {/* This converts the radius to a percentage */}
+                      {((radius / 2) * 100).toFixed(2)}% {/* This converts the radius to a percentage */}
                     </div>
                   </div>
                 </div>
