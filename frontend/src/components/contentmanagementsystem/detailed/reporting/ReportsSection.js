@@ -121,6 +121,7 @@ const ReportsSection = ({userQuery}) => {
               activeFilters={getActiveFilters()}
               selectedMarker={selectedMarker}
               mapRef={mapRef}
+              userQuery={userQuery}
             ></MapComponent>
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30 mb-10">
               <button
