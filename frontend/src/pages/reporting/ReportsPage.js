@@ -13,7 +13,7 @@ const ReportsPage = () => {
   const [selectedMarker, setSelectedMarker] = useState(location.state?.selectedIssue || null);
   const [newMarker, setNewMarker] = useState(null);
   const [reports, setReports] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!!location.state?.selectedIssue); 
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
