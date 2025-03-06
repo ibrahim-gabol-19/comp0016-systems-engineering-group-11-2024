@@ -235,51 +235,44 @@ const MiscellaneousSection = () => {
             </div>
             {/* Divider */}
             <hr className="my-6 border-t border-gray-300" />
-
             {/* Boundaries Section */}
             <div className="py-5">
-              <h2 className="py-2 font-bold text-4xl">Reporting</h2>
-              <div className="flex">
-                <div className="w-1/2 pr-4">
-                  <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Radius</h3>
-                    <input
-                      type="range"
-                      min="0"
-                      max="5"
-                      step="0.001"
-                      value={radius}
-                      onChange={handleRadiusChange}
-                      className="w-full"
+              <h2 className="py-2 font-bold text-4xl text-center">Map Boundaries</h2>
+              <div className="flex px-4 py-4">
+
+                {/* Radius Section */}
+                <div className="px-2 py-4 w-1/6">
+  <div className="text-center mb-6">
+    <input
+      type="range"
+      min="0"
+      max="3"
+      orient="vertical"
+      step="0.0001"
+      value={radius}
+      onChange={handleRadiusChange}
+      className="w-full h-full bg-gray-300 rounded-lg"
+    />
+    <div className="mt-2 text-lg">
+      {((radius / 5) * 100).toFixed(2)}% {/* This converts the radius to a percentage */}
+    </div>
+  </div>
+</div>
+
+
+                {/* Map Section */}
+                <div className="px-2 py-4 w-5/6">
+                  <div className="w-full h-full border-2 border-gray-300 rounded-lg shadow-lg">
+                    <MapComponent
+                      bounds={bounds}
+                      setExternalBounds={setBounds}
                     />
-                    <span>{radius}°</span>
                   </div>
-                  <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Top Side</h3>
-                    <span>{(bounds[1][0].toFixed(6))}°</span>
-                  </div>
-                  <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Bottom Side</h3>
-                    <span>{(bounds[0][0].toFixed(6))}°</span>
-                  </div>
-                  <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Left Side</h3>
-                    <span>{(bounds[0][1].toFixed(6))}°</span>
-                  </div>
-                  <div className="mb-4">
-                    <h3 className="text-xl text-gray-600 mb-2">Right Side</h3>
-                    <span>{(bounds[1][1].toFixed(6))}°</span>
-                  </div>
-                </div>
-                {/* Map Component */}
-                <div className="w-1/2 h-96">
-                  <MapComponent
-                    bounds={bounds} setExternalBounds={setBounds}
-                  />
                 </div>
 
               </div>
             </div>
+
 
 
           </form>
