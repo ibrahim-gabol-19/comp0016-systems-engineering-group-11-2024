@@ -1,17 +1,19 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
+import { useAuth } from "../../context/AuthContext"; 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
-
+  const {auth} = useAuth();
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
   const { main_color } = useContext(CompanyContext);
+
 
   const tags = [
     "environmental",
@@ -58,8 +60,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
       try {
+        const author = auth.user.username;
         const discussionMessage = {
-          author: "Example Author",
+          author: author,
           message: message,
           report: selectedMarker.id,
         };
