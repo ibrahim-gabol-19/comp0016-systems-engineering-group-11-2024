@@ -58,7 +58,7 @@ const MapComponent = ({ filters, dates, reports, events }) => {
       }));
 
     const validEvents = events
-      .filter((event) => event.latitude !== undefined && event.longitude !== undefined)
+      .filter((event) => event.latitude !== null && event.longitude !== null)
       .map((event) => ({
         id: event.id,
         name: event.title,
