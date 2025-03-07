@@ -9,7 +9,7 @@ const SearchBar = ({ setUserQuery }) => {
       {/* Search Bar Container */}
       <div
         className={`flex justify-center items-center transition-all duration-300 ease-in-out rounded-full bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-          isFocused ? "h-12 w-3/4" : "h-12 w-1/2"
+          isFocused ? "h-12 w-3/4" : "h-12 lg:w-1/2 w-3/4"
         }`}
       >
         {/* Icon */}

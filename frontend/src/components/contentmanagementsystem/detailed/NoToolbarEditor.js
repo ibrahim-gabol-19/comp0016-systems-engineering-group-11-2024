@@ -79,7 +79,7 @@ const NoToolbarEditor = forwardRef(
       ref.current?.enable(!readOnly);
     }, [readOnly, ref]);
 
-    return <div className="h-12 resize-none" ref={containerRef}></div>;
+    return <div className="resize-none" ref={containerRef}></div>;
   }
 );
 

@@ -342,13 +342,15 @@ const ContentManagementSystem = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-full md:w-5/6 h-full bg-white overflow-auto">
+        <div className={`w-full md:w-5/6 h-full bg-white ${selectedCategory !== "Reporting" ? "overflow-auto" : ""}`}>
           {selectedCategory === "Reporting" && (
-            <ReportsSection userQuery={userQuery} />
+            <div style={{ maxHeight: 'calc(100vh - 8000px)' }}>
+              <ReportsSection userQuery={userQuery} />
+            </div>
           )}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 pl-8 pr-8 pt-8 pb-8 max-h-[50vh]" style={{ gridAutoRows: '80%' }}>
                 {(selectedCategory === "Articles"
                   ? filterItems(articles, userQuery)
                   : selectedCategory === "Events"
@@ -390,18 +392,33 @@ const ContentManagementSystem = () => {
                         className="w-full h-1/2 object-cover rounded-lg"
                       />
                     )}
-                    <div className="p-2 flex flex-col h-1/2 text-center">
-                      <h1 className="font-bold text-2xl text-gray-800 truncate">
-                        {event.title}
-                      </h1>
-                      <p className="text-sm text-gray-500 truncate">
-                        {event.openTimes}
-                      </p>
-                      <p className="text-base text-gray-700 mt-2 overflow-hidden text-ellipsis line-clamp-3">
-                        {event.description}
-                      </p>
-                    </div>
-                    <button
+                    <div className="p-4 text-center flex flex-col justify-center">
+                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
+                        {event.event_type === "point_of_interest" ? (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {event.opening_times}
+                          </p>
+                        ) : event.event_type === "scheduled" ? (
+                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                                {new Date(event.date + 'T' + event.time).toLocaleDateString(undefined, {
+                                  weekday: 'short', // e.g., "Mon"
+                                  month: 'short',   // e.g., "Jan"
+                                  day: 'numeric',   // e.g., "15"
+                                  year: 'numeric'  // e.g., "2024"
+                              })} at {new Date(event.date + 'T' + event.time).toLocaleTimeString(undefined, {
+                                  hour: 'numeric',    // e.g., "3"
+                                  minute: 'numeric',  // e.g., "30"
+                                  hour12: true       // e.g., "AM/PM"
+                              })}
+                          </p>
+                        ): null}
+                        <p className="text-sm text-gray-500 mt-2 overflow-hidden break-words line-clamp-3 flex-1 ml-6 mr-6">
+                          {event.description}
+                        </p>
+                      </div>
+
+                    {/* Conditional Checkmark Button */}
+                    <button 
                       className={`absolute top-2 left-2 w-9 h-9 bg-gray-200 text-black rounded-full flex opacity-80 items-center justify-center ${
                         selectedCards.includes(event)
                           ? "opacity-100 bg-gray-600 font-bold text-white"
@@ -412,36 +429,73 @@ const ContentManagementSystem = () => {
                         toggleCardSelection(event);
                       }}
                     >
-                      ✓
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-5 h-5" // Adjust size as needed
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
                     </button>
                     {selectedCategory === "Events" && (
                       <button
-                        className={`absolute top-2 right-10 w-7 h-7 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
+                        className={`absolute top-2 right-10 w-9 h-9 mr-2 bg-gray-200 text-black rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity ${
                           starredCards.includes(event.id)
                             ? "bg-yellow-500 text-white"
                             : "opacity-60"
                         }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleStarSelection(event.id);
-                        }}
-                      >
-                        ★
-                      </button>
-                    )}
-                    <button
-                      className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteSingular(event);
+                        e.stopPropagation(); // Prevent the click event from triggering the card click
+                        toggleStarSelection(event.id);
                       }}
                     >
-                      ✕
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 18.03 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
                     </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  )}
+
+                  {/* Delete Button */}
+                  <button
+                    className="absolute top-2 right-2 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the click event from triggering the card click
+                      handleDeleteSingular(event);
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-5 h-5"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
