@@ -3,11 +3,12 @@ import React, { useRef, useState, useEffect } from "react";
 // import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
-import { useParams } from "react-router-dom"; // For dynamic routing
+import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import DropdownExtract from "../../components/contentmanagementsystem/detailed/DropdownExtractEvents";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -36,6 +37,8 @@ const DetailedEventPage = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
   const [requiredFields, setRequiredFields] = useState({});
+  const navigate = useNavigate();
+  
 
 
   useEffect(() => {
@@ -329,11 +332,39 @@ const DetailedEventPage = () => {
 
   const isFieldRequired = (fieldName) => requiredFields[fieldName];
 
+  const handleBack = () => { navigate(-1); };
+
   return (
     <div>
       <Header />
       <div className="pt-20"></div>
-      <div className="p-6 flex justify-end">
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4 ml-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+      </svg>
+      </button>
+      <div className="flex justify-between px-5">
+        <div>
+          <DropdownExtract
+          handleExtractFromPDFClick={handleExtractFromPDFClick}
+          handleExtractFromICSClick={handleExtractFromICSClick}
+        />
+        </div>
+        <div>
         <button
           onClick={() => setIsEditing((prev) => !prev)}
           className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
@@ -347,20 +378,7 @@ const DetailedEventPage = () => {
         >
           Save
         </button>
-  
-        <button
-          onClick={handleExtractFromPDFClick}
-          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-        >
-          Extract From PDF
-        </button>
-  
-        <button
-          onClick={handleExtractFromICSClick}
-          className="bg-teal-500 text-white justify-center font-bold rounded-lg hover:bg-teal-400 active:bg-teal-300 transition active:duration-100 duration-300 px-4 py-2"
-        >
-          Extract From ICS
-        </button>
+        </div>
   
         <input
           type="file"
@@ -379,8 +397,8 @@ const DetailedEventPage = () => {
       </div>
   
       {pdfFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected PDF:</strong> {pdfFile.name}
           </p>
           <button
@@ -404,8 +422,8 @@ const DetailedEventPage = () => {
       )}
   
       {icsFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected ICS:</strong> {icsFile.name}
           </p>
           <button
@@ -640,7 +658,18 @@ const DetailedEventPage = () => {
 
             {eventType === "scheduled" && (
                 <p className="text-lg mt-4 text-gray-900 text-center">
-                <b>Event Date & Time:</b> On {date} at {time}
+                <b>Event Date & Time: </b>
+
+                  {new Date(date + 'T' + time).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                  })} at {new Date(date + 'T' + time).toLocaleTimeString(undefined, {
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                  })}
                 </p>)
               }
               {eventType === "point_of_interest" && (

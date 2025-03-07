@@ -30,8 +30,8 @@ class Event(models.Model):
     latitude = models.FloatField(null=True, blank=True)
 
     # Fields for Scheduled Events only
-    date = models.DateField(null=True, blank=True)  # Will validate in serializer
-    time = models.TimeField(null=True, blank=True)  # Will validate in serializer
+    date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
 
     # Fields for Points of Interest only
     opening_times = models.CharField(max_length=255, blank=True, null=True)
