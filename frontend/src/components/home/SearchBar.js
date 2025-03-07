@@ -23,6 +23,7 @@ const SearchBar = () => {
     setMessages([...messages, { text: userQuery, sender: "user" }]);
     setModelReply("Here is what I found.");
     setFullUserQuery(userQuery);
+
     setUserQuery("");
   };
 
@@ -77,10 +78,58 @@ const SearchBar = () => {
         params: { query: userQuery },
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      console.log("Search results:", response.data.results);
 
       if (response.data && response.data.results) {
         setSearchResult(response.data.results);
+
+        await engine.resetChat();
+        const messages = [
+          {
+            role: "system",
+            content: `You are an AI assistant chatbot for GreenEarth Inc., a company focused on sustainability and environmental conservation.
+            
+            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
+            Be polite, professional, and ensure responses are concise and user-friendly. 
+            
+            --- 
+            **IMPORTANT**: When responding to event-related queries, follow these rules:
+            - Identify which results are events by checking if they have a "date" field.
+            - Convert the date string into a comparable format.
+            - Compare each event's date to today's date.
+            - **Only return upcoming events (dates after today).**
+            - If multiple upcoming events exist, sort them from soonest to latest
+            
+            Today's date: ${new Date().toISOString().split("T")[0]}
+            
+            ---
+            **Event Data (JSON Format)**
+            ${JSON.stringify(response.data.results, null, 2)}
+            
+            Based on this data, answer the user's question appropriately.
+            `,
+          },
+          { role: "user", content: userQuery },
+        ];
+
+        console.log(JSON.stringify(response.data.results, null, 2) + " The bees knees")
+        try {
+          const chunks = await engine.chat.completions.create({
+            messages,
+            temperature: 1,
+            stream: true,
+          });
+
+          let reply = "";
+          for await (const chunk of chunks) {
+            reply += chunk.choices[0]?.delta.content || "";
+            setModelReply(reply);
+          }
+
+          const fullReply = await engine.getMessage();
+          setModelReply(fullReply);
+        } catch (error) {
+          console.error("Error during chat completion:", error);
+        }
       } else {
         setSearchResult([]);
       }
@@ -94,54 +143,6 @@ const SearchBar = () => {
       return;
     }
 
-    await engine.resetChat();
-
-    const messages = [
-      {
-        role: "system",
-        content: `You are an AI assistant chatbot for GreenEarth Inc., a company focused on sustainability and environmental conservation.
-        
-        Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
-        Be polite, professional, and ensure responses are concise and user-friendly. 
-        
-        --- 
-        **IMPORTANT**: When responding to event-related queries, follow these rules:
-        - Identify which results are events by checking if they have a "date" field.
-        - Convert the date string into a comparable format.
-        - Compare each event's date to today's date.
-        - **Only return upcoming events (dates after today).**
-        - If multiple upcoming events exist, sort them from soonest to latest
-        
-        Today's date: ${new Date().toISOString().split("T")[0]}
-        
-        ---
-        **Event Data (JSON Format)**
-        ${JSON.stringify(searchResult, null, 2)}
-        
-        Based on this data, answer the user's question appropriately.
-        `,
-      },
-      { role: "user", content: userQuery },
-    ];
-
-    try {
-      const chunks = await engine.chat.completions.create({
-        messages,
-        temperature: 1,
-        stream: true,
-      });
-
-      let reply = "";
-      for await (const chunk of chunks) {
-        reply += chunk.choices[0]?.delta.content || "";
-        setModelReply(reply);
-      }
-
-      const fullReply = await engine.getMessage();
-      setModelReply(fullReply);
-    } catch (error) {
-      console.error("Error during chat completion:", error);
-    }
   };
 
   return (
@@ -180,91 +181,90 @@ const SearchBar = () => {
               <path d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
           </div>
-          
+
           <div
-            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${
-              fadeIn ? "opacity-100" : "opacity-0"
-            }`}
+            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${fadeIn ? "opacity-100" : "opacity-0"
+              }`}
           >
             {Array.isArray(searchResult)
               ? searchResult.map((item, index) => (
-                  <div
-                    key={index}
-                    className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
-                    onClick={() => handleRedirect(item)}
-                  >
-                    {/* Title */}
-                    <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
-                      {item.title}
-                    </p>
-                    {/* Source */}
-                    <span className="text-xs font-medium text-gray-500 uppercase">
-                      {item.source}
+                <div
+                  key={index}
+                  className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                  onClick={() => handleRedirect(item)}
+                >
+                  {/* Title */}
+                  <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
+                    {item.title}
+                  </p>
+                  {/* Source */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">
+                    {item.source}
+                  </span>
+                  {/* Score */}
+                  <p className="text-sm text-gray-600 mt-1">
+                    🔢 Score:{" "}
+                    <span className="font-medium">
+                      {item.similarity_score.toFixed(3)}
                     </span>
-                    {/* Score */}
-                    <p className="text-sm text-gray-600 mt-1">
-                      🔢 Score:{" "}
-                      <span className="font-medium">
-                        {item.similarity_score.toFixed(3)}
-                      </span>
-                    </p>
-                    {/* Conditional Content */}
-                    <div className="overflow-hidden text-ellipsis flex-grow">
-                      {item.source === "event" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            ⏰ <span className="font-medium">Time:</span>{" "}
-                            {item.time}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📍 <span className="font-medium">Location:</span>{" "}
-                            {item.location}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "article" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            ✍️ <span className="font-medium">Author:</span>{" "}
-                            {item.author}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📅 <span className="font-medium">Published:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "report" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            🏷️ <span className="font-medium">Tag:</span>{" "}
-                            {item.tags}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                    </div>
+                  </p>
+                  {/* Conditional Content */}
+                  <div className="overflow-hidden text-ellipsis flex-grow">
+                    {item.source === "event" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          ⏰ <span className="font-medium">Time:</span>{" "}
+                          {item.time}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📍 <span className="font-medium">Location:</span>{" "}
+                          {item.location}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "article" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          ✍️ <span className="font-medium">Author:</span>{" "}
+                          {item.author}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📅 <span className="font-medium">Published:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "report" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          🏷️ <span className="font-medium">Tag:</span>{" "}
+                          {item.tags}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
                   </div>
-                ))
+                </div>
+              ))
               : null}
           </div>
 
@@ -293,9 +293,8 @@ const SearchBar = () => {
 
       {/* Input Box */}
       <div
-        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${
-          isFocused ? "ring-2 ring-blue-500" : ""
-        }`}
+        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${isFocused ? "ring-2 ring-blue-500" : ""
+          }`}
       >
         <form onSubmit={handleSubmit} className="w-full h-full flex items-center">
           <input
