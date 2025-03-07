@@ -4,7 +4,7 @@ import { CompanyContext } from "../../context/CompanyContext";
 import { useAuth } from "../../context/AuthContext"; 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
+const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
   const {auth} = useAuth();
@@ -127,6 +127,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       );
       if (response.status === 201) {
         fetchReports();
+        onSidebarClose();
       }
 
       // Clear the form after submission
@@ -137,7 +138,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     } catch (err) {
       console.log("Error creating report:", err.message);
     }
+
   };
+
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -569,7 +572,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
             </div>
 
-            <div className="w-full h-1/4 shadow-md">
+            <div className="w-full h-1/5 shadow-md">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 style={{

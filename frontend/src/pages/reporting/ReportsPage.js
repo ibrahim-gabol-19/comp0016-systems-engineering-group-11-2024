@@ -109,7 +109,12 @@ const ReportsPage = () => {
                         <button className="absolute top-4 right-5 text-3xl scale-150" onClick={handleSidebarClose}>
                             &times;
                         </button>
-                        <SidebarReport selectedMarker={selectedMarker} newMarker={newMarker} fetchReports={fetchReports}></SidebarReport>
+                        <SidebarReport 
+                            selectedMarker={selectedMarker} 
+                            newMarker={newMarker} 
+                            fetchReports={fetchReports} 
+                            onSidebarClose={handleSidebarClose}
+                        ></SidebarReport>
                     </div>
                 )}
                 <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} relative`}>

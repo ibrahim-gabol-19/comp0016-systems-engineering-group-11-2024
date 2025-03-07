@@ -1,10 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   useMap,
-  useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -43,16 +42,13 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({
   onMarkerSelected,
-  onNewMarkerSelected,
   reports,
-  newMarker,
   activeFilters,
   selectedMarker,
   mapRef,
   userQuery,
 }) => {
   const zoomLevel = 13;
-  const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
   const bounds = [
@@ -77,25 +73,6 @@ const MapComponent = ({
     }, [selectedMarker, map]);
 
     return null;
-  }
-
-  function NewReport() {
-    const map = useMapEvents({
-      click(e) {
-        map.closePopup();
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-        onNewMarkerSelected(e);
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
-
-    return newMarker === null ? null : (
-      <Marker position={position} draggable={true} icon={SelectedIcon}></Marker>
-    );
   }
 
   // Combine filters
@@ -139,7 +116,6 @@ const MapComponent = ({
             }}
           />
         ))}
-        <NewReport />
         <RecenterMap selectedMarker={selectedMarker} />
       </MapContainer>
     </div>

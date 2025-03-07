@@ -28,12 +28,6 @@ const ReportsSection = ({userQuery}) => {
     setIsSidebarOpen(true);
   };
 
-  const handleNewMarkerSelected = (item) => {
-    setNewMarker(item);
-    setSelectedMarker(null);
-    setIsSidebarOpen(true);
-  };
-
   const fetchReports = async () => {
     try {
       const response = await axios.get( API_URL + "reports/");
@@ -105,7 +99,6 @@ const ReportsSection = ({userQuery}) => {
             </button>
             <SidebarReport
               selectedMarker={selectedMarker}
-              newMarker={newMarker}
               fetchReports={fetchReports}
             ></SidebarReport>
           </div>
@@ -114,9 +107,7 @@ const ReportsSection = ({userQuery}) => {
           <div className={`h-full flex flex-col ${selectedMarker || newMarker ? 'w-4/6 hidden sm:flex' : 'flex-grow min-w-0'} relative`}>
             <MapComponent
               onMarkerSelected={handleMarkerSelected}
-              onNewMarkerSelected={handleNewMarkerSelected}
               reports={reports}
-              newMarker={newMarker}
               activeFilters={getActiveFilters()}
               selectedMarker={selectedMarker}
               mapRef={mapRef}

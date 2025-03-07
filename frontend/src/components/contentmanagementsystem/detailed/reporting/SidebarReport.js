@@ -4,28 +4,15 @@ import { CompanyContext } from "../../../../context/CompanyContext";
 import { useAuth } from "../../../../context/AuthContext";
 const API_URL = process.env.REACT_APP_API_URL;
 
-const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
+const SidebarReport = ({ selectedMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
 
   const { auth } = useAuth();
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
-  const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
+
   const { main_color } = useContext(CompanyContext);
   const author =auth.user.username;
 
-  const tags = [
-    "environmental",
-    "road",
-    "pollution",
-    "wildlife_conservation",
-    "climate_change",
-    "waste_management",
-    "health_safety",
-    "urban_development",
-  ];
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -114,17 +101,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(file); // Store image URL in state
-      };
-      reader.readAsDataURL(file); // Convert file to base64
-    }
-  };
-
   const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
       try {
@@ -157,117 +133,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     }
   };
 
-  const handleSubmitNewForm = async (e) => {
-    e.preventDefault();
-
-    // Create the data object to send
-    const formData = new FormData();
-    formData.append("title", title);
-    if (image) {
-      formData.append("main_image", image);
-    }
-    formData.append("description", description);
-    formData.append("author", author);
-    formData.append("longitude", newMarker.latlng.lng.toFixed(5));
-    formData.append("latitude", newMarker.latlng.lat.toFixed(5));
-    formData.append("tags", selectedTag); // Include the selected tag
-
-    try {
-      const response = await axios.post(API_URL + "reports/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // To send files and form data
-        },
-      });
-      if (response.status === 201) {
-        fetchReports();
-      }
-
-      // Clear the form after submission
-      setTitle("");
-      setImage(null);
-      setDescription("");
-      setSelectedTag("environmental"); // Reset the tag after submission
-    } catch (err) {
-      console.log("Error creating report:", err.message);
-    }
-  };
-
-  if (newMarker) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
-        <div className="mb-6 ">
-          <p className="text-3xl font-bold">New report</p>
-        </div>
-        <div className="h-5/6 w-full">
-          <form onSubmit={handleSubmitNewForm} className="space-y-4">
-            {/* Title Input */}
-            <div>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                className="w-full py-12 text-3xl px-3 border rounded-lg"
-              />
-            </div>
-
-            {/* Image Input */}
-            <div>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e)}
-                className="w-full py-6 px-3 border rounded-lg"
-              />
-            </div>
-
-            {/* Description Input */}
-            <div>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter description"
-                className="w-full px-3 border rounded-lg h-48 resize-none"
-              />
-            </div>
-
-            {/* Tags Select */}
-            <div>
-              <label htmlFor="tags" className="block font-medium mb-2">
-                Select Tag
-              </label>
-              <select
-                id="tags"
-                value={selectedTag}
-                onChange={(e) => setSelectedTag(e.target.value)}
-                className="w-full py-3 px-3 border rounded-lg"
-              >
-                {tags.map((tag) => (
-                  <option key={tag} value={tag}>
-                    {tag.charAt(0).toUpperCase() +
-                      tag.slice(1).replace("_", " ")}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                className="w-full h-1/2 py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  } else if (selectedMarker) {
+if (selectedMarker) {
     /*Existing Report Discussion*/
     if (viewingDiscussion) {
       return (
@@ -612,7 +478,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               <div className="w-1/2 justify-center"></div>
             </div>
             {/*View discussion*/}
-            <div className="w-full h-1/4 shadow-md">
+            <div className="w-full h-1/5 shadow-md">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 style={{
