@@ -67,7 +67,8 @@ INSTALLED_APPS = [
     'forums',
     'comments',
     'companyinformation',
-    'storages'
+    'storages',
+    'likes'
 ]
 
 MIDDLEWARE = [

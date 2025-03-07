@@ -57,6 +57,14 @@ const transformEvent = (event) => ({
   tags: "Event"
 });
 
+// Helper function to determine the content type string for likes.
+const getLikeContentType = (type) => {
+  if (type === "forum") return "forums.forumpost";
+  if (type === "article") return "articles.article";
+  if (type === "event") return "events.event";
+  return "forums.forumpost";
+};
+
 const ForYouCard = () => {
   const [cards, setCards] = useState([]); // All posts from forums, articles, events
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
@@ -168,28 +176,52 @@ const ForYouCard = () => {
     );
   };
 
-  // Toggle like status for a post (frontend only).
-  const handleToggleLike = (postId) => {
-    setCards((prevCards) =>
-      prevCards.map((card) => {
-        if (card.id === postId) {
-          if (card.liked) {
-            return { ...card, liked: false, likeCount: (card.likeCount || 0) - 1 };
-          } else {
-            return { ...card, liked: true, likeCount: (card.likeCount || 0) + 1 };
-          }
+  // Toggle like status for a post by integrating the likes backend.
+  const handleToggleLike = async (postId, postType) => {
+    const token = localStorage.getItem("token");
+    const contentType = getLikeContentType(postType);
+    const card = cards.find((c) => c.id === postId);
+    if (!card) return;
+    if (!card.liked) {
+      // Like the post.
+      try {
+        const response = await axios.post(
+          `${API_URL}likes/`,
+          { content_type: contentType, object_id: postId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // Update the card's like status.
+        setCards((prevCards) =>
+          prevCards.map((c) =>
+            c.id === postId ? { ...c, liked: true, likeCount: (c.likeCount || 0) + 1 } : c
+          )
+        );
+      } catch (error) {
+        console.error("Error liking post:", error);
+      }
+    } else {
+      // Unlike the post.
+      try {
+        // First, fetch the like instance.
+        const res = await axios.get(`${API_URL}likes/`, {
+          params: { content_type: contentType, object_id: postId },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.data.length > 0) {
+          const likeInstance = res.data[0];
+          await axios.delete(`${API_URL}likes/${likeInstance.id}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setCards((prevCards) =>
+            prevCards.map((c) =>
+              c.id === postId ? { ...c, liked: false, likeCount: (c.likeCount || 0) - 1 } : c
+            )
+          );
         }
-        return card;
-      })
-    );
-  };
-
-  // Determine content_type for CommentsPopup based on post type.
-  const getContentType = (type) => {
-    if (type === "forum") return "forums.forumpost";
-    if (type === "article") return "articles.article";
-    if (type === "event") return "events.event";
-    return "forums.forumpost";
+      } catch (error) {
+        console.error("Error unliking post:", error);
+      }
+    }
   };
 
   return (
@@ -210,7 +242,6 @@ const ForYouCard = () => {
         {cards.map((card) => {
           // For all posts, truncate the content to a maximum of 100 characters.
           const displayContent = truncateText(card.content, 100);
-          // Determine if the card is a forum post.
           const isForum = card.type === "forum";
   
           return (
@@ -235,7 +266,6 @@ const ForYouCard = () => {
                       <p className="font-semibold text-lg text-gray-800">{card.author}</p>
                     </div>
                   ) : (
-                    // For articles and events, show title only.
                     <p className="font-semibold text-lg text-gray-800">{card.title}</p>
                   )}
                   {card.tags === "News" ? (
@@ -258,7 +288,7 @@ const ForYouCard = () => {
                     <span className="text-sm">{card.commentCount || 0}</span>
                   </button>
                   <button
-                    onClick={() => handleToggleLike(card.id)}
+                    onClick={() => handleToggleLike(card.id, card.type)}
                     className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
                       card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
                     }`}
@@ -346,7 +376,7 @@ const ForYouCard = () => {
                 )}
                 <div className="flex items-center justify-between mt-3">
                   <button
-                    onClick={() => handleOpenComments(card.id, dummyType)}  
+                    onClick={() => handleOpenComments(card.id, dummyType)}
                     className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                   >
                     <FaComment className="text-xl" />
@@ -354,7 +384,7 @@ const ForYouCard = () => {
                   </button>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleToggleLike(card.id)}
+                      onClick={() => handleToggleLike(card.id, dummyType)}
                       className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
                         card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
                       }`}
@@ -379,14 +409,15 @@ const ForYouCard = () => {
       {selectedPostId && (
         <CommentsPopup
           postId={selectedPostId}
-          // Pass the correct content type based on selectedPostType
-          contentType={selectedPostType === "forum"
-            ? "forums.forumpost"
-            : selectedPostType === "article"
-            ? "articles.article"
-            : selectedPostType === "event"
-            ? "events.event"
-            : "forums.forumpost"}
+          contentType={
+            selectedPostType === "forum"
+              ? "forums.forumpost"
+              : selectedPostType === "article"
+              ? "articles.article"
+              : selectedPostType === "event"
+              ? "events.event"
+              : "forums.forumpost"
+          }
           onClose={handleCloseComments}
           onCommentAdded={handleCommentAdded}
         />

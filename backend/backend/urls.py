@@ -32,6 +32,7 @@ urlpatterns = [
     path('companyinformation/', include('companyinformation.urls')),
     path('forums/', include('forums.urls')),
     path('comments/', include('comments.urls')),
+    path('likes/', include('likes.urls'))
 ]
 
 # Serve media files during development or production (not recommended for large projects)
