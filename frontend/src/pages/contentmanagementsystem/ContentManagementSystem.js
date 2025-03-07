@@ -5,7 +5,6 @@ import SelectTopBar from "../../components/contentmanagementsystem/SelectTopBar"
 import DefaultTopBar from "../../components/contentmanagementsystem/DefaultTopBar";
 import Header from "../../components/Header";
 import ReportsSection from "../../components/contentmanagementsystem/detailed/reporting/ReportsSection";
-import MiscellaneousSection from "../../components/contentmanagementsystem/detailed/miscellaneous/MiscellaneousSection";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
 
@@ -17,13 +16,12 @@ const ContentManagementSystem = () => {
   const [starredCards, setStarredCards] = useState([]);
   const [articles, setArticles] = useState([]);
   const [events, setEvents] = useState([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
   const { main_color } = useContext(CompanyContext);
   const token = localStorage.getItem("token");
-  const categories = ["Articles", "Events", "Reporting", "Miscellaneous"];
+  const categories = ["Articles", "Events", "Reporting"];
   const navigate = useNavigate();
 
   const sampleData = {
@@ -69,7 +67,6 @@ const ContentManagementSystem = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          console.log("DEBUG: Articles API Response:", response.data);
           setArticles(Array.isArray(response.data) ? response.data : []);
         })
         .catch((error) => {
@@ -83,7 +80,6 @@ const ContentManagementSystem = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          console.log("DEBUG: Events API Response:", response.data);
           setEvents(response.data);
           updateStarredCards(response.data);
         })
@@ -160,8 +156,7 @@ const ContentManagementSystem = () => {
       navigate(`/reporting/`);
     } else {
       navigate(
-        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${
-          sampleData[selectedCategory].length - 1
+        `/contentmanagementsystem/details/${selectedCategory.toLowerCase()}/${sampleData[selectedCategory].length - 1
         }`
       );
     }
@@ -169,10 +164,8 @@ const ContentManagementSystem = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-      setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       setIsDragging(false);
       alert(`Uploaded ${acceptedFiles.length} file(s) successfully!`);
-      console.log(uploadedFiles);
     },
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
@@ -325,7 +318,7 @@ const ContentManagementSystem = () => {
 
         {/* Desktop Sidebar Navigation */}
         <div className="hidden md:block w-1/6 bg-[#f9f9f9] flex flex-col text-black shadow-lg">
-          <ul className="space-y-2 py-4 flex flex-col h-full justify-between">
+          <ul className="space-y-2 py-4 flex flex-col h-full ">
             {categories.map((category) => (
               <li
                 key={category}
@@ -353,7 +346,6 @@ const ContentManagementSystem = () => {
           {selectedCategory === "Reporting" && (
             <ReportsSection userQuery={userQuery} />
           )}
-          {selectedCategory === "Miscellaneous" && <MiscellaneousSection />}
           {selectedCategory !== "Reporting" &&
             selectedCategory !== "Miscellaneous" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
@@ -380,7 +372,6 @@ const ContentManagementSystem = () => {
                     onClick={() => {
                       if (selectedCards.length === 0) {
                         handleCardClick(event.id);
-                        console.log("Event id clicked is", event.id);
                       } else {
                         toggleCardSelection(event);
                       }
