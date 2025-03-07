@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import aiLogo from "../../assets/ai_icon.png";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { CompanyContext } from "../../context/CompanyContext";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchBar = () => {
@@ -16,6 +17,8 @@ const SearchBar = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
+  const [streamingReply, setStreamingReply] = useState(false);
+  const {  name } = useContext(CompanyContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,6 +43,7 @@ const SearchBar = () => {
     }
   };
 
+ 
   useEffect(() => {
     const initModel = async () => {
       try {
@@ -47,7 +51,7 @@ const SearchBar = () => {
           new Worker(new URL("../.././workers/worker.js", import.meta.url), {
             type: "module",
           }),
-          "Llama-3.2-1B-Instruct-q4f16_1-MLC"
+          "Qwen2.5-1.5B-Instruct-q4f16_1-MLC"
         );
         setEngine(createdEngine);
       } catch (error) {
@@ -66,9 +70,18 @@ const SearchBar = () => {
       setTimeout(() => setFadeIn(true), 10);
     }
   }, [searchResult]);
-
+  
+  const extractEventDetails = (responseData) => {
+    return responseData.map(event => ({
+      title: event.title,
+      date: event.date,
+      description: event.description,
+      event_type: event.event_type
+    }));
+  }
+  
   const getReply = async (userQuery) => {
-    if (userQuery === "") {
+    if (userQuery === "" || streamingReply) {
       return;
     }
 
@@ -86,24 +99,18 @@ const SearchBar = () => {
         const messages = [
           {
             role: "system",
-            content: `You are an AI assistant chatbot for GreenEarth Inc., a company focused on sustainability and environmental conservation.
+            content: `You are an AI assistant chatbot for ${name}, a company.
             
-            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, and initiatives. 
+            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
             Be polite, professional, and ensure responses are concise and user-friendly. 
             
             --- 
-            **IMPORTANT**: When responding to event-related queries, follow these rules:
-            - Identify which results are events by checking if they have a "date" field.
-            - Convert the date string into a comparable format.
-            - Compare each event's date to today's date.
-            - **Only return upcoming events (dates after today).**
-            - If multiple upcoming events exist, sort them from soonest to latest
             
             Today's date: ${new Date().toISOString().split("T")[0]}
             
             ---
-            **Event Data (JSON Format)**
-            ${JSON.stringify(response.data.results, null, 2)}
+            **Data (JSON Format)**
+            ${JSON.stringify(extractEventDetails(response.data.results), null, 2)}
             
             Based on this data, answer the user's question appropriately.
             `,
@@ -111,11 +118,13 @@ const SearchBar = () => {
           { role: "user", content: userQuery },
         ];
 
-        console.log(JSON.stringify(response.data.results, null, 2) + " The bees knees")
+        // console.log(JSON.stringify(extractEventDetails(response.data.results), null, 2) + " The bees knees");        
+        const maxBufferSize = await engine.getMaxStorageBufferBindingSize();
+        // console.log(maxBufferSize);
         try {
           const chunks = await engine.chat.completions.create({
             messages,
-            temperature: 1,
+            temperature: 0.5,
             stream: true,
           });
 
@@ -123,8 +132,9 @@ const SearchBar = () => {
           for await (const chunk of chunks) {
             reply += chunk.choices[0]?.delta.content || "";
             setModelReply(reply);
+            setStreamingReply(true);
           }
-
+          setStreamingReply(false);
           const fullReply = await engine.getMessage();
           setModelReply(fullReply);
         } catch (error) {
