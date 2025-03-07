@@ -1,17 +1,19 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
+import { useAuth } from "../../context/AuthContext"; 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
-
+  const {auth} = useAuth();
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
   const { main_color } = useContext(CompanyContext);
+  const author = auth.user.username
 
   const tags = [
     "environmental",
@@ -59,7 +61,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     if (message.trim()) {
       try {
         const discussionMessage = {
-          author: "Example Author",
+          author: author,
           message: message,
           report: selectedMarker.id,
         };
@@ -107,7 +109,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       formData.append("main_image", image);
     }
     formData.append("description", description);
-    formData.append("author", "exampleauthor");
+    formData.append("author", author);
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
     formData.append("latitude", newMarker.latlng.lat.toFixed(5));
     formData.append("tags", selectedTag); // Include the selected tag
