@@ -13,7 +13,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
   const { main_color } = useContext(CompanyContext);
-
+  const author = auth.user.username
 
   const tags = [
     "environmental",
@@ -60,7 +60,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
   const handleSubmitNewDiscussionMessage = async () => {
     if (message.trim()) {
       try {
-        const author = auth.user.username;
         const discussionMessage = {
           author: author,
           message: message,
@@ -110,7 +109,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       formData.append("main_image", image);
     }
     formData.append("description", description);
-    formData.append("author", "exampleauthor");
+    formData.append("author", author);
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
     formData.append("latitude", newMarker.latlng.lat.toFixed(5));
     formData.append("tags", selectedTag); // Include the selected tag
