@@ -6,7 +6,6 @@ import MainImage from "../../components/contentmanagementsystem/detailed/MainIma
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
-import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { AIContext } from "../../context/AIContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -37,7 +36,7 @@ const DetailedArticlePage = () => {
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
 
   // AI Context
-  const { getReply, engine } = useContext(AIContext);
+  const { engine } = useContext(AIContext);
   
 
   // PDF extraction states
