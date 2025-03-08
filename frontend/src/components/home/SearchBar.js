@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
 import aiLogo from "../../assets/ai_icon.png";
 import ReactMarkdown from "react-markdown";
-import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CompanyContext } from "../../context/CompanyContext";
+import { AIContext } from "../../context/AIContext";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchBar = () => {
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [modelReply, setModelReply] = useState("");
-  const [engine, setEngine] = useState(null);
   const [userQuery, setUserQuery] = useState("");
   const [fullUserQuery, setFullUserQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
-  const [streamingReply, setStreamingReply] = useState(false);
-  const {  name } = useContext(CompanyContext);
-  const { getReply } = useContext(AIContext);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const { name } = useContext(CompanyContext);
+  const { getReply, engine } = useContext(AIContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +44,6 @@ const SearchBar = () => {
     }
   };
 
-
   // When new search results arrive, trigger the fade effect
   useEffect(() => {
     if (Array.isArray(searchResult) && searchResult.length > 0) {
@@ -52,39 +51,17 @@ const SearchBar = () => {
       setTimeout(() => setFadeIn(true), 10);
     }
   }, [searchResult]);
-  
+
   const extractEventDetails = (responseData) => {
-    return responseData.map(event => ({
+    return responseData.map((event) => ({
       title: event.title,
       date: event.date,
       description: event.description,
-      event_type: event.event_type
+      event_type: event.event_type,
     }));
-  }
-  
-  //NOTE: Search needs to be decoupled from getReply
-  const getSearchReply = async (userQuery) => {
-    
-    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
-            
-            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
-            Be polite, professional, and ensure responses are concise and user-friendly. 
-            
-            --- 
-            
-            Today's date: ${new Date().toISOString().split("T")[0]}
-            
-            ---
-            **Data (JSON Format)**
-            ${JSON.stringify(extractEventDetails(response.data.results), null, 2)}
-            
-            Based on this data, answer the user's question appropriately.
-            `;
-    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
-    if (userQuery === "" || streamingReply) {
-      return;
-    }
+  };
 
+  const getSearchResult = async (userQuery) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(API_URL + `search/`, {
@@ -94,53 +71,51 @@ const SearchBar = () => {
 
       if (response.data && response.data.results) {
         setSearchResult(response.data.results);
-
-        await engine.resetChat();
-        const messages = [
-          {
-            role: "system",
-            content: ,
-          },
-          { role: "user", content: userQuery },
-        ];
-
-        // console.log(JSON.stringify(extractEventDetails(response.data.results), null, 2) + " The bees knees");        
-        const maxBufferSize = await engine.getMaxStorageBufferBindingSize();
-        // console.log(maxBufferSize);
-        try {
-          const chunks = await engine.chat.completions.create({
-            messages,
-            temperature: 0.5,
-            stream: true,
-          });
-
-          let reply = "";
-          for await (const chunk of chunks) {
-            reply += chunk.choices[0]?.delta.content || "";
-            setModelReply(reply);
-            setStreamingReply(true);
-          }
-          setStreamingReply(false);
-          const fullReply = await engine.getMessage();
-          setModelReply(fullReply);
-        } catch (error) {
-          console.error("Error during chat completion:", error);
-        }
+        return response.data.results; // Return the results directly
       } else {
         setSearchResult([]);
+        return []; // Return an empty array if no results
       }
     } catch (error) {
       console.error("Error while fetching search results:", error);
+      return []; // Return an empty array in case of error
     }
+  };
+
+  const getSearchReply = async (userQuery) => {
+    if (userQuery === "" || isStreaming) {
+      return;
+    }
+
+    // Await the search results directly
+    const searchResult = await getSearchResult(userQuery);
+
+    console.log(searchResult); // This will now log the correct results
+
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+              
+              Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
+              Be polite, professional, and ensure responses are concise and user-friendly. 
+              
+              --- 
+              
+              Today's date: ${new Date().toISOString().split("T")[0]}
+              
+              ---
+              **Data (JSON Format)**
+              ${JSON.stringify(extractEventDetails(searchResult), null, 2)}
+              
+              Based on this data, answer the user's question appropriately.
+              `;
+
+    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
 
     if (!engine) {
       console.log("Model is still loading...");
       setModelReply("Here is what I found:");
       return;
     }
-
   };
-
   return (
     <div className="flex flex-col items-center w-full mt-8">
       {/* Header with AI Logo and Title */}
@@ -150,7 +125,8 @@ const SearchBar = () => {
           alt="AI Logo"
           className="w-12 h-12 mr-3 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
           style={{
-            animation: "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
+            animation:
+              "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
           }}
         />
         <h1 className="text-4xl font-extrabold text-gray-900">Ask AI</h1>
@@ -179,88 +155,89 @@ const SearchBar = () => {
           </div>
 
           <div
-            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${fadeIn ? "opacity-100" : "opacity-0"
-              }`}
+            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${
+              fadeIn ? "opacity-100" : "opacity-0"
+            }`}
           >
             {Array.isArray(searchResult)
               ? searchResult.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
-                  onClick={() => handleRedirect(item)}
-                >
-                  {/* Title */}
-                  <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
-                    {item.title}
-                  </p>
-                  {/* Source */}
-                  <span className="text-xs font-medium text-gray-500 uppercase">
-                    {item.source}
-                  </span>
-                  {/* Score */}
-                  <p className="text-sm text-gray-600 mt-1">
-                    🔢 Score:{" "}
-                    <span className="font-medium">
-                      {item.similarity_score.toFixed(3)}
+                  <div
+                    key={index}
+                    className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                    onClick={() => handleRedirect(item)}
+                  >
+                    {/* Title */}
+                    <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
+                      {item.title}
+                    </p>
+                    {/* Source */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">
+                      {item.source}
                     </span>
-                  </p>
-                  {/* Conditional Content */}
-                  <div className="overflow-hidden text-ellipsis flex-grow">
-                    {item.source === "event" && (
-                      <>
-                        <p className="text-sm text-gray-700 mt-2">
-                          📅 <span className="font-medium">Date:</span>{" "}
-                          {item.date}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          ⏰ <span className="font-medium">Time:</span>{" "}
-                          {item.time}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          📍 <span className="font-medium">Location:</span>{" "}
-                          {item.location}
-                        </p>
-                        <p className="text-sm text-gray-700 line-clamp-2">
-                          📖 <span className="font-medium">Description:</span>{" "}
-                          {item.description}
-                        </p>
-                      </>
-                    )}
-                    {item.source === "article" && (
-                      <>
-                        <p className="text-sm text-gray-700 mt-2">
-                          ✍️ <span className="font-medium">Author:</span>{" "}
-                          {item.author}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          📅 <span className="font-medium">Published:</span>{" "}
-                          {item.published_date}
-                        </p>
-                        <p className="text-sm text-gray-700 line-clamp-2">
-                          📖 <span className="font-medium">Description:</span>{" "}
-                          {item.description}
-                        </p>
-                      </>
-                    )}
-                    {item.source === "report" && (
-                      <>
-                        <p className="text-sm text-gray-700 mt-2">
-                          📅 <span className="font-medium">Date:</span>{" "}
-                          {item.published_date}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          🏷️ <span className="font-medium">Tag:</span>{" "}
-                          {item.tags}
-                        </p>
-                        <p className="text-sm text-gray-700 line-clamp-2">
-                          📖 <span className="font-medium">Description:</span>{" "}
-                          {item.description}
-                        </p>
-                      </>
-                    )}
+                    {/* Score */}
+                    <p className="text-sm text-gray-600 mt-1">
+                      🔢 Score:{" "}
+                      <span className="font-medium">
+                        {item.similarity_score.toFixed(3)}
+                      </span>
+                    </p>
+                    {/* Conditional Content */}
+                    <div className="overflow-hidden text-ellipsis flex-grow">
+                      {item.source === "event" && (
+                        <>
+                          <p className="text-sm text-gray-700 mt-2">
+                            📅 <span className="font-medium">Date:</span>{" "}
+                            {item.date}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            ⏰ <span className="font-medium">Time:</span>{" "}
+                            {item.time}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            📍 <span className="font-medium">Location:</span>{" "}
+                            {item.location}
+                          </p>
+                          <p className="text-sm text-gray-700 line-clamp-2">
+                            📖 <span className="font-medium">Description:</span>{" "}
+                            {item.description}
+                          </p>
+                        </>
+                      )}
+                      {item.source === "article" && (
+                        <>
+                          <p className="text-sm text-gray-700 mt-2">
+                            ✍️ <span className="font-medium">Author:</span>{" "}
+                            {item.author}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            📅 <span className="font-medium">Published:</span>{" "}
+                            {item.published_date}
+                          </p>
+                          <p className="text-sm text-gray-700 line-clamp-2">
+                            📖 <span className="font-medium">Description:</span>{" "}
+                            {item.description}
+                          </p>
+                        </>
+                      )}
+                      {item.source === "report" && (
+                        <>
+                          <p className="text-sm text-gray-700 mt-2">
+                            📅 <span className="font-medium">Date:</span>{" "}
+                            {item.published_date}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            🏷️ <span className="font-medium">Tag:</span>{" "}
+                            {item.tags}
+                          </p>
+                          <p className="text-sm text-gray-700 line-clamp-2">
+                            📖 <span className="font-medium">Description:</span>{" "}
+                            {item.description}
+                          </p>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                ))
               : null}
           </div>
 
@@ -289,13 +266,19 @@ const SearchBar = () => {
 
       {/* Input Box */}
       <div
-        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${isFocused ? "ring-2 ring-blue-500" : ""
-          }`}
+        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${
+          isFocused ? "ring-2 ring-blue-500" : ""
+        }`}
       >
-        <form onSubmit={handleSubmit} className="w-full h-full flex items-center">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full h-full flex items-center"
+        >
           <input
             type="text"
-            placeholder={isFocused ? "" : "When is the next volunteering event?"}
+            placeholder={
+              isFocused ? "" : "When is the next volunteering event?"
+            }
             className="w-full h-full outline-none bg-transparent text-gray-900 px-3"
             value={userQuery}
             onChange={(e) => setUserQuery(e.target.value)}
