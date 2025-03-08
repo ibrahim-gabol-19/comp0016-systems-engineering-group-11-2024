@@ -90,8 +90,6 @@ const SearchBar = () => {
     // Await the search results directly
     const searchResult = await getSearchResult(userQuery);
 
-    console.log(searchResult); // This will now log the correct results
-
     const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
               
               Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
