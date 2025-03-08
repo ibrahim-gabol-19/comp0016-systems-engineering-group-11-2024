@@ -79,7 +79,7 @@ const MainEditor = forwardRef(
       ref.current?.enable(!readOnly);
     }, [readOnly, ref]);
 
-    return <div className="pb-10 pt-8 h-5/6" ref={containerRef}></div>;
+    return <div className="h-5/6" ref={containerRef}></div>;
   }
 );
 

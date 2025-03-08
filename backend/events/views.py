@@ -53,9 +53,9 @@ class EventsViewSet(viewsets.ModelViewSet):
                     "date": event["date"],
                     "time": event["time"]
                 })
-            elif event["event_type"] == "poi":
+            elif event["event_type"] == "point_of_interest":
                 event_data.update({
-                    "opening_times": event["opening_times"] or "N/A",
+                    "opening_times": event["opening_times"],
                     "poi_type": event["poi_type"]
                 })
 
@@ -81,7 +81,7 @@ class EventsViewSet(viewsets.ModelViewSet):
 
             # Handle missing or None time
             if event["time"]:
-                time_str = event["time"].strftime("%I:%M")  # Convert to 12-hour format
+                time_str = event["time"].strftime("%H:%M")
             else:
                 time_str = ""  # Default for missing time
 

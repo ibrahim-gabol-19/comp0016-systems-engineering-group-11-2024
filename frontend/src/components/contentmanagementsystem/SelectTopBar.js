@@ -29,20 +29,19 @@ const SelectTopBar = ({
           />
         </svg>
       </button>
-      <div className=" basis-1/12 " />
+      <div className="" />
 
       {/* Selected cards count */}
-      <span className="basis-2/12  ml-36 mr-96 font-semibold text-xl">
+      <span className="flex-grow text-center font-semibold text-xl">
         {selectedCards.length} card(s) selected
       </span>
 
-      <div className=" basis-5/12 " />
+      <div className=" flex space-x-2 pr-2 " />
       {/* Action buttons */}
-      {/* <div className="basis-3/12 flex space-x-4"> */}
 
       {/* Delete button */}
       <button
-        className="max-w-12 flex ml-32 justify-center basis-1/12 py-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 active:duration-100 transition duration-500  "
+        className="flex justify-center p-3 bg-red-500 font-bold text-white rounded-lg hover:bg-red-400 active:bg-red-300 active:duration-100 transition duration-500 mr-2  "
         onClick={onDelete}
       >
         <svg
@@ -62,7 +61,7 @@ const SelectTopBar = ({
       </button>
       {/* Select All button */}
       <button
-        className="max-w-12 flex ml-4 mr-4 justify-center  basis-1/12  py-3 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:duration-100 active:bg-green-300 transition duration-500   "
+        className="flex justify-center p-3 bg-green-500 font-bold text-white rounded-lg hover:bg-green-400 active:duration-100 active:bg-green-300 transition duration-500 mr-4"
         onClick={onSelectAll}
       >
         <svg
@@ -81,7 +80,6 @@ const SelectTopBar = ({
         </svg>
       </button>
     </div>
-    // </div>
   );
 };
 

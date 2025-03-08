@@ -4,7 +4,7 @@ import { CompanyContext } from "../../context/CompanyContext";
 import { useAuth } from "../../context/AuthContext"; 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
+const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
   const {auth} = useAuth();
@@ -127,6 +127,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       );
       if (response.status === 201) {
         fetchReports();
+        onSidebarClose();
       }
 
       // Clear the form after submission
@@ -137,7 +138,9 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     } catch (err) {
       console.log("Error creating report:", err.message);
     }
+
   };
+
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -237,13 +240,13 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     if (viewingDiscussion) {
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full  h-1/6 px-3">
+          <div className="w-full h-1/6 px-3">
             {/*Title*/}
             <div className="w-full h-3/4 ">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
               </div>
-              <div className="w-full h-1/4 text-center justify-center">
+              <div className="w-full h-1/4 flex flex-col text-center justify-center">
                 <p className="text-gray-500 text-m mb-4">
                   Date Reported: {new Date(selectedMarker.published_date).toLocaleDateString()}
                 </p>
@@ -252,22 +255,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Status + Tags */}
             {selectedMarker.status !== "open" ? (
             <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
+              <p className="text-center text-purple-600 font-bold w-1/3 pr-4 mb-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
               </p>
 
-              <p className="text-center font-bold mx-4 text-gray-300">|</p>
+              <p className="text-center font-bold mx-4 text-gray-300 mb-4">|</p>
 
-
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
             </div>
                  ) : (
               <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
+              <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
@@ -277,7 +279,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
 
 
           {/**Discussion */}
-          <div className="w-full h-auto overflow-y-auto border border-gray-300 ">
+          <div className="w-full max-h-[450px] overflow-y-auto border border-gray-300 ">
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
@@ -286,7 +288,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 }`}
               >
                 {/* Profile Picture (SVG Icon) */}
-                <div className="w-1/6 h-full flex justify-center items-center">
+                <div className="w-1/6 flex justify-center items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -321,7 +323,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           </div>
           {/*New Discussion Message */}
           {selectedMarker.status === "open" ? (
-            <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
+            <div className="w-full flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
               <div className="w-full h-2/4 py-2 ">
                 {/* Text Input Form */}
                 <textarea
@@ -333,7 +335,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
               <div className="w-full h-1/4">
                 <button
-                  className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                  className="w-full h-2/3 py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                   onClick={handleSubmitNewDiscussionMessage}
                 >
                   Submit Message
@@ -447,11 +449,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       /*Existing Report Overview*/
       return (
         <div className="w-full h-full flex flex-col">
-          <div className="w-full h-1/6 px-3 ">
+          <div className="w-full h-1/6 px-3">
             {/*Title*/}
-            <div className="w-full h-3/4 ">
+            <div className="w-full h-3/4">
               <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl mb-4 mr-8">{selectedMarker.title}</p>
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2 ">{selectedMarker.title}</p>
               </div>
               <div className="w-full h-1/4 flex flex-col text-center justify-center">
                 <p className="text-gray-500 text-m mb-4">
@@ -461,7 +463,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             </div>
             {/* Status + Tags */}
             {selectedMarker.status !== "open" ? (
-              <div className="w-full h-1/4 flex justify-center items-center">
+            <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-purple-600 font-bold w-1/3 pr-4 mb-4">
                 {selectedMarker.status.charAt(0).toUpperCase() +
                   selectedMarker.status.slice(1).replace("_", " ")}
@@ -473,8 +475,8 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                {selectedMarker.tags.charAt(0).toUpperCase() +
                   selectedMarker.tags.slice(1).replace("_", " ")}
               </p>
-              </div>
-              ) : (
+            </div>
+            ) : (
             <div className="w-full h-1/4 flex justify-center items-center">
               <p className="text-center text-sky-400 font-bold w-1/3 pl-4 mb-4">
                 {selectedMarker.tags.charAt(0).toUpperCase() +
@@ -484,18 +486,18 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           )}
           </div>
           {/*Image*/}
-          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+          <div className="w-full h-[200px] flex justify-center items-center border border-gray-300">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain p-6"
               />
             ) : (
               <img
                 src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="h-full w-full object-contain"
               />
             )}
           </div>
@@ -505,7 +507,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Poster and Date Section */}
 
             {/* Description Text */}
-            <div className="w-full h-3/6 mb-3 overflow-auto">
+            <div className="w-full h-[300px] mb-3 overflow-auto">
               <p class="text-lg">{selectedMarker.description}</p>
             </div>
             {/*Poster*/}
@@ -570,7 +572,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
               </div>
             </div>
 
-            <div className="w-full h-1/6 shadow-md">
+            <div className="w-full h-1/5 shadow-md">
               <button
                 className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
                 style={{
@@ -605,7 +607,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-7"
+                  className="size-6"
                 >
                   <path
                     strokeLinecap="round"

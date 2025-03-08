@@ -3,7 +3,7 @@ import TitleEditor from "../../components/contentmanagementsystem/detailed/Title
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 const API_URL = process.env.REACT_APP_API_URL;
@@ -29,6 +29,10 @@ const DetailedArticlePage = () => {
   const [extractedData, setExtractedData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDataExtracted, setIsDataExtracted] = useState(false);
+  const [requiredFields, setRequiredFields] = useState({});
+  const navigate = useNavigate();
+    
+  
 
   // Ref for hidden file input
   const hiddenFileInput = useRef(null);
@@ -65,6 +69,20 @@ const DetailedArticlePage = () => {
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
+    const newRequiredFields = {};
+
+    if (!title) newRequiredFields.title = true;
+    if (!mainContent) newRequiredFields.mainContent = true;
+    if (!author) newRequiredFields.author = true;
+    if (!description) newRequiredFields.description = true;
+
+    setRequiredFields(newRequiredFields);
+
+    if (Object.keys(newRequiredFields).length > 0) {
+      alert("Please fill in all necessary fields.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", mainContent);
@@ -178,25 +196,34 @@ const DetailedArticlePage = () => {
     }
   }, [isEditing, extractedData]);
 
+  const isFieldRequired = (fieldName) => requiredFields[fieldName];
+
+  const handleBack = () => { navigate(-1); };
+
   return (
-    <div className="h-[calc(100vh-146px)] w-full">
+    <div className=" w-full overflow-auto">
       <Header />
       <div className="pt-20"></div>
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4 ml-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+      </svg>
+      </button>
       <div className="flex justify-between px-5">
-        <button
-          onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-          aria-label="Toggle edit/preview mode"
-        >
-          {isEditing ? "Switch to Preview" : "Switch to Edit"}
-        </button>
-        <button
-          onClick={handleSave}
-          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-          aria-label="Save article"
-        >
-          Save
-        </button>
         <button
           onClick={handleExtractFromPDFClick}
           className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2"
@@ -211,11 +238,27 @@ const DetailedArticlePage = () => {
           onChange={handlePDFUpload}
           style={{ display: "none" }}
         />
+        <div>
+        <button
+          onClick={() => setIsEditing((prev) => !prev)}
+          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          aria-label="Toggle edit/preview mode"
+        >
+          {isEditing ? "Switch to Preview" : "Switch to Edit"}
+        </button>
+        <button
+          onClick={handleSave}
+          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          aria-label="Save article"
+        >
+          Save
+        </button>
+        </div>
       </div>
   
       {pdfFile && (
-        <div className="pl-6">
-          <p>
+        <div className="pl-6 mt-6">
+          <p className="mb-2">
             <strong>Selected PDF:</strong> {pdfFile.name}
           </p>
           <button
@@ -244,48 +287,58 @@ const DetailedArticlePage = () => {
         </div>
       )}
   
-      <div className="h-full flex justify-center items-center overflow-auto relative">
+      <div className="flex justify-center items-center h-full w-full p-8">
         {isEditing ? (
-          <div className="w-screen h-full flex relative">
-            <div className="h-full w-1/6" />
-            <div className="w-3/6 flex flex-col h-full py-2 px-3 overflow-y-auto">
-              <TitleEditor
-                ref={quillRefTitle}
-                placeholderText="Title"
-                fontSize="60px"
-                defaultValue={title}
-                onTextChange={setTitle}
-              />
-              <MainEditor
-                ref={quillRefMain}
-                placeholderText="Main Content"
-                fontSize="16px"
-                defaultValue={mainContent}
-                onTextChange={setMainContent}
-              />
+          <div className="w-screen h-full flex justify-center items-start">
+          <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+          <div className="flex flex-col items-center">
+            <div className="w-3/4 pt-4">
+              <div className={`max-h-[10rem] overflow-y-auto ${isFieldRequired("title") ? "border-red-500 border-2" : null}`}>
+                <TitleEditor
+                  ref={quillRefTitle}
+                  placeholderText="Title"
+                  fontSize="60px"
+                  defaultValue={title}
+                  onTextChange={setTitle}
+                />
+              </div>
+              <div className={`flex flex-col h-[300px] overflow-y-auto mt-4 ${isFieldRequired("mainContent") ? "border-red-500 border-2" : "border-gray-300"}`}>
+                <MainEditor
+                  ref={quillRefMain}
+                  placeholderText="Main Content"
+                  fontSize="16px"
+                  defaultValue={mainContent}
+                  onTextChange={setMainContent}
+                />
+              </div>
             </div>
-            <div className="h-full w-1/6" />
-            <div className="w-2/6 px-3 pb-64 flex flex-col justify-center overflow-hidden">
-              <NoToolbarEditor
-                ref={quillRefAuthor}
-                placeholderText="Author"
-                fontSize="16px"
-                defaultValue={author}
-                onTextChange={setAuthor}
-              />
-              <NoToolbarEditor
-                ref={quillRefDescription}
-                placeholderText="Description"
-                fontSize="16px"
-                defaultValue={description}
-                onTextChange={setDescription}
-              />
+            <div className="w-1/2 flex flex-col justify-center overflow-hidden mt-4 space-y-4">
+              <div className={`max-h-[4rem] overflow-y-auto ${isFieldRequired("author") ? "border-red-500 border-2" : "border-gray-300"}`}>
+                <NoToolbarEditor
+                  ref={quillRefAuthor}
+                  placeholderText="Author"
+                  fontSize="16px"
+                  defaultValue={author}
+                  onTextChange={setAuthor}
+                />
+              </div>
+              <div className={`max-h-[4rem] overflow-y-auto ${isFieldRequired("description") ? "border-red-500 border-2" : "border-gray-300"}`}>
+                <NoToolbarEditor
+                  ref={quillRefDescription}
+                  placeholderText="Description"
+                  fontSize="16px"
+                  defaultValue={description}
+                  onTextChange={setDescription}
+                />
+              </div>
               <MainImage onFilesUploaded={handleFilesUploaded} />
             </div>
           </div>
+        </div>
+        </div>
         ) : (
-          <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-            <div className="max-w-3xl w-full bg-white p-6 rounded-md shadow-md">
+          <div className="w-screen h-full flex justify-center items-start overflow-auto">
+            <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md flex-1">
               <div className="flex items-center justify-between">
                 <h1 className="text-4xl font-bold text-gray-800 text-center flex-1">
                   {title}
