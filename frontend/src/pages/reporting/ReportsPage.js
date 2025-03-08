@@ -3,6 +3,7 @@ import MapComponent from "../../components/reporting/MapComponent";
 import SidebarReport from "../../components/reporting/SidebarReport";
 import axios from "axios";
 import Header from "../../components/Header";
+import ReactMarkdown from "react-markdown";
 import { useLocation } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -19,7 +20,6 @@ const ReportsPage = () => {
   );
   const [viewingAISummary, setViewingAISummary] = useState(false);
   const [modelReply, setModelReply] = useState("");
-  
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
@@ -189,13 +189,18 @@ const ReportsPage = () => {
               Closed
             </button>
           </div>
-          <div className="absolute bottom-1 left-3/4 transform -translate-y-1/2 flex space-x-2 z-10 mb-10">
+          <div className="absolute top-1/4 right-3/4 ">
             {/* Expandable AI Summary Section */}
-            {viewingAISummary && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-gray-700">
-                  {modelReply ||
-                    "This is a placeholder for the AI-generated summary."}
+            {viewingAISummary && selectedMarker && (
+              <div className="mt-4 p-4  px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
+                <p
+                  className={`text-gray-700 ${
+                    !modelReply ? "animate-pulse bg-gray-200 rounded" : ""
+                  }`}
+                >
+                  <ReactMarkdown className="text-gray-800">
+                    {modelReply || ""}
+                  </ReactMarkdown>
                 </p>
               </div>
             )}

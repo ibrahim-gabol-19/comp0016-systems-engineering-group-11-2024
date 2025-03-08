@@ -3,6 +3,8 @@ import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
 import { useAuth } from "../../context/AuthContext";
 import { AIContext } from "../../context/AIContext";
+import aiLogo from "../../assets/ai_icon.png"
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 const SidebarReport = ({
@@ -577,20 +579,30 @@ const SidebarReport = ({
 
             {/* Description Text */}
             <div className="w-full h-[300px] mb-3 overflow-auto">
-              {/* AI Button */}
-              <div className="flex justify-end mb-3">
-                <div
-                  className="w-1/3 h-12 bg-green-100 rounded-lg shadow-md cursor-pointer flex items-center justify-center hover:bg-green-200 transition-colors duration-200"
-                  onClick={() => {
-                    handleAIClick();
-                    setViewingAISummary(!viewingAISummary);
-                  }}
-                >
-                  <span className="text-sm font-semibold text-green-800">
-                    {viewingAISummary ? "Hide AI Summary" : "Show AI Summary"}
-                  </span>
-                </div>
-              </div>
+             {/* AI Button with Logo */}
+<div className="flex justify-end mb-3">
+  <div
+    className="w-1/3 h-12 bg-green-100 rounded-lg shadow-md cursor-pointer flex items-center justify-center hover:bg-green-200 transition-colors duration-200"
+    onClick={() => {
+      handleAIClick();
+      setViewingAISummary(!viewingAISummary);
+    }}
+  >
+    {/* AI Logo */}
+    <img
+      src={aiLogo}
+      alt="AI Logo"
+      className="w-8 h-8 mr-2 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
+      style={{
+        animation: "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
+      }}
+    />
+    {/* Button Text */}
+    <span className="text-sm font-semibold text-green-800">
+      {viewingAISummary ? "Hide AI Summary" : "Show AI Summary"}
+    </span>
+  </div>
+</div>
 
              
               <p className="text-lg mb-3">{selectedMarker.description}</p>
