@@ -39,7 +39,7 @@ const DetailedEventPage = () => {
   const navigate = useNavigate();
 
   // AI engine state for events
-  const { getReply, engine } = useContext(AIContext);
+  const { engine } = useContext(AIContext);
   const [isLoadingTitle, setIsLoadingTitle] = useState(false);
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
 
