@@ -1,8 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 // Create a context
 export const AIContext = createContext();
 
