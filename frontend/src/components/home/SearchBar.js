@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import aiLogo from "../../assets/ai_icon.png";
-import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import ReactMarkdown from "react-markdown";
+import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CompanyContext } from "../../context/CompanyContext";
@@ -19,10 +19,11 @@ const SearchBar = () => {
   const [fadeIn, setFadeIn] = useState(false);
   const [streamingReply, setStreamingReply] = useState(false);
   const {  name } = useContext(CompanyContext);
+  const { getReply } = useContext(AIContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    getReply(userQuery);
+    getSearchReply(userQuery);
     setMessages([...messages, { text: userQuery, sender: "user" }]);
     setModelReply("Here is what I found.");
     setFullUserQuery(userQuery);
@@ -43,25 +44,6 @@ const SearchBar = () => {
     }
   };
 
- 
-  useEffect(() => {
-    const initModel = async () => {
-      try {
-        const createdEngine = await CreateWebWorkerMLCEngine(
-          new Worker(new URL("../.././workers/worker.js", import.meta.url), {
-            type: "module",
-          }),
-          "Qwen2.5-1.5B-Instruct-q4f16_1-MLC"
-        );
-        setEngine(createdEngine);
-      } catch (error) {
-        console.error("Error while loading model:", error);
-        setModelReply("Error while loading model:", error);
-      }
-    };
-
-    initModel();
-  }, []);
 
   // When new search results arrive, trigger the fade effect
   useEffect(() => {
@@ -80,7 +62,25 @@ const SearchBar = () => {
     }));
   }
   
-  const getReply = async (userQuery) => {
+  //NOTE: Search needs to be decoupled from getReply
+  const getSearchReply = async (userQuery) => {
+    
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+            
+            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
+            Be polite, professional, and ensure responses are concise and user-friendly. 
+            
+            --- 
+            
+            Today's date: ${new Date().toISOString().split("T")[0]}
+            
+            ---
+            **Data (JSON Format)**
+            ${JSON.stringify(extractEventDetails(response.data.results), null, 2)}
+            
+            Based on this data, answer the user's question appropriately.
+            `;
+    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
     if (userQuery === "" || streamingReply) {
       return;
     }
@@ -99,21 +99,7 @@ const SearchBar = () => {
         const messages = [
           {
             role: "system",
-            content: `You are an AI assistant chatbot for ${name}, a company.
-            
-            Your role is to provide visitors with quick, accurate, and helpful responses related to the company's events, news, articles, and initiatives. 
-            Be polite, professional, and ensure responses are concise and user-friendly. 
-            
-            --- 
-            
-            Today's date: ${new Date().toISOString().split("T")[0]}
-            
-            ---
-            **Data (JSON Format)**
-            ${JSON.stringify(extractEventDetails(response.data.results), null, 2)}
-            
-            Based on this data, answer the user's question appropriately.
-            `,
+            content: ,
           },
           { role: "user", content: userQuery },
         ];
