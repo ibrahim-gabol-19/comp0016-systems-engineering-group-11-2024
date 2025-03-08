@@ -10,8 +10,13 @@ const SidebarReport = ({
   newMarker,
   fetchReports,
   onSidebarClose,
+  viewingAISummary,
+  setViewingAISummary,
+  modelReply,
+  setModelReply,
 }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
+  const [lastSummaryID, setLastSummaryID] = useState(null);
   const [message, setMessage] = useState(null);
   const { auth } = useAuth();
   const [title, setTitle] = useState("");
@@ -20,12 +25,11 @@ const SidebarReport = ({
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
   const { name, main_color } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
-  const [modelReply, setModelReply] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
 
   const author = auth.user.username;
 
-   const extractReportDetails = () => {
+  const extractReportDetails = () => {
     if (!selectedMarker) return null;
 
     // Extract only relevant fields
@@ -40,7 +44,7 @@ const SidebarReport = ({
       latitude: selectedMarker.latitude,
       longitude: selectedMarker.longitude,
       discussions: selectedMarker.discussions.map((discussion) => ({
-        author: discussion.author,
+        // author: discussion.author,
         message: discussion.message,
         created_at: discussion.created_at,
       })),
@@ -52,21 +56,17 @@ const SidebarReport = ({
   const getReportSummary = async () => {
     // Extract relevant data from selectedMarker
     const userQuery = JSON.stringify(extractReportDetails(), null, 2);
-    console.log(userQuery);
     const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
               
-              Provide a very short summary of the report in the local area for this company, including the discussion messages.
-              
+              Provide a summary of the report.
+              Provide a summary of the discussion message.
+              Provide your recommendations.
+              Maximum 100 words.
+
               Today's date: ${new Date().toISOString().split("T")[0]}
               `;
 
     await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
-
-    if (!engine) {
-      console.log("Model is still loading...");
-      setModelReply("Here is what I found:");
-      return;
-    }
   };
 
   const tags = [
@@ -79,8 +79,17 @@ const SidebarReport = ({
     "health_safety",
     "urban_development",
   ];
-  const handleUpvote = async () => {
+
+  const handleAIClick = () => {
+    if (!engine || isStreaming || lastSummaryID == selectedMarker.id || viewingAISummary) {
+      return;
+    }
+
     getReportSummary();
+    setLastSummaryID(selectedMarker.id);
+  };
+
+  const handleUpvote = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
@@ -568,7 +577,23 @@ const SidebarReport = ({
 
             {/* Description Text */}
             <div className="w-full h-[300px] mb-3 overflow-auto">
-              <p class="text-lg">{selectedMarker.description} {modelReply}</p>
+              {/* AI Button */}
+              <div className="flex justify-end mb-3">
+                <div
+                  className="w-1/3 h-12 bg-green-100 rounded-lg shadow-md cursor-pointer flex items-center justify-center hover:bg-green-200 transition-colors duration-200"
+                  onClick={() => {
+                    handleAIClick();
+                    setViewingAISummary(!viewingAISummary);
+                  }}
+                >
+                  <span className="text-sm font-semibold text-green-800">
+                    {viewingAISummary ? "Hide AI Summary" : "Show AI Summary"}
+                  </span>
+                </div>
+              </div>
+
+             
+              <p className="text-lg mb-3">{selectedMarker.description}</p>
             </div>
             {/*Poster*/}
             <div className="h-1/6 flex items-center bg-white border border-gray-100 space-x-4">
