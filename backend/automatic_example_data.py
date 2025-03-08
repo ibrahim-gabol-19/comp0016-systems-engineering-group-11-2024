@@ -3,7 +3,9 @@ import random
 from geopy.distance import geodesic
 
 # API URL and endpoints
-BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
+# BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
+BASE_URL = "http://127.0.0.1:8000"
+
 SIGNUP_URL = f"{BASE_URL}/api/auth/signup/"
 LOGIN_URL = f"{BASE_URL}/api/auth/login/"
 EVENTS_URL = f"{BASE_URL}/events/"

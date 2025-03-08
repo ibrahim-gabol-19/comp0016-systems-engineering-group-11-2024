@@ -17,8 +17,8 @@ const MiscellaneousSection = () => {
   const navigate = useNavigate();
   const [radius, setRadius] = useState(0);
   const [bounds, setBounds] = useState([
-    [51.0, -0.1], // Initial SW lat, lon
-    [51.1, -0.05], // Initial NE lat, lon
+    [51.341875, -0.29222], // Initial SW lat, lon
+    [51.651675, 0.01758], // Initial NE lat, lon
   ]);
 
   const handleRadiusChange = (event) => {
@@ -26,10 +26,6 @@ const MiscellaneousSection = () => {
     setRadius(newRadius);
     const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
     const centerLon = (bounds[0][1] + bounds[1][1]) / 2;
-    // setNeLat(centerLat + newRadius);
-    // setSwLat(centerLat - newRadius);
-    // setNeLon(centerLon + newRadius);
-    // setSwLon(centerLon - newRadius);
     setBounds([
       [centerLat - newRadius, centerLon - newRadius], // SW corner
       [centerLat + newRadius, centerLon + newRadius], // NE corner
@@ -52,10 +48,10 @@ const MiscellaneousSection = () => {
       const response = await axios.get(API_URL + "companyinformation/");
       const data = response.data[0];
 
-      const fetchedSwLat = data.sw_lat || 49.5;
-      const fetchedSwLon = data.sw_lon || -8;
-      const fetchedNeLat = data.ne_lat || 60;
-      const fetchedNeLon = data.ne_lon || 2;
+      const fetchedSwLat = data.sw_lat || 51.341875;
+      const fetchedSwLon = data.sw_lon || -0.29222;
+      const fetchedNeLat = data.ne_lat || 51.651675;
+      const fetchedNeLon = data.ne_lon || 0.01758;
 
       // Directly set bounds based on fetched data
       const newBounds = [
