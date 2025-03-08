@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
 import MainEditor from "../../components/contentmanagementsystem/detailed/MainEditor";
 import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor";
@@ -7,6 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm";
+import { AIContext } from "../../context/AIContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 const NEW_ARTICLE_ID = "0";
@@ -21,9 +22,6 @@ const DetailedArticlePage = () => {
   const quillRefAuthor = useRef();
   const quillRefDescription = useRef();
 
-  // AI engine state
-  const [engine, setEngine] = useState(null);
-
   // Article fields state
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
@@ -37,6 +35,10 @@ const DetailedArticlePage = () => {
   const [isLoadingTitle, setIsLoadingTitle] = useState(false);
   const [isLoadingMainContent, setIsLoadingMainContent] = useState(false);
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
+
+  // AI Context
+  const { getReply, engine } = useContext(AIContext);
+  
 
   // PDF extraction states
   const [pdfFile, setPdfFile] = useState(null);
@@ -75,28 +77,8 @@ const DetailedArticlePage = () => {
     }
   }, [articleId]);
 
-  // Initialize AI engine
-  useEffect(() => {
-    const initEngine = async () => {
-      try {
-        const createdEngine = await CreateWebWorkerMLCEngine(
-          new Worker(new URL("../.././workers/worker.js", import.meta.url), {
-            type: "module",
-          }),
-          "Llama-3.2-1B-Instruct-q4f16_1-MLC"
-        );
-        console.log("AI engine loaded successfully");
-        setEngine(createdEngine);
-      } catch (error) {
-        console.error("Error while loading model:", error);
-      }
-    };
-    initEngine();
-  }, []);
-
   // Function to suggest an alternative, more appealing title
   const handleSuggestAlternativeTitle = async () => {
-    console.log("Suggest Alternative Title button pressed");
     if (!title) {
       alert("Please enter a title first.");
       return;
@@ -107,7 +89,6 @@ const DetailedArticlePage = () => {
     }
     setIsLoadingTitle(true);
     try {
-      console.log("Resetting chat for title suggestion");
       await engine.resetChat();
       const messages = [
         {
@@ -121,17 +102,14 @@ const DetailedArticlePage = () => {
         },
       ];
       let alternativeTitle = "";
-      console.log("Sending title prompt to AI");
       const stream = await engine.chat.completions.create({
         messages,
         temperature: 0.7,
         stream: true,
       });
       for await (const chunk of stream) {
-        console.log("Received chunk for title:", chunk);
         alternativeTitle += chunk.choices[0]?.delta.content || "";
       }
-      console.log("Alternative title received:", alternativeTitle);
       setTitle(alternativeTitle);
       if (quillRefTitle.current) {
         quillRefTitle.current.setContents([{ insert: alternativeTitle }]);
@@ -144,7 +122,6 @@ const DetailedArticlePage = () => {
 
   // Function to generate detailed main content from a brief description/draft
   const handleGenerateMainContent = async () => {
-    console.log("Generate Main Content button pressed");
     if (!mainContent) {
       alert("Please enter a brief description or draft for the main content first.");
       return;
@@ -155,7 +132,6 @@ const DetailedArticlePage = () => {
     }
     setIsLoadingMainContent(true);
     try {
-      console.log("Resetting chat for main content generation");
       await engine.resetChat();
       const messages = [
         {
@@ -169,17 +145,14 @@ const DetailedArticlePage = () => {
         },
       ];
       let generatedContent = "";
-      console.log("Sending main content prompt to AI");
       const stream = await engine.chat.completions.create({
         messages,
         temperature: 0.7,
         stream: true,
       });
       for await (const chunk of stream) {
-        console.log("Received chunk for main content:", chunk);
         generatedContent += chunk.choices[0]?.delta.content || "";
       }
-      console.log("Generated main content:", generatedContent);
       setMainContent(generatedContent);
       if (quillRefMain.current) {
         quillRefMain.current.setContents([{ insert: generatedContent }]);
@@ -192,7 +165,6 @@ const DetailedArticlePage = () => {
 
   // Function to expand a short description into a longer one
   const handleExpandDescription = async () => {
-    console.log("Expand Description button pressed");
     if (!description) {
       alert("Please enter a short description first.");
       return;
@@ -203,7 +175,6 @@ const DetailedArticlePage = () => {
     }
     setIsLoadingDescription(true);
     try {
-      console.log("Resetting chat for description expansion");
       await engine.resetChat();
       const messages = [
         {
@@ -217,17 +188,14 @@ const DetailedArticlePage = () => {
         },
       ];
       let expandedDescription = "";
-      console.log("Sending description prompt to AI");
       const stream = await engine.chat.completions.create({
         messages,
         temperature: 0.7,
         stream: true,
       });
       for await (const chunk of stream) {
-        console.log("Received chunk for description:", chunk);
         expandedDescription += chunk.choices[0]?.delta.content || "";
       }
-      console.log("Expanded description:", expandedDescription);
       setDescription(expandedDescription);
       if (quillRefDescription.current) {
         quillRefDescription.current.setContents([{ insert: expandedDescription }]);

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
 import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
@@ -7,7 +7,7 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import DropdownExtract from "../../components/contentmanagementsystem/detailed/DropdownExtractEvents";
-import { CreateWebWorkerMLCEngine } from "@mlc-ai/web-llm"; // Added for AI engine
+import { AIContext } from "../../context/AIContext.js";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -39,28 +39,10 @@ const DetailedEventPage = () => {
   const navigate = useNavigate();
 
   // AI engine state for events
-  const [engine, setEngine] = useState(null);
+  const { getReply, engine } = useContext(AIContext);
   const [isLoadingTitle, setIsLoadingTitle] = useState(false);
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
 
-  // Initialize AI engine
-  useEffect(() => {
-    const initEngine = async () => {
-      try {
-        const createdEngine = await CreateWebWorkerMLCEngine(
-          new Worker(new URL("../.././workers/worker.js", import.meta.url), {
-            type: "module",
-          }),
-          "Llama-3.2-1B-Instruct-q4f16_1-MLC"
-        );
-        console.log("AI engine loaded successfully");
-        setEngine(createdEngine);
-      } catch (error) {
-        console.error("Error while loading model:", error);
-      }
-    };
-    initEngine();
-  }, []);
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
