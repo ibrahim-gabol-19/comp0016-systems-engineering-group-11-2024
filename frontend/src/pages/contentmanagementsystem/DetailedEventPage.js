@@ -40,8 +40,6 @@ const DetailedEventPage = () => {
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
-      console.log("useEffect is running");
-      console.log("event id received was", eventId);
       setIsEditing(false); // initially view preview when clicking box
       const token = localStorage.getItem("token");
       // Fetch article data when editing an existing article

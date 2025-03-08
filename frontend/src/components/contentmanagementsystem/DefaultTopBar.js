@@ -1,7 +1,13 @@
 import React, { useState, useContext } from "react";
 import SearchBar from "./SearchBar";
 import { CompanyContext } from "../../context/CompanyContext";
-const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi" }) => {
+
+const DefaultTopBar = ({
+  onManual,
+  onUpload,
+  setUserQuery,
+  selectedCategory = "hi",
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { main_color } = useContext(CompanyContext);
 
@@ -11,7 +17,6 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
     const R = (num >> 16) + amt;
     const G = ((num >> 8) & 0x00ff) + amt;
     const B = (num & 0x0000ff) + amt;
-
     return (
       "#" +
       (
@@ -24,39 +29,46 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
         .slice(1)
     );
   };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
-    <div className="pb-2 text-white border-b-2  flex flex-row justify-center items-center z-10 relative">
-      {/* New Button to toggle dropdown */}
-      <div className="w-1/6">
+    <div className="pb-2 text-white border-b-2 flex flex-row justify-center items-center z-10 relative">
+      {/* "New" Button */}
+      <div className="min-w-1/6">
         <button
-          className="justify-center w-full flex flex-row py-3 max-w-80 font-bold text-white rounded-lg transition active:duration-500 duration-100"
+          className="
+            w-full
+            flex
+            flex-row
+            items-center
+            justify-center
+            py-3
+            font-bold
+            text-white
+            rounded-lg
+            transition
+            active:duration-500
+            duration-100
+            whitespace-nowrap
+            min-w-[150px]
+          "
           style={{
-            backgroundColor: main_color, // Default background color
+            backgroundColor: main_color,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = lightenColor(
-              main_color,
-              20
-            ); // Lighter background on hover
+            e.currentTarget.style.backgroundColor = lightenColor(main_color, 20);
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
+            e.currentTarget.style.backgroundColor = main_color;
           }}
           onMouseDown={(e) => {
-            e.currentTarget.style.backgroundColor = lightenColor(
-              main_color,
-              40
-            ); // Even lighter background on active
+            e.currentTarget.style.backgroundColor = lightenColor(main_color, 40);
           }}
           onMouseUp={(e) => {
-            e.currentTarget.style.backgroundColor = lightenColor(
-              main_color,
-              20
-            ); // Reset to hover state on mouse up
+            e.currentTarget.style.backgroundColor = lightenColor(main_color, 20);
           }}
           onClick={toggleDropdown}
         >
@@ -74,28 +86,47 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          New {selectedCategory === "Articles" && "Article"} {selectedCategory === "Events" && "Event"} {selectedCategory === "Reporting" && "Report"} 
+          New
+          {selectedCategory === "Articles" && " Article"}
+          {selectedCategory === "Events" && " Event"}
+          {selectedCategory === "Reporting" && " Report"}
         </button>
+
+        {/* Dropdown */}
         <div
-          className={`absolute bg-gray-200 py-1 px-5 mt-2 rounded-lg shadow-lg z-20 w-1/6 left-0 transition-all duration-200 ${
+          className={`absolute bg-gray-200 py-1 px-5 mt-2 rounded-lg shadow-lg z-20 w-1/10 left-0 transition-all duration-200 ${
             isDropdownOpen
               ? "max-h-40 opacity-100 pointer-events-auto"
               : "max-h-0 opacity-0 pointer-events-none"
           }`}
         >
+          {/* CREATE Button */}
           <button
-            className="flex flex-row justify-center w-full py-3 bg-white font-bold rounded-lg hover:bg-gray-100 transition duration-500 active:duration-100 mb-2"
+            className="
+              flex
+              flex-row
+              justify-center
+              w-full
+              py-3
+              bg-white
+              font-bold
+              rounded-lg
+              hover:bg-gray-100
+              transition
+              duration-500
+              active:duration-100
+              mb-2
+              whitespace-nowrap
+              min-w-[130px]
+            "
             style={{
-              color: lightenColor(main_color, 10)
+              color: lightenColor(main_color, 10),
             }}
             onMouseDown={(e) => {
-              e.currentTarget.style.backgroundColor = lightenColor(
-                main_color,
-                80
-              ); // Lighter background on active
+              e.currentTarget.style.backgroundColor = lightenColor(main_color, 80);
             }}
             onMouseUp={(e) => {
-              e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse up
+              e.currentTarget.style.backgroundColor = "white";
             }}
             onClick={onManual}
           >
@@ -105,7 +136,7 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="size-6"
+              className="size-6 mr-1"
             >
               <path
                 strokeLinecap="round"
@@ -115,19 +146,33 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
             </svg>
             Create
           </button>
+
+          {/* UPLOAD Button */}
           <button
-            className="flex flex-row justify-center w-full py-3 bg-white font-bold rounded-lg hover:bg-gray-100 transition duration-500 active:duration-100"
+            className="
+              flex
+              flex-row
+              justify-center
+              w-full
+              py-3
+              bg-white
+              font-bold
+              rounded-lg
+              hover:bg-gray-100
+              transition
+              duration-500
+              active:duration-100
+              whitespace-nowrap
+              min-w-[130px]
+            "
             style={{
-              color: lightenColor(main_color, 10)
+              color: lightenColor(main_color, 10),
             }}
             onMouseDown={(e) => {
-              e.currentTarget.style.backgroundColor = lightenColor(
-                main_color,
-                80
-              ); // Lighter background on active
+              e.currentTarget.style.backgroundColor = lightenColor(main_color, 80);
             }}
             onMouseUp={(e) => {
-              e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse up
+              e.currentTarget.style.backgroundColor = "white";
             }}
             onClick={onUpload}
           >
@@ -137,7 +182,7 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="size-6"
+              className="size-6 mr-1"
             >
               <path
                 strokeLinecap="round"
@@ -150,9 +195,13 @@ const DefaultTopBar = ({ onManual, onUpload, setUserQuery, selectedCategory="hi"
         </div>
       </div>
 
+      {/* Spacing */}
       <div className="w-3/12"></div>
 
+      {/* Search Bar */}
       <SearchBar setUserQuery={setUserQuery} />
+
+      {/* Spacing */}
       <div className="w-3/12"></div>
     </div>
   );
