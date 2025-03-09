@@ -311,7 +311,8 @@ scheduled_events = [
         "theme": "Nature",
         "latitude": 51.5033,
         "longitude": -0.1300,
-        "is_featured": "True"
+        "is_featured": "True",
+        "image_path": "img/bird.png"
     },
     {
         "title": "Thames River Cleanup",
@@ -322,7 +323,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5074, 
         "longitude": -0.1278, 
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/dirtyriver.png"
     },
     {
         "title": "Community Garden Planting",
@@ -333,7 +335,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5304,
         "longitude": -0.1520,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/planting.png"
     },
     {
         "title": "Local History Walk",
@@ -344,7 +347,9 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5147,
         "longitude": -0.0911,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/historywalk.png"
+
     },
     {
         "title": "Upcycled Art Workshop",
@@ -355,7 +360,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5205,
         "longitude": -0.0936,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/art.png"
     },
     {
         "title": "Morning Fitness Jog",
@@ -366,7 +372,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5073,
         "longitude": -0.1657,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/jog.png"
     },
     {
         "title": "Local Produce Market",
@@ -377,7 +384,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5056,
         "longitude": -0.0909,
-        "is_featured": "True"
+        "is_featured": "True",
+        "image_path": "img/market.png"
     },
     {
         "title": "Urban Wildlife Workshop",
@@ -388,7 +396,8 @@ scheduled_events = [
         "theme": "Nature",
         "latitude": 51.5367,
         "longitude": -0.0306,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/wildlife.png"
     },
     {
         "title": "Riverboat Tour: Thames Discovery",
@@ -399,7 +408,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5055,
         "longitude": -0.0754,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/riverboat.png"
     },
     {
         "title": "Community Book Swap",
@@ -410,7 +420,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5019,
         "longitude": -0.0984,
-        "is_featured": "True"
+        "is_featured": "True",
+        "image_path": "img/books.png"
     },
     {
         "title": "Community yoga in the park",
@@ -421,7 +432,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5033,
         "longitude": -0.1419,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/yoga.png"
     },
     {
         "title": "Green Living Seminar",
@@ -432,7 +444,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5045,
         "longitude": -0.0805,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/seminar.png"
     },
     {
         "title": "Sunday Cycle Ride",
@@ -443,7 +456,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5350,
         "longitude": -0.1000,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/cycle.png"
     },
     {
         "title": "Art in the Park",
@@ -454,7 +468,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.4770,
         "longitude": -0.1583,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/artpark.png"
     },
     {
         "title": "Recycling Workshop",
@@ -465,7 +480,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5361,
         "longitude": -0.1060,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/recycle.png"
     },
     {
         "title": "Community Choir Practice",
@@ -476,7 +492,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5188,
         "longitude": -0.0717,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/choir.png"
     },
     {
         "title": "Sustainable Cooking Class",
@@ -487,7 +504,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.5435,
         "longitude": -0.0536,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/cooking.png"
     },
     {
         "title": "Nature Photography Walk",
@@ -498,7 +516,8 @@ scheduled_events = [
         "theme": "Nature",
         "latitude": 51.5607,
         "longitude": -0.1653,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/photography.png"
     },
     {
         "title": "Community Yoga Class",
@@ -509,7 +528,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.4769,
         "longitude": -0.0005,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/yoga.png"
     },
     {
         "title": "Zero Waste Workshop",
@@ -520,7 +540,8 @@ scheduled_events = [
         "theme": "Sustainability",
         "latitude": 51.6014,
         "longitude": -0.0265,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/recycle.png"
     },
     {
         "title": "Community Gardening Day",
@@ -531,7 +552,8 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.4785,
         "longitude": -0.2956,
-        "is_featured": "False"
+        "is_featured": "False",
+        "image_path": "img/gardening.png"
     }
 ]
 
@@ -644,69 +666,70 @@ articles_data = [
         "content": "Explore London's rich history, from its Roman origins as Londinium to its modern-day status as a global metropolis. Walk the ancient streets where historical figures like Shakespeare and Churchill once trod. Delve into the Tower of London's storied past, where tales of royalty, imprisonment, and intrigue echo through the centuries. Visit the British Museum to witness artifacts from civilizations across the globe, or wander through the medieval halls of Westminster Abbey, a site of coronations and royal burials. Trace the city's evolution through the Great Fire of London, the Victorian era's industrial boom, and the resilience displayed during World War II. Discover hidden historical gems in the City of London, where remnants of Roman walls and medieval churches stand side by side with modern skyscrapers. Unearth the stories behind iconic landmarks and lesser-known historical sites, painting a vivid picture of London's enduring legacy.",
         "author": "Alice Johnson",
         "description": "A journey through time in the heart of London.",
-        "main_image_path": "img/london.png"
+        "image_path": "img/london.png"
     },
     {
         "title": "A Guide to London’s Iconic Landmarks",
         "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance. Start your journey at the Houses of Parliament, where Big Ben's chimes resonate across the city, a symbol of British democracy. Cross Westminster Bridge to capture panoramic views of the London Eye, a giant Ferris wheel offering a unique perspective of the skyline. Explore Buckingham Palace, the official residence of the British monarch, and witness the Changing of the Guard ceremony. Marvel at the architectural grandeur of St. Paul's Cathedral, a masterpiece designed by Sir Christopher Wren. Walk across Tower Bridge, an engineering marvel that opens to allow ships to pass. Visit Trafalgar Square, home to Nelson's Column and the National Gallery, a hub of art and culture. Discover the historical significance of the Tower of London, a fortress, palace, and prison that has played a crucial role in British history. Each landmark tells a story, weaving together the rich tapestry of London's past and present.",
         "author": "Bob Williams",
         "description": "Explore the must-see sights of London.",
-        "main_image_path": "img/landmarks.jpg"
+        "image_path": "img/landmarks.jpg"
     },
     {
         "title": "The Best Parks in London",
         "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city. Hyde Park, one of the largest royal parks, features the Serpentine Lake, where you can rent paddleboats or enjoy a leisurely stroll. Regent’s Park, home to London Zoo and Queen Mary’s Gardens, offers a mix of formal gardens and open spaces perfect for picnics. Hampstead Heath, with its rolling hills and wooded areas, provides a wilder, more natural escape, offering stunning views of the city skyline from Parliament Hill. Explore the hidden gardens of Holland Park, with its Kyoto Garden providing a serene Japanese oasis. Discover the botanical wonders of Kew Gardens, a UNESCO World Heritage Site, or enjoy the vibrant atmosphere of Victoria Park, a favorite among East Londoners. Each park offers a unique experience, from formal gardens and boating lakes to wild meadows and ancient woodlands, ensuring there's a green space for every mood and activity.",
         "author": "Charlie Brown",
         "description": "Discover the green oasis of London.",
-        "main_image_path": "img/park.jpg"
+        "image_path": "img/park.jpg"
     },
     {
         "title": "A Walk Through London’s Museums",
         "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art. The British Museum houses a vast collection of world art and artifacts, including the Rosetta Stone and Egyptian mummies. The Natural History Museum, with its iconic dinosaur skeletons, offers a fascinating journey through the history of life on Earth. Tate Modern, housed in a former power station, displays modern and contemporary art from around the globe. Explore the Victoria and Albert Museum (V&A), showcasing decorative arts and design from various periods and cultures. Discover the Science Museum, where interactive exhibits bring scientific principles to life. Visit the National Gallery to admire masterpieces of European painting, or explore the smaller, specialized museums like the Sir John Soane's Museum or the Museum of London, each offering a unique perspective on history, art, and culture. London's museums cater to every interest, providing endless opportunities for learning and discovery.",
         "author": "Eve Smith",
         "description": "A cultural journey through London's museums.",
-        "main_image_path": "img/museum.webp"
+        "image_path": "img/museum.webp"
     },
     {
         "title": "Exploring the Thames River",
         "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture. Embark on a river cruise to see iconic landmarks from a different angle, passing under historic bridges and alongside modern skyscrapers. Explore the Thames Path, a long-distance trail that follows the river's course, offering scenic walks and cycling routes. Visit the historic docks and wharves, remnants of London's maritime past. Discover the hidden islands and tributaries that dot the river, each with its own unique character. Learn about the Thames's role in London's history, from its importance as a trade route to its role in wartime defense. Witness the changing tides and the diverse wildlife that call the river home. Whether you're cruising, walking, or simply admiring the view from a riverside pub, the Thames offers a glimpse into the heart of London.",
         "author": "Frank Miller",
         "description": "A voyage along the iconic Thames River.",
-        "main_image_path": "img/river.png"
+        "image_path": "img/river.png"
     },
     {
         "title": "The Best Coffee Shops in London",
         "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone. Start your day with a perfectly brewed cup at a specialty coffee shop in Shoreditch, known for its vibrant cafe culture. Explore the historic coffee houses of Soho, where literary figures and artists once gathered. Sample artisanal roasts and pastries at a cafe in Borough Market, a foodie paradise. Discover hidden gems in Notting Hill, where charming cafes line the colorful streets. Visit a roastery in East London to learn about the coffee-making process and sample freshly roasted beans. Enjoy a traditional afternoon tea with coffee and scones at a classic London cafe. From independent cafes to established chains, London's coffee scene offers a diverse range of experiences, catering to every taste and preference.",
         "author": "Grace Davis",
         "description": "A caffeine-fueled tour of London's coffee culture.",
-        "main_image_path": "img/coffee.jpg"
+        "image_path": "img/coffee.jpg"
     },
     {
         "title": "Hidden Gems of London",
         "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city. Explore the tranquil oasis of St. Dunstan in the East Church Garden, a former church transformed into a beautiful public space. Discover the charming alleyways and courtyards of Covent Garden, where hidden shops and cafes await. Visit the Leighton House Museum, a Victorian artist's home filled with stunning Islamic tiles and art. Explore the canals of Little Venice, where colorful narrowboats line the waterways. Discover the historic pubs of Southwark, where Shakespearean actors once performed. Visit the Kyoto Garden in Holland Park, a serene Japanese garden with a waterfall and koi pond. Explore the street art of Shoreditch, where vibrant murals and graffiti adorn the walls. From hidden gardens and historic pubs to art galleries and independent shops, London's hidden gems offer a unique and authentic experience, away from the hustle and bustle of the main tourist attractions.",
         "author": "Ivy Garcia",
         "description": "A guide to London's best-kept secrets.",
-        "main_image_path": "img/london.png"
+        "image_path": "img/london.png"
     }
 ]
 
 # Function to create events with dynamic titles and descriptions
-def create_event(token, title, description, location, date, time, latitude, longitude, is_featured):
+def create_event(token, title, description, location, date, time, latitude, longitude, is_featured, image_path):
     headers = {"Authorization": f"Bearer {token}"}
+    with open(image_path, "rb") as img_file:
+        files = {"main_image": img_file}
+        data = {
+            "title": title,
+            "description": description,
+            "location": location,
+            "event_type": "scheduled",
+            "date": date,  # Format date to YYYY-MM-DD
+            "time": time,
+            "latitude": latitude, 
+            "longitude": longitude,  
+            "is_featured": is_featured
+        }
+        response = requests.post(EVENTS_URL, headers=headers, data=data, files=files)
 
-    data = {
-        "title": title,
-        "description": description,
-        "location": location,
-        "event_type": "scheduled",
-        "date": date,  # Format date to YYYY-MM-DD
-        "time": time,
-        "latitude": latitude, 
-        "longitude": longitude,  
-        "is_featured": is_featured
-    }
-
-    response = requests.post(EVENTS_URL, headers=headers, data=data)
     if response.status_code == 201:
         print(f"Event '{title}' created successfully on {date}.")
     else:
@@ -1088,7 +1111,7 @@ def main():
         # Create events
         for i in range(len(scheduled_events)):
             event = scheduled_events[i]
-            create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"])
+            create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
         for i in range(len(poi_events)):
             event = poi_events[i]
             create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"])
@@ -1096,7 +1119,7 @@ def main():
         # Create articles
         for i in range(len(articles_data)):
             article = articles_data[i]
-            create_article(token, article['title'], article['content'], article['author'],article['description'], article['main_image_path'])
+            create_article(token, article['title'], article['content'], article['author'],article['description'], article['image_path'])
 
         # Create reports
         created_reports = []
