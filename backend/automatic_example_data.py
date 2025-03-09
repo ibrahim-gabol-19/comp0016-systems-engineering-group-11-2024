@@ -87,7 +87,6 @@ reports_data = [
         "status": "open",
         "tags": "road",
         "Author": "Alice Johnson",
-        "upvotes": 0
     },
     {
         "title": "Illegal Dumping in Park",
@@ -95,7 +94,6 @@ reports_data = [
         "status": "open",
         "tags": "waste_management",
         "Author": "Bob Williams",
-        "upvotes": 0
     },
     {
         "title": "Air Pollution Spike",
@@ -103,7 +101,6 @@ reports_data = [
         "status": "open",
         "tags": "pollution",
         "Author": "Charlie Brown",
-        "upvotes": 0
     },
     {
         "title": "Blocked Drains Causing Flooding",
@@ -111,7 +108,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Eve Smith",
-        "upvotes": 0
     },
     {
         "title": "Excessive Noise Pollution",
@@ -119,7 +115,6 @@ reports_data = [
         "status": "open",
         "tags": "pollution",
         "Author": "Frank Miller",
-        "upvotes": 0
     },
     {
         "title": "Tree Down Blocking Road",
@@ -127,7 +122,6 @@ reports_data = [
         "status": "open",
         "tags": "road",
         "Author": "Grace Davis",
-        "upvotes": 0
     },
     {
         "title": "Chemical Spill Near River",
@@ -135,7 +129,6 @@ reports_data = [
         "status": "open",
         "tags": "environmental",
         "Author": "Henry Wilson",
-        "upvotes": 0
     },
     {
         "title": "Overfilled Public Bins",
@@ -143,7 +136,6 @@ reports_data = [
         "status": "open",
         "tags": "waste_management",
         "Author": "Ivy Garcia",
-        "upvotes": 0
     },
     {
         "title": "Contaminated Water Supply",
@@ -151,7 +143,6 @@ reports_data = [
         "status": "open",
         "tags": "health_safety",
         "Author": "John Perez",
-        "upvotes": 0
     },
     {
         "title": "Abandoned Vehicle Blocking Street",
@@ -159,7 +150,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Karen Young",
-        "upvotes": 0
     },
     {
         "title": "Road Repair needed",
@@ -167,7 +157,6 @@ reports_data = [
         "status": "resolved",
         "tags": "road", 
         "Author": "Kelly Martinez",
-        "upvotes": 0
     },
     {
         "title": "Dog waste problem in park",
@@ -175,7 +164,6 @@ reports_data = [
         "status": "resolved",
         "tags": "waste_management",
         "Author": "Liam Thompson",
-        "upvotes": 0
     },
     {
         "title": "Noise complaint from construction site",
@@ -183,7 +171,6 @@ reports_data = [
         "status": "closed",
         "tags": "pollution",
         "Author": "Mia Hall",
-        "upvotes": 0
     },
     {
         "title": "Illegal dumping in alleyway",
@@ -191,7 +178,6 @@ reports_data = [
         "status": "closed",
         "tags": "waste_management",
         "Author": "Noah Lewis",
-        "upvotes": 0
     },
         {
         "title": "Broken Streetlight",
@@ -199,7 +185,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Sophia Clark",
-        "upvotes": 0
     },
     {
         "title": "Graffiti on Public Building",
@@ -207,7 +192,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Ethan Rodriguez",
-        "upvotes": 0
     },
     {
         "title": "Leaking Pipe on Sidewalk",
@@ -215,7 +199,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Isabella Patel",
-        "upvotes": 0
     },
     {
         "title": "Litter in Playground",
@@ -223,7 +206,6 @@ reports_data = [
         "status": "open",
         "tags": "waste_management",
         "Author": "Alexander Kim",
-        "upvotes": 0
     },
     {
         "title": "Fallen Branch Blocking Path",
@@ -231,7 +213,6 @@ reports_data = [
         "status": "open",
         "tags": "environmental",
         "Author": "Mia Gupta",
-        "upvotes": 0
     },
     {
         "title": "Unsafe Building Demolition",
@@ -239,7 +220,6 @@ reports_data = [
         "status": "open",
         "tags": "health_safety",
         "Author": "Daniel Singh",
-        "upvotes": 0
     },
     {
         "title": "Sewage Smell in Street",
@@ -247,7 +227,6 @@ reports_data = [
         "status": "open",
         "tags": "pollution",
         "Author": "Charlotte Wright",
-        "upvotes": 0
     },
     {
         "title": "Abandoned Shopping Carts",
@@ -255,7 +234,6 @@ reports_data = [
         "status": "open",
         "tags": "waste_management",
         "Author": "James Moore",
-        "upvotes": 0
     },
     {
         "title": "Damaged Traffic Sign",
@@ -263,7 +241,6 @@ reports_data = [
         "status": "open",
         "tags": "road",
         "Author": "Amelia Thomas",
-        "upvotes": 0
     },
     {
         "title": "Flooded Underpass",
@@ -271,7 +248,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Benjamin Jackson",
-        "upvotes": 0
     },
     {
         "title": "Resolved: Streetlight Repaired",
@@ -279,7 +255,6 @@ reports_data = [
         "status": "resolved",
         "tags": "urban_development",
         "Author": "Oliver White",
-        "upvotes": 0
     },
     {
         "title": "Resolved: Graffiti Removed",
@@ -287,7 +262,6 @@ reports_data = [
         "status": "resolved",
         "tags": "urban_development",
         "Author": "Evelyn Harris",
-        "upvotes": 0
     },
     {
         "title": "Closed: Noise Complaint Resolved",
@@ -295,7 +269,6 @@ reports_data = [
         "status": "closed",
         "tags": "pollution",
         "Author": "William Martin",
-        "upvotes": 0
     },
     {
         "title": "Closed: Illegal Dumping Cleaned",
@@ -303,7 +276,6 @@ reports_data = [
         "status": "closed",
         "tags": "waste_management",
         "Author": "Abigail Thompson",
-        "upvotes": 0
     },
     {
         "title": "Open: Dangerous Tree Branches",
@@ -311,7 +283,6 @@ reports_data = [
         "status": "open",
         "tags": "environmental",
         "Author": "Joseph Garcia",
-        "upvotes":0
     },
     {
         "title": "Open: Broken Park Bench",
@@ -319,7 +290,6 @@ reports_data = [
         "status": "open",
         "tags": "urban_development",
         "Author": "Madison Martinez",
-        "upvotes":0
     },
     {
         "title": "Open: Rats in Alleyway",
@@ -327,7 +297,6 @@ reports_data = [
         "status": "open",
         "tags": "health_safety",
         "Author": "Samuel Robinson",
-        "upvotes":0
     },
     {
         "title": "Open: Excessive Vehicle Idling",
@@ -335,7 +304,6 @@ reports_data = [
         "status": "open",
         "tags": "pollution",
         "Author": "Elizabeth Lopez",
-        "upvotes":0
     }
 ]
 
@@ -762,7 +730,6 @@ def create_report(token, title, description, status, tags, author):
         "longitude": (None, str(new_longitude)),
         "latitude": (None, str(new_latitude)),
         "tags": tags,
-        "upvotes": 0
 
     }
     response = requests.post(REPORTS_URL, headers=headers, data=data)
