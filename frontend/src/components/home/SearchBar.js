@@ -132,9 +132,9 @@ const SearchBar = () => {
       return;
     }
 
-    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+    const systemPrompt = `You are a local resident near ${name}, a company.
               
-              Match the following userQuery to a report.
+              Create a report from the following userQuery.
               Output in JSON according to this structure:
 
               "title": "",
