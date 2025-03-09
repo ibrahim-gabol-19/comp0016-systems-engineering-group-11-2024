@@ -80,9 +80,10 @@ const ReportsPage = () => {
 
   // Close the AI summary box if selectedMarker was changed
   useEffect(() => {
-    if (selectedMarker && selectedMarker.id != lastSummaryID) {
+    if (selectedMarker && selectedMarker.id !== lastSummaryID) {
       setViewingAISummary(false);
     }
+        // eslint-disable-next-line
   }, [selectedMarker]);
 
   const handleOutsideClick = (event) => {
