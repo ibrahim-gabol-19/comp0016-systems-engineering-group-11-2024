@@ -140,19 +140,19 @@ const SearchBar = () => {
               "title": "",
                                          
               "description": "",
-              
-              
-                      
+                                   
               `;
     setModelReply("Hi, let me make that report for you now...")
-    const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
-    setGeneratedReport(reportJSON);
-
-    if (!engine) {
-      console.log("Model is still loading...");
-      setModelReply("Here is what I found:");
-      return;
+    try {
+      const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
+      setGeneratedReport(reportJSON);
+  
     }
+    catch (error) {
+      console.error("Error:", error);
+      setModelReply("Sorry, please try again or try a different request");
+    }
+    
   };
 
   const getSearchResult = async (userQuery) => {
