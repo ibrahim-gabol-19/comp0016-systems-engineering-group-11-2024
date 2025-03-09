@@ -20,7 +20,7 @@ EVENTS_URL = f"{BASE_URL}/events/"
 CMS_ARTICLES_URL = f"{BASE_URL}/articles/"
 POI_URL = f"{BASE_URL}/events/"
 REPORTS_URL = f"{BASE_URL}/reports/"
-COMPANY_INFORMATION_URL = f"{BASE_URL}/companyinformation/"
+COMPANY_INFORMATION_URL = f"{BASE_URL}/companyinformation/1/"
 REPORTSDISCUSSION_URL = f"{BASE_URL}/reportdiscussion/"
 
 # Account credentials
@@ -768,8 +768,8 @@ def createComponyInformation(token):
             "ne_lat": 51.651675,  
             "ne_lon": -0.06758
         }
-    response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data)
-    if response.status_code == 201:
+    response = requests.put(COMPANY_INFORMATION_URL, headers=headers, data=data)
+    if response.status_code == 200:
         print(f"Company information created successfully.")
     else:
         print(f"Error creating company information:", response.text)
@@ -1096,13 +1096,6 @@ def create_article(token, title, content, author, description, image_path):
 # Main execution flow
 def main():
     # Flush the database before populating it
-    try:
-        subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
-
-        print("Database flushed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error flushing database: {e}")
-        return  # Stop execution if flushing fails
     signup()
     token = login()
     if token:
