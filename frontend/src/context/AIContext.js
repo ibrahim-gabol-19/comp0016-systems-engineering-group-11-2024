@@ -47,9 +47,6 @@ export const AIProvider = ({ children }) => {
         { role: "user", content: userQuery },
       ];
 
-      // console.log(JSON.stringify(extractEventDetails(response.data.results), null, 2) + " The bees knees");
-      // const maxBufferSize = await engine.getMaxStorageBufferBindingSize();
-      // console.log(maxBufferSize);
       const chunks = await engine.chat.completions.create({
         messages,
         temperature: 0.5,
@@ -65,9 +62,11 @@ export const AIProvider = ({ children }) => {
       setStreaming(false);
       const fullReply = await engine.getMessage();
       setModelReply(fullReply);
+      return fullReply;
     } catch (error) {
       console.error("Error during chat completion:", error);
     }
+    return;
 
   };
 
