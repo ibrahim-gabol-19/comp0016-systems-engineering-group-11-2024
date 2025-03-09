@@ -1,6 +1,5 @@
 import requests
 import random
-from geopy.distance import geodesic
 import random
 import requests
 import random
@@ -73,49 +72,6 @@ def create_article(token, title, content, author, description):
     else:
         print(f"Error creating article '{title}':", response.text)
 
-# Function to create reports
-def create_report(token, title, description):
-    headers = {"Authorization": f"Bearer {token}"}
-
-        # Random dispersion around the original latitude and longitude (within a few hundred meters)
-    def generate_random_location(lat, lon, max_dispersion_meters=10000):
-        # Generate a random distance and bearing
-        random_distance = random.uniform(0, max_dispersion_meters)  # Random distance in meters
-        random_bearing = random.uniform(0, 360)  # Random bearing in degrees
-
-        # Get the new location using geopy
-        origin = (lat, lon)
-        new_location = geodesic(kilometers=random_distance / 1000).destination(origin, random_bearing)
-        return new_location.latitude, new_location.longitude
-
-    # Generate the new random latitude and longitude within a few hundred meters
-    new_latitude, new_longitude = generate_random_location(51.47796, -0.23283)
-    new_latitude = round(new_latitude, 6)
-    new_longitude = round(new_longitude, 6)
-    data = {
-        "title": title,
-        "description": description,
-        "author": "Example Author",
-        "longitude": (None, str(new_longitude)),
-        "latitude": (None, str(new_latitude)),
-        "tags": "environmental"
-    }
-    response = requests.post(REPORTS_URL, headers=headers, data=data)
-    if response.status_code == 201:
-        print(f"Report '{title}' created successfully.")
-    else:
-        print(f"Error creating report '{title}':", response.text)
-
-
-# Sample London-related data
-LONDON_LOCATIONS = [
-    {"name": "Big Ben", "latitude": 51.5007, "longitude": -0.1246},
-    {"name": "London Eye", "latitude": 51.5033, "longitude": -0.1196},
-    {"name": "Buckingham Palace", "latitude": 51.5014, "longitude": -0.1419},
-    {"name": "Tower of London", "latitude": 51.5081, "longitude": -0.0759},
-    {"name": "British Museum", "latitude": 51.5194, "longitude": -0.1270}
-]
-
 articles_data = [
     {"title": "Discovering London's History", "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization."},
     {"title": "A Guide to London’s Iconic Landmarks", "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance."},
@@ -124,17 +80,277 @@ articles_data = [
     {"title": "Exploring the Thames River", "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture."}
 ]
 
+# reports_data = [
+#     {"title": "London’s Air Quality Crisis", "content": "London's air quality remains a significant concern, with levels of nitrogen dioxide (NO2) exceeding safe limits in many areas. The city's reliance on diesel vehicles and congestion are major contributors to air pollution."},
+#     {"title": "Waste Management Challenges in London", "content": "Waste management in London is becoming increasingly difficult as the population grows. Efforts to reduce waste through recycling programs and waste-to-energy technologies are underway, but challenges persist in reducing landfill use."},
+#     {"title": "The Pothole Problem in London", "content": "Potholes are a growing issue across London, causing damage to vehicles and posing safety risks to cyclists and pedestrians. Despite ongoing repair efforts, many roads still face significant maintenance challenges."},
+#     {"title": "Urban Heat Island Effect in London", "content": "London is experiencing the urban heat island effect, where built-up areas become significantly warmer than surrounding rural areas. This exacerbates the impact of heatwaves and contributes to poor air quality, creating challenges for public health and infrastructure."},
+#     {"title": "Flooding Risks and Drainage Issues in London", "content": "Heavy rainfall and rising sea levels pose significant flooding risks for London, especially in low-lying areas. The city's drainage infrastructure is struggling to cope with increasingly frequent and intense storms."},
+#     {"title": "Green Space Preservation in London", "content": "As London's population grows, preserving and expanding green spaces is becoming more challenging. Parks like Hyde Park and Hampstead Heath are vital for residents' well-being, but urban development pressures threaten these spaces."},
+#     {"title": "Plastic Waste Crisis in London", "content": "Plastic waste continues to be a major environmental issue in London, with millions of plastic bottles and packaging items discarded every day. The city is taking steps to reduce plastic use, including initiatives to ban single-use plastics in public spaces."},
+#     {"title": "The Impact of London's Public Transportation on Pollution", "content": "While London’s public transport system is among the largest in the world, it still contributes to the city's pollution. Efforts are being made to electrify buses and improve the sustainability of the city's trains and taxis."},
+#     {"title": "Noise Pollution in London", "content": "Noise pollution in London is reaching levels that affect residents' health and well-being. Major sources of noise include traffic, construction work, and air traffic. Authorities are working on measures to mitigate this growing problem."},
+#     {"title": "Sustainability of London's Food Systems", "content": "London's food systems are facing sustainability challenges, including food waste, food insecurity, and the environmental impact of food transportation. There are growing calls for local food sourcing and reducing the carbon footprint of food consumption."}
+# ]
+
 reports_data = [
-    {"title": "London’s Air Quality Crisis", "content": "London's air quality remains a significant concern, with levels of nitrogen dioxide (NO2) exceeding safe limits in many areas. The city's reliance on diesel vehicles and congestion are major contributors to air pollution."},
-    {"title": "Waste Management Challenges in London", "content": "Waste management in London is becoming increasingly difficult as the population grows. Efforts to reduce waste through recycling programs and waste-to-energy technologies are underway, but challenges persist in reducing landfill use."},
-    {"title": "The Pothole Problem in London", "content": "Potholes are a growing issue across London, causing damage to vehicles and posing safety risks to cyclists and pedestrians. Despite ongoing repair efforts, many roads still face significant maintenance challenges."},
-    {"title": "Urban Heat Island Effect in London", "content": "London is experiencing the urban heat island effect, where built-up areas become significantly warmer than surrounding rural areas. This exacerbates the impact of heatwaves and contributes to poor air quality, creating challenges for public health and infrastructure."},
-    {"title": "Flooding Risks and Drainage Issues in London", "content": "Heavy rainfall and rising sea levels pose significant flooding risks for London, especially in low-lying areas. The city's drainage infrastructure is struggling to cope with increasingly frequent and intense storms."},
-    {"title": "Green Space Preservation in London", "content": "As London's population grows, preserving and expanding green spaces is becoming more challenging. Parks like Hyde Park and Hampstead Heath are vital for residents' well-being, but urban development pressures threaten these spaces."},
-    {"title": "Plastic Waste Crisis in London", "content": "Plastic waste continues to be a major environmental issue in London, with millions of plastic bottles and packaging items discarded every day. The city is taking steps to reduce plastic use, including initiatives to ban single-use plastics in public spaces."},
-    {"title": "The Impact of London's Public Transportation on Pollution", "content": "While London’s public transport system is among the largest in the world, it still contributes to the city's pollution. Efforts are being made to electrify buses and improve the sustainability of the city's trains and taxis."},
-    {"title": "Noise Pollution in London", "content": "Noise pollution in London is reaching levels that affect residents' health and well-being. Major sources of noise include traffic, construction work, and air traffic. Authorities are working on measures to mitigate this growing problem."},
-    {"title": "Sustainability of London's Food Systems", "content": "London's food systems are facing sustainability challenges, including food waste, food insecurity, and the environmental impact of food transportation. There are growing calls for local food sourcing and reducing the carbon footprint of food consumption."}
+    {
+        "title": "Pothole on Elm Street",
+        "description": "Large pothole causing vehicle damage. Needs urgent repair.",
+        "status": "open",
+        "tags": "road",
+        "Author": "Alice Johnson",
+        "upvotes": 0
+    },
+    {
+        "title": "Illegal Dumping in Park",
+        "description": "Construction waste dumped in Riverside Park. Affects wildlife and park visitors. Ruined the natural beauty of the park.",
+        "status": "open",
+        "tags": "waste_management",
+        "Author": "Bob Williams",
+        "upvotes": 0
+    },
+    {
+        "title": "Air Pollution Spike",
+        "description": "Noticeable increase in air pollution in the city center. I can smell the fumes.",
+        "status": "open",
+        "tags": "pollution",
+        "Author": "Charlie Brown",
+        "upvotes": 0
+    },
+    {
+        "title": "Blocked Drains Causing Flooding",
+        "description": "Drains blocked, flooding during heavy rain.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Eve Smith",
+        "upvotes": 0
+    },
+    {
+        "title": "Excessive Noise Pollution",
+        "description": "Loud construction noise late at night. It's affecting residents' sleep.",
+        "status": "open",
+        "tags": "pollution",
+        "Author": "Frank Miller",
+        "upvotes": 0
+    },
+    {
+        "title": "Tree Down Blocking Road",
+        "description": "A Large tree has fallen and is blocking traffic. Needs to be removed.",
+        "status": "open",
+        "tags": "road",
+        "Author": "Grace Davis",
+        "upvotes": 0
+    },
+    {
+        "title": "Chemical Spill Near River",
+        "description": "There is an unidentified chemical spill near the riverbank. Concerns for wildlife and water quality.",
+        "status": "open",
+        "tags": "environmental",
+        "Author": "Henry Wilson",
+        "upvotes": 0
+    },
+    {
+        "title": "Overfilled Public Bins",
+        "description": "Public bins overflowing, creating a health hazard. Needs more frequent collection.",
+        "status": "open",
+        "tags": "waste_management",
+        "Author": "Ivy Garcia",
+        "upvotes": 0
+    },
+    {
+        "title": "Contaminated Water Supply",
+        "description": "The water in my residence is contaminated. Concerns for health and safety.",
+        "status": "open",
+        "tags": "health_safety",
+        "Author": "John Perez",
+        "upvotes": 0
+    },
+    {
+        "title": "Abandoned Vehicle Blocking Street",
+        "description": "Abandoned vehicle parked on residential street. Causing obstruction and safety concerns.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Karen Young",
+        "upvotes": 0
+    },
+    {
+        "title": "Road Repair needed",
+        "description": "Pothole on Maple Avenue needs to be fixed. It has caused many issues for drivers.",
+        "status": "resolved",
+        "tags": "road", 
+        "Author": "Kelly Martinez",
+        "upvotes": 0
+    },
+    {
+        "title": "Dog waste problem in park",
+        "description": "Dog waste not being picked up by owners. Health hazard for park visitors.",
+        "status": "resolved",
+        "tags": "waste_management",
+        "Author": "Liam Thompson",
+        "upvotes": 0
+    },
+    {
+        "title": "Noise complaint from construction site",
+        "description": "Construction noise outside permitted hours. Disturbing residents.",
+        "status": "closed",
+        "tags": "pollution",
+        "Author": "Mia Hall",
+        "upvotes": 0
+    },
+    {
+        "title": "Illegal dumping in alleyway",
+        "description": "Household waste dumped in alley behind shops. Unsanitary and unsightly.",
+        "status": "closed",
+        "tags": "waste_management",
+        "Author": "Noah Lewis",
+        "upvotes": 0
+    },
+        {
+        "title": "Broken Streetlight",
+        "description": "Streetlight on Oak Avenue is broken, creating a dark and unsafe area at night.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Sophia Clark",
+        "upvotes": 0
+    },
+    {
+        "title": "Graffiti on Public Building",
+        "description": "Vandalism with graffiti on the community center wall. Needs cleaning.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Ethan Rodriguez",
+        "upvotes": 0
+    },
+    {
+        "title": "Leaking Pipe on Sidewalk",
+        "description": "Water leaking from a pipe on the sidewalk, creating a slippery and wasteful situation.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Isabella Patel",
+        "upvotes": 0
+    },
+    {
+        "title": "Litter in Playground",
+        "description": "Excessive litter in the children's playground. Unhygienic and dangerous.",
+        "status": "open",
+        "tags": "waste_management",
+        "Author": "Alexander Kim",
+        "upvotes": 0
+    },
+    {
+        "title": "Fallen Branch Blocking Path",
+        "description": "Large branch fallen across the walking path in the park. Impeding access.",
+        "status": "open",
+        "tags": "environmental",
+        "Author": "Mia Gupta",
+        "upvotes": 0
+    },
+    {
+        "title": "Unsafe Building Demolition",
+        "description": "Demolition work being carried out without proper safety measures. Debris is falling into the street.",
+        "status": "open",
+        "tags": "health_safety",
+        "Author": "Daniel Singh",
+        "upvotes": 0
+    },
+    {
+        "title": "Sewage Smell in Street",
+        "description": "Strong sewage smell in the street, indicating a possible leak or blockage.",
+        "status": "open",
+        "tags": "pollution",
+        "Author": "Charlotte Wright",
+        "upvotes": 0
+    },
+    {
+        "title": "Abandoned Shopping Carts",
+        "description": "Several abandoned shopping carts left in the neighborhood. Creating an eyesore and obstruction.",
+        "status": "open",
+        "tags": "waste_management",
+        "Author": "James Moore",
+        "upvotes": 0
+    },
+    {
+        "title": "Damaged Traffic Sign",
+        "description": "Traffic sign at the intersection is damaged and difficult to read. Causing potential confusion.",
+        "status": "open",
+        "tags": "road",
+        "Author": "Amelia Thomas",
+        "upvotes": 0
+    },
+    {
+        "title": "Flooded Underpass",
+        "description": "Underpass flooded after heavy rain, making it impassable for pedestrians and vehicles.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Benjamin Jackson",
+        "upvotes": 0
+    },
+    {
+        "title": "Resolved: Streetlight Repaired",
+        "description": "The streetlight on Oak Avenue has been repaired and is now working.",
+        "status": "resolved",
+        "tags": "urban_development",
+        "Author": "Oliver White",
+        "upvotes": 0
+    },
+    {
+        "title": "Resolved: Graffiti Removed",
+        "description": "The graffiti on the community center wall has been cleaned.",
+        "status": "resolved",
+        "tags": "urban_development",
+        "Author": "Evelyn Harris",
+        "upvotes": 0
+    },
+    {
+        "title": "Closed: Noise Complaint Resolved",
+        "description": "The noise from the construction site has been addressed and is no longer an issue.",
+        "status": "closed",
+        "tags": "pollution",
+        "Author": "William Martin",
+        "upvotes": 0
+    },
+    {
+        "title": "Closed: Illegal Dumping Cleaned",
+        "description": "The illegal dumping in the alleyway has been cleared.",
+        "status": "closed",
+        "tags": "waste_management",
+        "Author": "Abigail Thompson",
+        "upvotes": 0
+    },
+    {
+        "title": "Open: Dangerous Tree Branches",
+        "description": "Tree branches are hanging dangerously low over the sidewalk. Need immediate trimming.",
+        "status": "open",
+        "tags": "environmental",
+        "Author": "Joseph Garcia",
+        "upvotes":0
+    },
+    {
+        "title": "Open: Broken Park Bench",
+        "description": "A park bench is broken and splintered. It is a safety hazard.",
+        "status": "open",
+        "tags": "urban_development",
+        "Author": "Madison Martinez",
+        "upvotes":0
+    },
+    {
+        "title": "Open: Rats in Alleyway",
+        "description": "There is an infestation of rats in the alleyway behind the shops.",
+        "status": "open",
+        "tags": "health_safety",
+        "Author": "Samuel Robinson",
+        "upvotes":0
+    },
+    {
+        "title": "Open: Excessive Vehicle Idling",
+        "description": "Delivery vehicles are idling for long periods, causing excessive pollution.",
+        "status": "open",
+        "tags": "pollution",
+        "Author": "Elizabeth Lopez",
+        "upvotes":0
+    }
+
 ]
 
 scheduled_events = [
@@ -474,10 +690,6 @@ poi_events = [
     }
 ]
 
-
-
-
-
 # Function to create events with dynamic titles and descriptions
 def create_event(token, title, description, location, date, time, latitude, longitude, is_featured):
     headers = {"Authorization": f"Bearer {token}"}
@@ -529,9 +741,9 @@ def createComponyInformation(token):
             "main_color":"#8ff095",
             "font":"Arial",
             "sw_lat" : 51.341875,
-            "sw_lon": -0.29222,  
+            "sw_lon": -0.33672,  
             "ne_lat": 51.651675,  
-            "ne_lon": 0.01758
+            "ne_lon": -0.01758
         }
     response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data)
     if response.status_code == 201:
@@ -539,7 +751,86 @@ def createComponyInformation(token):
     else:
         print(f"Error creating company information:", response.text)
 
+# Function to create reports
+def create_report(token, title, description, status, tags, author, upvotes):
+    headers = {"Authorization": f"Bearer {token}"}
 
+    sw_lat = 51.341875
+    sw_lon = -0.33672
+    ne_lat = 51.651675
+    ne_lon = -0.01758
+
+    # Generate random latitude and longitude within the bounding box
+    new_latitude = random.uniform(sw_lat, ne_lat)
+    new_longitude = random.uniform(sw_lon, ne_lon)
+
+    # Round to 6 decimal places
+    new_latitude = round(new_latitude, 6)
+    new_longitude = round(new_longitude, 6)
+
+    if upvotes == 0:
+        upvotes= random.randint(0, 50)
+
+    data = {
+        "title": title,
+        "status": status,
+        "description": description,
+        "author": author,
+        "longitude": (None, str(new_longitude)),
+        "latitude": (None, str(new_latitude)),
+        "tags": tags,
+        "upvotes": upvotes
+
+    }
+    response = requests.post(REPORTS_URL, headers=headers, data=data)
+    # print(f"Response status code: {response.status_code}")
+    # print(f"Response text: {response.text}")
+
+    if response.status_code == 201:
+        try:
+            response_json = response.json()
+            # print(f"Response JSON: {response_json}")
+            # print(f"Report '{title}' created successfully with status 'open'.")
+            return response_json #return the entire report data.
+        except (KeyError, ValueError):
+            print(f"Error parsing JSON response for report '{title}': {response.text}")
+            return None
+    else:
+        print(f"Error creating report '{title}':", response.text)
+        return None
+
+# Function to update the status of a non-open report
+def update_report_status(token, report_id, status):
+    headers = {"Authorization": f"Bearer {token}"}
+    patch_url = f"{REPORTS_URL}{report_id}/"
+
+    # Send OPTIONS request
+    options_response = requests.options(patch_url, headers=headers)
+    if options_response.status_code != 200:
+        return
+
+    # Send PATCH request
+    data = {"status": status}
+    response = requests.patch(patch_url, headers=headers, data=data)
+    if response.status_code == 200:
+        print(f"Report {report_id} status updated to '{status}'.")
+    else:
+        print(f"Error updating report {report_id}: {response.text}")
+
+def update_report_upvotes(token, report_id, upvotes):
+    headers = {"Authorization": f"Bearer {token}"}
+    patch_url = f"{REPORTS_URL}{report_id}/"
+
+    options_response = requests.options(patch_url, headers=headers)
+    if options_response.status_code != 200:
+        return
+
+    data = {"upvotes": upvotes}
+    response = requests.patch(patch_url, headers=headers, data=data)
+    if response.status_code == 200:
+        print(f"Report {report_id} upvotes updated to '{upvotes}'.")
+    else:
+        print(f"Error updating report {report_id} upvotes: {response.text}")
 
 # Main execution flow
 def main():
@@ -565,13 +856,19 @@ def main():
         for i in range(5):
             article = articles_data[i]
             create_article(token, article['title'], article['content'], "Author", f"Description for {article['title']}")
+        # Create reports
+        created_reports = []  # Store report data.
+        for report in reports_data:
+            report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'], report['upvotes'])
+            if report_data:
+                created_reports.append(report_data)
 
-        # Create 10 reports
-        for i in range(10):
-            report = reports_data[i]
-            create_report(token, report['title'], report['content'])
-    else:
-        print("Failed to login and obtain token.")
+        for i, report in enumerate(reports_data):
+            if i < len(created_reports) and created_reports[i]:
+                if report['status'] != 'open' and created_reports[i]:
+                    update_report_status(token, created_reports[i]['id'], report['status'])
+                random_upvotes = random.randint(0, 50)
+                update_report_upvotes(token, created_reports[i]['id'], random_upvotes)
 
 # Run the script
 if __name__ == "__main__":
