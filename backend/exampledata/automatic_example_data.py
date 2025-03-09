@@ -764,9 +764,9 @@ def createComponyInformation(token):
             "main_color":"#8ff095",
             "font":"Arial",
             "sw_lat" : 51.341875,
-            "sw_lon": -0.33672,  
+            "sw_lon": -0.38672,  
             "ne_lat": 51.651675,  
-            "ne_lon": -0.01758
+            "ne_lon": -0.06758
         }
     response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data)
     if response.status_code == 201:
