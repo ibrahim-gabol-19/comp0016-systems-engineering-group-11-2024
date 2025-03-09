@@ -20,6 +20,7 @@ CMS_ARTICLES_URL = f"{BASE_URL}/articles/"
 POI_URL = f"{BASE_URL}/events/"
 REPORTS_URL = f"{BASE_URL}/reports/"
 COMPANY_INFORMATION_URL = f"{BASE_URL}/companyinformation/"
+REPORTSDISCUSSION_URL = f"{BASE_URL}/reportdiscussion/"
 
 # Account credentials
 EMAIL = "ExampleBusiness@e.com"
@@ -730,8 +731,8 @@ def create_report(token, title, description, status, tags, author):
         "longitude": (None, str(new_longitude)),
         "latitude": (None, str(new_latitude)),
         "tags": tags,
-
     }
+
     response = requests.post(REPORTS_URL, headers=headers, data=data)
     # print(f"Response status code: {response.status_code}")
     # print(f"Response text: {response.text}")
@@ -782,6 +783,229 @@ def update_report_upvotes(token, report_id, upvotes):
     else:
         print(f"Error updating report {report_id} upvotes: {response.text}")
 
+# Function to create report discussion
+def create_report_discussion(token, report_id, author, message):
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "report": report_id,
+        "author": author,
+        "message": message,
+    }
+    response = requests.post(REPORTSDISCUSSION_URL, headers=headers, data=data)
+    if response.status_code == 201:
+        return response.json()
+    else:
+        print(f"Error creating report discussion: {response.text}")
+        return None
+    
+
+def generate_report_discussions(token, created_reports):
+    community_members = ["John Doe", "Jane Smith", "David Lee", "Sarah Jones", "Michael Brown", "Emily Davis", "Kevin Wilson", "Jessica Rodriguez", "Christopher Green", "Ashley King", "Matthew Scott", "Stephanie Baker", "Nicholas Adams", "Heather Nelson", "Ryan Mitchell", "Angela Collins"]
+
+    discussions = []
+
+    for i, report in enumerate(reports_data):
+        if i < len(created_reports) and created_reports[i]:
+            report_id = created_reports[i]['id']
+            if report['title'] == "Pothole on Elm Street":
+                messages = [
+                    "I drove over that pothole yesterday, it's terrible!",
+                    "Has anyone reported this to the city yet?",
+                    "We need to get this fixed ASAP, my tire is damaged.",
+                    "I saw a car nearly swerve into oncoming traffic trying to avoid it."
+                ]
+            elif report['title'] == "Illegal Dumping in Park":
+                messages = [
+                    "This is an outrage! Who would do such a thing?",
+                    "It's heartbreaking to see the park in this state.",
+                    "We should organize a community cleanup day.",
+                    "Has anyone seen any suspicious activity in the park recently?"
+                ]
+            elif report['title'] == "Air Pollution Spike":
+                messages = [
+                    "I've been having trouble breathing lately, this must be why.",
+                    "The smell is awful, it's affecting my daily life.",
+                    "Is there any way to monitor the air quality in real-time?",
+                    "We need to demand action from the city to address this pollution."
+                ]
+            elif report['title'] == "Blocked Drains Causing Flooding":
+                messages = [
+                    "My basement flooded last night because of this!",
+                    "The water was up to my ankles on the street.",
+                    "This happens every time it rains heavily, it's unacceptable.",
+                    "We need better drainage systems in this area."
+                ]
+            elif report['title'] == "Excessive Noise Pollution":
+                messages = [
+                    "I couldn't sleep at all last night because of the noise.",
+                    "This has been going on for days, it's unbearable.",
+                    "Are there any noise ordinances in this area?",
+                    "We need to file a formal complaint."
+                ]
+            elif report['title'] == "Tree Down Blocking Road":
+                messages = [
+                    "I had to take a detour this morning because of the tree.",
+                    "It's completely blocking the road, it's dangerous.",
+                    "Has anyone called the emergency services yet?",
+                    "We need to get this cleared as soon as possible."
+                ]
+            elif report['title'] == "Chemical Spill Near River":
+                messages = [
+                    "This is extremely concerning, the river is a vital resource.",
+                    "We need to alert the environmental agency immediately.",
+                    "Has anyone identified the chemical?",
+                    "We need to prevent this from spreading."
+                ]
+            elif report['title'] == "Overfilled Public Bins":
+                messages = [
+                    "The bins are overflowing and it's attracting pests.",
+                    "It's a health hazard, especially in this heat.",
+                    "We need more frequent collections.",
+                    "This is a recurring problem, it needs a permanent solution."
+                ]
+            elif report['title'] == "Contaminated Water Supply":
+                messages = [
+                    "I'm afraid to drink the water, it smells and tastes strange.",
+                    "We need to get the water tested immediately.",
+                    "Has anyone else experienced this?",
+                    "We need to alert the health department."
+                ]
+            elif report['title'] == "Abandoned Vehicle Blocking Street":
+                messages = [
+                    "That car has been there for days, it's taking up valuable parking space.",
+                    "It's also a safety concern, it's blocking the view of oncoming traffic.",
+                    "We need to get it towed.",
+                    "Who do we contact to report this?"
+                ]
+            elif report['title'] == "Road Repair needed":
+                messages = [
+                    "That pothole was terrible, glad it is fixed.",
+                    "The road is much smoother now.",
+                    "Thank you for fixing it.",
+                    "Who fixed it?"
+                ]
+            elif report['title'] == "Dog waste problem in park":
+                messages = [
+                    "Much better now, thank you.",
+                    "The park is much cleaner.",
+                    "Hopefully people will continue to be responsible.",
+                    "Glad the problem is resolved."
+                ]
+            elif report['title'] == "Noise complaint from construction site":
+                messages = [
+                    "Finally, some peace and quiet.",
+                    "Glad they addressed the issue.",
+                    "The construction site is much quieter now.",
+                    "Thank you for resolving this."
+                ]
+            elif report['title'] == "Illegal dumping in alleyway":
+                messages = [
+                    "The alleyway is clean again.",
+                    "Thank you for cleaning it up.",
+                    "Hopefully this will not happen again.",
+                    "The alley is much better now."
+                ]
+            elif report['title'] == "Broken Streetlight":
+                messages = [
+                    "It's so dark at night without that light.",
+                    "It's dangerous to walk there now.",
+                    "We need to get this fixed quickly.",
+                    "Has anyone reported this to the city?"
+                ]
+            elif report['title'] == "Graffiti on Public Building":
+                messages = [
+                    "That graffiti is an eyesore.",
+                    "It makes the community center look bad.",
+                    "We need to get it cleaned as soon as possible.",
+                    "Who would do such a thing?"
+                ]
+            elif report['title'] == "Leaking Pipe on Sidewalk":
+                messages = [
+                    "That leak is wasting so much water.",
+                    "It's also making the sidewalk slippery.",
+                    "We need to get it fixed immediately.",
+                    "Has anyone reported this to the water company?"
+                ]
+            elif report['title'] == "Litter in Playground":
+                messages = [
+                    "The playground is a mess.",
+                    "It's not safe for children to play there.",
+                    "We need to clean it up.",
+                    "Who is responsible for cleaning the playground?"
+                ]
+            elif report['title'] == "Fallen Branch Blocking Path":
+                messages = [
+                    "That branch is completely blocking the path.",
+                    "It's dangerous to try to climb over it.",
+                    "We need to get it removed.",
+                    "Has anyone reported this to the park rangers?"
+                ]
+            elif report['title'] == "Unsafe Building Demolition":
+                messages = [
+                    "That demolition is very unsafe.",
+                    "Debris is falling into the street.",
+                    "We need to stop the demolition until it is safe.",
+                    "Has anyone reported this to the building inspector?"
+                ]
+            elif report['title'] == "Sewage Smell in Street":
+                messages = [
+                    "That smell is disgusting.",
+                    "It's making me sick.",
+                    "We need to find the source of the smell.",
+                    "Has anyone reported this to the sewer company?"
+                ]
+            elif report['title'] == "Abandoned Shopping Carts":
+                messages = [
+                    "Those shopping carts are an eyesore.",
+                    "They're also taking up valuable space.",
+                    "We need to get them removed.",
+                    "Who is responsible for removing them?"
+                ]
+            elif report['title'] == "Damaged Traffic Sign":
+                messages = [
+                    "That sign is difficult to read.",
+                    "It's dangerous to drive through that intersection now.",
+                    "We need to get it replaced.",
+                    "Has anyone reported this to the traffic department?"
+                ]
+            elif report['title'] == "Flooded Underpass":
+                messages = [
+                    "The underpass is completely flooded.",
+                    "It's impossible to pass through now.",
+                    "We need to get the water pumped out.",
+                    "Has anyone reported this to the city?"
+                ]
+            elif report['title'] == "Resolved: Streetlight Repaired":
+                messages = [
+                    "The streetlight is working again.",
+                    "It's much safer to walk there at night now.",
+                    "Thank you for fixing it.",
+                    "Glad its working."
+                ]
+            elif report['title'] == "Resolved: Graffiti Removed":
+                messages = [
+                    "The graffiti is gone.",
+                    "The community center looks much better now.",
+                    "Thank you for cleaning it.",
+                    "Glad that is resolved."
+                ]
+            elif report['title'] == "Closed: Noise Complaint Resolved":
+                messages = [
+                    "The construction noise has stopped.",
+                    "It's so much quieter now.",
+                    "Thank you for addressing the issue.",
+                    "Glad that is resolved."
+                ]
+            else:
+                messages = ["General discussion message 1", "General discussion message 2"]
+
+            for message in messages:
+                author = random.choice(community_members)
+                discussion = create_report_discussion(token, report_id, author, message)
+                if discussion:
+                    discussions.append(discussion)
+    return discussions
+
 # Main execution flow
 def main():
     # Flush the database before populating it
@@ -812,6 +1036,8 @@ def main():
             report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'])
             if report_data:
                 created_reports.append(report_data)
+        # Generate report discussions
+        generate_report_discussions(token, created_reports)
 
         for i, report in enumerate(reports_data):
             if i < len(created_reports) and created_reports[i]:
