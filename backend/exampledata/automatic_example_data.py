@@ -650,50 +650,51 @@ articles_data = [
         "title": "Discovering London's History",
         "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization.",
         "author": "Alice Johnson",
-        "description": "A journey through time in the heart of London."
+        "description": "A journey through time in the heart of London.",
+        "main_image": "Photo by Dominika Gregušová from Pexels: https://www.pexels.com/photo/city-view-at-london-672532/"
     },
-    {
-        "title": "A Guide to London’s Iconic Landmarks",
-        "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance.",
-        "author": "Bob Williams",
-        "description": "Explore the must-see sights of London."
-    },
-    {
-        "title": "The Best Parks in London",
-        "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city.",
-        "author": "Charlie Brown",
-        "description": "Discover the green oasis of London."
-    },
-    {
-        "title": "A Walk Through London’s Museums",
-        "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art.",
-        "author": "Eve Smith",
-        "description": "A cultural journey through London's museums."
-    },
-    {
-        "title": "Exploring the Thames River",
-        "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture.",
-        "author": "Frank Miller",
-        "description": "A voyage along the iconic Thames River."
-    },
-    {
-        "title": "The Best Coffee Shops in London",
-        "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone.",
-        "author": "Grace Davis",
-        "description": "A caffeine-fueled tour of London's coffee culture."
-    },
-    {
-        "title": "London's Street Food Scene",
-        "content": "Explore the vibrant street food markets of London, from Borough Market to Camden Lock. Indulge in global cuisines, artisanal treats, and local favorites.",
-        "author": "Henry Wilson",
-        "description": "A culinary journey through London's streets."
-    },
-    {
-        "title": "Hidden Gems of London",
-        "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city.",
-        "author": "Ivy Garcia",
-        "description": "A guide to London's best-kept secrets."
-    }
+    # {
+    #     "title": "A Guide to London’s Iconic Landmarks",
+    #     "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance.",
+    #     "author": "Bob Williams",
+    #     "description": "Explore the must-see sights of London."
+    # },
+    # {
+    #     "title": "The Best Parks in London",
+    #     "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city.",
+    #     "author": "Charlie Brown",
+    #     "description": "Discover the green oasis of London."
+    # },
+    # {
+    #     "title": "A Walk Through London’s Museums",
+    #     "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art.",
+    #     "author": "Eve Smith",
+    #     "description": "A cultural journey through London's museums."
+    # },
+    # {
+    #     "title": "Exploring the Thames River",
+    #     "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture.",
+    #     "author": "Frank Miller",
+    #     "description": "A voyage along the iconic Thames River."
+    # },
+    # {
+    #     "title": "The Best Coffee Shops in London",
+    #     "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone.",
+    #     "author": "Grace Davis",
+    #     "description": "A caffeine-fueled tour of London's coffee culture."
+    # },
+    # {
+    #     "title": "London's Street Food Scene",
+    #     "content": "Explore the vibrant street food markets of London, from Borough Market to Camden Lock. Indulge in global cuisines, artisanal treats, and local favorites.",
+    #     "author": "Henry Wilson",
+    #     "description": "A culinary journey through London's streets."
+    # },
+    # {
+    #     "title": "Hidden Gems of London",
+    #     "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city.",
+    #     "author": "Ivy Garcia",
+    #     "description": "A guide to London's best-kept secrets."
+    # }
 ]
 
 # Function to create events with dynamic titles and descriptions
@@ -1058,13 +1059,14 @@ def generate_report_discussions(token, created_reports):
     return discussions
 
 # Function to create articles
-def create_article(token, title, content, author, description):
+def create_article(token, title, content, author, description, main_image):
     headers = {"Authorization": f"Bearer {token}"}
     data = {
         "title": title,
         "content": content,
         "author": author,
-        "description": description
+        "description": description,
+        "main_image": main_image,
     }
     response = requests.post(CMS_ARTICLES_URL, headers=headers, data=data)
     if response.status_code == 201:
@@ -1076,7 +1078,8 @@ def create_article(token, title, content, author, description):
 def main():
     # Flush the database before populating it
     try:
-        subprocess.run(["py", "-3.11", "-m", "manage", "flush"], check=True)
+        subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
+
         print("Database flushed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error flushing database: {e}")
@@ -1097,7 +1100,7 @@ def main():
         # Create articles
         for i in range(len(articles_data)):
             article = articles_data[i]
-            create_article(token, article['title'], article['content'], article['author'],article['description'])
+            create_article(token, article['title'], article['content'], article['author'],article['description'], article['main_image'])
 
         # Create reports
         created_reports = []
