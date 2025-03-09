@@ -203,7 +203,7 @@ const ReportsPage = () => {
           <div className="absolute top-1/4 right-3/4 ">
             {/* Expandable AI Summary Section */}
             {viewingAISummary && selectedMarker && (
-              <div className="mt-4 p-4  px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
+              <div className="mt-4 p-4 max-h-[40rem] overflow-auto px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
                 <p
                   className={`text-gray-700 ${
                     !modelReply ? "animate-pulse bg-gray-200 rounded" : ""
