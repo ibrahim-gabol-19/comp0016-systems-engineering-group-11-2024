@@ -105,8 +105,8 @@ const MiscellaneousSection = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
-    window.location.reload();
+    navigate('/'); // Navigate to the root URL
+    window.location.reload(); // Reload the page
   };
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
