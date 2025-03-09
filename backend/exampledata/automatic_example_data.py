@@ -566,7 +566,8 @@ poi_events = [
         "latitude": 51.5007,
         "longitude": -0.1246,
         "is_featured": "False",
-        "opening_times": "Mon- Fri 09:00-17:00"
+        "opening_times": "Mon- Fri 09:00-17:00",
+        "image_path": "img/bigben.png"
     },
     {
         "title": "Visit the London Eye",
@@ -576,7 +577,8 @@ poi_events = [
         "latitude": 51.5033,
         "longitude": -0.1196,
         "is_featured": "False",
-        "opening_times": "Everyday 10:00-20:30"
+        "opening_times": "Everyday 10:00-20:30",
+        "image_path": "img/londoneye.png"
     },
     {
         "title": "Explore Trafalgar Square",
@@ -586,7 +588,8 @@ poi_events = [
         "latitude": 51.5074,
         "longitude": -0.1278,
         "is_featured": "False",
-        "opening_times": "24/7"
+        "opening_times": "24/7",
+        "image_path": "img/trafalgar.png"
     },
     {
         "title": "Tour Buckingham Palace",
@@ -596,7 +599,8 @@ poi_events = [
         "latitude": 51.5014,
         "longitude": -0.1419,
         "is_featured": "False",
-        "opening_times": "Wed-Sun 09:30-17:30"
+        "opening_times": "Wed-Sun 09:30-17:30",
+        "image_path": "img/buckingham.png"
     },
     {
         "title": "Visit the Tower of London",
@@ -606,7 +610,8 @@ poi_events = [
         "latitude": 51.5081,
         "longitude": -0.0759,
         "is_featured": "False",
-        "opening_times": "Tue-Sat 09:00-17:30"
+        "opening_times": "Tue-Sat 09:00-17:30",
+        "image_path": "img/tower.png"
     },
     {
         "title": "Discover the British Museum",
@@ -616,7 +621,8 @@ poi_events = [
         "latitude": 51.5194,
         "longitude": -0.1270,
         "is_featured": "False",
-        "opening_times": "Every day 10:00-17:30"
+        "opening_times": "Every day 10:00-17:30",
+        "image_path": "img/museum.webp"
     },
     {
         "title": "Explore the Natural History Museum",
@@ -626,7 +632,8 @@ poi_events = [
         "latitude": 51.4966,
         "longitude": -0.1764,
         "is_featured": "False",
-        "opening_times": "Every day 10:00-17:50"
+        "opening_times": "Every day 10:00-17:50",
+        "image_path": "img/naturalhistory.png"
     },
     {
         "title": "Hyde Park: London's Green Oasis",
@@ -636,7 +643,8 @@ poi_events = [
         "latitude": 51.5073,
         "longitude": -0.1657,
         "is_featured": "False",
-        "opening_times": ""
+        "opening_times": "24/7",
+        "image_path": "img/hydepark.png"
     },
     {
         "title": "Regent's Park: A Botanical Haven",
@@ -646,7 +654,8 @@ poi_events = [
         "latitude": 51.5304,
         "longitude": -0.1520,
         "is_featured": "False",
-        "opening_times": ""
+        "opening_times": "24/7",
+        "image_path": "img/regentspark.png"
     },
     {
         "title": "Kew Gardens: A World of Plants",
@@ -656,7 +665,8 @@ poi_events = [
         "latitude": 51.4785,
         "longitude": -0.2956,
         "is_featured": "False",
-        "opening_times": "Every day 10:00-18:00"
+        "opening_times": "Every day 10:00-18:00",
+        "image_path": "img/kewgardens.png"
     }
 ]
 
@@ -735,21 +745,22 @@ def create_event(token, title, description, location, date, time, latitude, long
     else:
         print(f"Error creating event '{title}':", response.text)
 
-def create_poi(token, title, description, location, opening_times, poi_type, latitude, longitude, is_featured):
+def create_poi(token, title, description, location, opening_times, poi_type, latitude, longitude, is_featured, image_path):
     headers = {"Authorization": f"Bearer {token}"}
-    data = {
-        "title": title,
-        "description": description,
-        "location": location,
-        "event_type": "point_of_interest",
-        "latitude": latitude, 
-        "longitude": longitude,  
-        "is_featured": is_featured,
-        "poi_type": poi_type,
-        "opening_times": opening_times
-    }
-    
-    response = requests.post(POI_URL, headers=headers, data=data)
+    with open(image_path, "rb") as img_file:
+        files = {"main_image": img_file}
+        data = {
+            "title": title,
+            "description": description,
+            "location": location,
+            "event_type": "point_of_interest",
+            "latitude": latitude, 
+            "longitude": longitude,  
+            "is_featured": is_featured,
+            "poi_type": poi_type,
+            "opening_times": opening_times
+        }
+        response = requests.post(POI_URL, headers=headers, data=data, files=files)
     if response.status_code == 201:
         print(f"POI '{title}' created successfully with type '{poi_type}'.")
     else:
@@ -757,18 +768,19 @@ def create_poi(token, title, description, location, opening_times, poi_type, lat
 
 def createComponyInformation(token):
     headers = {"Authorization": f"Bearer {token}"}
-    data = {
-            "name":"London City Council",
-            "about":"This is London City Council.",
-            "logo":None, 
-            "main_color":"#8ff095",
-            "font":"Arial",
-            "sw_lat" : 51.341875,
-            "sw_lon": -0.38672,  
-            "ne_lat": 51.651675,  
-            "ne_lon": -0.06758
-        }
-    response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data)
+    with open("img/councillogo.png", "rb") as img_file:
+        files = {"logo": img_file}
+        data = {
+                "name":"London City Council",
+                "about":"This is London City Council.",
+                "main_color":"#8ff095",
+                "font":"Arial",
+                "sw_lat" : 51.341875,
+                "sw_lon": -0.38672,  
+                "ne_lat": 51.651675,  
+                "ne_lon": -0.06758
+            }
+        response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data, files=files)
     if response.status_code == 201:
         print(f"Company information created successfully.")
     else:
@@ -1114,7 +1126,7 @@ def main():
             create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
         for i in range(len(poi_events)):
             event = poi_events[i]
-            create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"])
+            create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
 
         # Create articles
         for i in range(len(articles_data)):
