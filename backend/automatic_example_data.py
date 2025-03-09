@@ -1,6 +1,15 @@
 import requests
 import random
 from geopy.distance import geodesic
+import urllib.parse
+from io import BytesIO
+import random
+import requests
+import random
+import requests
+import datetime
+
+
 
 # API URL and endpoints
 # BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
@@ -12,6 +21,7 @@ EVENTS_URL = f"{BASE_URL}/events/"
 CMS_ARTICLES_URL = f"{BASE_URL}/articles/"
 POI_URL = f"{BASE_URL}/events/"
 REPORTS_URL = f"{BASE_URL}/reports/"
+COMPANY_INFORMATION_URL = f"{BASE_URL}/companyinformation/"
 
 # Account credentials
 EMAIL = "ExampleBusiness@e.com"
@@ -57,36 +67,6 @@ def login():
         print(f"Login failed with status code {response.status_code}: {response.text} {response}")
         return None
 
-
-import datetime
-
-# def create_event(token, title, description, location, event_time):
-#     headers = {"Authorization": f"Bearer {token}"}
-
-#     # Get today's date and the current week range (starting from Sunday)
-#     today = datetime.date.today()
-#     start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday
-#     days_of_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]  # Days in this week
-
-#     # Randomly choose a day from the current week
-#     event_date = random.choice(days_of_week)
-
-#     data = {
-#         "title": title,
-#         "description": description,
-#         "location": location,
-#         "event_type": "scheduled",
-#         "date": event_date.isoformat(),  # Format date to YYYY-MM-DD
-#         "time": event_time,
-#         "latitude": 51.5074,  # Approximate latitude for London
-#         "longitude": -0.1278  # Approximate longitude for London
-#     }
-
-#     response = requests.post(EVENTS_URL, headers=headers, data=data)
-#     if response.status_code == 201:
-#         print(f"Event '{title}' created successfully on {event_date}.")
-#     else:
-#         print(f"Error creating event '{title}':", response.text)
 
 # Function to create articles
 def create_article(token, title, content, author, description):
@@ -159,11 +139,7 @@ def create_report(token, title, description):
         print(f"Report '{title}' created successfully.")
     else:
         print(f"Error creating report '{title}':", response.text)
-import random
-import requests
-import random
-import requests
-import datetime
+
 
 # Sample London-related data
 LONDON_LOCATIONS = [
@@ -195,93 +171,261 @@ reports_data = [
     {"title": "Sustainability of London's Food Systems", "content": "London's food systems are facing sustainability challenges, including food waste, food insecurity, and the environmental impact of food transportation. There are growing calls for local food sourcing and reducing the carbon footprint of food consumption."}
 ]
 
-events = [
+scheduled_events = [
     {
-        "event_title": "Thames River Cleanup",
-        "event_description": "Join us for a community-driven Thames River cleanup! Help us remove waste and protect London's iconic river while learning about local water ecosystems.",
+        "title": "Bird Watching in St. James's Park",
+        "description": "Join our guided bird watching tour in St. James's Park. Discover the diverse bird species that call this park home.",
+        "location": "St. James's Park",
+        "date": "2025-03-11",
+        "time": "15:00",
+        "theme": "Nature",
+        "latitude": 51.5033,
+        "longitude": -0.1300,
+        "is_featured": "True"
+    },
+    {
+        "title": "Thames River Cleanup",
+        "description": "Join us for a community-driven Thames River cleanup! Help us remove waste and protect London's iconic river while learning about local water ecosystems.",
         "location": "South Bank",
-        "time": "09:00",
-        "theme": "Sustainability"
+        "date": "2025-03-10",
+        "time": "12:00",
+        "theme": "Sustainability",
+        "latitude": 51.5074,  # Approximate latitude for London
+        "longitude": -0.1278,  # Approximate longitude for London
+        "is_featured": "True"
     },
     {
-        "event_title": "AI Walk: Exploring Smart City Solutions in London",
-        "event_description": "Take part in a guided walk through central London and discover how AI is being used to make the city smarter and more sustainable. Visit areas implementing innovative tech like smart lighting and waste management.",
-        "location": "Covent Garden",
-        "time": "11:00",
-        "theme": "AI"
-    },
-    {
-        "event_title": "Green Spaces Walk: Exploring Sustainable Gardens in London",
-        "event_description": "Join us for a relaxing walk through some of London’s most sustainable green spaces. From urban gardens to eco-conscious parks, learn how nature and sustainability coexist in the heart of the city.",
-        "location": "Hyde Park",
-        "time": "14:00",
-        "theme": "Sustainability"
-    },
-    {
-        "event_title": "Community Litter Pick at Regent’s Canal",
-        "event_description": "Help us keep Regent’s Canal clean and beautiful by joining our community litter pick. Together, we can help protect London's waterways and promote a cleaner, greener city.",
-        "location": "Regent's Canal",
+        "title": "Community Garden Planting",
+        "description": "Help us plant new flowers and vegetables in our local community garden. Learn about organic gardening and meet your neighbors!",
+        "location": "Regent's Park",
+        "date": "2025-03-03",
         "time": "10:00",
-        "theme": "Sustainability"
+        "theme": "Sustainability",
+        "latitude": 51.5304,
+        "longitude": -0.1520,
+        "is_featured": "False"
     },
     {
-        "event_title": "Green London Walking Tour: Eco-Innovations and Urban Sustainability",
-        "event_description": "Join a guided walking tour through London’s greenest streets, learning about the city’s sustainability projects, from green roofs to zero-waste initiatives. See how London is becoming a model for eco-friendly urban living.",
-        "location": "Shoreditch",
-        "time": "13:30",
-        "theme": "Sustainability"
+        "title": "Local History Walk",
+        "description": "Discover hidden historical gems in the City of London with our guided walking tour. Learn about the area's rich past.",
+        "location": "Guildhall",
+        "date": "2025-03-05",
+        "time": "14:00",
+        "theme": "Community",
+        "latitude": 51.5147,
+        "longitude": -0.0911,
+        "is_featured": "False"
     },
     {
-        "event_title": "Smart Cities Hackathon: Building the Future of London",
-        "event_description": "A hands-on hackathon where tech enthusiasts can come together to solve real-world urban challenges using AI. Teams will work on projects that make London a more sustainable and tech-forward city.",
-        "location": "King’s Cross",
-        "time": "09:30",
-        "theme": "AI"
+        "title": "Upcycled Art Workshop",
+        "description": "Create unique art pieces using recycled materials. Learn creative techniques and reduce waste.",
+        "location": "Barbican Centre",
+        "date": "2025-03-07",
+        "time": "18:00",
+        "theme": "Sustainability",
+        "latitude": 51.5205,
+        "longitude": -0.0936,
+        "is_featured": "False"
     },
     {
-        "event_title": "Urban Gardening Workshop",
-        "event_description": "Learn how to create your own urban garden in this hands-on workshop. From rooftop gardens to balcony plants, discover sustainable ways to grow your own food in the heart of London.",
-        "location": "Camden",
-        "time": "16:00",
-        "theme": "Sustainability"
+        "title": "Morning Fitness Jog",
+        "description": "Start your day with an energizing morning jog through Hyde Park. All fitness levels are welcome!",
+        "location": "Hyde Park",
+        "date": "2025-03-11",
+        "time": "07:00",
+        "theme": "Community",
+        "latitude": 51.5073,
+        "longitude": -0.1657,
+        "is_featured": "False"
     },
     {
-        "event_title": "Tree Planting in the City: A Green Initiative",
-        "event_description": "Be part of London’s green future by helping to plant trees in one of the city’s many open spaces. This event is a great opportunity to make a tangible impact on the environment while enjoying the outdoors.",
+        "title": "Local Produce Market",
+        "description": "Support local farmers and businesses at our weekly produce market. Fresh fruits, vegetables, and artisanal goods.",
+        "location": "Borough Market",
+        "date": "2025-03-12",
+        "time": "09:00",
+        "theme": "Community",
+        "latitude": 51.5056,
+        "longitude": -0.0909,
+        "is_featured": "False"
+    },
+    {
+        "title": "Urban Wildlife Workshop",
+        "description": "Learn about the wildlife that thrives in London's urban environment. Discover how to create wildlife-friendly spaces.",
         "location": "Victoria Park",
-        "time": "10:30",
-        "theme": "Sustainability"
+        "date": "2025-03-13",
+        "time": "16:00",
+        "theme": "Nature",
+        "latitude": 51.5367,
+        "longitude": -0.0306,
+        "is_featured": "False"
+    },
+    {
+        "title": "Riverboat Tour: Thames Discovery",
+        "description": "Embark on a scenic riverboat tour along the Thames. Explore London's landmarks from a unique perspective.",
+        "location": "Tower Bridge",
+        "date": "2025-03-13",
+        "time": "13:00",
+        "theme": "Community",
+        "latitude": 51.5055,
+        "longitude": -0.0754,
+        "is_featured": "False"
+    },
+    {
+        "title": "Community Book Swap",
+        "description": "Bring your old books and swap them for new reads at our community book swap. A great way to recycle and discover new authors.",
+        "location": "Southwark Library",
+        "date": "2025-03-14",
+        "time": "13:00",
+        "theme": "Community",
+        "latitude": 51.5019,
+        "longitude": -0.0984,
+        "is_featured": "False"
+    },
+    {
+        "title": "Community yoga in the park",
+        "description": "Join our community yoga session in the park. Relax, stretch, and connect with nature.",
+        "location": "Green Park",
+        "date": "2025-03-15",
+        "time": "9:00",
+        "theme": "Community",
+        "latitude": 51.5033,
+        "longitude": -0.1419,
+        "is_featured": "False"
+    },
+    {
+        "title": "Green Living Seminar",
+        "description": "Learn practical tips for sustainable living. Reduce your carbon footprint and make a positive impact on the environment.",
+        "location": "City Hall",
+        "date": "2025-03-15",
+        "time": "11:00",
+        "theme": "Sustainability",
+        "latitude": 51.5045,
+        "longitude": -0.0805,
+        "is_featured": "False"
+    },
+    {
+        "title": "Sunday Cycle Ride",
+        "description": "Enjoy a leisurely cycle ride along the Regent's Canal. Explore London's hidden waterways and enjoy the scenery.",
+        "location": "Regent's Canal",
+        "date": "2025-03-16",
+        "time": "10:00",
+        "theme": "Community",
+        "latitude": 51.5350,
+        "longitude": -0.1000,
+        "is_featured": "False"
+    },
+    {
+        "title": "Art in the Park",
+        "description": "Join us for an outdoor art session in Battersea Park. Bring your own materials or use ours. All skill levels welcome.",
+        "location": "Battersea Park",
+        "date": "2025-03-18",
+        "time": "14:00",
+        "theme": "Community",
+        "latitude": 51.4770,
+        "longitude": -0.1583,
+        "is_featured": "False"
+    },
+    {
+        "title": "Recycling Workshop",
+        "description": "Learn the ins and outs of recycling in London. Understand what can and cannot be recycled and how to do it effectively.",
+        "location": "Islington Ecology Centre",
+        "date": "2025-03-20",
+        "time": "17:00",
+        "theme": "Sustainability",
+        "latitude": 51.5361,
+        "longitude": -0.1060,
+        "is_featured": "False"
+    },
+    {
+        "title": "Community Choir Practice",
+        "description": "Join our friendly community choir for a fun singing session. All voices welcome!",
+        "location": "Spitalfields Community Centre",
+        "date": "2025-03-22",
+        "time": "19:00",
+        "theme": "Community",
+        "latitude": 51.5188,
+        "longitude": -0.0717,
+        "is_featured": "False"
+    },
+    {
+        "title": "Sustainable Cooking Class",
+        "description": "Learn how to cook delicious and sustainable meals using locally sourced ingredients. Reduce food waste and eat healthy.",
+        "location": "Hackney City Farm",
+        "date": "2025-03-24",
+        "time": "18:30",
+        "theme": "Sustainability",
+        "latitude": 51.5435,
+        "longitude": -0.0536,
+        "is_featured": "False"
+    },
+    {
+        "title": "Nature Photography Walk",
+        "description": "Capture the beauty of London's parks and wildlife on our guided photography walk. Learn tips and tricks for stunning nature shots.",
+        "location": "Hampstead Heath",
+        "date": "2025-03-26",
+        "time": "15:30",
+        "theme": "Nature",
+        "latitude": 51.5607,
+        "longitude": -0.1653,
+        "is_featured": "False"
+    },
+    {
+        "title": "Community Yoga Class",
+        "description": "Relax and unwind with our community yoga class in Greenwich Park. Suitable for all levels, bring your own mat.",
+        "location": "Greenwich Park",
+        "date": "2025-03-28",
+        "time": "08:30",
+        "theme": "Community",
+        "latitude": 51.4769,
+        "longitude": -0.0005,
+        "is_featured": "False"
+    },
+    {
+        "title": "Zero Waste Workshop",
+        "description": "Discover the principles of zero waste living and how to reduce your environmental impact. Practical tips and advice for sustainable living.",
+        "location": "Walthamstow Wetlands",
+        "date": "2025-03-30",
+        "time": "16:00",
+        "theme": "Sustainability",
+        "latitude": 51.6014,
+        "longitude": -0.0265,
+        "is_featured": "False"
+    },
+    {
+        "title": "Community Gardening Day",
+        "description": "Join us for a day of community gardening at Kew Gardens. Help plant flowers, herbs, and vegetables in our shared garden space.",
+        "location": "Kew Gardens",
+        "date": "2025-04-01",
+        "time": "10:00",
+        "theme": "Community",
+        "latitude": 51.4785,
+        "longitude": -0.2956,
+        "is_featured": "False"
     }
 ]
 
 company_data = {"title"}
 
 # Function to create events with dynamic titles and descriptions
-def create_event(token, title, description, location, event_time):
+def create_event(token, title, description, location, date, time, latitude, longitude, is_featured):
     headers = {"Authorization": f"Bearer {token}"}
-    
-    # Get today's date and the current week range (starting from Sunday)
-    today = datetime.date.today()
-    start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday
-    days_of_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]  # Days in this week
-
-    # Randomly choose a day from the current week
-    event_date = random.choice(days_of_week)
 
     data = {
         "title": title,
         "description": description,
         "location": location,
         "event_type": "scheduled",
-        "date": event_date.isoformat(),  # Format date to YYYY-MM-DD
-        "time": event_time,
-        "latitude": 51.5074,  # Approximate latitude for London
-        "longitude": -0.1278  # Approximate longitude for London
+        "date": date,  # Format date to YYYY-MM-DD
+        "time": time,
+        "latitude": latitude, 
+        "longitude": longitude,  
+        "is_featured": is_featured
     }
 
     response = requests.post(EVENTS_URL, headers=headers, data=data)
     if response.status_code == 201:
-        print(f"Event '{title}' created successfully on {event_date}.")
+        print(f"Event '{title}' created successfully on {date}.")
     else:
         print(f"Error creating event '{title}':", response.text)
 
@@ -317,15 +461,37 @@ def create_poi(token, title, description, location):
     else:
         print(f"Error creating POI '{title}':", response.text)
 
+def createComponyInformation(token):
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+            "name":"London City Council",
+            "about":"This is London City Council.",
+            "logo":None, 
+            "main_color":"#8ff095",
+            "font":"Arial",
+            "sw_lat" : 51.341875,
+            "sw_lon": -0.29222,  
+            "ne_lat": 51.651675,  
+            "ne_lon": 0.01758
+        }
+    response = requests.post(COMPANY_INFORMATION_URL, headers=headers, data=data)
+    if response.status_code == 201:
+        print(f"Company information created successfully.")
+    else:
+        print(f"Error creating company information:", response.text)
+
+
+
 # Main execution flow
 def main():
     signup()
     token = login()
     if token:
+        createComponyInformation(token)
         # Create 5 events with dynamic titles and descriptions
-        for i in range(5):
-            event = events[i]
-            create_event(token, event["event_title"], event["event_description"], event["location"], event["time"])
+        for i in range(len(scheduled_events)):
+            event = scheduled_events[i]
+            create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"])
         # Create 5 articles
         for i in range(5):
             article = articles_data[i]
