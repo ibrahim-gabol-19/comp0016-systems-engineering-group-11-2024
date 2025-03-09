@@ -5,7 +5,6 @@ import axios from "axios";
 import Header from "../../components/Header";
 import ReactMarkdown from "react-markdown";
 import { useLocation } from "react-router-dom";
-import L from 'leaflet'; 
 
 const API_URL = process.env.REACT_APP_API_URL;
 
