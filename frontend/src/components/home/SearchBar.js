@@ -15,6 +15,7 @@ const SearchBar = () => {
   const [userQuery, setUserQuery] = useState("");
   const [fullUserQuery, setFullUserQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+  const [generatedReport, setGeneratedReport] = useState(null);
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -24,7 +25,14 @@ const SearchBar = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // LLM decides whether to initiate new report or search query
+    setMessages([...messages, { text: userQuery, sender: "user" }]);
+    // setModelReply("Here is what I found.");
+    setFullUserQuery(userQuery);
+    setUserQuery("");
     const choice = await determineUserQuery(userQuery);
+    setSearchResult([]);
+    setGeneratedReport(null);
+    console.log(choice);
     switch (choice) {
       case "0":
         console.log("0");
@@ -35,16 +43,11 @@ const SearchBar = () => {
         getReportReply(userQuery);
         break;
       default:
-        console.log("default");
-        console.log(modelReply);
-        // getSearchReply(userQuery);
+        getSearchReply(userQuery);
         break;
     }
 
-    setMessages([...messages, { text: userQuery, sender: "user" }]);
-    setModelReply("Here is what I found.");
-    setFullUserQuery(userQuery);
-    setUserQuery("");
+
   };
 
   const handleRedirect = (item) => {
@@ -55,7 +58,10 @@ const SearchBar = () => {
       navigate(`/events/${item.id}`);
     } else if (item.source === "article") {
       navigate(`/articles/${item.id}`);
-    } else {
+    } else if (item === "generatedReport") {
+      navigate(`/reporting`, { state: { newIssue: generatedReport}});
+    }
+    else {
       console.log("Did not match any source");
     }
   };
@@ -82,15 +88,23 @@ const SearchBar = () => {
     if (userQuery === "" || isStreaming) {
       return;
     }
-
-    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
-              The user has asked something, it may be a report with a location and title and description.
-              It may be a search query asking for events or articles.
-              Determine whether the following is a new report request or a search query
-              Respond with 1 to create a new report and 0 for search query.
-              `;
-
-    const modelReply = await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+    const systemPrompt = `
+    Determine whether the following is a new report request or a search query.
+    - Respond with 1 (new report request) if the input:
+      * Asks to create a new report.
+      * Describes an issue or problem that needs to be reported.
+      * Uses phrases like "report," "create a report," or "make a new report."
+    - Respond with 0 (search query) if the input:
+      * Asks for information or looks up existing data.
+      * Uses phrases like "find," "search," or "information about."
+    Examples:
+    - "Can you make a new report? I noticed some overflowing bins on my road." → 1
+    - "Find information about overflowing bins in my area." → 0
+    - "I want to report a pothole on Main Street." → 1
+    - "What are the rules for waste disposal?" → 0
+    Respond with 1 for new report requests and 0 for search queries.
+  `;
+    const modelReply = await getReply(userQuery, systemPrompt, () => { }, setIsStreaming);
 
     if (!engine) {
       console.log("Model is still loading...");
@@ -108,19 +122,19 @@ const SearchBar = () => {
     const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
               
               Match the following userQuery to a report.
-              Use the following structure:
+              Output in JSON according to this structure:
 
               "title": "",
-              
-              "tags": "",
-              
+                                         
               "description": "",
               
-              "location": "",
+              
                       
               `;
-
-    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+    setModelReply("Hi, let me make that report for you now...")
+    const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
+    console.log(reportJSON);
+    setGeneratedReport(reportJSON);
 
     if (!engine) {
       console.log("Model is still loading...");
@@ -304,6 +318,18 @@ const SearchBar = () => {
                 </div>
               ))
               : null}
+            {/* AI-Generated Report box */}
+            {generatedReport ? (
+              <div
+                className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                onClick={() => handleRedirect("generatedReport")}
+              >
+                <h3 className="text-xl font-semibold text-gray-800">{generatedReport.title}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {generatedReport.tags}</div>
+                <p className="text-gray-600">{generatedReport.description}</p>
+              </div>
+            ) : null}
           </div>
 
           {/* AI Response */}

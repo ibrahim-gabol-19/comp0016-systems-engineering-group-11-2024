@@ -5,6 +5,7 @@ import axios from "axios";
 import Header from "../../components/Header";
 import ReactMarkdown from "react-markdown";
 import { useLocation } from "react-router-dom";
+import L from 'leaflet'; 
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -39,6 +40,7 @@ const ReportsPage = () => {
 
   const handleNewMarkerSelected = (item) => {
     setNewMarker(item);
+    console.log(item);
     setSelectedMarker(null);
     setIsSidebarOpen(true);
   };
@@ -75,8 +77,21 @@ const ReportsPage = () => {
       setSelectedMarker(location.state.selectedIssue);
       setIsSidebarOpen(true);
     }
+
+    if (location.state?.newIssue) {
+      const newIssue = location.state.newIssue;
+      newIssue.latitude = "1.01";
+      newIssue.longitude = "1.22";
+      newIssue.lat = 1.01;
+      newIssue.lon = 1.22;
+      newIssue.latlng = L.latLng(51.27983522676365, -0.022315979003906253);
+      console.log(newIssue);
+      setNewMarker(newIssue);
+      setIsSidebarOpen(true);
+      
+    }
     // eslint-disable-next-line
-  }, [location.state?.selectedIssue]);
+  }, [location.state?.selectedIssue, location.state?.newIssue]);
 
   // Close the AI summary box if selectedMarker was changed
   useEffect(() => {
