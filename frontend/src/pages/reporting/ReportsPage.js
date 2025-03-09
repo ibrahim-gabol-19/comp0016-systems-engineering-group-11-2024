@@ -20,6 +20,7 @@ const ReportsPage = () => {
   );
   const [viewingAISummary, setViewingAISummary] = useState(false);
   const [modelReply, setModelReply] = useState("");
+  const [lastSummaryID, setLastSummaryID] = useState(null);
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
@@ -76,6 +77,13 @@ const ReportsPage = () => {
     }
     // eslint-disable-next-line
   }, [location.state?.selectedIssue]);
+
+  // Close the AI summary box if selectedMarker was changed
+  useEffect(() => {
+    if (selectedMarker && selectedMarker.id != lastSummaryID) {
+      setViewingAISummary(false);
+    }
+  }, [selectedMarker]);
 
   const handleOutsideClick = (event) => {
     if (selectedMarker || newMarker) {
@@ -138,6 +146,8 @@ const ReportsPage = () => {
               setViewingAISummary={setViewingAISummary}
               modelReply={modelReply}
               setModelReply={setModelReply}
+              lastSummaryID={lastSummaryID}
+              setLastSummaryID={setLastSummaryID}
             ></SidebarReport>
           </div>
         )}
