@@ -65,9 +65,11 @@ export const AIProvider = ({ children }) => {
       setStreaming(false);
       const fullReply = await engine.getMessage();
       setModelReply(fullReply);
+      return fullReply;
     } catch (error) {
       console.error("Error during chat completion:", error);
     }
+    return;
 
   };
 

@@ -21,13 +21,29 @@ const SearchBar = () => {
   const { name } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    getSearchReply(userQuery);
+    // LLM decides whether to initiate new report or search query
+    const choice = await determineUserQuery(userQuery);
+    switch (choice) {
+      case "0":
+        console.log("0");
+        getSearchReply(userQuery);
+        break;
+      case "1":
+        console.log("1");
+        getReportReply(userQuery);
+        break;
+      default:
+        console.log("default");
+        console.log(modelReply);
+        // getSearchReply(userQuery);
+        break;
+    }
+
     setMessages([...messages, { text: userQuery, sender: "user" }]);
     setModelReply("Here is what I found.");
     setFullUserQuery(userQuery);
-
     setUserQuery("");
   };
 
@@ -59,6 +75,58 @@ const SearchBar = () => {
       description: event.description,
       event_type: event.event_type,
     }));
+  };
+
+
+  const determineUserQuery = async (userQuery) => {
+    if (userQuery === "" || isStreaming) {
+      return;
+    }
+
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+              The user has asked something, it may be a report with a location and title and description.
+              It may be a search query asking for events or articles.
+              Determine whether the following is a new report request or a search query
+              Respond with 1 to create a new report and 0 for search query.
+              `;
+
+    const modelReply = await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+
+    if (!engine) {
+      console.log("Model is still loading...");
+      setModelReply("Here is what I found:");
+      return;
+    }
+    return modelReply;
+  };
+
+  const getReportReply = async (userQuery) => {
+    if (userQuery === "" || isStreaming) {
+      return;
+    }
+
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+              
+              Match the following userQuery to a report.
+              Use the following structure:
+
+              "title": "",
+              
+              "tags": "",
+              
+              "description": "",
+              
+              "location": "",
+                      
+              `;
+
+    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+
+    if (!engine) {
+      console.log("Model is still loading...");
+      setModelReply("Here is what I found:");
+      return;
+    }
   };
 
   const getSearchResult = async (userQuery) => {
@@ -153,89 +221,88 @@ const SearchBar = () => {
           </div>
 
           <div
-            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${
-              fadeIn ? "opacity-100" : "opacity-0"
-            }`}
+            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${fadeIn ? "opacity-100" : "opacity-0"
+              }`}
           >
             {Array.isArray(searchResult)
               ? searchResult.map((item, index) => (
-                  <div
-                    key={index}
-                    className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
-                    onClick={() => handleRedirect(item)}
-                  >
-                    {/* Title */}
-                    <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
-                      {item.title}
-                    </p>
-                    {/* Source */}
-                    <span className="text-xs font-medium text-gray-500 uppercase">
-                      {item.source}
+                <div
+                  key={index}
+                  className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                  onClick={() => handleRedirect(item)}
+                >
+                  {/* Title */}
+                  <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
+                    {item.title}
+                  </p>
+                  {/* Source */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">
+                    {item.source}
+                  </span>
+                  {/* Score */}
+                  <p className="text-sm text-gray-600 mt-1">
+                    🔢 Score:{" "}
+                    <span className="font-medium">
+                      {item.similarity_score.toFixed(3)}
                     </span>
-                    {/* Score */}
-                    <p className="text-sm text-gray-600 mt-1">
-                      🔢 Score:{" "}
-                      <span className="font-medium">
-                        {item.similarity_score.toFixed(3)}
-                      </span>
-                    </p>
-                    {/* Conditional Content */}
-                    <div className="overflow-hidden text-ellipsis flex-grow">
-                      {item.source === "event" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            ⏰ <span className="font-medium">Time:</span>{" "}
-                            {item.time}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📍 <span className="font-medium">Location:</span>{" "}
-                            {item.location}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "article" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            ✍️ <span className="font-medium">Author:</span>{" "}
-                            {item.author}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📅 <span className="font-medium">Published:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "report" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            🏷️ <span className="font-medium">Tag:</span>{" "}
-                            {item.tags}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                    </div>
+                  </p>
+                  {/* Conditional Content */}
+                  <div className="overflow-hidden text-ellipsis flex-grow">
+                    {item.source === "event" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          ⏰ <span className="font-medium">Time:</span>{" "}
+                          {item.time}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📍 <span className="font-medium">Location:</span>{" "}
+                          {item.location}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "article" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          ✍️ <span className="font-medium">Author:</span>{" "}
+                          {item.author}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📅 <span className="font-medium">Published:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "report" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          🏷️ <span className="font-medium">Tag:</span>{" "}
+                          {item.tags}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
                   </div>
-                ))
+                </div>
+              ))
               : null}
           </div>
 
@@ -264,9 +331,8 @@ const SearchBar = () => {
 
       {/* Input Box */}
       <div
-        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${
-          isFocused ? "ring-2 ring-blue-500" : ""
-        }`}
+        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${isFocused ? "ring-2 ring-blue-500" : ""
+          }`}
       >
         <form
           onSubmit={handleSubmit}
