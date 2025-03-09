@@ -73,13 +73,13 @@ def create_article(token, title, content, author, description):
     else:
         print(f"Error creating article '{title}':", response.text)
 
-articles_data = [
-    {"title": "Discovering London's History", "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization."},
-    {"title": "A Guide to London’s Iconic Landmarks", "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance."},
-    {"title": "The Best Parks in London", "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city."},
-    {"title": "A Walk Through London’s Museums", "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art."},
-    {"title": "Exploring the Thames River", "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture."}
-]
+# articles_data = [
+#     {"title": "Discovering London's History", "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization."},
+#     {"title": "A Guide to London’s Iconic Landmarks", "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance."},
+#     {"title": "The Best Parks in London", "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city."},
+#     {"title": "A Walk Through London’s Museums", "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art."},
+#     {"title": "Exploring the Thames River", "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture."}
+# ]
 
 reports_data = [
     {
@@ -645,6 +645,45 @@ poi_events = [
     }
 ]
 
+articles_data = [
+    {
+        "title": "Discovering London's History",
+        "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization.",
+        "author": "Alice Johnson",
+        "description": "A journey through time in the heart of London."
+    },
+    {
+        "title": "A Guide to London’s Iconic Landmarks",
+        "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance.",
+        "author": "Bob Williams",
+        "description": "Explore the must-see sights of London."
+    },
+    {
+        "title": "The Best Parks in London",
+        "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city.",
+        "author": "Charlie Brown",
+        "description": "Discover the green oasis of London."
+    },
+    {
+        "title": "A Walk Through London’s Museums",
+        "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art.",
+        "author": "Eve Smith",
+        "description": "A cultural journey through London's museums."
+    },
+    {
+        "title": "Exploring the Thames River",
+        "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture.",
+        "author": "Frank Miller",
+        "description": "A voyage along the iconic Thames River."
+    },
+    {
+        "title": "The Best Coffee Shops in London",
+        "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone.",
+        "author": "Grace Davis",
+        "description": "A caffeine-fueled tour of London's coffee culture."
+    }
+]
+
 # Function to create events with dynamic titles and descriptions
 def create_event(token, title, description, location, date, time, latitude, longitude, is_featured):
     headers = {"Authorization": f"Bearer {token}"}
@@ -1006,6 +1045,21 @@ def generate_report_discussions(token, created_reports):
                     discussions.append(discussion)
     return discussions
 
+# Function to create articles
+def create_article(token, title, content, author, description):
+    headers = {"Authorization": f"Bearer {token}"}
+    data = {
+        "title": title,
+        "content": content,
+        "author": author,
+        "description": description
+    }
+    response = requests.post(CMS_ARTICLES_URL, headers=headers, data=data)
+    if response.status_code == 201:
+        print(f"Article '{title}' created successfully.")
+    else:
+        print(f"Error creating article '{title}':", response.text)
+
 # Main execution flow
 def main():
     # Flush the database before populating it
@@ -1019,6 +1073,7 @@ def main():
     token = login()
     if token:
         createComponyInformation(token)
+
         # Create events
         for i in range(len(scheduled_events)):
             event = scheduled_events[i]
@@ -1026,19 +1081,20 @@ def main():
         for i in range(len(poi_events)):
             event = poi_events[i]
             create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"])
+
         # Create articles
-        for i in range(5):
+        for i in range(len(articles_data)):
             article = articles_data[i]
-            create_article(token, article['title'], article['content'], "Author", f"Description for {article['title']}")
+            create_article(token, article['title'], article['content'], article['author'],article['description'])
+
         # Create reports
-        created_reports = []  # Store report data.
+        created_reports = []
         for report in reports_data:
             report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'])
             if report_data:
                 created_reports.append(report_data)
         # Generate report discussions
         generate_report_discussions(token, created_reports)
-
         for i, report in enumerate(reports_data):
             if i < len(created_reports) and created_reports[i]:
                 if report['status'] != 'open' and created_reports[i]:
