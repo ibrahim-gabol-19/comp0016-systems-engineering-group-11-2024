@@ -5,6 +5,7 @@ import requests
 import random
 import requests
 import subprocess  # Import the subprocess module
+import os
 
 
 
@@ -72,14 +73,6 @@ def create_article(token, title, content, author, description):
         print(f"Article '{title}' created successfully.")
     else:
         print(f"Error creating article '{title}':", response.text)
-
-# articles_data = [
-#     {"title": "Discovering London's History", "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization."},
-#     {"title": "A Guide to London’s Iconic Landmarks", "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance."},
-#     {"title": "The Best Parks in London", "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city."},
-#     {"title": "A Walk Through London’s Museums", "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art."},
-#     {"title": "Exploring the Thames River", "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture."}
-# ]
 
 reports_data = [
     {
@@ -648,53 +641,53 @@ poi_events = [
 articles_data = [
     {
         "title": "Discovering London's History",
-        "content": "Explore London's rich history, from the Roman era to the present day. Famous landmarks like the Tower of London and Buckingham Palace tell the stories of British monarchy and civilization.",
+        "content": "Explore London's rich history, from its Roman origins as Londinium to its modern-day status as a global metropolis. Walk the ancient streets where historical figures like Shakespeare and Churchill once trod. Delve into the Tower of London's storied past, where tales of royalty, imprisonment, and intrigue echo through the centuries. Visit the British Museum to witness artifacts from civilizations across the globe, or wander through the medieval halls of Westminster Abbey, a site of coronations and royal burials. Trace the city's evolution through the Great Fire of London, the Victorian era's industrial boom, and the resilience displayed during World War II. Discover hidden historical gems in the City of London, where remnants of Roman walls and medieval churches stand side by side with modern skyscrapers. Unearth the stories behind iconic landmarks and lesser-known historical sites, painting a vivid picture of London's enduring legacy.",
         "author": "Alice Johnson",
         "description": "A journey through time in the heart of London.",
-        "main_image": "Photo by Dominika Gregušová from Pexels: https://www.pexels.com/photo/city-view-at-london-672532/"
+        "main_image_path": "img/london.png"
     },
-    # {
-    #     "title": "A Guide to London’s Iconic Landmarks",
-    #     "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance.",
-    #     "author": "Bob Williams",
-    #     "description": "Explore the must-see sights of London."
-    # },
-    # {
-    #     "title": "The Best Parks in London",
-    #     "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city.",
-    #     "author": "Charlie Brown",
-    #     "description": "Discover the green oasis of London."
-    # },
-    # {
-    #     "title": "A Walk Through London’s Museums",
-    #     "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art.",
-    #     "author": "Eve Smith",
-    #     "description": "A cultural journey through London's museums."
-    # },
-    # {
-    #     "title": "Exploring the Thames River",
-    #     "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture.",
-    #     "author": "Frank Miller",
-    #     "description": "A voyage along the iconic Thames River."
-    # },
-    # {
-    #     "title": "The Best Coffee Shops in London",
-    #     "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone.",
-    #     "author": "Grace Davis",
-    #     "description": "A caffeine-fueled tour of London's coffee culture."
-    # },
-    # {
-    #     "title": "London's Street Food Scene",
-    #     "content": "Explore the vibrant street food markets of London, from Borough Market to Camden Lock. Indulge in global cuisines, artisanal treats, and local favorites.",
-    #     "author": "Henry Wilson",
-    #     "description": "A culinary journey through London's streets."
-    # },
-    # {
-    #     "title": "Hidden Gems of London",
-    #     "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city.",
-    #     "author": "Ivy Garcia",
-    #     "description": "A guide to London's best-kept secrets."
-    # }
+    {
+        "title": "A Guide to London’s Iconic Landmarks",
+        "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance. Start your journey at the Houses of Parliament, where Big Ben's chimes resonate across the city, a symbol of British democracy. Cross Westminster Bridge to capture panoramic views of the London Eye, a giant Ferris wheel offering a unique perspective of the skyline. Explore Buckingham Palace, the official residence of the British monarch, and witness the Changing of the Guard ceremony. Marvel at the architectural grandeur of St. Paul's Cathedral, a masterpiece designed by Sir Christopher Wren. Walk across Tower Bridge, an engineering marvel that opens to allow ships to pass. Visit Trafalgar Square, home to Nelson's Column and the National Gallery, a hub of art and culture. Discover the historical significance of the Tower of London, a fortress, palace, and prison that has played a crucial role in British history. Each landmark tells a story, weaving together the rich tapestry of London's past and present.",
+        "author": "Bob Williams",
+        "description": "Explore the must-see sights of London.",
+        "main_image_path": "img/landmarks.jpg"
+    },
+    {
+        "title": "The Best Parks in London",
+        "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city. Hyde Park, one of the largest royal parks, features the Serpentine Lake, where you can rent paddleboats or enjoy a leisurely stroll. Regent’s Park, home to London Zoo and Queen Mary’s Gardens, offers a mix of formal gardens and open spaces perfect for picnics. Hampstead Heath, with its rolling hills and wooded areas, provides a wilder, more natural escape, offering stunning views of the city skyline from Parliament Hill. Explore the hidden gardens of Holland Park, with its Kyoto Garden providing a serene Japanese oasis. Discover the botanical wonders of Kew Gardens, a UNESCO World Heritage Site, or enjoy the vibrant atmosphere of Victoria Park, a favorite among East Londoners. Each park offers a unique experience, from formal gardens and boating lakes to wild meadows and ancient woodlands, ensuring there's a green space for every mood and activity.",
+        "author": "Charlie Brown",
+        "description": "Discover the green oasis of London.",
+        "main_image_path": "img/park.jpg"
+    },
+    {
+        "title": "A Walk Through London’s Museums",
+        "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art. The British Museum houses a vast collection of world art and artifacts, including the Rosetta Stone and Egyptian mummies. The Natural History Museum, with its iconic dinosaur skeletons, offers a fascinating journey through the history of life on Earth. Tate Modern, housed in a former power station, displays modern and contemporary art from around the globe. Explore the Victoria and Albert Museum (V&A), showcasing decorative arts and design from various periods and cultures. Discover the Science Museum, where interactive exhibits bring scientific principles to life. Visit the National Gallery to admire masterpieces of European painting, or explore the smaller, specialized museums like the Sir John Soane's Museum or the Museum of London, each offering a unique perspective on history, art, and culture. London's museums cater to every interest, providing endless opportunities for learning and discovery.",
+        "author": "Eve Smith",
+        "description": "A cultural journey through London's museums.",
+        "main_image_path": "img/museum.webp"
+    },
+    {
+        "title": "Exploring the Thames River",
+        "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture. Embark on a river cruise to see iconic landmarks from a different angle, passing under historic bridges and alongside modern skyscrapers. Explore the Thames Path, a long-distance trail that follows the river's course, offering scenic walks and cycling routes. Visit the historic docks and wharves, remnants of London's maritime past. Discover the hidden islands and tributaries that dot the river, each with its own unique character. Learn about the Thames's role in London's history, from its importance as a trade route to its role in wartime defense. Witness the changing tides and the diverse wildlife that call the river home. Whether you're cruising, walking, or simply admiring the view from a riverside pub, the Thames offers a glimpse into the heart of London.",
+        "author": "Frank Miller",
+        "description": "A voyage along the iconic Thames River.",
+        "main_image_path": "img/river.png"
+    },
+    {
+        "title": "The Best Coffee Shops in London",
+        "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone. Start your day with a perfectly brewed cup at a specialty coffee shop in Shoreditch, known for its vibrant cafe culture. Explore the historic coffee houses of Soho, where literary figures and artists once gathered. Sample artisanal roasts and pastries at a cafe in Borough Market, a foodie paradise. Discover hidden gems in Notting Hill, where charming cafes line the colorful streets. Visit a roastery in East London to learn about the coffee-making process and sample freshly roasted beans. Enjoy a traditional afternoon tea with coffee and scones at a classic London cafe. From independent cafes to established chains, London's coffee scene offers a diverse range of experiences, catering to every taste and preference.",
+        "author": "Grace Davis",
+        "description": "A caffeine-fueled tour of London's coffee culture.",
+        "main_image_path": "img/coffee.jpg"
+    },
+    {
+        "title": "Hidden Gems of London",
+        "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city. Explore the tranquil oasis of St. Dunstan in the East Church Garden, a former church transformed into a beautiful public space. Discover the charming alleyways and courtyards of Covent Garden, where hidden shops and cafes await. Visit the Leighton House Museum, a Victorian artist's home filled with stunning Islamic tiles and art. Explore the canals of Little Venice, where colorful narrowboats line the waterways. Discover the historic pubs of Southwark, where Shakespearean actors once performed. Visit the Kyoto Garden in Holland Park, a serene Japanese garden with a waterfall and koi pond. Explore the street art of Shoreditch, where vibrant murals and graffiti adorn the walls. From hidden gardens and historic pubs to art galleries and independent shops, London's hidden gems offer a unique and authentic experience, away from the hustle and bustle of the main tourist attractions.",
+        "author": "Ivy Garcia",
+        "description": "A guide to London's best-kept secrets.",
+        "main_image_path": "img/london.png"
+    }
 ]
 
 # Function to create events with dynamic titles and descriptions
@@ -1059,16 +1052,19 @@ def generate_report_discussions(token, created_reports):
     return discussions
 
 # Function to create articles
-def create_article(token, title, content, author, description, main_image):
+def create_article(token, title, content, author, description, image_path):
     headers = {"Authorization": f"Bearer {token}"}
-    data = {
-        "title": title,
-        "content": content,
-        "author": author,
-        "description": description,
-        "main_image": main_image,
-    }
-    response = requests.post(CMS_ARTICLES_URL, headers=headers, data=data)
+
+    with open(image_path, "rb") as img_file:
+        files = {"main_image": img_file}
+        data = {
+            "title": title,
+            "content": content,
+            "author": author,
+            "description": description,
+        }
+        response = requests.post(CMS_ARTICLES_URL, headers=headers, data=data, files=files)
+
     if response.status_code == 201:
         print(f"Article '{title}' created successfully.")
     else:
@@ -1100,7 +1096,7 @@ def main():
         # Create articles
         for i in range(len(articles_data)):
             article = articles_data[i]
-            create_article(token, article['title'], article['content'], article['author'],article['description'], article['main_image'])
+            create_article(token, article['title'], article['content'], article['author'],article['description'], article['main_image_path'])
 
         # Create reports
         created_reports = []
