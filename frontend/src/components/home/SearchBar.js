@@ -5,6 +5,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CompanyContext } from "../../context/CompanyContext";
 import { AIContext } from "../../context/AIContext";
+import L from "leaflet";
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -19,8 +21,9 @@ const SearchBar = () => {
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const { name } = useContext(CompanyContext);
+  const { name , sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,14 +35,11 @@ const SearchBar = () => {
     const choice = await determineUserQuery(userQuery);
     setSearchResult([]);
     setGeneratedReport(null);
-    console.log(choice);
     switch (choice) {
       case "0":
-        console.log("0");
         getSearchReply(userQuery);
         break;
       case "1":
-        console.log("1");
         getReportReply(userQuery);
         break;
       default:
@@ -50,8 +50,16 @@ const SearchBar = () => {
 
   };
 
+  const createGeneratedReportWithLocation = (generatedReport) => {
+    const center = L.latLng(
+      (parseFloat(sw_lat) + parseFloat(ne_lat)) / 2,
+      (parseFloat(sw_lon) + parseFloat(ne_lon)) / 2
+    );
+    const generatedReportWithLocation = generatedReport;
+    generatedReportWithLocation.latlng = center;
+    return generatedReportWithLocation;
+  }
   const handleRedirect = (item) => {
-    console.log("Item clicked was", item);
     if (item.source === "report") {
       navigate("/reporting", { state: { selectedIssue: item } });
     } else if (item.source === "event") {
@@ -59,7 +67,8 @@ const SearchBar = () => {
     } else if (item.source === "article") {
       navigate(`/articles/${item.id}`);
     } else if (item === "generatedReport") {
-      navigate(`/reporting`, { state: { newIssue: generatedReport}});
+      const generatedReportWithLocation = createGeneratedReportWithLocation(generatedReport);
+      navigate(`/reporting`, { state: { newIssue: generatedReportWithLocation}});
     }
     else {
       console.log("Did not match any source");
@@ -72,7 +81,11 @@ const SearchBar = () => {
       setFadeIn(false);
       setTimeout(() => setFadeIn(true), 10);
     }
-  }, [searchResult]);
+    if (generatedReport) {
+      setFadeIn(false);
+      setTimeout(() => setFadeIn(true), 10);
+    }
+  }, [searchResult, generatedReport]);
 
   const extractEventDetails = (responseData) => {
     return responseData.map((event) => ({
@@ -133,7 +146,6 @@ const SearchBar = () => {
               `;
     setModelReply("Hi, let me make that report for you now...")
     const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
-    console.log(reportJSON);
     setGeneratedReport(reportJSON);
 
     if (!engine) {

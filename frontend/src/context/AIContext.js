@@ -47,9 +47,6 @@ export const AIProvider = ({ children }) => {
         { role: "user", content: userQuery },
       ];
 
-      // console.log(JSON.stringify(extractEventDetails(response.data.results), null, 2) + " The bees knees");
-      // const maxBufferSize = await engine.getMaxStorageBufferBindingSize();
-      // console.log(maxBufferSize);
       const chunks = await engine.chat.completions.create({
         messages,
         temperature: 0.5,

@@ -22,6 +22,9 @@ const ReportsPage = () => {
   const [viewingAISummary, setViewingAISummary] = useState(false);
   const [modelReply, setModelReply] = useState("");
   const [lastSummaryID, setLastSummaryID] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
 
   const sidebarRef = useRef(null);
   const mapRef = useRef(null);
@@ -40,7 +43,6 @@ const ReportsPage = () => {
 
   const handleNewMarkerSelected = (item) => {
     setNewMarker(item);
-    console.log(item);
     setSelectedMarker(null);
     setIsSidebarOpen(true);
   };
@@ -80,15 +82,10 @@ const ReportsPage = () => {
 
     if (location.state?.newIssue) {
       const newIssue = location.state.newIssue;
-      newIssue.latitude = "1.01";
-      newIssue.longitude = "1.22";
-      newIssue.lat = 1.01;
-      newIssue.lon = 1.22;
-      newIssue.latlng = L.latLng(51.27983522676365, -0.022315979003906253);
-      console.log(newIssue);
       setNewMarker(newIssue);
       setIsSidebarOpen(true);
-      
+      setTitle(newIssue.title);
+      setDescription(newIssue.description);
     }
     // eslint-disable-next-line
   }, [location.state?.selectedIssue, location.state?.newIssue]);
@@ -164,6 +161,10 @@ const ReportsPage = () => {
               setModelReply={setModelReply}
               lastSummaryID={lastSummaryID}
               setLastSummaryID={setLastSummaryID}
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
             ></SidebarReport>
           </div>
         )}

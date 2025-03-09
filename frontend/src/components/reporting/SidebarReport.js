@@ -18,13 +18,15 @@ const SidebarReport = ({
   setModelReply,
   lastSummaryID,
   setLastSummaryID,
+  title,
+  setTitle,
+  description,
+  setDescription,
 }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
   const { auth } = useAuth();
-  const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
   const { name, main_color } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
