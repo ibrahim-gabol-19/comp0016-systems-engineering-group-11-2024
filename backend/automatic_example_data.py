@@ -80,19 +80,6 @@ articles_data = [
     {"title": "Exploring the Thames River", "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture."}
 ]
 
-# reports_data = [
-#     {"title": "London’s Air Quality Crisis", "content": "London's air quality remains a significant concern, with levels of nitrogen dioxide (NO2) exceeding safe limits in many areas. The city's reliance on diesel vehicles and congestion are major contributors to air pollution."},
-#     {"title": "Waste Management Challenges in London", "content": "Waste management in London is becoming increasingly difficult as the population grows. Efforts to reduce waste through recycling programs and waste-to-energy technologies are underway, but challenges persist in reducing landfill use."},
-#     {"title": "The Pothole Problem in London", "content": "Potholes are a growing issue across London, causing damage to vehicles and posing safety risks to cyclists and pedestrians. Despite ongoing repair efforts, many roads still face significant maintenance challenges."},
-#     {"title": "Urban Heat Island Effect in London", "content": "London is experiencing the urban heat island effect, where built-up areas become significantly warmer than surrounding rural areas. This exacerbates the impact of heatwaves and contributes to poor air quality, creating challenges for public health and infrastructure."},
-#     {"title": "Flooding Risks and Drainage Issues in London", "content": "Heavy rainfall and rising sea levels pose significant flooding risks for London, especially in low-lying areas. The city's drainage infrastructure is struggling to cope with increasingly frequent and intense storms."},
-#     {"title": "Green Space Preservation in London", "content": "As London's population grows, preserving and expanding green spaces is becoming more challenging. Parks like Hyde Park and Hampstead Heath are vital for residents' well-being, but urban development pressures threaten these spaces."},
-#     {"title": "Plastic Waste Crisis in London", "content": "Plastic waste continues to be a major environmental issue in London, with millions of plastic bottles and packaging items discarded every day. The city is taking steps to reduce plastic use, including initiatives to ban single-use plastics in public spaces."},
-#     {"title": "The Impact of London's Public Transportation on Pollution", "content": "While London’s public transport system is among the largest in the world, it still contributes to the city's pollution. Efforts are being made to electrify buses and improve the sustainability of the city's trains and taxis."},
-#     {"title": "Noise Pollution in London", "content": "Noise pollution in London is reaching levels that affect residents' health and well-being. Major sources of noise include traffic, construction work, and air traffic. Authorities are working on measures to mitigate this growing problem."},
-#     {"title": "Sustainability of London's Food Systems", "content": "London's food systems are facing sustainability challenges, including food waste, food insecurity, and the environmental impact of food transportation. There are growing calls for local food sourcing and reducing the carbon footprint of food consumption."}
-# ]
-
 reports_data = [
     {
         "title": "Pothole on Elm Street",
@@ -350,7 +337,6 @@ reports_data = [
         "Author": "Elizabeth Lopez",
         "upvotes":0
     }
-
 ]
 
 scheduled_events = [
@@ -752,7 +738,7 @@ def createComponyInformation(token):
         print(f"Error creating company information:", response.text)
 
 # Function to create reports
-def create_report(token, title, description, status, tags, author, upvotes):
+def create_report(token, title, description, status, tags, author):
     headers = {"Authorization": f"Bearer {token}"}
 
     sw_lat = 51.341875
@@ -768,9 +754,6 @@ def create_report(token, title, description, status, tags, author, upvotes):
     new_latitude = round(new_latitude, 6)
     new_longitude = round(new_longitude, 6)
 
-    if upvotes == 0:
-        upvotes= random.randint(0, 50)
-
     data = {
         "title": title,
         "status": status,
@@ -779,7 +762,7 @@ def create_report(token, title, description, status, tags, author, upvotes):
         "longitude": (None, str(new_longitude)),
         "latitude": (None, str(new_latitude)),
         "tags": tags,
-        "upvotes": upvotes
+        "upvotes": 0
 
     }
     response = requests.post(REPORTS_URL, headers=headers, data=data)
@@ -859,7 +842,7 @@ def main():
         # Create reports
         created_reports = []  # Store report data.
         for report in reports_data:
-            report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'], report['upvotes'])
+            report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'])
             if report_data:
                 created_reports.append(report_data)
 
