@@ -15,29 +15,32 @@ const truncateText = (text, limit) => {
 };
 
 // Transformation functions for each type of post.
-const transformForumPost = (post, token) => ({
+// Each transformation adds a uniqueId property.
+const transformForumPost = (post) => ({
   id: post.id,
+  uniqueId: `forum-${post.id}`,
   type: "forum",
   title: post.title || post.name,
   content: post.content,
-  image: post.media, // URL of media (if any)
+  image: post.media,
   author: post.author,
   created_at: post.created_at,
   commentCount: post.commentCount || 0,
   likeCount: post.likeCount !== undefined ? post.likeCount : 0,
   liked: post.liked !== undefined ? post.liked : false,
-  tags: post.tags // Could be "News", "Event", "Volunteering", etc.
+  tags: post.tags
 });
 
 const transformArticle = (article) => ({
   id: article.id,
+  uniqueId: `article-${article.id}`,
   type: "article",
   title: article.title,
-  content: article.description, // Use description as summary content
-  image: article.main_image, // main_image URL
+  content: article.description,
+  image: article.main_image,
   author: article.author,
   created_at: article.published_date,
-  commentCount: 0, // Default if not implemented for articles
+  commentCount: 0,
   likeCount: 0,
   liked: false,
   tags: "News"
@@ -45,12 +48,13 @@ const transformArticle = (article) => ({
 
 const transformEvent = (event) => ({
   id: event.id,
+  uniqueId: `event-${event.id}`,
   type: "event",
   title: event.title,
   content: event.description,
-  image: event.main_image, // URL already provided by backend transformation
-  author: "", // No author for events
-  created_at: event.date, // For scheduled events, date is provided
+  image: event.main_image,
+  author: "",
+  created_at: event.date,
   commentCount: 0,
   likeCount: 0,
   liked: false,
@@ -66,10 +70,26 @@ const getLikeContentType = (type) => {
 };
 
 const ForYouCard = () => {
-  const [cards, setCards] = useState([]); // All posts from forums, articles, events
+  const [cards, setCards] = useState([]);
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState(null); // Which post's comments to show
-  const [selectedPostType, setSelectedPostType] = useState(null); // "forum", "article", or "event"
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [selectedPostType, setSelectedPostType] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Fetch current user details from the accounts endpoint.
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get(`${API_URL}accounts/user/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setCurrentUser(res.data))
+        .catch((err) =>
+          console.error("Error fetching current user (ensure the URL is correct):", err)
+        );
+    }
+  }, []);
 
   // Unified fetch function: fetch forums, articles, events and merge them.
   const fetchAllPosts = async () => {
@@ -80,7 +100,6 @@ const ForYouCard = () => {
       // Fetch forum posts.
       const forumRes = await axios.get(`${API_URL}forums/`, { headers: authHeader });
       const forumPostsRaw = forumRes.data;
-      // For each forum post, fetch its comment count.
       const forumPosts = await Promise.all(
         forumPostsRaw.map(async (post) => {
           try {
@@ -88,10 +107,10 @@ const ForYouCard = () => {
               params: { content_type: "forums.forumpost", object_id: post.id },
               headers: authHeader,
             });
-            return transformForumPost({ ...post, commentCount: commentRes.data.length }, token);
+            return transformForumPost({ ...post, commentCount: commentRes.data.length });
           } catch (error) {
             console.error("Error fetching extra info for forum post", post.id, error);
-            return transformForumPost({ ...post, commentCount: 0 }, token);
+            return transformForumPost({ ...post, commentCount: 0 });
           }
         })
       );
@@ -105,13 +124,40 @@ const ForYouCard = () => {
       const events = eventsRes.data.map((event) => transformEvent(event));
 
       // Merge all posts.
-      const allPosts = [...forumPosts, ...articles, ...events];
+      let allPosts = [...forumPosts, ...articles, ...events];
       // Sort by created_at descending.
       allPosts.sort((a, b) => {
         if (!a.created_at) return 1;
         if (!b.created_at) return -1;
         return new Date(b.created_at) - new Date(a.created_at);
       });
+
+      // If token and currentUser exist, update each card's like status.
+      if (token && currentUser && currentUser.id) {
+        const updatedPosts = await Promise.all(
+          allPosts.map(async (card) => {
+            try {
+              const res = await axios.get(`${API_URL}likes/`, {
+                params: {
+                  content_type: getLikeContentType(card.type),
+                  object_id: card.id,
+                },
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const likes = res.data;
+              return {
+                ...card,
+                likeCount: likes.length,
+                liked: likes.some((like) => Number(like.user.id) === Number(currentUser.id)),
+              };
+            } catch (err) {
+              console.error("Error fetching likes for card", card.id, err);
+              return card;
+            }
+          })
+        );
+        allPosts = updatedPosts;
+      }
       setCards(allPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -120,7 +166,7 @@ const ForYouCard = () => {
 
   useEffect(() => {
     fetchAllPosts();
-  }, []);
+  }, [currentUser]);
 
   // Handle post creation (only applies to forum posts for now).
   const handleCreatePost = async (postData) => {
@@ -154,7 +200,7 @@ const ForYouCard = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // Modified to accept both postId and postType.
+  // Open comments modal with the specified post ID and type.
   const handleOpenComments = (postId, postType) => {
     setSelectedPostId(postId);
     setSelectedPostType(postType);
@@ -180,20 +226,20 @@ const ForYouCard = () => {
   const handleToggleLike = async (postId, postType) => {
     const token = localStorage.getItem("token");
     const contentType = getLikeContentType(postType);
-    const card = cards.find((c) => c.id === postId);
+    const uniqueId = `${postType}-${postId}`;
+    const card = cards.find((c) => c.uniqueId === uniqueId);
     if (!card) return;
     if (!card.liked) {
       // Like the post.
       try {
-        const response = await axios.post(
+        await axios.post(
           `${API_URL}likes/`,
           { content_type: contentType, object_id: postId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // Update the card's like status.
         setCards((prevCards) =>
           prevCards.map((c) =>
-            c.id === postId ? { ...c, liked: true, likeCount: (c.likeCount || 0) + 1 } : c
+            c.uniqueId === uniqueId ? { ...c, liked: true, likeCount: (c.likeCount || 0) + 1 } : c
           )
         );
       } catch (error) {
@@ -202,21 +248,26 @@ const ForYouCard = () => {
     } else {
       // Unlike the post.
       try {
-        // First, fetch the like instance.
         const res = await axios.get(`${API_URL}likes/`, {
           params: { content_type: contentType, object_id: postId },
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.data.length > 0) {
-          const likeInstance = res.data[0];
-          await axios.delete(`${API_URL}likes/${likeInstance.id}/`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setCards((prevCards) =>
-            prevCards.map((c) =>
-              c.id === postId ? { ...c, liked: false, likeCount: (c.likeCount || 0) - 1 } : c
-            )
+          const likeInstance = res.data.find(
+            (like) => Number(like.user.id) === Number(currentUser.id)
           );
+          if (likeInstance) {
+            await axios.delete(`${API_URL}likes/${likeInstance.id}/`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setCards((prevCards) =>
+              prevCards.map((c) =>
+                c.uniqueId === uniqueId
+                  ? { ...c, liked: false, likeCount: (c.likeCount || 0) - 1 }
+                  : c
+              )
+            );
+          }
         }
       } catch (error) {
         console.error("Error unliking post:", error);
@@ -236,17 +287,15 @@ const ForYouCard = () => {
           <span>+</span> Create Post
         </button>
       </div>
-  
+
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => {
-          // For all posts, truncate the content to a maximum of 100 characters.
           const displayContent = truncateText(card.content, 100);
           const isForum = card.type === "forum";
-  
           return (
             <div
-              key={card.id}
+              key={card.uniqueId}
               className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
             >
               {card.image && (
@@ -301,7 +350,7 @@ const ForYouCard = () => {
             </div>
           );
         })}
-  
+
         {/* Dummy posts for testing */}
         {[
           {
@@ -333,13 +382,7 @@ const ForYouCard = () => {
         ].map((card, index) => {
           const isForum = !card.tags || (card.tags !== "News" && card.tags !== "Event" && card.tags !== "Article");
           const displayContent = truncateText(card.content, 100);
-          // For dummy posts, determine type based on tags.
-          const dummyType =
-            card.tags === "News"
-              ? "article"
-              : card.tags === "Event"
-              ? "event"
-              : "forum";
+          const dummyType = card.tags === "News" ? "article" : card.tags === "Event" ? "event" : "forum";
           return (
             <div
               key={`existing-${index}`}
@@ -399,13 +442,13 @@ const ForYouCard = () => {
           );
         })}
       </div>
-  
+
       <CreatePostModal
         isOpen={isCreatePostModalOpen}
         onClose={() => setIsCreatePostModalOpen(false)}
         onSubmit={handleCreatePost}
       />
-  
+
       {selectedPostId && (
         <CommentsPopup
           postId={selectedPostId}
@@ -425,5 +468,5 @@ const ForYouCard = () => {
     </div>
   );
 };
-  
+
 export default ForYouCard;
