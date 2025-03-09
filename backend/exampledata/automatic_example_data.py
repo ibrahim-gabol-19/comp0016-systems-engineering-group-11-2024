@@ -773,7 +773,7 @@ def createComponyInformation(token):
         data = {
                 "name":"London City Council",
                 "about":"This is London City Council.",
-                "main_color":"#8ff095",
+                "main_color":"#a4eaa8",
                 "font":"Arial",
                 "sw_lat" : 51.341875,
                 "sw_lon": -0.38672,  
