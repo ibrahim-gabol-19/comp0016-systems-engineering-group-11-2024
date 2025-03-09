@@ -1,13 +1,12 @@
 import requests
 import random
 from geopy.distance import geodesic
-import urllib.parse
-from io import BytesIO
 import random
 import requests
 import random
 import requests
-import datetime
+import subprocess  # Import the subprocess module
+
 
 
 
@@ -27,15 +26,6 @@ COMPANY_INFORMATION_URL = f"{BASE_URL}/companyinformation/"
 EMAIL = "ExampleBusiness@e.com"
 PASSWORD = "1ExampleBusiness*"
 USERNAME = "ExampleBusiness"
-
-# London related data
-LONDON_LOCATIONS = [
-    "Big Ben, Westminster, London, Greater London, England",
-    "London Eye, South Bank, London, Greater London, England",
-    "Trafalgar Square, Westminster, London, Greater London, England",
-    "Buckingham Palace, Westminster, London, Greater London, England",
-    "Tower of London, Tower Hill, London, Greater London, England"
-]
 
 # Function to sign up a new account
 def signup():
@@ -82,30 +72,6 @@ def create_article(token, title, content, author, description):
         print(f"Article '{title}' created successfully.")
     else:
         print(f"Error creating article '{title}':", response.text)
-
-# Function to create points of interest (POI)
-
-# def create_poi(token, title, description, location):
-#     headers = {"Authorization": f"Bearer {token}"}
-    
-#     # Randomly choose a poi_type
-#     poi_type = random.choice(["landmarks", "museums", "parks"])
-    
-#     data = {
-#         "title": title,
-#         "description": description,
-#         "location": location,
-#         "poi_type": poi_type,
-#         "event_type": "point_of_interest",
-#         "latitude": 51.5074,  # Approximate latitude for London
-#         "longitude": -0.1278  # Approximate longitude for London
-#     }
-    
-#     response = requests.post(POI_URL, headers=headers, data=data)
-#     if response.status_code == 201:
-#         print(f"POI '{title}' created successfully with type '{poi_type}'.")
-#     else:
-#         print(f"Error creating POI '{title}':", response.text)
 
 # Function to create reports
 def create_report(token, title, description):
@@ -174,7 +140,7 @@ reports_data = [
 scheduled_events = [
     {
         "title": "Bird Watching in St. James's Park",
-        "description": "Join our guided bird watching tour in St. James's Park. Discover the diverse bird species that call this park home.",
+        "description": "Join our guided bird watching tour in St. James's Park. Discover the diverse bird species that call this park home. Binoculars provided. Please wear comfortable shoes.",
         "location": "St. James's Park",
         "date": "2025-03-11",
         "time": "15:00",
@@ -190,13 +156,13 @@ scheduled_events = [
         "date": "2025-03-10",
         "time": "12:00",
         "theme": "Sustainability",
-        "latitude": 51.5074,  # Approximate latitude for London
-        "longitude": -0.1278,  # Approximate longitude for London
-        "is_featured": "True"
+        "latitude": 51.5074, 
+        "longitude": -0.1278, 
+        "is_featured": "False"
     },
     {
         "title": "Community Garden Planting",
-        "description": "Help us plant new flowers and vegetables in our local community garden. Learn about organic gardening and meet your neighbors!",
+        "description": "Help us plant new flowers and vegetables in our local community garden. Learn about organic gardening and meet your neighbors! \n Please bring your own gardening gloves.",
         "location": "Regent's Park",
         "date": "2025-03-03",
         "time": "10:00",
@@ -247,7 +213,7 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5056,
         "longitude": -0.0909,
-        "is_featured": "False"
+        "is_featured": "True"
     },
     {
         "title": "Urban Wildlife Workshop",
@@ -280,7 +246,7 @@ scheduled_events = [
         "theme": "Community",
         "latitude": 51.5019,
         "longitude": -0.0984,
-        "is_featured": "False"
+        "is_featured": "True"
     },
     {
         "title": "Community yoga in the park",
@@ -405,7 +371,112 @@ scheduled_events = [
     }
 ]
 
-company_data = {"title"}
+poi_events = [
+    {
+        "title": "Explore Big Ben",
+        "description": "Discover the history and architecture of Big Ben, one of London's most iconic landmarks.",
+        "location": "Big Ben, Westminster, London, Greater London, England",
+        "poi_type": "landmarks",
+        "latitude": 51.5007,
+        "longitude": -0.1246,
+        "is_featured": "False",
+        "opening_times": "Mon- Fri 09:00-17:00"
+    },
+    {
+        "title": "Visit the London Eye",
+        "description": "Experience breathtaking views of London from the London Eye. A must-visit attraction for tourists and locals alike.",
+        "location": "London Eye, South Bank, London, Greater London, England",
+        "poi_type": "landmarks",
+        "latitude": 51.5033,
+        "longitude": -0.1196,
+        "is_featured": "False",
+        "opening_times": "Everyday 10:00-20:30"
+    },
+    {
+        "title": "Explore Trafalgar Square",
+        "description": "Discover the history and cultural significance of Trafalgar Square. Home to Nelson's Column and the National Gallery.",
+        "location": "Trafalgar Square, Westminster, London, Greater London, England",
+        "poi_type": "landmarks",
+        "latitude": 51.5074,
+        "longitude": -0.1278,
+        "is_featured": "False",
+        "opening_times": "24/7"
+    },
+    {
+        "title": "Tour Buckingham Palace",
+        "description": "Experience the grandeur of Buckingham Palace, the official residence of the British monarch. Witness the Changing of the Guard ceremony.",
+        "location": "Buckingham Palace, Westminster, London, Greater London, England",
+        "poi_type": "landmarks",
+        "latitude": 51.5014,
+        "longitude": -0.1419,
+        "is_featured": "False",
+        "opening_times": "Wed-Sun 09:30-17:30"
+    },
+    {
+        "title": "Visit the Tower of London",
+        "description": "Explore the Tower of London, a historic castle and fortress on the banks of the River Thames. Home to the Crown Jewels and centuries of history.",
+        "location": "Tower of London, Tower Hill, London, Greater London, England",
+        "poi_type": "landmarks",
+        "latitude": 51.5081,
+        "longitude": -0.0759,
+        "is_featured": "False",
+        "opening_times": "Tue-Sat 09:00-17:30"
+    },
+    {
+        "title": "Discover the British Museum",
+        "description": "Immerse yourself in world history and culture at the British Museum. Home to a vast collection of artifacts from ancient civilizations.",
+        "location": "British Museum, Great Russell St, Bloomsbury, London, England",
+        "poi_type": "museums",
+        "latitude": 51.5194,
+        "longitude": -0.1270,
+        "is_featured": "False",
+        "opening_times": "Every day 10:00-17:30"
+    },
+    {
+        "title": "Explore the Natural History Museum",
+        "description": "Journey through the natural world at the Natural History Museum. Discover dinosaurs, gemstones, and interactive exhibits for all ages.",
+        "location": "Natural History Museum, Cromwell Rd, South Kensington, London, England",
+        "poi_type": "museums",
+        "latitude": 51.4966,
+        "longitude": -0.1764,
+        "is_featured": "False",
+        "opening_times": "Every day 10:00-17:50"
+    },
+    {
+        "title": "Hyde Park: London's Green Oasis",
+        "description": "Escape the city hustle and bustle in Hyde Park. Enjoy picnics, boating, and leisurely walks in one of London's largest parks.",
+        "location": "Hyde Park, London, England",
+        "poi_type": "parks",
+        "latitude": 51.5073,
+        "longitude": -0.1657,
+        "is_featured": "False",
+        "opening_times": ""
+    },
+    {
+        "title": "Regent's Park: A Botanical Haven",
+        "description": "Stroll through Regent's Park and admire its stunning gardens and wildlife. Visit the Queen Mary's Rose Garden and London Zoo.",
+        "location": "Regent's Park, London, England",
+        "poi_type": "parks",
+        "latitude": 51.5304,
+        "longitude": -0.1520,
+        "is_featured": "False",
+        "opening_times": ""
+    },
+    {
+        "title": "Kew Gardens: A World of Plants",
+        "description": "Explore the diverse plant life at Kew Gardens, a UNESCO World Heritage Site. Discover glasshouses, treetop walks, and botanical wonders.",
+        "location": "Kew Gardens, Richmond, London, England",
+        "poi_type": "parks",
+        "latitude": 51.4785,
+        "longitude": -0.2956,
+        "is_featured": "False",
+        "opening_times": "Every day 10:00-18:00"
+    }
+]
+
+
+
+
 
 # Function to create events with dynamic titles and descriptions
 def create_event(token, title, description, location, date, time, latitude, longitude, is_featured):
@@ -429,30 +500,18 @@ def create_event(token, title, description, location, date, time, latitude, long
     else:
         print(f"Error creating event '{title}':", response.text)
 
-# Function to create POIs with dynamic titles and descriptions
-def create_poi(token, title, description, location):
+def create_poi(token, title, description, location, opening_times, poi_type, latitude, longitude, is_featured):
     headers = {"Authorization": f"Bearer {token}"}
-    
-    # Randomly choose a poi_type
-    poi_type = random.choice(["landmarks", "museums", "parks"])
-    
-    # Randomly generate a description for the POI
-    poi_descriptions = [
-        f"Explore the beauty and history of {location['name']}, one of London's most iconic landmarks.",
-        f"Discover the significance of {location['name']} and its role in shaping London’s culture.",
-        f"Visit {location['name']} for an unforgettable experience and a deeper understanding of London's heritage."
-    ]
-    
-    description = random.choice(poi_descriptions)
-
     data = {
         "title": title,
         "description": description,
-        "location": location['name'],
-        "poi_type": poi_type,
+        "location": location,
         "event_type": "point_of_interest",
-        "latitude": location['latitude'],
-        "longitude": location['longitude']
+        "latitude": latitude, 
+        "longitude": longitude,  
+        "is_featured": is_featured,
+        "poi_type": poi_type,
+        "opening_times": opening_times
     }
     
     response = requests.post(POI_URL, headers=headers, data=data)
@@ -484,23 +543,28 @@ def createComponyInformation(token):
 
 # Main execution flow
 def main():
+    # Flush the database before populating it
+    try:
+        subprocess.run(["py", "-3.11", "-m", "manage", "flush"], check=True)
+        print("Database flushed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error flushing database: {e}")
+        return  # Stop execution if flushing fails
     signup()
     token = login()
     if token:
         createComponyInformation(token)
-        # Create 5 events with dynamic titles and descriptions
+        # Create events
         for i in range(len(scheduled_events)):
             event = scheduled_events[i]
             create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"])
-        # Create 5 articles
+        for i in range(len(poi_events)):
+            event = poi_events[i]
+            create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"])
+        # Create articles
         for i in range(5):
             article = articles_data[i]
             create_article(token, article['title'], article['content'], "Author", f"Description for {article['title']}")
-
-        # Create 5 POIs with dynamic titles and descriptions
-        for i in range(5):
-            poi_title = f"Explore {LONDON_LOCATIONS[i]['name']}"
-            create_poi(token, poi_title, f"Discover the fascinating history and beauty of {LONDON_LOCATIONS[i]['name']}.", LONDON_LOCATIONS[i])
 
         # Create 10 reports
         for i in range(10):
