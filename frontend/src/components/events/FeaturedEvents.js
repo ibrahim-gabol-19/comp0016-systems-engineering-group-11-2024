@@ -33,6 +33,21 @@ const FeaturedEvents = () => {
     );
   };
 
+  function convert12HourTo24Hour(time12) {
+    const [time, modifier] = time12.split(' ');
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+        hours = '00';
+    }
+
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}:${minutes}`;
+}
+
   return (
     <>
       {featuredEvents.length > 0 ? (
@@ -63,20 +78,29 @@ const FeaturedEvents = () => {
                         />
                       )}
                       <div className="p-4 text-center">
-                        <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
+                      <h4 className="font-bold text-lg overflow-hidden break-words line-clamp-2 min-h-[3.5rem]">{event.title}</h4>
                         {event.eventType === "scheduled" ? (
-                          <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
-                              {new Date(event.date + 'T' + event.time).toLocaleDateString(undefined, {
-                                  weekday: 'short', // e.g., "Mon"
-                                  month: 'short',   // e.g., "Jan"
-                                  day: 'numeric',   // e.g., "15"
-                                  year: 'numeric'  // e.g., "2024"
-                              })} at {new Date(event.date + 'T' + event.time).toLocaleTimeString(undefined, {
-                                  hour: 'numeric',    // e.g., "3"
-                                  minute: 'numeric',  // e.g., "30"
-                                  hour12: true       // e.g., "AM/PM"
-                              })}
-                          </p>
+                            <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
+                            {(() => {
+                                let time24 = convert12HourTo24Hour(event.time);
+                                const dateTimeString = event.date + 'T' + time24;
+                                const date = new Date(dateTimeString);
+                                if (isNaN(date.getTime())) {
+                                    return "";
+                                } else {
+                                    return `${date.toLocaleDateString(undefined, {
+                                        weekday: 'short',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    })} at ${date.toLocaleTimeString(undefined, {
+                                        hour: 'numeric',
+                                        minute: 'numeric',
+                                        hour12: true
+                                    })}`;
+                                }
+                            })()}
+                        </p>
                         ) : (
                           <p className="text-sm text-gray-600 overflow-hidden break-words line-clamp-1">
                             {event.openTimes}

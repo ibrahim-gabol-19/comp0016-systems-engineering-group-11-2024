@@ -121,7 +121,7 @@ class EventsViewSet(viewsets.ModelViewSet):
             poi_dict[category].append({
                 "id": poi["id"],
                 "title": poi["title"],
-                "openTimes": poi["opening_times"] or "No opening hours available",
+                "openTimes": poi["opening_times"],
                 "description": poi["description"],
                 "main_image": main_image_url,
                 "category": category
