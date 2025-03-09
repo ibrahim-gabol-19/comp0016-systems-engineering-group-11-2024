@@ -83,7 +83,7 @@ const ReportsPage = () => {
     if (selectedMarker && selectedMarker.id !== lastSummaryID) {
       setViewingAISummary(false);
     }
-        // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [selectedMarker]);
 
   const handleOutsideClick = (event) => {
@@ -200,22 +200,22 @@ const ReportsPage = () => {
               Closed
             </button>
           </div>
-          <div className="absolute top-1/3 right-3/4 ">
-            {/* Expandable AI Summary Section */}
-            {viewingAISummary && selectedMarker && (
-              <div className="mt-4 p-4 max-h-[40rem] overflow-auto px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
-                <p
-                  className={`text-gray-700 ${
-                    !modelReply ? "animate-pulse bg-gray-200 rounded" : ""
-                  }`}
-                >
-                  <ReactMarkdown className="text-gray-800">
-                    {modelReply || ""}
-                  </ReactMarkdown>
-                </p>
-              </div>
-            )}
-          </div>
+        </div>
+        <div className="absolute lg:top-1/3 lg:w-1/4 top-1/3 lg:translate-x-[135%] lg:translate-y-[0%] translate-y-[80%] lg:bottom-auto bottom-0">
+          {/* Expandable AI Summary Section */}
+          {viewingAISummary && selectedMarker && (
+            <div className="mt-4 p-4 max-h-[40rem] overflow-auto px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
+              <p
+                className={`text-gray-700 ${
+                  !modelReply ? "animate-pulse bg-gray-200 rounded" : ""
+                }`}
+              >
+                <ReactMarkdown className="text-gray-800">
+                  {modelReply || ""}
+                </ReactMarkdown>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
