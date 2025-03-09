@@ -32,8 +32,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
   const zoomLevel = 13;
-  const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+  const [position, setPosition] = useState(null);
 
 
   const bounds = [
@@ -48,7 +48,11 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
         map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
-    }, [selectedMarker, map]);
+      if (newMarker && newMarker.latitude !== undefined && newMarker.longitude !== undefined) {
+        map.flyTo(newMarker.latlng, map.getZoom());
+      }
+      // eslint-disable-next-line
+    }, [selectedMarker, newMarker]);
 
     return null;
   }
@@ -68,7 +72,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
     });
 
     return newMarker === null ? null : (
-      <Marker position={position} draggable={true} icon={SelectedIcon}></Marker>
+      <Marker position={position || newMarker.latlng} draggable={true} icon={SelectedIcon}></Marker>
     );
   }
 

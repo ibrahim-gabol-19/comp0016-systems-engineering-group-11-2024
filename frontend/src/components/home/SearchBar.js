@@ -5,6 +5,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CompanyContext } from "../../context/CompanyContext";
 import { AIContext } from "../../context/AIContext";
+import L from "leaflet";
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -15,31 +17,60 @@ const SearchBar = () => {
   const [userQuery, setUserQuery] = useState("");
   const [fullUserQuery, setFullUserQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+  const [generatedReport, setGeneratedReport] = useState(null);
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const { name } = useContext(CompanyContext);
+  const { name , sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    getSearchReply(userQuery);
-    setMessages([...messages, { text: userQuery, sender: "user" }]);
-    setModelReply("Here is what I found.");
-    setFullUserQuery(userQuery);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // LLM decides whether to initiate new report or search query
+    setMessages([...messages, { text: userQuery, sender: "user" }]);
+    // setModelReply("Here is what I found.");
+    setFullUserQuery(userQuery);
     setUserQuery("");
+    const choice = await determineUserQuery(userQuery);
+    setSearchResult([]);
+    setGeneratedReport(null);
+    switch (choice) {
+      case "0":
+        getSearchReply(userQuery);
+        break;
+      case "1":
+        getReportReply(userQuery);
+        break;
+      default:
+        getSearchReply(userQuery);
+        break;
+    }
+
+
   };
 
+  const createGeneratedReportWithLocation = (generatedReport) => {
+    const center = L.latLng(
+      (parseFloat(sw_lat) + parseFloat(ne_lat)) / 2,
+      (parseFloat(sw_lon) + parseFloat(ne_lon)) / 2
+    );
+    const generatedReportWithLocation = generatedReport;
+    generatedReportWithLocation.latlng = center;
+    return generatedReportWithLocation;
+  }
   const handleRedirect = (item) => {
-    console.log("Item clicked was", item);
     if (item.source === "report") {
       navigate("/reporting", { state: { selectedIssue: item } });
     } else if (item.source === "event") {
       navigate(`/events/${item.id}`);
     } else if (item.source === "article") {
       navigate(`/articles/${item.id}`);
-    } else {
+    } else if (item === "generatedReport") {
+      const generatedReportWithLocation = createGeneratedReportWithLocation(generatedReport);
+      navigate(`/reporting`, { state: { newIssue: generatedReportWithLocation}});
+    }
+    else {
       console.log("Did not match any source");
     }
   };
@@ -50,7 +81,11 @@ const SearchBar = () => {
       setFadeIn(false);
       setTimeout(() => setFadeIn(true), 10);
     }
-  }, [searchResult]);
+    if (generatedReport) {
+      setFadeIn(false);
+      setTimeout(() => setFadeIn(true), 10);
+    }
+  }, [searchResult, generatedReport]);
 
   const extractEventDetails = (responseData) => {
     return responseData.map((event) => ({
@@ -59,6 +94,65 @@ const SearchBar = () => {
       description: event.description,
       event_type: event.event_type,
     }));
+  };
+
+
+  const determineUserQuery = async (userQuery) => {
+    if (userQuery === "" || isStreaming) {
+      return;
+    }
+    const systemPrompt = `
+    Determine whether the following is a new report request or a search query.
+    - Respond with 1 (new report request) if the input:
+      * Asks to create a new report.
+      * Describes an issue or problem that needs to be reported.
+      * Uses phrases like "report," "create a report," or "make a new report."
+    - Respond with 0 (search query) if the input:
+      * Asks for information or looks up existing data.
+      * Uses phrases like "find," "search," or "information about."
+    Examples:
+    - "Can you make a new report? I noticed some overflowing bins on my road." → 1
+    - "Find information about overflowing bins in my area." → 0
+    - "I want to report a pothole on Main Street." → 1
+    - "What are the rules for waste disposal?" → 0
+    Respond with 1 for new report requests and 0 for search queries.
+  `;
+    const modelReply = await getReply(userQuery, systemPrompt, () => { }, setIsStreaming);
+
+    if (!engine) {
+      console.log("Model is still loading...");
+      setModelReply("Here is what I found:");
+      return;
+    }
+    return modelReply;
+  };
+
+  const getReportReply = async (userQuery) => {
+    if (userQuery === "" || isStreaming) {
+      return;
+    }
+
+    const systemPrompt = `You are a local resident near ${name}, a company.
+              
+              Create a report from the following userQuery.
+              Output in JSON according to this structure:
+
+              "title": "",
+                                         
+              "description": "",
+                                   
+              `;
+    setModelReply("Hi, let me make that report for you now...")
+    try {
+      const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
+      setGeneratedReport(reportJSON);
+  
+    }
+    catch (error) {
+      console.error("Error:", error);
+      setModelReply("Sorry, please try again or try a different request");
+    }
+    
   };
 
   const getSearchResult = async (userQuery) => {
@@ -153,90 +247,101 @@ const SearchBar = () => {
           </div>
 
           <div
-            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${
-              fadeIn ? "opacity-100" : "opacity-0"
-            }`}
+            className={`grid gap-6 p-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 w-full max-w-5xl transition-opacity duration-1000 ease-in-out ${fadeIn ? "opacity-100" : "opacity-0"
+              }`}
           >
             {Array.isArray(searchResult)
               ? searchResult.map((item, index) => (
-                  <div
-                    key={index}
-                    className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
-                    onClick={() => handleRedirect(item)}
-                  >
-                    {/* Title */}
-                    <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
-                      {item.title}
-                    </p>
-                    {/* Source */}
-                    <span className="text-xs font-medium text-gray-500 uppercase">
-                      {item.source}
+                <div
+                  key={index}
+                  className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                  onClick={() => handleRedirect(item)}
+                >
+                  {/* Title */}
+                  <p className="font-bold text-lg text-gray-900 tracking-wide break-words">
+                    {item.title}
+                  </p>
+                  {/* Source */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">
+                    {item.source}
+                  </span>
+                  {/* Score */}
+                  <p className="text-sm text-gray-600 mt-1">
+                    🔢 Score:{" "}
+                    <span className="font-medium">
+                      {item.similarity_score.toFixed(3)}
                     </span>
-                    {/* Score */}
-                    <p className="text-sm text-gray-600 mt-1">
-                      🔢 Score:{" "}
-                      <span className="font-medium">
-                        {item.similarity_score.toFixed(3)}
-                      </span>
-                    </p>
-                    {/* Conditional Content */}
-                    <div className="overflow-hidden text-ellipsis flex-grow">
-                      {item.source === "event" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            ⏰ <span className="font-medium">Time:</span>{" "}
-                            {item.time}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📍 <span className="font-medium">Location:</span>{" "}
-                            {item.location}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "article" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            ✍️ <span className="font-medium">Author:</span>{" "}
-                            {item.author}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            📅 <span className="font-medium">Published:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                      {item.source === "report" && (
-                        <>
-                          <p className="text-sm text-gray-700 mt-2">
-                            📅 <span className="font-medium">Date:</span>{" "}
-                            {item.published_date}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            🏷️ <span className="font-medium">Tag:</span>{" "}
-                            {item.tags}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            📖 <span className="font-medium">Description:</span>{" "}
-                            {item.description}
-                          </p>
-                        </>
-                      )}
-                    </div>
+                  </p>
+                  {/* Conditional Content */}
+                  <div className="overflow-hidden text-ellipsis flex-grow">
+                    {item.source === "event" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          ⏰ <span className="font-medium">Time:</span>{" "}
+                          {item.time}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📍 <span className="font-medium">Location:</span>{" "}
+                          {item.location}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "article" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          ✍️ <span className="font-medium">Author:</span>{" "}
+                          {item.author}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          📅 <span className="font-medium">Published:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
+                    {item.source === "report" && (
+                      <>
+                        <p className="text-sm text-gray-700 mt-2">
+                          📅 <span className="font-medium">Date:</span>{" "}
+                          {item.published_date}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          🏷️ <span className="font-medium">Tag:</span>{" "}
+                          {item.tags}
+                        </p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          📖 <span className="font-medium">Description:</span>{" "}
+                          {item.description}
+                        </p>
+                      </>
+                    )}
                   </div>
-                ))
+                </div>
+              ))
               : null}
+            {/* AI-Generated Report box */}
+            {generatedReport ? (
+              <div
+                className="w-full h-[250px] p-5 bg-blue-50 rounded-xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all flex flex-col justify-between overflow-hidden"
+                onClick={() => handleRedirect("generatedReport")}
+              >
+                <h3 className="text-xl font-semibold text-gray-800">{generatedReport.title}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {generatedReport.tags}</div>
+                <p className="text-gray-600">{generatedReport.description}</p>
+              </div>
+            ) : null}
           </div>
 
           {/* AI Response */}
@@ -264,9 +369,8 @@ const SearchBar = () => {
 
       {/* Input Box */}
       <div
-        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${
-          isFocused ? "ring-2 ring-blue-500" : ""
-        }`}
+        className={`mt-3 flex h-14 w-full max-w-xl items-center bg-white border border-gray-300 rounded-full px-4 shadow-md transition-all ${isFocused ? "ring-2 ring-blue-500" : ""
+          }`}
       >
         <form
           onSubmit={handleSubmit}

@@ -1,19 +1,78 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
+import { AIContext } from "../../context/AIContext";
+import aiLogo from "../../assets/ai_icon.png";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
-const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose }) => {
+const SidebarReport = ({
+  selectedMarker,
+  newMarker,
+  fetchReports,
+  onSidebarClose,
+  viewingAISummary,
+  setViewingAISummary,
+  modelReply,
+  setModelReply,
+  lastSummaryID,
+  setLastSummaryID,
+  title,
+  setTitle,
+  description,
+  setDescription,
+}) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
-  const {auth} = useAuth();
-  const [title, setTitle] = useState("");
+  const { auth } = useAuth();
   const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
-  const { main_color } = useContext(CompanyContext);
-  const author = auth.user.username
+  const { name, main_color } = useContext(CompanyContext);
+  const { getReply, engine } = useContext(AIContext);
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const author = auth.user.username;
+
+  const extractReportDetails = () => {
+    if (!selectedMarker) return null;
+
+    // Extract only relevant fields
+    const relevantDetails = {
+      title: selectedMarker.title,
+      status: selectedMarker.status,
+      tags: selectedMarker.tags,
+      author: selectedMarker.author,
+      published_date: selectedMarker.published_date,
+      description: selectedMarker.description,
+      upvotes: selectedMarker.upvotes,
+      latitude: selectedMarker.latitude,
+      longitude: selectedMarker.longitude,
+      discussions: selectedMarker.discussions.map((discussion) => ({
+        // author: discussion.author,
+        message: discussion.message,
+        created_at: discussion.created_at,
+      })),
+    };
+
+    return relevantDetails;
+  };
+
+  const getReportSummary = async () => {
+    // Extract relevant data from selectedMarker
+    const userQuery = JSON.stringify(extractReportDetails(), null, 2);
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+              
+              Provide a summary of the report.
+              Provide a summary of the discussion message.
+              Provide your recommendations.
+              Maximum 100 words.
+
+              Today's date: ${new Date().toISOString().split("T")[0]}
+              `;
+
+    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+  };
 
   const tags = [
     "environmental",
@@ -25,6 +84,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
     "health_safety",
     "urban_development",
   ];
+
+  const handleAIClick = () => {
+    if (
+      !engine ||
+      isStreaming ||
+      lastSummaryID === selectedMarker.id ||
+      viewingAISummary
+    ) {
+      return;
+    }
+
+    getReportSummary();
+    setLastSummaryID(selectedMarker.id);
+  };
+
   const handleUpvote = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -32,11 +106,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
         API_URL + "reports/" + selectedMarker.id + "/upvote/",
         {},
         {
-            headers: {
-                Authorization: `Bearer ${token}`,  
-            },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    );
+      );
       if (response.status === 200) {
         fetchReports();
       }
@@ -70,9 +144,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
         if (!token) {
           alert("Authentication required. Please log in.");
           return;
-      }
-
-        
+        }
 
         const response = await axios.post(
           API_URL + "reportdiscussion/",
@@ -80,7 +152,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
           {
             headers: {
               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -115,16 +187,12 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
     formData.append("tags", selectedTag); // Include the selected tag
 
     try {
-      const response = await axios.post(
-        API_URL + "reports/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // To send files and form data
-            Authorization: `Bearer ${token}`, 
-          },
-        }
-      );
+      const response = await axios.post(API_URL + "reports/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // To send files and form data
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 201) {
         fetchReports();
         onSidebarClose();
@@ -138,7 +206,6 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
     } catch (err) {
       console.log("Error creating report:", err.message);
     }
-
   };
 
   const lightenColor = (color, percent) => {
@@ -278,11 +345,10 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex p-3 mb-3 border border-gray-200 rounded-lg ${
-                  discussion.author === "Business"
-                    ? "bg-yellow-100"
-                    : "bg-gray-50"
-                }`}
+                className={`flex p-3 mb-3 border border-gray-200 rounded-lg ${discussion.author === "Business"
+                  ? "bg-yellow-100"
+                  : "bg-gray-50"
+                  }`}
               >
                 {/* Profile Icon */}
                 <div className="w-1/6 flex justify-center items-center">
@@ -483,14 +549,49 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports, onSidebarClose
               />
             )}
           </div>
-          {/* Content */}
-          <div className="p-4 flex flex-col flex-1 overflow-y-auto">
-            <div className="mb-4">
-              {/* Description wrapped to handle long texts */}
-              <div className="max-h-60 overflow-y-auto">
-                <p className="text-lg text-gray-800 break-words">
-                  {selectedMarker.description}
-                </p>
+
+          {/* Description with Poster and Date */}
+          <div className="w-full  px-3 py-3 pb-6 h-3/6 flex flex-col">
+            {/* Poster and Date Section */}
+
+            {/* Description Text */}
+            <div className="w-full h-[300px] mb-3 overflow-auto">
+              {/* AI Button with Logo */}
+              <div className="flex justify-end mb-3">
+                <div
+                  className=" h-12 bg-blue-50 rounded-lg shadow-md cursor-pointer flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
+                  onClick={() => {
+                    handleAIClick();
+                    setViewingAISummary(!viewingAISummary);
+                  }}
+                >
+                  {/* AI Logo */}
+                  <img
+                    src={aiLogo}
+                    alt="AI Logo"
+                    className="w-8 h-8 mx-4 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
+                    style={{
+                      animation:
+                        "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
+                    }}
+                  />
+                  {/* Button Text */}
+                  <span className="text-sm font-semibold text-green-800">
+                    {viewingAISummary ? "" : ""}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1 overflow-y-auto">
+                <div className="mb-4">
+                  {/* Description wrapped to handle long texts */}
+                  <div className="max-h-60 overflow-y-auto">
+                    <p className="text-lg text-gray-800 break-words">
+                      {selectedMarker.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex items-center bg-white border border-gray-100 p-3 rounded-md">
