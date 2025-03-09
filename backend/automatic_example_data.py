@@ -681,6 +681,18 @@ articles_data = [
         "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone.",
         "author": "Grace Davis",
         "description": "A caffeine-fueled tour of London's coffee culture."
+    },
+    {
+        "title": "London's Street Food Scene",
+        "content": "Explore the vibrant street food markets of London, from Borough Market to Camden Lock. Indulge in global cuisines, artisanal treats, and local favorites.",
+        "author": "Henry Wilson",
+        "description": "A culinary journey through London's streets."
+    },
+    {
+        "title": "Hidden Gems of London",
+        "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city.",
+        "author": "Ivy Garcia",
+        "description": "A guide to London's best-kept secrets."
     }
 ]
 
