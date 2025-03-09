@@ -200,7 +200,7 @@ const ReportsPage = () => {
               Closed
             </button>
           </div>
-          <div className="absolute top-1/4 right-3/4 ">
+          <div className="absolute top-1/3 right-3/4 ">
             {/* Expandable AI Summary Section */}
             {viewingAISummary && selectedMarker && (
               <div className="mt-4 p-4 max-h-[40rem] overflow-auto px-4 py-3 bg-blue-50 rounded-2xl shadow-md border border-gray-200">
