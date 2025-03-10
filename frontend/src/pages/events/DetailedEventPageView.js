@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 
 const DetailedEventPageView = () => {
     const { eventId } = useParams();
-    console.log("Event ID from URL:", eventId);
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);    
@@ -40,9 +39,9 @@ const DetailedEventPageView = () => {
       time,
       date,
       location,
-      eventType,
-      poiType,
-      openingTimes,
+      event_type,
+      poi_type,
+      opening_times,
       latitude,
       longitude,
     } = event;
@@ -51,7 +50,7 @@ const DetailedEventPageView = () => {
 
   return (
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
-        <div className="max-w-7xl w-full bg-white p-6 rounded-md shadow-md">
+        <div className="max-w-7xl w-full bg-white p-6 rounded-lg shadow-md">
             {/* Back Button */}
             <button
             onClick={handleBack}
@@ -76,9 +75,9 @@ const DetailedEventPageView = () => {
             <h1 className="text-4xl font-bold text-gray-900 text-center flex-1">
             {title}
             </h1>
-            {eventType === "point_of_interest" && !(poiType === "other") && (
+            {event_type === "point_of_interest" && !(poi_type === "other") && (
             <p className="text-lg mt-4 text-gray-600 text-center">
-                {poiType.charAt(0).toUpperCase() + poiType.slice(1, -1)}
+                {poi_type.charAt(0).toUpperCase() + poi_type.slice(1, -1)}
             </p>
             )}
         </div>
@@ -98,16 +97,27 @@ const DetailedEventPageView = () => {
             {description}
         </p>
 
-        {eventType === "scheduled" && (
-            <p className="text-lg mt-4 text-gray-900 text-center">
-            <b>Event Date & Time:</b> On {date} at {time}
-            </p>)
-            }
-            {eventType === "point_of_interest" && (
-            <p className="text-lg mt-4 text-gray-900 text-center">
-            <b>Open Time:</b> {openingTimes}
-            </p>)
-            }
+        {event_type === "scheduled" && (
+                <p className="text-lg mt-4 text-gray-900 text-center">
+                <b>Event Date & Time: </b>
+
+                  {new Date(date + 'T' + time).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                  })} at {new Date(date + 'T' + time).toLocaleTimeString(undefined, {
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                  })}
+                </p>)
+              }
+              {event_type === "point_of_interest" && (
+                <p className="text-lg mt-4 text-gray-900 text-center">
+                <b>Open Time:</b> {opening_times}
+                </p>)
+              }
 
         {/* Map Section */}
         <p className="text-lg mt-4 text-gray-900 text-center">

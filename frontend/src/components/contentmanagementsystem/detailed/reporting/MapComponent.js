@@ -1,12 +1,16 @@
-import React, { useContext } from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import React, { useContext, useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css"; // Import leaflet styles
-
+import "leaflet/dist/leaflet.css";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { CompanyContext } from "../../../../context/CompanyContext";
-// Make default Icon show up for Markers
+
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -14,10 +18,14 @@ let DefaultIcon = L.icon({
   iconAnchor: [12, 16],
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
+let SelectedIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [35, 57],
+  iconAnchor: [17, 57],
+});
 
-// The filter function to search within item fields
-const filterItems = (
+const searchFilterItems = (
   items,
   userQuery,
   itemFields = ["title", "description"]
@@ -30,47 +38,87 @@ const filterItems = (
   });
 };
 
-const MapComponent = ({ onMarkerSelected, reports, filter, userQuery }) => {
+L.Marker.prototype.options.icon = DefaultIcon;
+
+const MapComponent = ({
+  onMarkerSelected,
+  reports,
+  activeFilters,
+  selectedMarker,
+  mapRef,
+  userQuery,
+}) => {
   const zoomLevel = 13;
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
 
   const bounds = [
-    [sw_lat, sw_lon], // Southwest coordinates
-    [ne_lat, ne_lon], // Northeast coordinates
+    [sw_lat, sw_lon],
+    [ne_lat, ne_lon],
   ];
 
-  // Filter the reports based on the status and user query
-  const filteredReports = filterItems(
-    reports.filter((item) => item.status === filter),
+  function RecenterMap({ selectedMarker }) {
+    const map = useMap();
+
+    useEffect(() => {
+      if (
+        selectedMarker &&
+        selectedMarker.latitude !== undefined &&
+        selectedMarker.longitude !== undefined
+      ) {
+        map.flyTo(
+          [selectedMarker.latitude, selectedMarker.longitude],
+          map.getZoom()
+        );
+      }
+    }, [selectedMarker, map]);
+
+    return null;
+  }
+
+  // Combine filters
+  const statusFilteredReports = reports.filter((item) =>
+    activeFilters.includes(item.status)
+  );
+  const combinedFilteredReports = searchFilterItems(
+    statusFilteredReports,
     userQuery
   );
 
   return (
-    <MapContainer
-      center={[0, 0]}
-      zoom={zoomLevel}
-      style={{ width: "100%", minHeight: "100%", height: "100%" }}
-      maxBounds={bounds} // Restrict map movement to Company-Define bounds
-      maxBoundsViscosity={1.0} // Ensures map stays within bounds
-      minZoom={8} // Set minimum zoom level to allow zooming in further
-      maxZoom={17} // Set maximum zoom level to zoom in further
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {filteredReports.map((item) => (
-        <Marker
-          key={item.id}
-          position={[item.latitude, item.longitude]}
-          eventHandlers={{
-            click: () => {
-              onMarkerSelected(item);
-            },
-          }}
+    <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 10 }}>
+      <MapContainer
+        center={[0, 0]}
+        zoom={zoomLevel}
+        style={{ width: "100%", minHeight: "100%", height: "100%" }}
+        maxBounds={bounds}
+        maxBoundsViscosity={1.0}
+        minZoom={8}
+        maxZoom={17}
+        ref={mapRef}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-      ))}
-    </MapContainer>
+        {combinedFilteredReports.map((item) => (
+          <Marker
+            key={item.id}
+            position={[item.latitude, item.longitude]}
+            icon={
+              selectedMarker && selectedMarker.id === item.id
+                ? SelectedIcon
+                : DefaultIcon
+            }
+            eventHandlers={{
+              click: () => {
+                onMarkerSelected(item);
+              },
+            }}
+          />
+        ))}
+        <RecenterMap selectedMarker={selectedMarker} />
+      </MapContainer>
+    </div>
   );
 };
 

@@ -85,9 +85,6 @@ const Calendar = () => {
     setCurrentDay((prevDay) => prevDay.subtract(1, "day"));
   };
 
-  const dayKey = currentDay.format("YYYY-MM-DD");
-  const todayEvents = events[dayKey] || [];
-
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -182,8 +179,19 @@ const Calendar = () => {
           <p className="text-center text-gray-500">Loading events...</p>
         ) : (
           <div className="rounded-lg p-4 bg-gray-100">
-            {todayEvents.length > 0 ? (
-              todayEvents.map((event, index) => (
+            {(() => {
+                const dayKey = currentDay.format("YYYY-MM-DD");
+                let todayEvents = events[dayKey] || [];
+
+                // Sort todayEvents by time
+                todayEvents.sort((a, b) => {
+                    const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
+                    const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
+                    return timeA.isBefore(timeB) ? -1 : timeA.isAfter(timeB) ? 1 : 0;
+                });
+
+                return todayEvents.length > 0 ? (
+                    todayEvents.map((event, index) => (
                 <div
                   key={index}
                   className="p-2  rounded-lg  cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
@@ -218,7 +226,8 @@ const Calendar = () => {
               ))
             ) : (
               <p className="text-center text-gray-400">No events</p>
-            )}
+            );
+          })()}
           </div>
         )}
       </div>
@@ -232,6 +241,13 @@ const Calendar = () => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
             const dayEvents = events[dayKey] || [];
+
+              // Sort dayEvents by time
+              dayEvents.sort((a, b) => {
+                const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
+                const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
+                return timeA.isBefore(timeB) ? -1 : timeA.isAfter(timeB) ? 1 : 0;
+            });
 
             return (
               <div

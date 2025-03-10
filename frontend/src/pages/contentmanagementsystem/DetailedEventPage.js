@@ -1,13 +1,13 @@
-import React, { useRef, useState, useEffect } from "react";
-// import TitleEditor from "../../components/contentmanagementsystem/detailed/TitleEditor";
-// import NoToolbarEditor from "../../components/contentmanagementsystem/detailed/NoToolbarEditor.js";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
 import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
-import { useParams } from "react-router-dom"; // For dynamic routing
+import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import DropdownExtract from "../../components/contentmanagementsystem/detailed/DropdownExtractEvents";
+import { AIContext } from "../../context/AIContext.js";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -19,7 +19,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
- const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
   // State for PDF and ICS extraction
   const [pdfFile, setPdfFile] = useState(null);
   const [icsFile, setIcsFile] = useState(null);
@@ -36,19 +36,23 @@ const DetailedEventPage = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [position, setPosition] = useState(null);
   const [requiredFields, setRequiredFields] = useState({});
+  const navigate = useNavigate();
+
+  // AI engine state for events
+  const { engine } = useContext(AIContext);
+  const [isLoadingTitle, setIsLoadingTitle] = useState(false);
+  const [isLoadingDescription, setIsLoadingDescription] = useState(false);
 
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
-      console.log("useEffect is running");
-      console.log("event id received was", eventId);
       setIsEditing(false); // initially view preview when clicking box
       const token = localStorage.getItem("token");
-      // Fetch article data when editing an existing article
+      // Fetch event data when editing an existing event
       axios
         .get(API_URL + `events/${eventId}/`, {
-          headers: { Authorization: `Bearer ${token}` },  // ✅ Include token
-      })
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
           const event = response.data;
           setTitle(event.title || "");
@@ -64,7 +68,10 @@ const DetailedEventPage = () => {
             setUploadedFiles([event.main_image]);
           }
           if (event.latitude && event.longitude) {
-            setPosition([parseFloat(event.latitude), parseFloat(event.longitude)]);
+            setPosition([
+              parseFloat(event.latitude),
+              parseFloat(event.longitude),
+            ]);
           }
         })
         .catch((error) => {
@@ -75,7 +82,6 @@ const DetailedEventPage = () => {
     // eslint-disable-next-line
   }, [eventId]);
 
-
   const handleFilesUploaded = (acceptedFiles) => {
     if (acceptedFiles.length > 1) {
       alert("Only one image can be uploaded.");
@@ -85,7 +91,7 @@ const DetailedEventPage = () => {
   };
 
   const handleSave = async () => {
-  const token=localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const newRequiredFields = {};
 
     if (eventType === "scheduled") {
@@ -94,7 +100,6 @@ const DetailedEventPage = () => {
       if (!time) newRequiredFields.time = true;
       if (!description) newRequiredFields.description = true;
       if (!location) newRequiredFields.location = true;
-
     } else if (eventType === "point_of_interest") {
       if (!title) newRequiredFields.title = true;
       if (!description) newRequiredFields.description = true;
@@ -108,7 +113,7 @@ const DetailedEventPage = () => {
       alert("Please fill in all necessary fields.");
       return;
     }
-    
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("date", date);
@@ -134,34 +139,20 @@ const DetailedEventPage = () => {
 
     try {
       if (eventId !== NEW_EVENT_ID) {
-        const token = localStorage.getItem("token");
-        // PUT operation for updating an existing article
-
-        await axios.put(
-          API_URL + `events/${eventId}/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`, 
-            },
-          }
-          );
-        
-
+        await axios.put(API_URL + `events/${eventId}/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         alert("Event updated successfully!");
       } else {
-        // POST operation for creating a new article
-        await axios.post(
-          API_URL + "events/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`, 
-            },
-          }
-        );
+        await axios.post(API_URL + "events/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         alert("Event saved successfully!");
       }
     } catch (error) {
@@ -284,27 +275,27 @@ const DetailedEventPage = () => {
 
   const fetchSuggestions = async (query) => {
     if (!query) return;
-  
+
     try {
       const controller = new AbortController(); // Allows us to cancel the fetch
       const timeoutId = setTimeout(() => {
         controller.abort(); // Abort the fetch after 3 seconds
-        alert("Location not found"); 
+        alert("Location not found");
       }, 3000);
-  
+
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${query}`,
         { signal: controller.signal }
       );
-  
+
       clearTimeout(timeoutId); // Clear timeout if fetch is successful
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-  
+
       if (data.length === 0) {
         alert("Location not found");
       } else {
@@ -318,7 +309,7 @@ const DetailedEventPage = () => {
       }
     }
   };
-  
+
   const handleSelectLocation = (place) => {
     setLocation(place.display_name);
     setPosition([parseFloat(place.lat), parseFloat(place.lon)]);
@@ -331,39 +322,136 @@ const DetailedEventPage = () => {
 
   const isFieldRequired = (fieldName) => requiredFields[fieldName];
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  // AI Functions for Event Title and Description
+  const handleSuggestAlternativeTitle = async () => {
+    if (!title) {
+      alert("Please enter a title first.");
+      return;
+    }
+    if (!engine) {
+      alert("AI model is still loading. Please wait.");
+      return;
+    }
+    setIsLoadingTitle(true);
+    try {
+      await engine.resetChat();
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Suggest an alternative title that is more appealing for the following title: , dont add any commentary , just generate one title maximum",
+        },
+        {
+          role: "user",
+          content: title,
+        },
+      ];
+      let alternativeTitle = "";
+      const stream = await engine.chat.completions.create({
+        messages,
+        temperature: 0.7,
+        stream: true,
+      });
+      for await (const chunk of stream) {
+        alternativeTitle += chunk.choices[0]?.delta.content || "";
+      }
+      setTitle(alternativeTitle);
+    } catch (error) {
+      console.error("Error suggesting alternative title:", error);
+    }
+    setIsLoadingTitle(false);
+  };
+
+  const handleExpandDescription = async () => {
+    if (!description) {
+      alert("Please enter a short description first.");
+      return;
+    }
+    if (!engine) {
+      alert("AI model is still loading. Please wait.");
+      return;
+    }
+    setIsLoadingDescription(true);
+    try {
+      await engine.resetChat();
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Expand the following short description into a detailed, engaging, and informative description. Max 30 words: ",
+        },
+        {
+          role: "user",
+          content: description,
+        },
+      ];
+      let expandedDescription = "";
+      const stream = await engine.chat.completions.create({
+        messages,
+        temperature: 0.7,
+        stream: true,
+      });
+      for await (const chunk of stream) {
+        expandedDescription += chunk.choices[0]?.delta.content || "";
+      }
+      setDescription(expandedDescription);
+    } catch (error) {
+      console.error("Error expanding description:", error);
+    }
+    setIsLoadingDescription(false);
+  };
+
   return (
     <div>
       <Header />
       <div className="pt-20"></div>
-      <div className="p-6 flex justify-end">
-        <button
-          onClick={() => setIsEditing((prev) => !prev)}
-          className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4 ml-6"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
         >
-          {isEditing ? "Switch to Preview" : "Switch to Edit"}
-        </button>
-  
-        <button
-          onClick={handleSave}
-          className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-        >
-          Save
-        </button>
-  
-        <button
-          onClick={handleExtractFromPDFClick}
-          className="bg-purple-500 text-white justify-center font-bold rounded-lg hover:bg-purple-400 active:bg-purple-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
-        >
-          Extract From PDF
-        </button>
-  
-        <button
-          onClick={handleExtractFromICSClick}
-          className="bg-teal-500 text-white justify-center font-bold rounded-lg hover:bg-teal-400 active:bg-teal-300 transition active:duration-100 duration-300 px-4 py-2"
-        >
-          Extract From ICS
-        </button>
-  
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+      </button>
+      <div className="flex justify-between px-5">
+        <div>
+          <DropdownExtract
+            handleExtractFromPDFClick={handleExtractFromPDFClick}
+            handleExtractFromICSClick={handleExtractFromICSClick}
+          />
+        </div>
+        <div>
+          <button
+            onClick={() => setIsEditing((prev) => !prev)}
+            className="bg-blue-500 text-white justify-center font-bold rounded-lg hover:bg-blue-400 active:bg-blue-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          >
+            {isEditing ? "Switch to Preview" : "Switch to Edit"}
+          </button>
+
+          <button
+            onClick={handleSave}
+            className="bg-green-500 text-white justify-center font-bold rounded-lg hover:bg-green-400 active:bg-green-300 transition active:duration-100 duration-300 px-4 py-2 mr-4"
+          >
+            Save
+          </button>
+        </div>
+
         <input
           type="file"
           accept="application/pdf"
@@ -379,10 +467,10 @@ const DetailedEventPage = () => {
           style={{ display: "none" }}
         />
       </div>
-  
+
       {pdfFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected PDF:</strong> {pdfFile.name}
           </p>
           <button
@@ -404,10 +492,10 @@ const DetailedEventPage = () => {
           </button>
         </div>
       )}
-  
+
       {icsFile && (
-        <div className="p-6">
-          <p>
+        <div className="p-6 mt-6">
+          <p className="mb-2">
             <strong>Selected ICS:</strong> {icsFile.name}
           </p>
           <button
@@ -463,25 +551,53 @@ const DetailedEventPage = () => {
             )}
 
             <div className="space-y-4 mt-4">
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                className={`w-full p-3 border ${
-                  isFieldRequired("title") ? "border-red-500" : "border-gray-300"
-                } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
-                className={`w-full p-3 border ${
-                  isFieldRequired("description") ? "border-red-500" : "border-gray-300"
-                } rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto`}
-                rows="3"
-                style={{ maxHeight: "200px" }} // Limits growth, enables scrolling
-              />
+              <div>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Title"
+                  className={`w-full p-3 border ${
+                    isFieldRequired("title")
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
+                />
+                <div className="mt-2 flex justify-center">
+                  <button
+                    onClick={handleSuggestAlternativeTitle}
+                    className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
+                  >
+                    {isLoadingTitle
+                      ? "Loading..."
+                      : "Suggest Alternative Title"}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description"
+                  className={`w-full p-3 border ${
+                    isFieldRequired("description")
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto`}
+                  rows="3"
+                  style={{ maxHeight: "200px" }}
+                />
+                <div className="mt-2 flex justify-center">
+                  <button
+                    onClick={handleExpandDescription}
+                    className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
+                  >
+                    {isLoadingDescription
+                      ? "Loading..."
+                      : "Expand Description"}
+                  </button>
+                </div>
+              </div>
               <MainImage onFilesUploaded={handleFilesUploaded} />
             </div>
 
@@ -504,7 +620,9 @@ const DetailedEventPage = () => {
 
             {eventType === "point_of_interest" && (
               <div className="mt-4 space-y-4">
-                <label className="block text-sm font-medium text-gray-700">POI Type:</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  POI Type:
+                </label>
                 <select
                   value={poiType}
                   onChange={(e) => setPoiType(e.target.value)}
@@ -529,7 +647,7 @@ const DetailedEventPage = () => {
               </div>
             )}
             <div className="mt-4 space-y-4">
-              {/* Input Field */}
+              {/* Input Field for Location */}
               <div className="w-full flex space-x-4">
                 <input
                   type="text"
@@ -539,7 +657,9 @@ const DetailedEventPage = () => {
                   }}
                   placeholder="Location"
                   className={`flex-1 p-3 border ${
-                    isFieldRequired("location") ? "border-red-500" : "border-gray-300"
+                    isFieldRequired("location")
+                      ? "border-red-500"
+                      : "border-gray-300"
                   } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
                 />
                 <button
@@ -564,7 +684,6 @@ const DetailedEventPage = () => {
                   ))}
                 </ul>
               )}
-
 
               {/* Map Display */}
               {position && (
@@ -592,9 +711,9 @@ const DetailedEventPage = () => {
                     </Marker>
                   </MapContainer>
                   <button
-                  onClick={handleDeleteLocation}
-                  className="absolute bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg"
-                  style={{zIndex: 10 }}
+                    onClick={handleDeleteLocation}
+                    className="absolute bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg"
+                    style={{ zIndex: 10 }}
                   >
                     Delete Map
                   </button>
@@ -612,13 +731,13 @@ const DetailedEventPage = () => {
               <h1 className="text-4xl font-bold text-gray-900 text-center flex-1">
                 {title}
               </h1>
-              {eventType === "point_of_interest" && !(poiType === "other") && (
-                <p className="text-lg mt-4 text-gray-600 text-center">
-                  {poiType.charAt(0).toUpperCase() + poiType.slice(1, -1)}
-                </p>
+              {eventType === "point_of_interest" &&
+                !(poiType === "other") && (
+                  <p className="text-lg mt-4 text-gray-600 text-center">
+                    {poiType.charAt(0).toUpperCase() +
+                      poiType.slice(1, -1)}
+                  </p>
                 )}
-
-
             </div>
 
             <div className="mt-4">
@@ -641,15 +760,27 @@ const DetailedEventPage = () => {
             </p>
 
             {eventType === "scheduled" && (
-                <p className="text-lg mt-4 text-gray-900 text-center">
-                <b>Event Date & Time:</b> On {date} at {time}
-                </p>)
-              }
-              {eventType === "point_of_interest" && (
-                <p className="text-lg mt-4 text-gray-900 text-center">
+              <p className="text-lg mt-4 text-gray-900 text-center">
+                <b>Event Date & Time: </b>
+                {new Date(date + "T" + time).toLocaleDateString(undefined, {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}{" "}
+                at{" "}
+                {new Date(date + "T" + time).toLocaleTimeString(undefined, {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+              </p>
+            )}
+            {eventType === "point_of_interest" && (
+              <p className="text-lg mt-4 text-gray-900 text-center">
                 <b>Open Time:</b> {openingTimes}
-                </p>)
-              }
+              </p>
+            )}
 
             {/* Main Content Section */}
             <p className="text-lg mt-4 text-gray-900 text-center">

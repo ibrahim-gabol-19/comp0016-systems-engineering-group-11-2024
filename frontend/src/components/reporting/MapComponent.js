@@ -32,8 +32,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
   const zoomLevel = 13;
-  const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+  const [position, setPosition] = useState(null);
 
 
   const bounds = [
@@ -48,7 +48,11 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
         map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
-    }, [selectedMarker, map]);
+      if (newMarker && newMarker.latitude !== undefined && newMarker.longitude !== undefined) {
+        map.flyTo(newMarker.latlng, map.getZoom());
+      }
+      // eslint-disable-next-line
+    }, [selectedMarker, newMarker, map]);
 
     return null;
   }
@@ -68,7 +72,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
     });
 
     return newMarker === null ? null : (
-      <Marker position={position} draggable={true} icon={SelectedIcon}></Marker>
+      <Marker position={position || newMarker.latlng} draggable={true} icon={SelectedIcon}></Marker>
     );
   }
 
@@ -76,35 +80,35 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}>
-    <MapContainer
-      center={[0, 0]}
-      zoom={zoomLevel}
-      style={{ width: "100%", minHeight: "100%", height: "100%"}}
-      maxBounds={bounds}
-      maxBoundsViscosity={1.0}
-      minZoom={8}
-      maxZoom={17}
-      ref={mapRef}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {filteredReports.map((item) => (
-        <Marker
-          key={item.id}
-          position={[item.latitude, item.longitude]}
-          icon={selectedMarker && selectedMarker.id === item.id ? SelectedIcon : DefaultIcon}
-          eventHandlers={{
-            click: () => {
-              onMarkerSelected(item);
-            },
-          }}
+      <MapContainer
+        center={[0, 0]}
+        zoom={zoomLevel}
+        style={{ width: "100%", minHeight: "100%", height: "100%" }}
+        maxBounds={bounds}
+        maxBoundsViscosity={1.0}
+        minZoom={8}
+        maxZoom={17}
+        ref={mapRef}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-      ))}
-      <NewReport />
-      <RecenterMap selectedMarker={selectedMarker} />
-    </MapContainer>
+        {filteredReports.map((item) => (
+          <Marker
+            key={item.id}
+            position={[item.latitude, item.longitude]}
+            icon={selectedMarker && selectedMarker.id === item.id ? SelectedIcon : DefaultIcon}
+            eventHandlers={{
+              click: () => {
+                onMarkerSelected(item);
+              },
+            }}
+          />
+        ))}
+        <NewReport />
+        <RecenterMap selectedMarker={selectedMarker} />
+      </MapContainer>
     </div>
   );
 };
