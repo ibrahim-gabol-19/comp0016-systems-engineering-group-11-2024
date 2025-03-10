@@ -5,6 +5,7 @@ import NewsButton from "./NewsButton";
 import CreatePostModal from "./CreatePostModal";
 import CommentsPopup from "./CommentsPopup";
 import FilterForYouModal from "./FilterForYouModal";
+import ExpandedPostModal from "./ExpandedPostModal";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -75,6 +76,7 @@ const ForYouCard = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [selectedPostType, setSelectedPostType] = useState(null);
+  const [expandedPost, setExpandedPost] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   // Local filter state.
@@ -226,7 +228,8 @@ const ForYouCard = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleOpenComments = (postId, postType) => {
+  const handleOpenComments = (postId, postType, e) => {
+    if (e) e.stopPropagation();
     setSelectedPostId(postId);
     setSelectedPostType(postType);
   };
@@ -246,7 +249,8 @@ const ForYouCard = () => {
     );
   };
 
-  const handleToggleLike = async (postId, postType) => {
+  const handleToggleLike = async (postId, postType, e) => {
+    if (e) e.stopPropagation();
     const token = localStorage.getItem("token");
     const contentType = getLikeContentType(postType);
     const uniqueId = `${postType}-${postId}`;
@@ -336,7 +340,8 @@ const ForYouCard = () => {
           return (
             <div
               key={card.uniqueId}
-              className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
+              onClick={() => setExpandedPost(card)}
+              className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105 cursor-pointer"
             >
               {card.image && (
                 <img
@@ -378,14 +383,18 @@ const ForYouCard = () => {
                 </p>
                 <div className="flex items-center justify-between mt-3">
                   <button
-                    onClick={() => handleOpenComments(card.id, card.type)}
+                    onClick={(e) =>
+                      handleOpenComments(card.id, card.type, e)
+                    }
                     className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
                   >
                     <FaComment className="text-xl" />
                     <span className="text-sm">{card.commentCount || 0}</span>
                   </button>
                   <button
-                    onClick={() => handleToggleLike(card.id, card.type)}
+                    onClick={(e) =>
+                      handleToggleLike(card.id, card.type, e)
+                    }
                     className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
                       card.liked
                         ? "text-blue-500"
@@ -435,6 +444,14 @@ const ForYouCard = () => {
         initialFilters={filterOptions}
         initialSortOrder={sortOrder}
       />
+
+      {expandedPost && (
+        <ExpandedPostModal
+          post={expandedPost}
+          onClose={() => setExpandedPost(null)}
+          onOpenComments={handleOpenComments}
+        />
+      )}
     </div>
   );
 };
