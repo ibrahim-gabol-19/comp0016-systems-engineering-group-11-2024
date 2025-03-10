@@ -1,14 +1,6 @@
 import requests
 import random
-import random
-import requests
-import random
-import requests
-import subprocess  # Import the subprocess module
-import os
-
-
-
+import subprocess
 
 # API URL and endpoints
 # BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
@@ -58,7 +50,6 @@ def login():
         print(f"Login failed with status code {response.status_code}: {response.text} {response}")
         return None
 
-
 # Function to create articles
 def create_article(token, title, content, author, description):
     headers = {"Authorization": f"Bearer {token}"}
@@ -77,21 +68,24 @@ def create_article(token, title, content, author, description):
 reports_data = [
     {
         "title": "Pothole on Elm Street",
-        "description": "Large pothole causing vehicle damage. Needs urgent repair.",
+        "description": "Large pothole causing vehicle damage. "
+        "Needs urgent repair.",
         "status": "open",
         "tags": "road",
         "Author": "Alice Johnson",
     },
     {
         "title": "Illegal Dumping in Park",
-        "description": "Construction waste dumped in Riverside Park. Affects wildlife and park visitors. Ruined the natural beauty of the park.",
+        "description": "Construction waste dumped in Riverside Park. "
+        "Affects wildlife and park visitors. Ruined the natural beauty of the park.",
         "status": "open",
         "tags": "waste_management",
         "Author": "Bob Williams",
     },
     {
         "title": "Air Pollution Spike",
-        "description": "Noticeable increase in air pollution in the city center. I can smell the fumes.",
+        "description": "Noticeable increase in air pollution in the city center. "
+        "I can smell the fumes.",
         "status": "open",
         "tags": "pollution",
         "Author": "Charlie Brown",
@@ -105,161 +99,184 @@ reports_data = [
     },
     {
         "title": "Excessive Noise Pollution",
-        "description": "Loud construction noise late at night. It's affecting residents' sleep.",
+        "description": "Loud construction noise late at night. It's affecting"
+        " residents' sleep.",
         "status": "open",
         "tags": "pollution",
         "Author": "Frank Miller",
     },
     {
         "title": "Tree Down Blocking Road",
-        "description": "A Large tree has fallen and is blocking traffic. Needs to be removed.",
+        "description": "A Large tree has fallen and is blocking traffic."
+        "Needs to be removed.",
         "status": "open",
         "tags": "road",
         "Author": "Grace Davis",
     },
     {
         "title": "Chemical Spill Near River",
-        "description": "There is an unidentified chemical spill near the riverbank. Concerns for wildlife and water quality.",
+        "description": "There is an unidentified chemical spill near the riverbank."
+        " Concerns for wildlife and water quality.",
         "status": "open",
         "tags": "environmental",
         "Author": "Henry Wilson",
     },
     {
         "title": "Overfilled Public Bins",
-        "description": "Public bins overflowing, creating a health hazard. Needs more frequent collection.",
+        "description": "Public bins overflowing, creating a health hazard. "
+        "Needs more frequent collection.",
         "status": "open",
         "tags": "waste_management",
         "Author": "Ivy Garcia",
     },
     {
         "title": "Contaminated Water Supply",
-        "description": "The water in my residence is contaminated. Concerns for health and safety.",
+        "description": "The water in my residence is contaminated. "
+        "Concerns for health and safety.",
         "status": "open",
         "tags": "health_safety",
         "Author": "John Perez",
     },
     {
         "title": "Abandoned Vehicle Blocking Street",
-        "description": "Abandoned vehicle parked on residential street. Causing obstruction and safety concerns.",
+        "description": "Abandoned vehicle parked on residential street. "
+        "Causing obstruction and safety concerns.",
         "status": "open",
         "tags": "urban_development",
         "Author": "Karen Young",
     },
     {
         "title": "Road Repair needed",
-        "description": "Pothole on Maple Avenue needs to be fixed. It has caused many issues for drivers.",
+        "description": "Pothole on Maple Avenue needs to be fixed. "
+        "It has caused many issues for drivers.",
         "status": "resolved",
         "tags": "road", 
         "Author": "Kelly Martinez",
     },
     {
         "title": "Dog waste problem in park",
-        "description": "Dog waste not being picked up by owners. Health hazard for park visitors.",
+        "description": "Dog waste not being picked up by owners. "
+        "Health hazard for park visitors.",
         "status": "resolved",
         "tags": "waste_management",
         "Author": "Liam Thompson",
     },
     {
         "title": "Noise complaint from construction site",
-        "description": "Construction noise outside permitted hours. Disturbing residents.",
+        "description": "Construction noise outside permitted hours. "
+        "Disturbing residents.",
         "status": "closed",
         "tags": "pollution",
         "Author": "Mia Hall",
     },
     {
         "title": "Illegal dumping in alleyway",
-        "description": "Household waste dumped in alley behind shops. Unsanitary and unsightly.",
+        "description": "Household waste dumped in alley behind shops. "
+        "Unsanitary and unsightly.",
         "status": "closed",
         "tags": "waste_management",
         "Author": "Noah Lewis",
     },
         {
         "title": "Broken Streetlight",
-        "description": "Streetlight on Oak Avenue is broken, creating a dark and unsafe area at night.",
+        "description": "Streetlight on Oak Avenue is broken, "
+        "creating a dark and unsafe area at night.",
         "status": "open",
         "tags": "urban_development",
         "Author": "Sophia Clark",
     },
     {
         "title": "Graffiti on Public Building",
-        "description": "Vandalism with graffiti on the community center wall. Needs cleaning.",
+        "description": "Vandalism with graffiti on the community center wall. "
+        "Needs cleaning.",
         "status": "open",
         "tags": "urban_development",
         "Author": "Ethan Rodriguez",
     },
     {
         "title": "Leaking Pipe on Sidewalk",
-        "description": "Water leaking from a pipe on the sidewalk, creating a slippery and wasteful situation.",
+        "description": "Water leaking from a pipe on the sidewalk, "
+        "creating a slippery and wasteful situation.",
         "status": "open",
         "tags": "urban_development",
         "Author": "Isabella Patel",
     },
     {
         "title": "Litter in Playground",
-        "description": "Excessive litter in the children's playground. Unhygienic and dangerous.",
+        "description": "Excessive litter in the children's playground. "
+        "Unhygienic and dangerous.",
         "status": "open",
         "tags": "waste_management",
         "Author": "Alexander Kim",
     },
     {
         "title": "Fallen Branch Blocking Path",
-        "description": "Large branch fallen across the walking path in the park. Impeding access.",
+        "description": "Large branch fallen across the walking path in the park. "
+        "Impeding access.",
         "status": "open",
         "tags": "environmental",
         "Author": "Mia Gupta",
     },
     {
         "title": "Unsafe Building Demolition",
-        "description": "Demolition work being carried out without proper safety measures. Debris is falling into the street.",
+        "description": "Demolition work being carried out without proper safety measures. "
+        "Debris is falling into the street.",
         "status": "open",
         "tags": "health_safety",
         "Author": "Daniel Singh",
     },
     {
         "title": "Sewage Smell in Street",
-        "description": "Strong sewage smell in the street, indicating a possible leak or blockage.",
+        "description": "Strong sewage smell in the street, "
+        "indicating a possible leak or blockage.",
         "status": "open",
         "tags": "pollution",
         "Author": "Charlotte Wright",
     },
     {
         "title": "Abandoned Shopping Carts",
-        "description": "Several abandoned shopping carts left in the neighborhood. Creating an eyesore and obstruction.",
+        "description": "Several abandoned shopping carts left in the neighborhood. "
+        "Creating an eyesore and obstruction.",
         "status": "open",
         "tags": "waste_management",
         "Author": "James Moore",
     },
     {
         "title": "Damaged Traffic Sign",
-        "description": "Traffic sign at the intersection is damaged and difficult to read. Causing potential confusion.",
+        "description": "Traffic sign at the intersection is damaged and difficult to read. "
+        "Causing potential confusion.",
         "status": "open",
         "tags": "road",
         "Author": "Amelia Thomas",
     },
     {
         "title": "Flooded Underpass",
-        "description": "Underpass flooded after heavy rain, making it impassable for pedestrians and vehicles.",
+        "description": "Underpass flooded after heavy rain, making it impassable "
+        "for pedestrians and vehicles.",
         "status": "open",
         "tags": "urban_development",
         "Author": "Benjamin Jackson",
     },
     {
         "title": "Resolved: Streetlight Repaired",
-        "description": "The streetlight on Oak Avenue has been repaired and is now working.",
+        "description": "The streetlight on Oak Avenue has been repaired and "
+        "is now working.",
         "status": "resolved",
         "tags": "urban_development",
         "Author": "Oliver White",
     },
     {
         "title": "Resolved: Graffiti Removed",
-        "description": "The graffiti on the community center wall has been cleaned.",
+        "description": "The graffiti on the community center wall has "
+        "been cleaned.",
         "status": "resolved",
         "tags": "urban_development",
         "Author": "Evelyn Harris",
     },
     {
         "title": "Closed: Noise Complaint Resolved",
-        "description": "The noise from the construction site has been addressed and is no longer an issue.",
+        "description": "The noise from the construction site has been addressed "
+        "and is no longer an issue.",
         "status": "closed",
         "tags": "pollution",
         "Author": "William Martin",
@@ -273,7 +290,8 @@ reports_data = [
     },
     {
         "title": "Open: Dangerous Tree Branches",
-        "description": "Tree branches are hanging dangerously low over the sidewalk. Need immediate trimming.",
+        "description": "Tree branches are hanging dangerously low over the sidewalk."
+        " Need immediate trimming.",
         "status": "open",
         "tags": "environmental",
         "Author": "Joseph Garcia",
@@ -287,14 +305,16 @@ reports_data = [
     },
     {
         "title": "Open: Rats in Alleyway",
-        "description": "There is an infestation of rats in the alleyway behind the shops.",
+        "description": "There is an infestation of rats in the alleyway"
+        " behind the shops.",
         "status": "open",
         "tags": "health_safety",
         "Author": "Samuel Robinson",
     },
     {
         "title": "Open: Excessive Vehicle Idling",
-        "description": "Delivery vehicles are idling for long periods, causing excessive pollution.",
+        "description": "Delivery vehicles are idling for long periods,"
+        " causing excessive pollution.",
         "status": "open",
         "tags": "pollution",
         "Author": "Elizabeth Lopez",
@@ -304,7 +324,9 @@ reports_data = [
 scheduled_events = [
     {
         "title": "Bird Watching in St. James's Park",
-        "description": "Join our guided bird watching tour in St. James's Park. Discover the diverse bird species that call this park home. Binoculars provided. Please wear comfortable shoes.",
+        "description": "Join our guided bird watching tour in St. James's Park. "
+        "Discover the diverse bird species that call this park home. Binoculars provided."
+        " Please wear comfortable shoes.",
         "location": "St. James's Park",
         "date": "2025-03-11",
         "time": "15:00",
@@ -316,7 +338,9 @@ scheduled_events = [
     },
     {
         "title": "Thames River Cleanup",
-        "description": "Join us for a community-driven Thames River cleanup! Help us remove waste and protect London's iconic river while learning about local water ecosystems.",
+        "description": "Join us for a community-driven Thames River cleanup!"
+        " Help us remove waste and protect London's iconic river while learning"
+        " about local water ecosystems.",
         "location": "South Bank",
         "date": "2025-03-10",
         "time": "12:00",
@@ -328,7 +352,9 @@ scheduled_events = [
     },
     {
         "title": "Community Garden Planting",
-        "description": "Help us plant new flowers and vegetables in our local community garden. Learn about organic gardening and meet your neighbors! \n Please bring your own gardening gloves.",
+        "description": "Help us plant new flowers and vegetables in our local community garden. "
+        "Learn about organic gardening and meet your neighbors! Please "
+        "bring your own gardening gloves.",
         "location": "Regent's Park",
         "date": "2025-03-03",
         "time": "10:00",
@@ -340,7 +366,8 @@ scheduled_events = [
     },
     {
         "title": "Local History Walk",
-        "description": "Discover hidden historical gems in the City of London with our guided walking tour. Learn about the area's rich past.",
+        "description": "Discover hidden historical gems in the City of London with "
+        "our guided walking tour. Learn about the area's rich past.",
         "location": "Guildhall",
         "date": "2025-03-05",
         "time": "14:00",
@@ -353,7 +380,8 @@ scheduled_events = [
     },
     {
         "title": "Upcycled Art Workshop",
-        "description": "Create unique art pieces using recycled materials. Learn creative techniques and reduce waste.",
+        "description": "Create unique art pieces using recycled materials. "
+        "Learn creative techniques and reduce waste.",
         "location": "Barbican Centre",
         "date": "2025-03-07",
         "time": "18:00",
@@ -365,7 +393,8 @@ scheduled_events = [
     },
     {
         "title": "Morning Fitness Jog",
-        "description": "Start your day with an energizing morning jog through Hyde Park. All fitness levels are welcome!",
+        "description": "Start your day with an energizing morning jog through "
+        "Hyde Park. All fitness levels are welcome!",
         "location": "Hyde Park",
         "date": "2025-03-11",
         "time": "07:00",
@@ -377,7 +406,8 @@ scheduled_events = [
     },
     {
         "title": "Local Produce Market",
-        "description": "Support local farmers and businesses at our weekly produce market. Fresh fruits, vegetables, and artisanal goods.",
+        "description": "Support local farmers and businesses at our weekly produce market. "
+        "Fresh fruits, vegetables, and artisanal goods.",
         "location": "Borough Market",
         "date": "2025-03-12",
         "time": "09:00",
@@ -389,7 +419,8 @@ scheduled_events = [
     },
     {
         "title": "Urban Wildlife Workshop",
-        "description": "Learn about the wildlife that thrives in London's urban environment. Discover how to create wildlife-friendly spaces.",
+        "description": "Learn about the wildlife that thrives in London's urban environment."
+        " Discover how to create wildlife-friendly spaces.",
         "location": "Victoria Park",
         "date": "2025-03-13",
         "time": "16:00",
@@ -401,7 +432,8 @@ scheduled_events = [
     },
     {
         "title": "Riverboat Tour: Thames Discovery",
-        "description": "Embark on a scenic riverboat tour along the Thames. Explore London's landmarks from a unique perspective.",
+        "description": "Embark on a scenic riverboat tour along the Thames."
+        " Explore London's landmarks from a unique perspective.",
         "location": "Tower Bridge",
         "date": "2025-03-13",
         "time": "13:00",
@@ -413,7 +445,8 @@ scheduled_events = [
     },
     {
         "title": "Community Book Swap",
-        "description": "Bring your old books and swap them for new reads at our community book swap. A great way to recycle and discover new authors.",
+        "description": "Bring your old books and swap them for new reads at our"
+        " community book swap. A great way to recycle and discover new authors.",
         "location": "Southwark Library",
         "date": "2025-03-14",
         "time": "13:00",
@@ -425,7 +458,8 @@ scheduled_events = [
     },
     {
         "title": "Community yoga in the park",
-        "description": "Join our community yoga session in the park. Relax, stretch, and connect with nature.",
+        "description": "Join our community yoga session in the park. Relax, stretch, "
+        "and connect with nature.",
         "location": "Green Park",
         "date": "2025-03-15",
         "time": "9:00",
@@ -437,7 +471,8 @@ scheduled_events = [
     },
     {
         "title": "Green Living Seminar",
-        "description": "Learn practical tips for sustainable living. Reduce your carbon footprint and make a positive impact on the environment.",
+        "description": "Learn practical tips for sustainable living. Reduce your carbon"
+        " footprint and make a positive impact on the environment.",
         "location": "City Hall",
         "date": "2025-03-15",
         "time": "11:00",
@@ -449,7 +484,8 @@ scheduled_events = [
     },
     {
         "title": "Sunday Cycle Ride",
-        "description": "Enjoy a leisurely cycle ride along the Regent's Canal. Explore London's hidden waterways and enjoy the scenery.",
+        "description": "Enjoy a leisurely cycle ride along the Regent's Canal. "
+        "Explore London's hidden waterways and enjoy the scenery.",
         "location": "Regent's Canal",
         "date": "2025-03-16",
         "time": "10:00",
@@ -461,7 +497,8 @@ scheduled_events = [
     },
     {
         "title": "Art in the Park",
-        "description": "Join us for an outdoor art session in Battersea Park. Bring your own materials or use ours. All skill levels welcome.",
+        "description": "Join us for an outdoor art session in Battersea Park. "
+        "Bring your own materials or use ours. All skill levels welcome.",
         "location": "Battersea Park",
         "date": "2025-03-18",
         "time": "14:00",
@@ -473,7 +510,8 @@ scheduled_events = [
     },
     {
         "title": "Recycling Workshop",
-        "description": "Learn the ins and outs of recycling in London. Understand what can and cannot be recycled and how to do it effectively.",
+        "description": "Learn the ins and outs of recycling in London. "
+        "Understand what can and cannot be recycled and how to do it effectively.",
         "location": "Islington Ecology Centre",
         "date": "2025-03-20",
         "time": "17:00",
@@ -485,7 +523,8 @@ scheduled_events = [
     },
     {
         "title": "Community Choir Practice",
-        "description": "Join our friendly community choir for a fun singing session. All voices welcome!",
+        "description": "Join our friendly community choir for a fun singing session. "
+        "All voices welcome!",
         "location": "Spitalfields Community Centre",
         "date": "2025-03-22",
         "time": "19:00",
@@ -497,7 +536,8 @@ scheduled_events = [
     },
     {
         "title": "Sustainable Cooking Class",
-        "description": "Learn how to cook delicious and sustainable meals using locally sourced ingredients. Reduce food waste and eat healthy.",
+        "description": "Learn how to cook delicious and sustainable meals using locally"
+        " sourced ingredients. Reduce food waste and eat healthy.",
         "location": "Hackney City Farm",
         "date": "2025-03-24",
         "time": "18:30",
@@ -509,7 +549,8 @@ scheduled_events = [
     },
     {
         "title": "Nature Photography Walk",
-        "description": "Capture the beauty of London's parks and wildlife on our guided photography walk. Learn tips and tricks for stunning nature shots.",
+        "description": "Capture the beauty of London's parks and wildlife on our "
+        "guided photography walk. Learn tips and tricks for stunning nature shots.",
         "location": "Hampstead Heath",
         "date": "2025-03-26",
         "time": "15:30",
@@ -521,7 +562,8 @@ scheduled_events = [
     },
     {
         "title": "Community Yoga Class",
-        "description": "Relax and unwind with our community yoga class in Greenwich Park. Suitable for all levels, bring your own mat.",
+        "description": "Relax and unwind with our community yoga class in Greenwich Park. "
+        "Suitable for all levels, bring your own mat.",
         "location": "Greenwich Park",
         "date": "2025-03-28",
         "time": "08:30",
@@ -533,7 +575,8 @@ scheduled_events = [
     },
     {
         "title": "Zero Waste Workshop",
-        "description": "Discover the principles of zero waste living and how to reduce your environmental impact. Practical tips and advice for sustainable living.",
+        "description": "Discover the principles of zero waste living and how to reduce your "
+        "environmental impact. Practical tips and advice for sustainable living.",
         "location": "Walthamstow Wetlands",
         "date": "2025-03-30",
         "time": "16:00",
@@ -545,7 +588,8 @@ scheduled_events = [
     },
     {
         "title": "Community Gardening Day",
-        "description": "Join us for a day of community gardening at Kew Gardens. Help plant flowers, herbs, and vegetables in our shared garden space.",
+        "description": "Join us for a day of community gardening at Kew Gardens. "
+        "Help plant flowers, herbs, and vegetables in our shared garden space.",
         "location": "Kew Gardens",
         "date": "2025-04-01",
         "time": "10:00",
@@ -571,7 +615,8 @@ poi_events = [
     },
     {
         "title": "Visit the London Eye",
-        "description": "Experience breathtaking views of London from the London Eye. A must-visit attraction for tourists and locals alike.",
+        "description": "Experience breathtaking views of London from the London Eye. "
+        "A must-visit attraction for tourists and locals alike.",
         "location": "London Eye, South Bank, London, Greater London, England",
         "poi_type": "landmarks",
         "latitude": 51.5033,
@@ -582,7 +627,8 @@ poi_events = [
     },
     {
         "title": "Explore Trafalgar Square",
-        "description": "Discover the history and cultural significance of Trafalgar Square. Home to Nelson's Column and the National Gallery.",
+        "description": "Discover the history and cultural significance of Trafalgar Square."
+        " Home to Nelson's Column and the National Gallery.",
         "location": "Trafalgar Square, Westminster, London, Greater London, England",
         "poi_type": "landmarks",
         "latitude": 51.5074,
@@ -593,7 +639,8 @@ poi_events = [
     },
     {
         "title": "Tour Buckingham Palace",
-        "description": "Experience the grandeur of Buckingham Palace, the official residence of the British monarch. Witness the Changing of the Guard ceremony.",
+        "description": "Experience the grandeur of Buckingham Palace, the official residence of "
+        "the British monarch. Witness the Changing of the Guard ceremony.",
         "location": "Buckingham Palace, Westminster, London, Greater London, England",
         "poi_type": "landmarks",
         "latitude": 51.5014,
@@ -604,7 +651,8 @@ poi_events = [
     },
     {
         "title": "Visit the Tower of London",
-        "description": "Explore the Tower of London, a historic castle and fortress on the banks of the River Thames. Home to the Crown Jewels and centuries of history.",
+        "description": "Explore the Tower of London, a historic castle and fortress on the banks of "
+        "the River Thames. Home to the Crown Jewels and centuries of history.",
         "location": "Tower of London, Tower Hill, London, Greater London, England",
         "poi_type": "landmarks",
         "latitude": 51.5081,
@@ -615,7 +663,8 @@ poi_events = [
     },
     {
         "title": "Discover the British Museum",
-        "description": "Immerse yourself in world history and culture at the British Museum. Home to a vast collection of artifacts from ancient civilizations.",
+        "description": "Immerse yourself in world history and culture at the British Museum. "
+        "Home to a vast collection of artifacts from ancient civilizations.",
         "location": "British Museum, Great Russell St, Bloomsbury, London, England",
         "poi_type": "museums",
         "latitude": 51.5194,
@@ -626,7 +675,8 @@ poi_events = [
     },
     {
         "title": "Explore the Natural History Museum",
-        "description": "Journey through the natural world at the Natural History Museum. Discover dinosaurs, gemstones, and interactive exhibits for all ages.",
+        "description": "Journey through the natural world at the Natural History Museum. "
+        "Discover dinosaurs, gemstones, and interactive exhibits for all ages.",
         "location": "Natural History Museum, Cromwell Rd, South Kensington, London, England",
         "poi_type": "museums",
         "latitude": 51.4966,
@@ -637,7 +687,8 @@ poi_events = [
     },
     {
         "title": "Hyde Park: London's Green Oasis",
-        "description": "Escape the city hustle and bustle in Hyde Park. Enjoy picnics, boating, and leisurely walks in one of London's largest parks.",
+        "description": "Escape the city hustle and bustle in Hyde Park. Enjoy picnics, boating,"
+        " and leisurely walks in one of London's largest parks.",
         "location": "Hyde Park, London, England",
         "poi_type": "parks",
         "latitude": 51.5073,
@@ -648,7 +699,8 @@ poi_events = [
     },
     {
         "title": "Regent's Park: A Botanical Haven",
-        "description": "Stroll through Regent's Park and admire its stunning gardens and wildlife. Visit the Queen Mary's Rose Garden and London Zoo.",
+        "description": "Stroll through Regent's Park and admire its stunning gardens "
+        "and wildlife. Visit the Queen Mary's Rose Garden and London Zoo.",
         "location": "Regent's Park, London, England",
         "poi_type": "parks",
         "latitude": 51.5304,
@@ -659,7 +711,8 @@ poi_events = [
     },
     {
         "title": "Kew Gardens: A World of Plants",
-        "description": "Explore the diverse plant life at Kew Gardens, a UNESCO World Heritage Site. Discover glasshouses, treetop walks, and botanical wonders.",
+        "description": "Explore the diverse plant life at Kew Gardens, a UNESCO World Heritage Site."
+        " Discover glasshouses, treetop walks, and botanical wonders.",
         "location": "Kew Gardens, Richmond, London, England",
         "poi_type": "parks",
         "latitude": 51.4785,
@@ -673,49 +726,115 @@ poi_events = [
 articles_data = [
     {
         "title": "Discovering London's History",
-        "content": "Explore London's rich history, from its Roman origins as Londinium to its modern-day status as a global metropolis. Walk the ancient streets where historical figures like Shakespeare and Churchill once trod. Delve into the Tower of London's storied past, where tales of royalty, imprisonment, and intrigue echo through the centuries. Visit the British Museum to witness artifacts from civilizations across the globe, or wander through the medieval halls of Westminster Abbey, a site of coronations and royal burials. Trace the city's evolution through the Great Fire of London, the Victorian era's industrial boom, and the resilience displayed during World War II. Discover hidden historical gems in the City of London, where remnants of Roman walls and medieval churches stand side by side with modern skyscrapers. Unearth the stories behind iconic landmarks and lesser-known historical sites, painting a vivid picture of London's enduring legacy.",
+        "content": "Explore London's rich history, from its Roman origins as Londinium to its modern-day status as a"
+        " global metropolis. Walk the ancient streets where historical figures like Shakespeare and Churchill once trod."
+        " Delve into the Tower of London's storied past, where tales of royalty, imprisonment, and intrigue echo through"
+        " the centuries. Visit the British Museum to witness artifacts from civilizations across the globe, or wander"
+        " through the medieval halls of Westminster Abbey, a site of coronations and royal burials. Trace the city's "
+        "evolution through the Great Fire of London, the Victorian era's industrial boom, and the resilience displayed"
+        " during World War II. Discover hidden historical gems in the City of London, where remnants of Roman walls "
+        "and medieval churches stand side by side with modern skyscrapers. Unearth the stories behind iconic landmarks"
+        " and lesser-known historical sites, painting a vivid picture of London's enduring legacy.",
         "author": "Alice Johnson",
         "description": "A journey through time in the heart of London.",
         "image_path": "img/london.png"
     },
     {
         "title": "A Guide to London’s Iconic Landmarks",
-        "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These iconic sites attract millions of tourists every year, offering breathtaking views and historic significance. Start your journey at the Houses of Parliament, where Big Ben's chimes resonate across the city, a symbol of British democracy. Cross Westminster Bridge to capture panoramic views of the London Eye, a giant Ferris wheel offering a unique perspective of the skyline. Explore Buckingham Palace, the official residence of the British monarch, and witness the Changing of the Guard ceremony. Marvel at the architectural grandeur of St. Paul's Cathedral, a masterpiece designed by Sir Christopher Wren. Walk across Tower Bridge, an engineering marvel that opens to allow ships to pass. Visit Trafalgar Square, home to Nelson's Column and the National Gallery, a hub of art and culture. Discover the historical significance of the Tower of London, a fortress, palace, and prison that has played a crucial role in British history. Each landmark tells a story, weaving together the rich tapestry of London's past and present.",
+        "content": "From Big Ben to the London Eye, London boasts some of the most famous landmarks in the world. These"
+        " iconic sites attract millions of tourists every year, offering breathtaking views and historic significance."
+        " Start your journey at the Houses of Parliament, where Big Ben's chimes resonate across the city, a symbol of British"
+        " democracy. Cross Westminster Bridge to capture panoramic views of the London Eye, a giant Ferris wheel offering a "
+        "unique perspective of the skyline. Explore Buckingham Palace, the official residence of the British monarch, and witness "
+        "the Changing of the Guard ceremony. Marvel at the architectural grandeur of St. Paul's Cathedral, a masterpiece designed"
+        " by Sir Christopher Wren. Walk across Tower Bridge, an engineering marvel that opens to allow ships to pass. "
+        "Visit Trafalgar Square, home to Nelson's Column and the National Gallery, a hub of art and culture. Discover the historical"
+        " significance of the Tower of London, a fortress, palace, and prison that has played a crucial role in British history. "
+        "Each landmark tells a story, weaving together the rich tapestry of London's past and present.",
         "author": "Bob Williams",
         "description": "Explore the must-see sights of London.",
         "image_path": "img/landmarks.jpg"
     },
     {
         "title": "The Best Parks in London",
-        "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and bustle of the city. Hyde Park, one of the largest royal parks, features the Serpentine Lake, where you can rent paddleboats or enjoy a leisurely stroll. Regent’s Park, home to London Zoo and Queen Mary’s Gardens, offers a mix of formal gardens and open spaces perfect for picnics. Hampstead Heath, with its rolling hills and wooded areas, provides a wilder, more natural escape, offering stunning views of the city skyline from Parliament Hill. Explore the hidden gardens of Holland Park, with its Kyoto Garden providing a serene Japanese oasis. Discover the botanical wonders of Kew Gardens, a UNESCO World Heritage Site, or enjoy the vibrant atmosphere of Victoria Park, a favorite among East Londoners. Each park offers a unique experience, from formal gardens and boating lakes to wild meadows and ancient woodlands, ensuring there's a green space for every mood and activity.",
+        "content": "London offers a variety of green spaces for relaxation and leisure. Hyde Park, Regent’s Park, and"
+        " Hampstead Heath are just a few of the many parks that provide peace and tranquility amidst the hustle and "
+        "bustle of the city. Hyde Park, one of the largest royal parks, features the Serpentine Lake, where you can rent "
+        "paddleboats or enjoy a leisurely stroll. Regent’s Park, home to London Zoo and Queen Mary’s Gardens, offers a mix"
+        " of formal gardens and open spaces perfect for picnics. Hampstead Heath, with its rolling hills and wooded areas,"
+        " provides a wilder, more natural escape, offering stunning views of the city skyline from Parliament Hill. Explore "
+        "the hidden gardens of Holland Park, with its Kyoto Garden providing a serene Japanese oasis. Discover the botanical"
+        " wonders of Kew Gardens, a UNESCO World Heritage Site, or enjoy the vibrant atmosphere of Victoria Park, a favorite"
+        " among East Londoners. Each park offers a unique experience, from formal gardens and boating lakes to wild meadows "
+        "and ancient woodlands, ensuring there's a green space for every mood and activity.",
         "author": "Charlie Brown",
         "description": "Discover the green oasis of London.",
         "image_path": "img/park.jpg"
     },
     {
         "title": "A Walk Through London’s Museums",
-        "content": "London is home to some of the world’s most renowned museums. The British Museum, Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art. The British Museum houses a vast collection of world art and artifacts, including the Rosetta Stone and Egyptian mummies. The Natural History Museum, with its iconic dinosaur skeletons, offers a fascinating journey through the history of life on Earth. Tate Modern, housed in a former power station, displays modern and contemporary art from around the globe. Explore the Victoria and Albert Museum (V&A), showcasing decorative arts and design from various periods and cultures. Discover the Science Museum, where interactive exhibits bring scientific principles to life. Visit the National Gallery to admire masterpieces of European painting, or explore the smaller, specialized museums like the Sir John Soane's Museum or the Museum of London, each offering a unique perspective on history, art, and culture. London's museums cater to every interest, providing endless opportunities for learning and discovery.",
+        "content": "London is home to some of the world’s most renowned museums. The British Museum, "
+        "Natural History Museum, and Tate Modern showcase everything from ancient artifacts to contemporary art."
+        " The British Museum houses a vast collection of world art and artifacts, including the Rosetta Stone "
+        "and Egyptian mummies. The Natural History Museum, with its iconic dinosaur skeletons, offers a fascinating "
+        "journey through the history of life on Earth. Tate Modern, housed in a former power station, displays modern"
+        " and contemporary art from around the globe. Explore the Victoria and Albert Museum (V&A), showcasing decorative"
+        " arts and design from various periods and cultures. Discover the Science Museum, where interactive exhibits"
+        " bring scientific principles to life. Visit the National Gallery to admire masterpieces of European painting,"
+        " or explore the smaller, specialized museums like the Sir John Soane's Museum or the Museum of London, each"
+        " offering a unique perspective on history, art, and culture. London's museums cater to every interest, providing"
+        " endless opportunities for learning and discovery.",
         "author": "Eve Smith",
         "description": "A cultural journey through London's museums.",
         "image_path": "img/museum.webp"
     },
     {
         "title": "Exploring the Thames River",
-        "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and London Bridge providing vital connections across the city. A boat ride along the Thames offers a unique perspective on London's history and architecture. Embark on a river cruise to see iconic landmarks from a different angle, passing under historic bridges and alongside modern skyscrapers. Explore the Thames Path, a long-distance trail that follows the river's course, offering scenic walks and cycling routes. Visit the historic docks and wharves, remnants of London's maritime past. Discover the hidden islands and tributaries that dot the river, each with its own unique character. Learn about the Thames's role in London's history, from its importance as a trade route to its role in wartime defense. Witness the changing tides and the diverse wildlife that call the river home. Whether you're cruising, walking, or simply admiring the view from a riverside pub, the Thames offers a glimpse into the heart of London.",
+        "content": "The River Thames is the lifeblood of London, with bridges like Tower Bridge and "
+        "London Bridge providing vital connections across the city. A boat ride along the Thames offers"
+        " a unique perspective on London's history and architecture. Embark on a river cruise to see "
+        "iconic landmarks from a different angle, passing under historic bridges and alongside modern skyscrapers."
+        " Explore the Thames Path, a long-distance trail that follows the river's course, offering scenic walks "
+        "and cycling routes. Visit the historic docks and wharves, remnants of London's maritime past. Discover"
+        " the hidden islands and tributaries that dot the river, each with its own unique character. Learn "
+        "about the Thames's role in London's history, from its importance as a trade route to its role in "
+        "wartime defense. Witness the changing tides and the diverse wildlife that call the river home. Whether"
+        " you're cruising, walking, or simply admiring the view from a riverside pub, the Thames offers a glimpse"
+        " into the heart of London.",
         "author": "Frank Miller",
         "description": "A voyage along the iconic Thames River.",
         "image_path": "img/river.png"
     },
     {
         "title": "The Best Coffee Shops in London",
-        "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for everyone. Start your day with a perfectly brewed cup at a specialty coffee shop in Shoreditch, known for its vibrant cafe culture. Explore the historic coffee houses of Soho, where literary figures and artists once gathered. Sample artisanal roasts and pastries at a cafe in Borough Market, a foodie paradise. Discover hidden gems in Notting Hill, where charming cafes line the colorful streets. Visit a roastery in East London to learn about the coffee-making process and sample freshly roasted beans. Enjoy a traditional afternoon tea with coffee and scones at a classic London cafe. From independent cafes to established chains, London's coffee scene offers a diverse range of experiences, catering to every taste and preference.",
+        "content": "Discover the top coffee shops in London, from cozy cafes to trendy roasteries. "
+        "Whether you're a latte lover or espresso enthusiast, London's coffee scene has something for"
+        " everyone. Start your day with a perfectly brewed cup at a specialty coffee shop in Shoreditch,"
+        " known for its vibrant cafe culture. Explore the historic coffee houses of Soho, where literary figures"
+        " and artists once gathered. Sample artisanal roasts and pastries at a cafe in Borough Market, a foodie paradise."
+        " Discover hidden gems in Notting Hill, where charming cafes line the colorful streets. Visit a roastery "
+        "in East London to learn about the coffee-making process and sample freshly roasted beans. Enjoy a traditional"
+        " afternoon tea with coffee and scones at a classic London cafe. From independent cafes to established chains, "
+        "London's coffee scene offers a diverse range of experiences, catering to every taste and preference.",
         "author": "Grace Davis",
         "description": "A caffeine-fueled tour of London's coffee culture.",
         "image_path": "img/coffee.jpg"
     },
     {
         "title": "Hidden Gems of London",
-        "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. Escape the tourist crowds and discover the lesser-known treasures of the city. Explore the tranquil oasis of St. Dunstan in the East Church Garden, a former church transformed into a beautiful public space. Discover the charming alleyways and courtyards of Covent Garden, where hidden shops and cafes await. Visit the Leighton House Museum, a Victorian artist's home filled with stunning Islamic tiles and art. Explore the canals of Little Venice, where colorful narrowboats line the waterways. Discover the historic pubs of Southwark, where Shakespearean actors once performed. Visit the Kyoto Garden in Holland Park, a serene Japanese garden with a waterfall and koi pond. Explore the street art of Shoreditch, where vibrant murals and graffiti adorn the walls. From hidden gardens and historic pubs to art galleries and independent shops, London's hidden gems offer a unique and authentic experience, away from the hustle and bustle of the main tourist attractions.",
+        "content": "Uncover the hidden gems of London, from secret gardens to historic pubs. "
+        "Escape the tourist crowds and discover the lesser-known treasures of the city. "
+        "Explore the tranquil oasis of St. Dunstan in the East Church Garden, "
+        "a former church transformed into a beautiful public space. Discover the charming "
+        "alleyways and courtyards of Covent Garden, where hidden shops and cafes await. "
+        "Visit the Leighton House Museum, a Victorian artist's home filled with stunning "
+        "Islamic tiles and art. Explore the canals of Little Venice, where colorful narrowboats "
+        "line the waterways. Discover the historic pubs of Southwark, where Shakespearean actors "
+        "once performed. Visit the Kyoto Garden in Holland Park, a serene Japanese garden with a "
+        "waterfall and koi pond. Explore the street art of Shoreditch, where vibrant murals and "
+        "graffiti adorn the walls. From hidden gardens and historic pubs to art galleries and "
+        "independent shops, London's hidden gems offer a unique and authentic experience, away "
+        "from the hustle and bustle of the main tourist attractions.",
         "author": "Ivy Garcia",
         "description": "A guide to London's best-kept secrets.",
         "image_path": "img/london.png"
@@ -723,7 +842,8 @@ articles_data = [
 ]
 
 # Function to create events with dynamic titles and descriptions
-def create_event(token, title, description, location, date, time, latitude, longitude, is_featured, image_path):
+def create_event(token, title, description, location, date, time, latitude, longitude, 
+                 is_featured, image_path):
     headers = {"Authorization": f"Bearer {token}"}
     with open(image_path, "rb") as img_file:
         files = {"main_image": img_file}
@@ -745,7 +865,8 @@ def create_event(token, title, description, location, date, time, latitude, long
     else:
         print(f"Error creating event '{title}':", response.text)
 
-def create_poi(token, title, description, location, opening_times, poi_type, latitude, longitude, is_featured, image_path):
+def create_poi(token, title, description, location, opening_times, poi_type, latitude,
+                longitude, is_featured, image_path):
     headers = {"Authorization": f"Bearer {token}"}
     with open(image_path, "rb") as img_file:
         files = {"main_image": img_file}
@@ -814,14 +935,10 @@ def create_report(token, title, description, status, tags, author):
     }
 
     response = requests.post(REPORTS_URL, headers=headers, data=data)
-    # print(f"Response status code: {response.status_code}")
-    # print(f"Response text: {response.text}")
 
     if response.status_code == 201:
         try:
             response_json = response.json()
-            # print(f"Response JSON: {response_json}")
-            # print(f"Report '{title}' created successfully with status 'open'.")
             return response_json #return the entire report data.
         except (KeyError, ValueError):
             print(f"Error parsing JSON response for report '{title}': {response.text}")
@@ -880,7 +997,10 @@ def create_report_discussion(token, report_id, author, message):
     
 
 def generate_report_discussions(token, created_reports):
-    community_members = ["John Doe", "Jane Smith", "David Lee", "Sarah Jones", "Michael Brown", "Emily Davis", "Kevin Wilson", "Jessica Rodriguez", "Christopher Green", "Ashley King", "Matthew Scott", "Stephanie Baker", "Nicholas Adams", "Heather Nelson", "Ryan Mitchell", "Angela Collins"]
+    community_members = ["John Doe", "Jane Smith", "David Lee", "Sarah Jones", "Michael Brown", 
+                         "Emily Davis", "Kevin Wilson", "Jessica Rodriguez", "Christopher Green", 
+                         "Ashley King", "Matthew Scott", "Stephanie Baker", "Nicholas Adams", 
+                         "Heather Nelson", "Ryan Mitchell", "Angela Collins"]
 
     discussions = []
 
@@ -1123,20 +1243,24 @@ def main():
         # Create events
         for i in range(len(scheduled_events)):
             event = scheduled_events[i]
-            create_event(token, event["title"], event["description"], event["location"], event["date"], event["time"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
+            create_event(token, event["title"], event["description"], event["location"], event["date"], 
+                         event["time"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
         for i in range(len(poi_events)):
             event = poi_events[i]
-            create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], event["poi_type"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
+            create_poi(token, event["title"], event["description"], event["location"], event["opening_times"], 
+                       event["poi_type"], event["latitude"], event["longitude"], event["is_featured"], event["image_path"])
 
         # Create articles
         for i in range(len(articles_data)):
             article = articles_data[i]
-            create_article(token, article['title'], article['content'], article['author'],article['description'], article['image_path'])
+            create_article(token, article['title'], article['content'], article['author'], 
+                           article['description'], article['image_path'])
 
         # Create reports
         created_reports = []
         for report in reports_data:
-            report_data = create_report(token, report['title'], report['description'], report['status'], report['tags'], report['Author'])
+            report_data = create_report(token, report['title'], report['description'], 
+                                        report['status'], report['tags'], report['Author'])
             if report_data:
                 created_reports.append(report_data)
         # Generate report discussions
