@@ -48,7 +48,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
       if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
         map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
-      if (newMarker && newMarker.latitude !== undefined && newMarker.longitude !== undefined) {
+      if (newMarker && newMarker.latlng) {
         map.flyTo(newMarker.latlng, map.getZoom());
       }
       // eslint-disable-next-line
