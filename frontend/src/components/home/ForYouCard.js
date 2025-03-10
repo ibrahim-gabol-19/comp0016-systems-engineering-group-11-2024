@@ -6,25 +6,53 @@ import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const ForYouCard = () => {
   const cards = [
-    {
-      name: "Jane Doe",
+      {
+      name: "Liam Green",
       tag: "News",
-      content: "Green Inc are proud to launch their first prototype!  😁",
-      comment: "Awesome news!",
-      media: "https://via.placeholder.com/300x200", // Media image URL
+      content: "The City Council has approved a new green energy initiative to reduce carbon emissions by 20% by 2027.",
+      comment: "That's a bold move for a greener London!",
+      media: "https://picsum.photos/600",
     },
     {
-      name: "John Doe",
+      name: "Sophie Carter",
       tag: "Event",
-      content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
-      comment: "Sounds interesting!",
-      media: "https://via.placeholder.com/300x200",
+      content: "Walk with us! Join the 'London Heritage Walk' on Sunday to explore the rich history of our city. 🏙️",
+      comment: "Sounds like a lovely day out!",
+      media: "https://picsum.photos/500",
     },
-    
+    {
+      name: "James Smith",
+      tag: "News",
+      content: "New solar panel installations will be implemented across London council buildings to improve energy efficiency.",
+      comment: "Excited to see this change!",
+      media: "https://picsum.photos/550",
+    },
+    {
+      name: "Olivia Johnson",
+      tag: "Event",
+      content: "Help plant new trees in Regent’s Park as part of the 'Greening London' initiative this weekend! 🌳",
+      comment: "A great way to contribute to the environment!",
+      media: "https://picsum.photos/650",
+    },
+    {
+      name: "Daniel Lee",
+      tag: "Event",
+      content: "Looking for volunteers to assist with the London Soup Kitchen project. Every little bit helps!",
+      comment: "Great cause, count me in!",
+      media: "https://picsum.photos/700",
+    },
+    {
+      name: "Maya Patel",
+      tag: "News",
+      content: "London City Council will be offering free composting workshops for residents to reduce food waste. 🥕",
+      comment: "This is a fantastic idea!",
+      media: "https://picsum.photos/450",
+    },
   ];
 
+
   return (
-    <div className="p-6 font-sans">
+    <div className="p-6">
       <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">For You</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, index) => (
