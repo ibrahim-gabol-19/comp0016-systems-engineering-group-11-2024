@@ -1,3 +1,5 @@
+# pylint: disable=all
+
 import requests
 import random
 import subprocess
