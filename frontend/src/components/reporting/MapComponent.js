@@ -23,24 +23,18 @@ let DefaultIcon = L.icon({
 let SelectedIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
-  iconSize: [35, 57],
-  iconAnchor: [17, 57],
+  iconSize: [35, 57], // Increased size
+  iconAnchor: [17, 57], // Adjusted anchor
 });
+
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({
-  onMarkerSelected,
-  onNewMarkerSelected,
-  reports,
-  newMarker,
-  activeFilters,
-  selectedMarker,
-  mapRef,
-}) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
   const zoomLevel = 13;
-  const [position, setPosition] = useState(null);
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+  const [position, setPosition] = useState(null);
+
 
   const bounds = [
     [sw_lat, sw_lon],
@@ -51,17 +45,14 @@ const MapComponent = ({
     const map = useMap();
 
     useEffect(() => {
-      if (
-        selectedMarker &&
-        selectedMarker.latitude !== undefined &&
-        selectedMarker.longitude !== undefined
-      ) {
-        map.flyTo(
-          [selectedMarker.latitude, selectedMarker.longitude],
-          map.getZoom()
-        );
+      if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
+        map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
-    }, [selectedMarker, map]);
+      if (newMarker && newMarker.latitude !== undefined && newMarker.longitude !== undefined) {
+        map.flyTo(newMarker.latlng, map.getZoom());
+      }
+      // eslint-disable-next-line
+    }, [selectedMarker, newMarker, map]);
 
     return null;
   }
@@ -81,26 +72,11 @@ const MapComponent = ({
     });
 
     return newMarker === null ? null : (
-      <Marker
-        position={position}
-        draggable={true}
-        icon={SelectedIcon}
-        eventHandlers={{
-          dragend: (e) => {
-            const marker = e.target;
-            const newPos = marker.getLatLng();
-            setPosition(newPos);
-            // Update the newMarker with the new coordinates
-            onNewMarkerSelected({ latlng: newPos });
-          },
-        }}
-      ></Marker>
+      <Marker position={position || newMarker.latlng} draggable={true} icon={SelectedIcon}></Marker>
     );
   }
 
-  const filteredReports = reports.filter((item) =>
-    activeFilters.includes(item.status)
-  );
+  const filteredReports = reports.filter((item) => activeFilters.includes(item.status));
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}>
@@ -122,11 +98,7 @@ const MapComponent = ({
           <Marker
             key={item.id}
             position={[item.latitude, item.longitude]}
-            icon={
-              selectedMarker && selectedMarker.id === item.id
-                ? SelectedIcon
-                : DefaultIcon
-            }
+            icon={selectedMarker && selectedMarker.id === item.id ? SelectedIcon : DefaultIcon}
             eventHandlers={{
               click: () => {
                 onMarkerSelected(item);
