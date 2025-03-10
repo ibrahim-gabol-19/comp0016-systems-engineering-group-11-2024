@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { FaThumbsUp, FaComment, FaFilter } from "react-icons/fa";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
-import { FaThumbsUp, FaComment } from "react-icons/fa";
 import CreatePostModal from "./CreatePostModal";
 import CommentsPopup from "./CommentsPopup";
+import FilterForYouModal from "./FilterForYouModal";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-// Helper function to truncate text to a specified limit.
+// Helper function to truncate text.
 const truncateText = (text, limit) => {
   if (!text) return "";
   return text.length > limit ? text.slice(0, limit) + "..." : text;
 };
 
-// Transformation functions for each type of post.
-// Each transformation adds a uniqueId property.
+// Transformation functions for each post type.
 const transformForumPost = (post) => ({
   id: post.id,
   uniqueId: `forum-${post.id}`,
@@ -28,7 +28,7 @@ const transformForumPost = (post) => ({
   commentCount: post.commentCount || 0,
   likeCount: post.likeCount !== undefined ? post.likeCount : 0,
   liked: post.liked !== undefined ? post.liked : false,
-  tags: post.tags
+  tags: post.tags,
 });
 
 const transformArticle = (article) => ({
@@ -43,7 +43,7 @@ const transformArticle = (article) => ({
   commentCount: 0,
   likeCount: 0,
   liked: false,
-  tags: "News"
+  tags: "News",
 });
 
 const transformEvent = (event) => ({
@@ -58,10 +58,10 @@ const transformEvent = (event) => ({
   commentCount: 0,
   likeCount: 0,
   liked: false,
-  tags: "Event"
+  tags: "Event",
 });
 
-// Helper function to determine the content type string for likes.
+// Helper function for likes.
 const getLikeContentType = (type) => {
   if (type === "forum") return "forums.forumpost";
   if (type === "article") return "articles.article";
@@ -72,11 +72,20 @@ const getLikeContentType = (type) => {
 const ForYouCard = () => {
   const [cards, setCards] = useState([]);
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [selectedPostType, setSelectedPostType] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch current user details from the accounts endpoint.
+  // Local filter state.
+  const [filterOptions, setFilterOptions] = useState({
+    forum: true,
+    article: true,
+    event: true,
+  });
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  // Fetch current user.
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -86,19 +95,21 @@ const ForYouCard = () => {
         })
         .then((res) => setCurrentUser(res.data))
         .catch((err) =>
-          console.error("Error fetching current user (ensure the URL is correct):", err)
+          console.error("Error fetching current user:", err)
         );
     }
   }, []);
 
-  // Unified fetch function: fetch forums, articles, events and merge them.
+  // Fetch all posts.
   const fetchAllPosts = async () => {
     try {
       const token = localStorage.getItem("token");
       const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
-      
-      // Fetch forum posts.
-      const forumRes = await axios.get(`${API_URL}forums/`, { headers: authHeader });
+
+      // Forum posts.
+      const forumRes = await axios.get(`${API_URL}forums/`, {
+        headers: authHeader,
+      });
       const forumPostsRaw = forumRes.data;
       const forumPosts = await Promise.all(
         forumPostsRaw.map(async (post) => {
@@ -107,32 +118,46 @@ const ForYouCard = () => {
               params: { content_type: "forums.forumpost", object_id: post.id },
               headers: authHeader,
             });
-            return transformForumPost({ ...post, commentCount: commentRes.data.length });
+            return transformForumPost({
+              ...post,
+              commentCount: commentRes.data.length,
+            });
           } catch (error) {
-            console.error("Error fetching extra info for forum post", post.id, error);
+            console.error(
+              "Error fetching comments for forum post",
+              post.id,
+              error
+            );
             return transformForumPost({ ...post, commentCount: 0 });
           }
         })
       );
 
-      // Fetch articles.
-      const articlesRes = await axios.get(`${API_URL}articles/`, { headers: authHeader });
-      const articles = articlesRes.data.map((article) => transformArticle(article));
+      // Articles.
+      const articlesRes = await axios.get(`${API_URL}articles/`, {
+        headers: authHeader,
+      });
+      const articles = articlesRes.data.map((article) =>
+        transformArticle(article)
+      );
 
-      // Fetch events.
-      const eventsRes = await axios.get(`${API_URL}events/`, { headers: authHeader });
+      // Events.
+      const eventsRes = await axios.get(`${API_URL}events/`, {
+        headers: authHeader,
+      });
       const events = eventsRes.data.map((event) => transformEvent(event));
 
-      // Merge all posts.
+      // Merge posts.
       let allPosts = [...forumPosts, ...articles, ...events];
-      // Sort by created_at descending.
+
+      // Initial sort: newest first.
       allPosts.sort((a, b) => {
         if (!a.created_at) return 1;
         if (!b.created_at) return -1;
         return new Date(b.created_at) - new Date(a.created_at);
       });
 
-      // If token and currentUser exist, update each card's like status.
+      // Update like status.
       if (token && currentUser && currentUser.id) {
         const updatedPosts = await Promise.all(
           allPosts.map(async (card) => {
@@ -148,7 +173,9 @@ const ForYouCard = () => {
               return {
                 ...card,
                 likeCount: likes.length,
-                liked: likes.some((like) => Number(like.user.id) === Number(currentUser.id)),
+                liked: likes.some(
+                  (like) => Number(like.user.id) === Number(currentUser.id)
+                ),
               };
             } catch (err) {
               console.error("Error fetching likes for card", card.id, err);
@@ -168,7 +195,6 @@ const ForYouCard = () => {
     fetchAllPosts();
   }, [currentUser]);
 
-  // Handle post creation (only applies to forum posts for now).
   const handleCreatePost = async (postData) => {
     try {
       const token = localStorage.getItem("token");
@@ -200,7 +226,6 @@ const ForYouCard = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // Open comments modal with the specified post ID and type.
   const handleOpenComments = (postId, postType) => {
     setSelectedPostId(postId);
     setSelectedPostType(postType);
@@ -211,7 +236,6 @@ const ForYouCard = () => {
     setSelectedPostType(null);
   };
 
-  // When a comment is added, update the comment count for that post locally.
   const handleCommentAdded = () => {
     setCards((prevCards) =>
       prevCards.map((card) =>
@@ -222,7 +246,6 @@ const ForYouCard = () => {
     );
   };
 
-  // Toggle like status for a post by integrating the likes backend.
   const handleToggleLike = async (postId, postType) => {
     const token = localStorage.getItem("token");
     const contentType = getLikeContentType(postType);
@@ -230,7 +253,6 @@ const ForYouCard = () => {
     const card = cards.find((c) => c.uniqueId === uniqueId);
     if (!card) return;
     if (!card.liked) {
-      // Like the post.
       try {
         await axios.post(
           `${API_URL}likes/`,
@@ -239,14 +261,15 @@ const ForYouCard = () => {
         );
         setCards((prevCards) =>
           prevCards.map((c) =>
-            c.uniqueId === uniqueId ? { ...c, liked: true, likeCount: (c.likeCount || 0) + 1 } : c
+            c.uniqueId === uniqueId
+              ? { ...c, liked: true, likeCount: (c.likeCount || 0) + 1 }
+              : c
           )
         );
       } catch (error) {
         console.error("Error liking post:", error);
       }
     } else {
-      // Unlike the post.
       try {
         const res = await axios.get(`${API_URL}likes/`, {
           params: { content_type: contentType, object_id: postId },
@@ -275,22 +298,39 @@ const ForYouCard = () => {
     }
   };
 
+  // Apply filtering and sorting.
+  const filteredCards = cards.filter((card) => filterOptions[card.type]);
+  const sortedCards = [...filteredCards].sort((a, b) => {
+    if (!a.created_at) return 1;
+    if (!b.created_at) return -1;
+    return sortOrder === "newest"
+      ? new Date(b.created_at) - new Date(a.created_at)
+      : new Date(a.created_at) - new Date(b.created_at);
+  });
+
   return (
     <div className="p-6 font-sans">
-      {/* "For You" Section Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">For You</h2>
-        <button
-          onClick={() => setIsCreatePostModalOpen(true)}
-          className="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105 flex items-center gap-1"
-        >
-          <span>+</span> Create Post
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsFilterModalOpen(true)}
+            className="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          >
+            <FaFilter />
+            Filter
+          </button>
+          <button
+            onClick={() => setIsCreatePostModalOpen(true)}
+            className="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transform transition-all duration-300 hover:scale-105 flex items-center gap-1"
+          >
+            <span>+</span> Create Post
+          </button>
+        </div>
       </div>
 
-      {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card) => {
+        {sortedCards.map((card) => {
           const displayContent = truncateText(card.content, 100);
           const isForum = card.type === "forum";
           return (
@@ -312,10 +352,14 @@ const ForYouCard = () => {
                       <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
                         {card.author[0]}
                       </div>
-                      <p className="font-semibold text-lg text-gray-800">{card.author}</p>
+                      <p className="font-semibold text-lg text-gray-800">
+                        {card.author}
+                      </p>
                     </div>
                   ) : (
-                    <p className="font-semibold text-lg text-gray-800">{card.title}</p>
+                    <p className="font-semibold text-lg text-gray-800">
+                      {card.title}
+                    </p>
                   )}
                   {card.tags === "News" ? (
                     <NewsButton />
@@ -325,9 +369,13 @@ const ForYouCard = () => {
                 </div>
                 <p className="text-gray-700">{displayContent}</p>
                 {isForum && (
-                  <p className="text-gray-500 text-sm mt-1 italic">Tags: {card.tags}</p>
+                  <p className="text-gray-500 text-sm mt-1 italic">
+                    Tags: {card.tags}
+                  </p>
                 )}
-                <p className="text-gray-500 text-sm mt-2 italic">{formatDate(card.created_at)}</p>
+                <p className="text-gray-500 text-sm mt-2 italic">
+                  {formatDate(card.created_at)}
+                </p>
                 <div className="flex items-center justify-between mt-3">
                   <button
                     onClick={() => handleOpenComments(card.id, card.type)}
@@ -339,103 +387,14 @@ const ForYouCard = () => {
                   <button
                     onClick={() => handleToggleLike(card.id, card.type)}
                     className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
-                      card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
+                      card.liked
+                        ? "text-blue-500"
+                        : "text-gray-600 hover:text-gray-700"
                     }`}
                   >
                     <FaThumbsUp className="text-xl" />
                     <span className="text-sm">{card.likeCount || 0}</span>
                   </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Dummy posts for testing */}
-        {[
-          {
-            id: 997,
-            name: "Jane Doe",
-            tags: "News",
-            title: "Prototype Launch",
-            content: "Green Inc are proud to launch their first prototype! 😁",
-            comment: "Awesome news!",
-            image: "https://via.placeholder.com/300x200",
-          },
-          {
-            id: 998,
-            name: "John Doe",
-            tags: "Event",
-            title: "Annual Conference",
-            content: "Green Inc are hosting their annual conference at the Excel Centre in London!",
-            comment: "Sounds interesting!",
-            image: "https://via.placeholder.com/300x200",
-          },
-          {
-            id: 999,
-            name: "Emily Smith",
-            tags: "Volunteering",
-            content: "Join us in making a difference in the community! 🌍",
-            comment: "It's a rewarding experience!",
-            image: "https://via.placeholder.com/300x200",
-          },
-        ].map((card, index) => {
-          const isForum = !card.tags || (card.tags !== "News" && card.tags !== "Event" && card.tags !== "Article");
-          const displayContent = truncateText(card.content, 100);
-          const dummyType = card.tags === "News" ? "article" : card.tags === "Event" ? "event" : "forum";
-          return (
-            <div
-              key={`existing-${index}`}
-              className="group bg-gray-100 shadow-lg rounded-lg overflow-hidden flex flex-col sm:flex-row transform transition-transform duration-300 hover:scale-105"
-            >
-              {card.image && (
-                <img
-                  src={card.image}
-                  alt="Media content"
-                  className="sm:w-1/3 w-full h-48 sm:h-auto object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              )}
-              <div className="p-4 flex-1">
-                <div className="flex justify-between items-center mb-2">
-                  {card.tags === "News" || card.tags === "Event" ? (
-                    <p className="font-semibold text-lg text-gray-800">{card.title || card.name}</p>
-                  ) : (
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                        {card.name[0]}
-                      </div>
-                      <p className="font-semibold text-lg text-gray-800">{card.name}</p>
-                    </div>
-                  )}
-                  {card.tags === "News" ? (
-                    <NewsButton />
-                  ) : card.tags === "Event" ? (
-                    <EventButton />
-                  ) : null}
-                </div>
-                <p className="text-gray-700">{displayContent}</p>
-                {isForum && (
-                  <p className="text-gray-500 text-sm mt-2 italic">{card.comment}</p>
-                )}
-                <div className="flex items-center justify-between mt-3">
-                  <button
-                    onClick={() => handleOpenComments(card.id, dummyType)}
-                    className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full flex items-center gap-1"
-                  >
-                    <FaComment className="text-xl" />
-                    <span className="text-sm">{card.comments?.length || 0}</span>
-                  </button>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleToggleLike(card.id, dummyType)}
-                      className={`p-1 rounded-full flex items-center gap-1 transition-all duration-300 hover:scale-110 ${
-                        card.liked ? "text-blue-500" : "text-gray-600 hover:text-gray-700"
-                      }`}
-                    >
-                      <FaThumbsUp className="text-xl" />
-                      <span className="text-sm">{card.likeCount || 0}</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -465,6 +424,17 @@ const ForYouCard = () => {
           onCommentAdded={handleCommentAdded}
         />
       )}
+
+      <FilterForYouModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        onApply={(newFilters, newSortOrder) => {
+          setFilterOptions(newFilters);
+          setSortOrder(newSortOrder);
+        }}
+        initialFilters={filterOptions}
+        initialSortOrder={sortOrder}
+      />
     </div>
   );
 };
