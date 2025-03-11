@@ -1,3 +1,5 @@
+"""URL configurations for the forums application."""
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import ForumPostViewSet

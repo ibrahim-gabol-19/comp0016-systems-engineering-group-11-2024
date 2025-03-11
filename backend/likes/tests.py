@@ -1,3 +1,2 @@
-from django.test import TestCase
-
+"""Tests for the likes application."""
 # Create your tests here.

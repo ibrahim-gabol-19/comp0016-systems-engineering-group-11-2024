@@ -1,3 +1,2 @@
-from django.contrib import admin
-
+"""Admin module for forums."""
 # Register your models here.

@@ -1,7 +1,10 @@
+"""Views for the forums application."""
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import ForumPost
 from .serializers import ForumPostSerializer
+
 
 class ForumPostViewSet(viewsets.ModelViewSet):
     """

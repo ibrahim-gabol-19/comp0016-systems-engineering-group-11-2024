@@ -1,8 +1,12 @@
+"""Serializers for the comments application."""
+
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 from .models import Comment
 
+
 class CommentSerializer(serializers.ModelSerializer):
+    """Serializer for the Comment model."""
     author = serializers.ReadOnlyField(source='author.username')
     like_count = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
@@ -28,13 +32,16 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['author', 'created_at', 'updated_at', 'likes']
 
     def get_like_count(self, obj):
+        """Return the like count for the comment."""
         return obj.like_count()
 
     def get_replies(self, obj):
+        """Return serialized replies for the comment."""
         replies = obj.replies.all()
         return CommentSerializer(replies, many=True).data
 
     def create(self, validated_data):
+        """Create a new Comment instance."""
         request_data = self.context['request'].data
         user = self.context['request'].user
         validated_data['author'] = user
@@ -44,10 +51,10 @@ class CommentSerializer(serializers.ModelSerializer):
         try:
             app_label, model = content_type_str.split('.')
             ct = ContentType.objects.get(app_label=app_label, model=model)
-        except Exception:
+        except Exception as exc:
             raise serializers.ValidationError(
                 "Invalid content_type format. Expected 'app_label.model'."
-            )
+            ) from exc
         validated_data['content_type'] = ct
 
         # If a reply is being made, map the frontend's "reply_to" field to parent_comment

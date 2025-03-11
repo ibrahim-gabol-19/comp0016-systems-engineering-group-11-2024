@@ -1,14 +1,18 @@
+"""Serializers for the forums application."""
+
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import ForumPost
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
 
 class ForumPostSerializer(serializers.ModelSerializer):
     """
     Serializer for ForumPost
     """
-    author = serializers.ReadOnlyField(source='author.username')  # Display the username of the author
+    # Display the username of the author
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = ForumPost

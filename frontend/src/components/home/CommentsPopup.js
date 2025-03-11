@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaThumbsUp } from "react-icons/fa";
 import axios from "axios";
 
@@ -22,7 +22,9 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setCurrentUser(res.data.username))
-        .catch((err) => console.error("Error fetching current user:", err));
+        .catch((err) =>
+          console.error("Error fetching current user:", err)
+        );
     }
   }, []);
 
@@ -36,7 +38,7 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   };
 
   // Fetch comments using the passed contentType prop
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}comments/`, {
@@ -50,11 +52,11 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
-  };
+  }, [postId, contentType]);
 
   useEffect(() => {
     fetchComments();
-  }, [postId, contentType]);
+  }, [fetchComments]);
 
   // Handle submitting a new comment or reply
   const handleSubmitComment = async (e) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaThumbsUp, FaComment, FaFilter } from "react-icons/fa";
 import EventButton from "./EventButton";
 import NewsButton from "./NewsButton";
@@ -104,14 +104,12 @@ const ForYouCard = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setCurrentUser(res.data))
-        .catch((err) =>
-          console.error("Error fetching current user:", err)
-        );
+        .catch((err) => console.error("Error fetching current user:", err));
     }
   }, []);
 
   // Fetch all posts.
-  const fetchAllPosts = async () => {
+  const fetchAllPosts = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
@@ -199,11 +197,11 @@ const ForYouCard = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     fetchAllPosts();
-  }, [currentUser]);
+  }, [fetchAllPosts]);
 
   const handleCreatePost = async (postData) => {
     try {

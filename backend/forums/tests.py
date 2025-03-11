@@ -1,3 +1,3 @@
-from django.test import TestCase
+"""Tests for the forums application."""
 
 # Create your tests here.
