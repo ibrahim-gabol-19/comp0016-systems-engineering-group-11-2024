@@ -13,6 +13,11 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
     return `${day}/${month}/${year}`;
   };
 
+  const formatTime = (timeString) => {
+    if (!timeString) return "";
+    return timeString.slice(0, 5);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full relative overflow-y-auto max-h-screen">
@@ -31,22 +36,38 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
         )}
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
-          <p className="text-gray-500 text-sm mb-4">
-            {formatDate(post.created_at)}
-          </p>
+          <p className="text-gray-500 text-sm mb-4">{formatDate(post.created_at)}</p>
           {post.author && (
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
                 {post.author[0]}
               </div>
-              <p className="font-semibold text-lg text-gray-800">
-                {post.author}
-              </p>
+              <p className="font-semibold text-lg text-gray-800">{post.author}</p>
             </div>
           )}
           <p className="text-gray-700 mb-4">{post.content}</p>
-          {post.tags && (
-            <p className="text-gray-500 italic mb-4">Tags: {post.tags}</p>
+          {post.type === "event" ? (
+            <>
+              <div className="mb-4">
+                {post.location && (
+                  <p className="text-gray-700 mb-2">
+                    <span className="font-bold">Location:</span> {post.location}
+                  </p>
+                )}
+                {post.time && (
+                  <p className="text-gray-700">
+                    <span className="font-bold">Time:</span> {formatTime(post.time)}
+                  </p>
+                )}
+              </div>
+              {post.tags && (
+                <p className="text-gray-500 italic mb-4">Tags: {post.tags}</p>
+              )}
+            </>
+          ) : (
+            post.tags && (
+              <p className="text-gray-500 italic mb-4">Tags: {post.tags}</p>
+            )
           )}
           <div className="flex items-center justify-end">
             <button

@@ -16,6 +16,12 @@ const truncateText = (text, limit) => {
   return text.length > limit ? text.slice(0, limit) + "..." : text;
 };
 
+// Helper function to format time as HH:MM
+const formatTime = (timeString) => {
+  if (!timeString) return "";
+  return timeString.slice(0, 5);
+};
+
 // Transformation functions for each post type.
 const transformForumPost = (post) => ({
   id: post.id,
@@ -60,6 +66,8 @@ const transformEvent = (event) => ({
   likeCount: 0,
   liked: false,
   tags: "Event",
+  location: event.location,   
+  time: event.time,          
 });
 
 // Helper function for likes.
@@ -381,6 +389,12 @@ const ForYouCard = () => {
                 <p className="text-gray-500 text-sm mt-2 italic">
                   {formatDate(card.created_at)}
                 </p>
+                {card.type === "event" && (
+                  <div className="text-gray-500 text-xs mt-1">
+                    {card.location && <p>Location: {card.location}</p>}
+                    {card.time && <p>Time: {formatTime(card.time)}</p>}
+                  </div>
+                )}
                 <div className="flex items-center justify-between mt-3">
                   <button
                     onClick={(e) =>
