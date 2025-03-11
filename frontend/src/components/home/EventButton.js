@@ -5,7 +5,7 @@ const EventButton = () => {
   const navigate = useNavigate(); // Initialize navigate hook for navigation
 
   const handleClick = () => {
-    navigate("/event"); // Redirect to the event page
+    navigate("/events"); // Redirect to the event page
   };
 
   return (

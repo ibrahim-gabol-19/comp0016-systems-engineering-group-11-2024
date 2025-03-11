@@ -5,7 +5,7 @@ const NewsButton = () => {
   const navigate = useNavigate(); // Initialize navigate hook for navigation
 
   const handleClick = () => {
-    navigate("/news"); // Redirect to the news page
+    navigate("/"); // Redirect to the news page
   };
 
   return (
