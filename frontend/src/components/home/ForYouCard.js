@@ -66,8 +66,8 @@ const transformEvent = (event) => ({
   likeCount: 0,
   liked: false,
   tags: "Event",
-  location: event.location,   
-  time: event.time,          
+  location: event.location,
+  time: event.time,
 });
 
 // Helper function for likes.
@@ -361,13 +361,15 @@ const ForYouCard = () => {
               <div className="p-4 flex-1">
                 <div className="flex justify-between items-center mb-2">
                   {isForum ? (
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
-                        {card.author[0]}
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-white mr-3">
+                          {card.author[0]}
+                        </div>
+                        <p className="font-semibold text-lg text-gray-800">
+                          {card.title}
+                        </p>
                       </div>
-                      <p className="font-semibold text-lg text-gray-800">
-                        {card.author}
-                      </p>
                     </div>
                   ) : (
                     <p className="font-semibold text-lg text-gray-800">
