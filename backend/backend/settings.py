@@ -64,8 +64,11 @@ INSTALLED_APPS = [
     'events',
     'search',
     'accounts',
+    'forums',
+    'comments',
     'companyinformation',
-    'storages'
+    'storages',
+    'likes'
 ]
 
 MIDDLEWARE = [
