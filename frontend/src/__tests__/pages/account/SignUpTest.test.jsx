@@ -16,7 +16,7 @@ vi.mock("../../../context/AuthContext", () => ({
 }));
 
 // Mock import.meta.env
-vi.stubEnv("VITE_API_URL", "http://localhost:8000/api");
+vi.stubEnv("VITE_API_URL", "http://localhost:8000/");
 
 describe("SignUp Component", () => {
     beforeEach(() => {
@@ -101,7 +101,7 @@ describe("SignUp Component", () => {
         // Check if the API was called with the correct data
         await waitFor(() => {
             expect(axios.post).toHaveBeenCalledWith(
-                `${import.meta.env.VITE_API_URL}/auth/signup/`, // Use the environment variable
+                `${import.meta.env.VITE_API_URL}api/auth/signup/`, // Use the environment variable
                 {
                     username: "testuser",
                     email: "test@example.com",

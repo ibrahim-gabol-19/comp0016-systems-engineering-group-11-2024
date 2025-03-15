@@ -125,11 +125,11 @@ describe("Login Component", () => {
     await userEvent.click(submitButton);
 
     // Doesn't work at the moment because an error isn't displayed on the frontend
-    // // Verify the error message is displayed
-    // await waitFor(() => {
-    //   expect(
-    //     screen.getByText(/error logging in/i)
-    //   ).toBeInTheDocument();
-    // });
+    // Verify the error message is displayed
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Please try again./i)
+      ).toBeInTheDocument();
+    });
   });
 });
