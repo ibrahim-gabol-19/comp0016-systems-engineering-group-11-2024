@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FaThumbsUp } from "react-icons/fa";
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   const [comments, setComments] = useState([]); // All comments for this post

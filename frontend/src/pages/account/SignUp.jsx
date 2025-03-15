@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext"; // Assuming you have an aut
 const SignUp = () => {
   const { auth } = useAuth(); // Get authentication status from context
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

@@ -27,8 +27,8 @@ const HomePage = () => {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         const [reportsResponse, eventsResponse] = await Promise.all([
-          axios.get(process.env.REACT_APP_API_URL + "reports/", { headers }),
-          axios.get(process.env.REACT_APP_API_URL + "events/", { headers }),
+          axios.get(import.meta.env.VITE_API_URL + "reports/", { headers }),
+          axios.get(import.meta.env.VITE_API_URL + "events/", { headers }),
         ]);
 
         if (reportsResponse.status === 200) {

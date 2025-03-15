@@ -4,7 +4,7 @@ import MapComponent from "./MapComponent";
 import SidebarReport from "./SidebarReport";
 import axios from "axios";
 import { useLocation} from "react-router-dom";
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ReportsSection = ({userQuery}) => {
   const location = useLocation();

@@ -13,7 +13,7 @@ export const AIProvider = ({ children }) => {
     const initModel = async () => {
       try {
         const createdEngine = await CreateWebWorkerMLCEngine(
-          new Worker(new URL(".././workers/worker.js", import.meta.url), {
+          new Worker(new URL(".././workers/worker.jsx", import.meta.url), {
             type: "module",
           }),
           modelToUse

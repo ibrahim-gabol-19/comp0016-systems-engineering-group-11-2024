@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
 import MainImage from "../../components/contentmanagementsystem/detailed/MainImage";
-import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.js";
+import DateTime from "../../components/contentmanagementsystem/detailed/DateTime.jsx";
 import { useParams, useNavigate } from "react-router-dom"; // For dynamic routing
 import Header from "../../components/Header";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import DropdownExtract from "../../components/contentmanagementsystem/detailed/DropdownExtractEvents";
-import { AIContext } from "../../context/AIContext.js";
+import { AIContext } from "../../context/AIContext.jsx";
 
 const NEW_EVENT_ID = "0";
 const DetailedEventPage = () => {
@@ -19,7 +19,7 @@ const DetailedEventPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   // State for PDF and ICS extraction
   const [pdfFile, setPdfFile] = useState(null);
   const [icsFile, setIcsFile] = useState(null);
