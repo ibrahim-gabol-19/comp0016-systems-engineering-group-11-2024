@@ -11,6 +11,10 @@ import SignUp from "./pages/account/SignUp";
 import Login from "./pages/account/Login";
 import ProtectedRoute from "./pages/account/ProtectedRoute";
 import { CompanyProvider } from "./context/CompanyContext"; // Adjust the import path
+import { AIProvider } from "./context/AIContext";
+import DetailedEventPageView from "./pages/events/DetailedEventPageView";
+import DetailedArticlePageView from "./pages/articles/DetailedArticlePageView";
+import MiscellaneousSection from "./pages/settings/MiscellaneousSectionPage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -50,34 +54,48 @@ const App = () => {
     <div style={{ fontFamily: font }}>
       <AuthProvider>
         <CompanyProvider>
-          <Router>
-            <div className="bg-gray-100 text-black min-h-screen">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
+          <AIProvider>
+            <Router>
+              <div className="bg-gray-100 text-black min-h-screen">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/login" element={<Login />} />
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/events" element={<EventsPage />} />
-                  <Route
-                    path="/contentmanagementsystem"
-                    element={<ContentManagementSystem />}
-                  />
-                  <Route
-                    path="/contentmanagementsystem/details/articles/:articleId"
-                    element={<DetailedArticlePage />}
-                  />
-                  <Route
-                    path="/contentmanagementsystem/details/events/:eventId"
-                    element={<DetailedEventPage />}
-                  />
-                  <Route path="/reporting" element={<ReportsPage />} />
-                </Route>
-              </Routes>
-            </div>
-          </Router>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/events" element={<EventsPage />} />
+                    <Route
+                      path="/contentmanagementsystem"
+                      element={<ContentManagementSystem />}
+                    />
+                    <Route
+                      path="/articles/:articleId"
+                      element={<DetailedArticlePageView />}
+                    />
+                    <Route
+                      path="/contentmanagementsystem/details/articles/:articleId"
+                      element={<DetailedArticlePage />}
+                    />
+                    <Route
+                      path="/events/:eventId"
+                      element={<DetailedEventPageView />}
+                    />
+                    <Route
+                      path="/contentmanagementsystem/details/events/:eventId"
+                      element={<DetailedEventPage />}
+                    />
+                    <Route path="/reporting" element={<ReportsPage />} />
+                    <Route
+                      path="/miscellaneous"
+                      element={<MiscellaneousSection />}
+                    />
+                  </Route>
+                </Routes>
+              </div>
+            </Router>
+          </AIProvider>
         </CompanyProvider>
       </AuthProvider>
     </div>

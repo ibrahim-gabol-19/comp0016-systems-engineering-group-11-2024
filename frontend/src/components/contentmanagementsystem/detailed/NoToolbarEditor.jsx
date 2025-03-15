@@ -52,7 +52,7 @@ const NoToolbarEditor = forwardRef(
       quill.root.style.textAlign = "center";
       quill.root.style.overflowY = "auto"; // Enable vertical scrolling
       quill.root.style.overflowX = "auto";
-
+      
       ref.current = quill;
       quillRef.current = quill;
       quill.root.style.direction = "ltr";
@@ -79,7 +79,7 @@ const NoToolbarEditor = forwardRef(
       ref.current?.enable(!readOnly);
     }, [readOnly, ref]);
 
-    return <div className="h-12 resize-none" ref={containerRef}></div>;
+    return <div className="resize-none" ref={containerRef}></div>;
   }
 );
 

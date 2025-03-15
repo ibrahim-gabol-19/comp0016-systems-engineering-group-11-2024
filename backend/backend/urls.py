@@ -30,8 +30,11 @@ urlpatterns = [
     path('search/', include('search.urls')),
     path('api/auth/', include('accounts.urls')),
     path('companyinformation/', include('companyinformation.urls')),
+    path('forums/', include('forums.urls')),
+    path('comments/', include('comments.urls')),
+    path('likes/', include('likes.urls'))
 ]
 
-# Serve media files during development
+# Serve media files during development or production (not recommended for large projects)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

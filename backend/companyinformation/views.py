@@ -33,10 +33,10 @@ def create_default_company():
                 logo=None,  # You can leave it as None or add a default image if available
                 main_color="#FF5733",  # Hex color code example
                 font="Arial",  # Default font
-                sw_lat=34.052235,  # Example latitude for SW corner
-                sw_lon=-118.243683,  # Example longitude for SW corner
-                ne_lat=34.052255,  # Example latitude for NE corner
-                ne_lon=-118.243600,  # Example longitude for NE corner
+                sw_lat = 51.341875,  # Example latitude for SW corner
+                sw_lon = -0.29222,  # Example longitude for SW corner
+                ne_lat = 51.651675,  # Example latitude for NE corner
+                ne_lon = 0.01758,  # Example longitude for NE corner
             )
     except OperationalError:
         # The table doesn't exist yet, skip creating the default company

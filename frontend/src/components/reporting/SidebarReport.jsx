@@ -1,17 +1,78 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
-const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from "../../context/AuthContext";
+import { AIContext } from "../../context/AIContext";
+import aiLogo from "../../assets/ai_icon.png";
 
-const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
+const API_URL = process.env.REACT_APP_API_URL;
+
+const SidebarReport = ({
+  selectedMarker,
+  newMarker,
+  fetchReports,
+  onSidebarClose,
+  viewingAISummary,
+  setViewingAISummary,
+  modelReply,
+  setModelReply,
+  lastSummaryID,
+  setLastSummaryID,
+  title,
+  setTitle,
+  description,
+  setDescription,
+}) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
-
-  const [title, setTitle] = useState("");
+  const { auth } = useAuth();
   const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
   const [selectedTag, setSelectedTag] = useState("environmental"); // Default tag
-  const { main_color } = useContext(CompanyContext);
+  const { name, main_color } = useContext(CompanyContext);
+  const { getReply, engine } = useContext(AIContext);
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const author = auth.user.username;
+
+  const extractReportDetails = () => {
+    if (!selectedMarker) return null;
+
+    // Extract only relevant fields
+    const relevantDetails = {
+      title: selectedMarker.title,
+      status: selectedMarker.status,
+      tags: selectedMarker.tags,
+      author: selectedMarker.author,
+      published_date: selectedMarker.published_date,
+      description: selectedMarker.description,
+      upvotes: selectedMarker.upvotes,
+      latitude: selectedMarker.latitude,
+      longitude: selectedMarker.longitude,
+      discussions: selectedMarker.discussions.map((discussion) => ({
+        // author: discussion.author,
+        message: discussion.message,
+        created_at: discussion.created_at,
+      })),
+    };
+
+    return relevantDetails;
+  };
+
+  const getReportSummary = async () => {
+    // Extract relevant data from selectedMarker
+    const userQuery = JSON.stringify(extractReportDetails(), null, 2);
+    const systemPrompt = `You are an AI assistant chatbot for ${name}, a company.
+              
+              Provide a summary of the report.
+              Provide a summary of the discussion message.
+              Provide your recommendations.
+              Maximum 100 words.
+
+              Today's date: ${new Date().toISOString().split("T")[0]}
+              `;
+
+    await getReply(userQuery, systemPrompt, setModelReply, setIsStreaming);
+  };
 
   const tags = [
     "environmental",
@@ -23,6 +84,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     "health_safety",
     "urban_development",
   ];
+
+  const handleAIClick = () => {
+    if (
+      !engine ||
+      isStreaming ||
+      lastSummaryID === selectedMarker.id ||
+      viewingAISummary
+    ) {
+      return;
+    }
+
+    getReportSummary();
+    setLastSummaryID(selectedMarker.id);
+  };
+
   const handleUpvote = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -30,11 +106,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         API_URL + "reports/" + selectedMarker.id + "/upvote/",
         {},
         {
-            headers: {
-                Authorization: `Bearer ${token}`,  
-            },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    );
+      );
       if (response.status === 200) {
         fetchReports();
       }
@@ -59,7 +135,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
     if (message.trim()) {
       try {
         const discussionMessage = {
-          author: "Example Author",
+          author: author,
           message: message,
           report: selectedMarker.id,
         };
@@ -68,9 +144,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         if (!token) {
           alert("Authentication required. Please log in.");
           return;
-      }
-
-        
+        }
 
         const response = await axios.post(
           API_URL + "reportdiscussion/",
@@ -78,7 +152,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
           {
             headers: {
               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -107,25 +181,21 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       formData.append("main_image", image);
     }
     formData.append("description", description);
-    formData.append("author", "exampleauthor");
+    formData.append("author", author);
     formData.append("longitude", newMarker.latlng.lng.toFixed(5));
     formData.append("latitude", newMarker.latlng.lat.toFixed(5));
     formData.append("tags", selectedTag); // Include the selected tag
 
     try {
-      const response = await axios.post(
-        `${API_URL}reports/`, 
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      
+      const response = await axios.post(API_URL + "reports/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // To send files and form data
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 201) {
         fetchReports();
+        onSidebarClose();
       }
 
       // Clear the form after submission
@@ -137,6 +207,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       console.log("Error creating report:", err.message, " to", API_URL );
     }
   };
+
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -156,14 +227,15 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
         .slice(1)
     );
   };
+
   if (newMarker) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center px-3 py-3">
-        <div className="mb-6 ">
-          <p className="text-3xl font-bold">New report</p>
+      <div className="w-full h-full p-6 bg-white shadow-lg rounded-lg overflow-y-auto">
+        <div className="mb-6 text-center">
+          <p className="text-3xl font-bold text-gray-800">New Report</p>
         </div>
-        <div className="h-5/6 w-full">
-          <form onSubmit={handleSubmitNewForm} className="space-y-4">
+        <div className="w-full">
+          <form onSubmit={handleSubmitNewForm} className="space-y-6">
             {/* Title Input */}
             <div>
               <input
@@ -172,21 +244,19 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title"
-                className="w-full py-12 text-3xl px-3 border rounded-lg"
+                className="w-full p-3 text-xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
-
             {/* Image Input */}
             <div>
               <input
                 type="file"
                 id="image"
                 accept="image/*"
-                onChange={(e) => handleImageUpload(e)}
-                className="w-full py-6 px-3 border rounded-lg"
+                onChange={handleImageUpload}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
-
             {/* Description Input */}
             <div>
               <textarea
@@ -194,20 +264,22 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter description"
-                className="w-full px-3 border rounded-lg h-48 resize-none"
+                className="w-full p-3 border border-gray-300 rounded-md h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
-
             {/* Tags Select */}
             <div>
-              <label htmlFor="tags" className="block font-medium mb-2">
+              <label
+                htmlFor="tags"
+                className="block text-lg font-medium mb-2 text-gray-700"
+              >
                 Select Tag
               </label>
               <select
                 id="tags"
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="w-full py-3 px-3 border rounded-lg"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 {tags.map((tag) => (
                   <option key={tag} value={tag}>
@@ -217,12 +289,11 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 ))}
               </select>
             </div>
-
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                className="w-full py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-300"
               >
                 Submit
               </button>
@@ -232,49 +303,55 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
       </div>
     );
   } else if (selectedMarker) {
-    /*Existing Report Discussion*/
     if (viewingDiscussion) {
       return (
-        <div className="w-full h-full flex flex-col">
-          <div className="w-full  h-1/6 px-3">
-            {/*Title*/}
-            <div className="w-full h-3/4 ">
-              <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
-              </div>
-              <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+        <div className="w-full h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="text-center">
+              <p className="font-semibold text-3xl mb-2 line-clamp-2 text-gray-800">
+                {selectedMarker.title}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-gray-500 text-base">
+                Date Reported:{" "}
+                {new Date(selectedMarker.published_date).toLocaleDateString()}
+              </p>
+            </div>
+            {selectedMarker.status !== "open" ? (
+              <div className="flex justify-center items-center mt-4">
+                <p className="text-purple-600 font-bold mx-2">
+                  {selectedMarker.status.charAt(0).toUpperCase() +
+                    selectedMarker.status.slice(1).replace("_", " ")}
+                </p>
+                <span className="text-gray-300">|</span>
+                <p className="text-sky-400 font-bold mx-2">
+                  {selectedMarker.tags.charAt(0).toUpperCase() +
+                    selectedMarker.tags.slice(1).replace("_", " ")}
                 </p>
               </div>
-            </div>
-            {/* Status + Tags */}
-            <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() +
-                  selectedMarker.status.slice(1).replace("_", " ")}
-              </p>
-
-              <p className="text-center font-bold mx-4">●</p>
-
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() +
-                  selectedMarker.tags.slice(1).replace("_", " ")}
-              </p>
-            </div>
+            ) : (
+              <div className="flex justify-center items-center mt-4">
+                <p className="text-sky-400 font-bold">
+                  {selectedMarker.tags.charAt(0).toUpperCase() +
+                    selectedMarker.tags.slice(1).replace("_", " ")}
+                </p>
+              </div>
+            )}
           </div>
-          {/**Discussion */}
-          <div className="w-full h-3/6 overflow-auto border border-gray-300 ">
+          {/* Discussion List */}
+          <div className="flex-1 p-4 overflow-y-auto">
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-32 w-full min-h-16 border border-gray-200 overflow-auto ${
-                  discussion.author === "Business" ? "bg-yellow-200" : ""
-                }
-                }`}
+                className={`flex p-3 mb-3 border border-gray-200 rounded-lg ${discussion.author === "Business"
+                  ? "bg-yellow-100"
+                  : "bg-gray-50"
+                  }`}
               >
-                {/* Profile Picture (SVG Icon) */}
-                <div className="w-1/6 h-full flex justify-center items-center">
+                {/* Profile Icon */}
+                <div className="w-1/6 flex justify-center items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -290,63 +367,63 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                     />
                   </svg>
                 </div>
-                <div className="w-5/6 overflow-y-auto break-words py-3">
-                  <p className="font-semibold">{discussion.author}</p>
-                  <p className="">{discussion.message}</p>
+                <div className="w-5/6">
+                  <p className="font-semibold text-gray-800">
+                    {discussion.author}
+                  </p>
+                  <p className="text-gray-700">{discussion.message}</p>
                   <p className="text-gray-500 text-sm">
-                    {new Date(discussion.created_at).toLocaleString()}
+                    {new Date(discussion.created_at).toLocaleString(undefined, {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })}
                   </p>
                 </div>
               </div>
             ))}
           </div>
-
-          {/*New Discussion Message */}
-          <div className="w-full  flex flex-col items-center justify-center h-2/6 px-3 py-3 pb-6 ">
-            <div className="w-full h-2/4 py-2 ">
-              {/* Text Input Form */}
+          {/* New Discussion Message */}
+          {selectedMarker.status === "open" ? (
+            <div className="p-4 border-t border-gray-200">
               <textarea
-                className="w-full h-full p-2 border rounded-lg resize-none"
-                placeholder="Type your discussion message here..."
+                className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+                placeholder="Type your message here..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)} // Use state to manage input
+                onChange={(e) => setMessage(e.target.value)}
               ></textarea>
-            </div>
-            <div className="w-full h-1/4">
               <button
-                className="w-full  py-2 mt-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
-                onClick={handleSubmitNewDiscussionMessage} // Submit handler
+                className="w-full py-2 mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-300"
+                onClick={handleSubmitNewDiscussionMessage}
               >
                 Submit Message
               </button>
-            </div>
-            {/*View Overview*/}
-            <div className="w-full shadow-md h-1/4">
               <button
-                className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
-                style={{
-                  color: main_color, // Dynamic text color
-                }}
+                className="flex items-center justify-center w-full py-2 mt-4 bg-white border border-gray-300 font-bold rounded-md transition duration-300 hover:bg-gray-100"
+                style={{ color: main_color }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = lightenColor(
                     main_color,
                     40
-                  ); // Lighter background on hover
+                  );
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "white"; // Reset background on mouse leave
+                  e.currentTarget.style.backgroundColor = "white";
                 }}
                 onMouseDown={(e) => {
                   e.currentTarget.style.backgroundColor = lightenColor(
                     main_color,
                     60
-                  ); // Even lighter background on active
+                  );
                 }}
                 onMouseUp={(e) => {
                   e.currentTarget.style.backgroundColor = lightenColor(
                     main_color,
                     40
-                  ); // Reset to hover state on mouse up
+                  );
                 }}
                 onClick={() => setViewingDiscussion(false)}
               >
@@ -356,7 +433,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-6"
+                  className="w-6 h-6 mr-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -367,51 +444,108 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                 Back
               </button>
             </div>
-          </div>
+          ) : (
+            <div className="p-4 border-t border-gray-200 flex flex-col items-center">
+              <p className="text-gray-500 text-center mb-4">
+                This report is {selectedMarker.status}. Further messages are not
+                allowed.
+              </p>
+              <button
+                className="flex items-center justify-center w-full py-2 bg-white border border-gray-300 font-bold rounded-md transition duration-300 hover:bg-gray-100"
+                style={{ color: main_color }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  );
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white";
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    60
+                  );
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = lightenColor(
+                    main_color,
+                    40
+                  );
+                }}
+                onClick={() => setViewingDiscussion(false)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6 mr-2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                  />
+                </svg>
+                Back
+              </button>
+            </div>
+          )}
         </div>
       );
     } else {
-      /*Existing Report Overview*/
       return (
-        <div className="w-full h-full flex flex-col">
-          <div className="w-full h-1/6 px-3 ">
-            {/*Title*/}
-            <div className="w-full h-3/4 ">
-              <div className="w-full h-3/4 text-center justify-center">
-                <p class="font-semibold text-4xl">{selectedMarker.title}</p>
-              </div>
-              <div className="w-full h-1/4 text-center justify-center">
-                <p className="text-gray-500 text-m">
-                  {new Date(selectedMarker.published_date).toLocaleDateString()}
+        <div className="w-full h-full flex flex-col bg-white shadow-lg rounded-lg overflow-hidden">
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="text-center">
+              <p className="font-semibold text-3xl mb-2 line-clamp-2 text-gray-800">
+                {selectedMarker.title}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-gray-500 text-base mb-2">
+                Date Reported:{" "}
+                {new Date(selectedMarker.published_date).toLocaleDateString()}
+              </p>
+            </div>
+            {selectedMarker.status !== "open" ? (
+              <div className="flex justify-center items-center mt-2">
+                <p className="text-purple-600 font-bold mx-2">
+                  {selectedMarker.status.charAt(0).toUpperCase() +
+                    selectedMarker.status.slice(1).replace("_", " ")}
+                </p>
+                <span className="text-gray-300">|</span>
+                <p className="text-sky-400 font-bold mx-2">
+                  {selectedMarker.tags.charAt(0).toUpperCase() +
+                    selectedMarker.tags.slice(1).replace("_", " ")}
                 </p>
               </div>
-            </div>
-            {/* Status + Tags */}
-            <div className="w-full h-1/4 flex justify-center items-center">
-              <p className="text-center text-purple-600 font-bold w-1/3 pr-4">
-                {selectedMarker.status.charAt(0).toUpperCase() +
-                  selectedMarker.status.slice(1).replace("_", " ")}
-              </p>
-              <p className="text-center font-bold mx-4">●</p>
-              <p className="text-center text-sky-400 font-bold w-1/3 pl-4">
-                {selectedMarker.tags.charAt(0).toUpperCase() +
-                  selectedMarker.tags.slice(1).replace("_", " ")}
-              </p>
-            </div>
+            ) : (
+              <div className="flex justify-center items-center mt-2">
+                <p className="text-sky-400 font-bold">
+                  {selectedMarker.tags.charAt(0).toUpperCase() +
+                    selectedMarker.tags.slice(1).replace("_", " ")}
+                </p>
+              </div>
+            )}
           </div>
-          {/*Image*/}
-          <div className="w-full h-2/6 flex  justify-center items-center border border-gray-300">
+          {/* Image */}
+          <div className="flex justify-center items-center border-b border-gray-200">
             {selectedMarker.main_image ? (
               <img
                 src={selectedMarker.main_image}
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="w-full h-48 object-contain p-4"
               />
             ) : (
               <img
-                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg?ga=GA1.1.1375142660.1737879724&semt=ais_hybrid"
+                src="https://img.freepik.com/free-vector/illustration-notepad_53876-18174.jpg"
                 alt=""
-                className="h-64 w-64 object-contain"
+                className="w-full h-48 object-contain p-4"
               />
             )}
           </div>
@@ -421,13 +555,47 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
             {/* Poster and Date Section */}
 
             {/* Description Text */}
-            <div className="w-full h-3/6 mb-3 overflow-auto">
-              <p class="text-lg">{selectedMarker.description}</p>
+            <div className="w-full h-[300px] mb-3 overflow-auto">
+              {/* AI Button with Logo */}
+              <div className="flex justify-end mb-3">
+                <div
+                  className=" h-12 bg-blue-50 rounded-lg shadow-md cursor-pointer flex items-center justify-center hover:bg-blue-100 transition-colors duration-200"
+                  onClick={() => {
+                    handleAIClick();
+                    setViewingAISummary(!viewingAISummary);
+                  }}
+                >
+                  {/* AI Logo */}
+                  <img
+                    src={aiLogo}
+                    alt="AI Logo"
+                    className="w-8 h-8 mx-4 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
+                    style={{
+                      animation:
+                        "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
+                    }}
+                  />
+                  {/* Button Text */}
+                  <span className="text-sm font-semibold text-green-800">
+                    {viewingAISummary ? "" : ""}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1 overflow-y-auto">
+                <div className="mb-4">
+                  {/* Description wrapped to handle long texts */}
+                  <div className="max-h-60 overflow-y-auto">
+                    <p className="text-lg text-gray-800 break-words">
+                      {selectedMarker.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/*Poster*/}
-            <div className="h-1/6 flex items-center bg-white border border-gray-100 space-x-4">
-              {/* Profile Picture (SVG Icon) */}
-              <div className="w-1/6 h-full flex justify-center items-center">
+            <div className="flex items-center bg-white border border-gray-100 p-3 rounded-md">
+              <div className="w-1/6 flex justify-center items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -443,55 +611,43 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   />
                 </svg>
               </div>
-
-              {/* Poster Name and Date */}
-              <div className="w-5/6 flex flex-col justify-center">
-                {/* Poster Name */}
-                <p className="font-bold text-l">{selectedMarker.author}</p>
-
-                {/* Date in Italics */}
+              <div className="w-5/6 ml-3">
+                <p className="font-bold text-lg text-gray-800">
+                  {selectedMarker.author}
+                </p>
                 <p className="text-sm italic text-gray-500">
                   {selectedMarker.date}
                 </p>
               </div>
             </div>
-            <div className="h-1/6 flex items-center bg-white border border-gray-100 mb-3 justify-center ">
-              <div className="w-1/2">
-                {/* Current Upvotes */}
-                <p className="italic text-center">
-                  {selectedMarker.upvotes} Upvotes
-                </p>
-              </div>
-              {/* Upvote Button with Icon */}
-              <div className="w-1/2 justify-center">
-                <button
-                  onClick={handleUpvote}
-                  className="flex items-center justify-center space-x-2  w-full px-4 py-2 rounded-lg active:bg-green-100 hover:bg-gray-100 transition duration-500 active:duration-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="w-full h-1/6 shadow-md">
+            <div className="flex items-center justify-between bg-white border border-gray-100 p-3 rounded-md mt-4">
+              <p className="italic text-center text-gray-700">
+                {selectedMarker.upvotes} Upvotes
+              </p>
               <button
-                className="flex flex-row justify-center w-full h-full bg-white font-bold rounded-lg transition duration-500 active:duration-100 mb-2 items-center justify-center"
-                style={{
-                  color: main_color,
-                }}
+                onClick={handleUpvote}
+                className="flex items-center justify-center px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-4">
+              <button
+                className="flex items-center justify-center w-full py-2 bg-white border border-gray-300 font-bold rounded-md transition duration-300 hover:bg-gray-100"
+                style={{ color: main_color }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = lightenColor(
                     main_color,
@@ -521,7 +677,7 @@ const SidebarReport = ({ selectedMarker, newMarker, fetchReports }) => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-7"
+                  className="w-6 h-6 mr-2"
                 >
                   <path
                     strokeLinecap="round"

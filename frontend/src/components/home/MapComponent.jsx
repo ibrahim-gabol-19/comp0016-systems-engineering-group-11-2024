@@ -1,84 +1,150 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { useEffect, useState, useContext } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import leaflet styles
+import { CompanyContext } from "../../context/CompanyContext";
 
-const MapComponent = ({ filters, dates }) => {
+const MapResizeFix = () => {
+  const map = useMap();
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId); // Clear the timeout on cleanup
+  }, [map]);
+  
+  return null;
+};
+
+const MapComponent = ({ filters, dates, reports, events }) => {
+  const navigate = useNavigate();
   const [filteredItems, setFilteredItems] = useState([]);
-  const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center of the UK (London)
-  const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level for the UK
-  const ukBounds = [
-    [49.5, -8],  // Southwest coordinates (approx.)
-    [60, 2],     // Northeast coordinates (approx.)
+  const [mapCenter, setMapCenter] = useState([51.5074, -0.1278]); // Default center: London
+  const [zoomLevel, setZoomLevel] = useState(6); // Default zoom level
+  const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+
+  const [isContextLoaded, setIsContextLoaded] = useState(false); // Track if context data is loaded
+
+  useEffect(() => {
+    if (sw_lat && sw_lon && ne_lat && ne_lon) {
+      setIsContextLoaded(true); // Set context data as loaded once bounds are available
+    }
+  }, [sw_lat, sw_lon, ne_lat, ne_lon]);
+
+  const bounds = [
+    [sw_lat, sw_lon], // Southwest coordinates
+    [ne_lat, ne_lon], // Northeast coordinates
   ];
 
-  // Simulate fetching and filtering data based on selected filters and dates
   useEffect(() => {
     setMapCenter([51.5074, -0.1278]);
     setZoomLevel(6);
 
-    const fetchFilteredData = () => {
-      const data = [
-        { id: 1, name: "Volunteering Event", type: "volunteering", date: "2024-12-15", emoji: "🙌", lat: 51.5074, lng: -0.1278 }, // London
-        { id: 2, name: "News Update", type: "news", date: "2024-12-10", emoji: "📰", lat: 53.4084, lng: -2.9916 }, // Manchester
-        { id: 3, name: "Local Issue", type: "issues", date: "2024-12-14", emoji: "⚠️", lat: 52.4862, lng: -1.8904 }, // Birmingham
-        { id: 4, name: "Community Event", type: "events", date: "2024-12-12", emoji: "📍", lat: 51.4545, lng: -2.5879 }, // Bristol
-        { id: 5, name: "Volunteering Event", type: "volunteering", date: "2024-12-13", emoji: "🙌", lat: 55.9533, lng: -3.1883 }, // Edinburgh
-        { id: 6, name: "News Update", type: "news", date: "2024-12-16", emoji: "📰", lat: 53.4080, lng: -2.2389 }, // Liverpool
-        { id: 7, name: "Local Issue", type: "issues", date: "2024-12-17", emoji: "⚠️", lat: 52.2053, lng: 0.1218 }, // Cambridge
-        { id: 8, name: "Community Event", type: "events", date: "2024-12-11", emoji: "📍", lat: 51.5076, lng: -0.1280 }, // London (another spot)
-      ];
+    const validReports = reports
+      .filter(report => report.latitude !== undefined && report.longitude !== undefined)
+      .map(report => ({
+        id: report.id,
+        name: report.title, 
+        type: "issues", 
+        date: report.published_date || "Unknown Date",
+        emoji: "⚠️", // Default emoji
+        lat: parseFloat(report.latitude), 
+        lng: parseFloat(report.longitude),
+        status: report.status,
+        tags: report.tags,
+      }));
 
-      const filtered = data.filter((item) => {
-        // Filter based on selected filters
-        const isSelected =
-          (filters.volunteering && item.type === "volunteering") ||
-          (filters.events && item.type === "events") ||
-          (filters.news && item.type === "news") ||
-          (filters.issues && item.type === "issues");
+    const validEvents = events
+      .filter((event) => event.latitude !== null && event.longitude !== null)
+      .map((event) => ({
+        id: event.id,
+        name: event.title,
+        type: "events",
+        date: event.date,
+        emoji: "📍", // Icon for events
+        lat: parseFloat(event.latitude),
+        lng: parseFloat(event.longitude),
+        status: "active",
+      }));
 
-        // Filter by date range
-        const isWithinDateRange = (!dates.from || new Date(item.date) >= new Date(dates.from)) &&
-                                  (!dates.to || new Date(item.date) <= new Date(dates.to));
 
-        return isSelected && isWithinDateRange;
-      });
+    const filtered = [...validReports, ...validEvents].filter((item) => {
+      const isSelected =
+        (filters.events && item.type === "events") ||
+        (filters.issues && item.type === "issues" && item.status === "open");
 
-      setFilteredItems(filtered);
-    };
+      const isWithinDateRange =
+        (!dates.from || new Date(item.date) >= new Date(dates.from)) &&
+        (!dates.to || new Date(item.date) <= new Date(dates.to));
 
-    fetchFilteredData();
-  }, [filters, dates]); // Re-run filter logic when filters or dates change
+      return isSelected && isWithinDateRange;
+    });
 
+    setFilteredItems(filtered);
+  }, [filters, dates, reports, events]);
+
+  const handleRedirect = (item) => {
+    if(item.type ==="issues"){
+      navigate("/reporting", { state: { selectedIssue: item } });
+    }
+    else{
+      navigate(`/events/${item.id}`);
+    }
+  };
 
   return (
-    <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6">
-      <MapContainer
-        center={mapCenter}
-        zoom={zoomLevel}
-        style={{ width: "100%", height: "500px" }}
-        maxBounds={ukBounds} // Restrict map movement to UK
-        maxBoundsViscosity={1.0} // Ensures map stays within bounds
-        minZoom={8} // Set minimum zoom level to allow zooming in further
-        maxZoom={15} // Set maximum zoom level to zoom in further
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {filteredItems.map((item) => (
-          <Marker
-            key={item.id}
-            position={[item.lat, item.lng]}
-            icon={new L.DivIcon({
-              className: 'emoji-icon',
-              html: `<span style="font-size: 30px;">${item.emoji}</span>`, // Using emoji as the icon
-            })}
-          >
-            <Popup>{item.name}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+    <div className="p-4 rounded-lg shadow-lg bg-white max-w-full mx-auto my-6" style={{ overflow: "hidden" }}>
+      {isContextLoaded ? ( // Only render the map once context data is loaded
+        <MapContainer
+          center={mapCenter}
+          zoom={zoomLevel}
+          style={{ width: "100%", height: "500px", zIndex: 0 }}
+          maxBounds={bounds} // Restrict map movement to company-defined bounds
+          maxBoundsViscosity={1.0}
+          minZoom={6}
+          maxZoom={15}
+        >
+          <MapResizeFix /> {/* Fixes map resize issue */}
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; OpenStreetMap contributors'
+          />
+          {filteredItems.map((item) => (
+            <Marker
+              key={item.id}
+              position={[item.lat, item.lng]} // Ensure lat/lng exist
+              icon={new L.DivIcon({
+                className: "emoji-icon",
+                html: `<span style="font-size: 20px;">${item.emoji || "⚠️"}</span>`,
+              })}
+            >
+              <Popup offset={[0, -10]}> {/* Adjusts popup position */}
+                <div className="p-2 w-48 text-sm">
+                  <h3 className="text-base font-semibold text-gray-800">{item.name}</h3>
+
+                  {item.tags && (
+                    <div className="bg-gray-200 text-gray-700 text-xs font-medium px-1 py-0.5 rounded mt-1">
+                      #{item.tags}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => handleRedirect(item)}
+                    className="mt-2 w-full bg-blue-500 text-white text-xs font-medium py-1 rounded transition-all duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                  >
+                    🔍 View {item.type === "issues"? "Report" : "Event"}
+                  </button>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      ) : (
+        <div>Loading map...</div> // Render loading state while context data is not available
+      )}
     </div>
   );
 };
