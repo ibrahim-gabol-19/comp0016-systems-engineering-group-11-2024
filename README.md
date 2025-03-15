@@ -39,6 +39,6 @@
 ### Unit Tests
 - *(To be implemented)*
 ### Coverage Report
-- *(To be implemented)*
+- `npm run coverage`
 ### Linting
 - `npm run lint`
