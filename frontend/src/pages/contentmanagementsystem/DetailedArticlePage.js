@@ -34,6 +34,7 @@ const DetailedArticlePage = () => {
   const [isLoadingTitle, setIsLoadingTitle] = useState(false);
   const [isLoadingMainContent, setIsLoadingMainContent] = useState(false);
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
+  const [isLoadingSummariseDescription, setIsLoadingSummariseDescription] = useState(false);
 
   // AI Context
   const { engine } = useContext(AIContext);
@@ -203,6 +204,54 @@ const DetailedArticlePage = () => {
       console.error("Error expanding description:", error);
     }
     setIsLoadingDescription(false);
+  };
+
+  // Function to summarise an existing long description into a concise summary
+  const handleSummariseDescription = async () => {
+    if (!description) {
+      alert("Please enter a description first.");
+      return;
+    }
+    // Decide what is "suitably long" - here we require at least 20 words
+    if (description.trim().split(/\s+/).length < 20) {
+      alert("Description is too short to summarise. Please add more details.");
+      return;
+    }
+    if (!engine) {
+      alert("AI model is still loading. Please wait.");
+      return;
+    }
+    setIsLoadingSummariseDescription(true);
+    try {
+      await engine.resetChat();
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Summarize the following description into a concise summary paragraph with a maximum of 30 words. Output only the summary without any additional commentary or questions.",
+        },
+        {
+          role: "user",
+          content: description,
+        },
+      ];
+      let summarisedDescription = "";
+      const stream = await engine.chat.completions.create({
+        messages,
+        temperature: 0.7,
+        stream: true,
+      });
+      for await (const chunk of stream) {
+        summarisedDescription += chunk.choices[0]?.delta.content || "";
+      }
+      setDescription(summarisedDescription);
+      if (quillRefDescription.current) {
+        quillRefDescription.current.setContents([{ insert: summarisedDescription }]);
+      }
+    } catch (error) {
+      console.error("Error summarising description:", error);
+    }
+    setIsLoadingSummariseDescription(false);
   };
 
   const handleSave = async () => {
@@ -540,8 +589,8 @@ const DetailedArticlePage = () => {
                       onTextChange={setDescription}
                     />
                   </div>
-                  {/* AI Expand Description Button */}
-                  <div className="mt-2 flex justify-center">
+                  {/* AI Expand and Summarise Description Buttons */}
+                  <div className="mt-2 flex justify-center space-x-4">
                     <button
                       onClick={handleExpandDescription}
                       className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
@@ -569,6 +618,34 @@ const DetailedArticlePage = () => {
                         </svg>
                       )}
                       {isLoadingDescription ? "Loading..." : "Expand Description"}
+                    </button>
+                    <button
+                      onClick={handleSummariseDescription}
+                      className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
+                    >
+                      {isLoadingSummariseDescription && (
+                        <svg
+                          className="animate-spin h-5 w-5 mr-2 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          ></path>
+                        </svg>
+                      )}
+                      {isLoadingSummariseDescription ? "Loading..." : "Summarise Description"}
                     </button>
                   </div>
                   <MainImage onFilesUploaded={handleFilesUploaded} />
