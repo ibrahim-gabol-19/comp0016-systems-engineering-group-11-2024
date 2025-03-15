@@ -212,8 +212,8 @@ const DetailedArticlePage = () => {
       alert("Please enter a description first.");
       return;
     }
-    // Decide what is "suitably long" - here we require at least 20 words
-    if (description.trim().split(/\s+/).length < 20) {
+    // Existing description must be at least 30 words 
+    if (description.trim().split(/\s+/).length < 30) {
       alert("Description is too short to summarise. Please add more details.");
       return;
     }
@@ -228,7 +228,7 @@ const DetailedArticlePage = () => {
         {
           role: "system",
           content:
-            "Summarize the following description into a concise summary paragraph with a maximum of 30 words. Output only the summary without any additional commentary or questions.",
+            "Summarise the following description into a concise summary paragraph with a maximum of 30 words. Output only the summary without any additional commentary or questions.",
         },
         {
           role: "user",

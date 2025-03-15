@@ -42,7 +42,7 @@ const DetailedEventPage = () => {
   const { engine } = useContext(AIContext);
   const [isLoadingTitle, setIsLoadingTitle] = useState(false);
   const [isLoadingDescription, setIsLoadingDescription] = useState(false);
-
+  const [isLoadingSummariseDescription, setIsLoadingSummariseDescription] = useState(false);
 
   useEffect(() => {
     if (eventId !== NEW_EVENT_ID) {
@@ -405,6 +405,51 @@ const DetailedEventPage = () => {
     setIsLoadingDescription(false);
   };
 
+  // New Function: Summarise Event Description while retaining date, time and location info
+  const handleSummariseDescription = async () => {
+    if (!description) {
+      alert("Please enter a description first.");
+      return;
+    }
+    // Existing description must be at least 30 words
+    if (description.trim().split(/\s+/).length < 30) {
+      alert("Description is too short to summarise. Please add more details.");
+      return;
+    }
+    if (!engine) {
+      alert("AI model is still loading. Please wait.");
+      return;
+    }
+    setIsLoadingSummariseDescription(true);
+    try {
+      await engine.resetChat();
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Summarise the following event description into a concise summary paragraph with a maximum of 30 words. Ensure the summary includes the event's date, time, and location.",
+        },
+        {
+          role: "user",
+          content: `Description: ${description}\nDate: ${date}\nTime: ${time}\nLocation: ${location}`,
+        },
+      ];
+      let summarisedDescription = "";
+      const stream = await engine.chat.completions.create({
+        messages,
+        temperature: 0.7,
+        stream: true,
+      });
+      for await (const chunk of stream) {
+        summarisedDescription += chunk.choices[0]?.delta.content || "";
+      }
+      setDescription(summarisedDescription);
+    } catch (error) {
+      console.error("Error summarising description:", error);
+    }
+    setIsLoadingSummariseDescription(false);
+  };
+
   return (
     <div>
       <Header />
@@ -587,14 +632,18 @@ const DetailedEventPage = () => {
                   rows="3"
                   style={{ maxHeight: "200px" }}
                 />
-                <div className="mt-2 flex justify-center">
+                <div className="mt-2 flex justify-center space-x-4">
                   <button
                     onClick={handleExpandDescription}
                     className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
                   >
-                    {isLoadingDescription
-                      ? "Loading..."
-                      : "Expand Description"}
+                    {isLoadingDescription ? "Loading..." : "Expand Description"}
+                  </button>
+                  <button
+                    onClick={handleSummariseDescription}
+                    className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center"
+                  >
+                    {isLoadingSummariseDescription ? "Loading..." : "Summarise Description"}
                   </button>
                 </div>
               </div>
