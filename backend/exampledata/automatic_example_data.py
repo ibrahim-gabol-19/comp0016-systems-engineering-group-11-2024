@@ -5,8 +5,8 @@ import random
 import subprocess
 
 # API URL and endpoints
-# BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
+# BASE_URL = "http://127.0.0.1:8000"
 
 SIGNUP_URL = f"{BASE_URL}/api/auth/signup/"
 LOGIN_URL = f"{BASE_URL}/api/auth/login/"
@@ -1231,7 +1231,7 @@ def create_article(token, title, content, author, description, image_path):
 def main():
     # Flush the database before populating it
     try:
-        subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
+        # subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
 
         print("Database flushed successfully.")
     except subprocess.CalledProcessError as e:
