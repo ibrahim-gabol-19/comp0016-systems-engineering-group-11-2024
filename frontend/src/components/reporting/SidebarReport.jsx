@@ -623,7 +623,7 @@ const SidebarReport = ({
                 {selectedMarker.upvotes} Upvotes
               </p>
               <button
-                onClick={handleUpvote}
+                onClick={() => handleUpvote}
                 className="flex items-center justify-center px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300"
               >
                 <svg
