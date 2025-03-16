@@ -1,7 +1,7 @@
 # comp0016-systems-engineering-group-11-2024
 
 # Backend
-
+- Make sure your python version is 3.10 or 3.11 
 ## Run Development
 - `cd backend`
 - `python -m venv venv`
