@@ -30,7 +30,7 @@ let SelectedIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
+const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef, viewingAISummary }) => {
   const zoomLevel = 13;
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
   const [position, setPosition] = useState(null);
@@ -45,6 +45,10 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
     const map = useMap();
 
     useEffect(() => {
+      if (viewingAISummary)
+      {
+        return;
+      }
       if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
         map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
       }
