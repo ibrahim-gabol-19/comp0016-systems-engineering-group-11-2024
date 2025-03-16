@@ -1,24 +1,37 @@
+"""
+This module contains unit tests for the 'events' app.
+It tests the views and serializers to ensure they work as expected.
+"""
+
+from datetime import date, time
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import Event
-from .serializers import EventSerializer
-from datetime import date, time
 
 class EventModelTest(APITestCase):
+    """
+    Test cases for the Event model.
+    """
+
     def setUp(self):
+        """
+        Set up the test client and create a test event.
+        """
         self.event = Event.objects.create(
             title="Test Event",
             event_type="scheduled",
             description="This is a test event",
             location="Test Location",
-            date=date(2023, 10, 1), 
+            date=date(2023, 10, 1),
             time=time(12, 0, 0),
             is_featured=True
         )
 
     def test_event_creation(self):
+        """
+        Test the creation of an Event instance.
+        """
         self.assertEqual(self.event.title, "Test Event")
         self.assertEqual(self.event.event_type, "scheduled")
         self.assertEqual(self.event.description, "This is a test event")
@@ -28,7 +41,14 @@ class EventModelTest(APITestCase):
         self.assertTrue(self.event.is_featured)
 
 class EventsViewSetTest(APITestCase):
+    """
+    Test cases for the EventViewSet.
+    """
+
     def setUp(self):
+        """
+        Set up the test client and create test events.
+        """
         self.client = APIClient()
         self.event = Event.objects.create(
             title="Test Event",
@@ -50,24 +70,36 @@ class EventsViewSetTest(APITestCase):
         )
 
     def test_list_events(self):
+        """
+        Test the EventViewSet list view.
+        """
         url = reverse('event-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
     def test_scheduled_events(self):
+        """
+        Test the EventViewSet scheduled events view.
+        """
         url = reverse('event-scheduled')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("2023-10-01", response.data)
 
     def test_pois_events(self):
+        """
+        Test the EventViewSet POIs events view.
+        """
         url = reverse('event-pois')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("landmarks", response.data)
 
     def test_featured_events(self):
+        """
+        Test the EventViewSet featured events view.
+        """
         url = reverse('event-featured')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -75,18 +107,27 @@ class EventsViewSetTest(APITestCase):
         self.assertEqual(response.data[0]['title'], "Test Event")
 
     def test_search_events(self):
+        """
+        Test the EventViewSet search events view.
+        """
         url = reverse('event-search')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
     def test_event_detail(self):
+        """
+        Test the EventViewSet detail view.
+        """
         url = reverse('event-detail', args=[self.event.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Test Event")
 
     def test_create_event(self):
+        """
+        Test the EventViewSet create event view.
+        """
         url = reverse('event-list')
         data = {
             "title": "New Event",
@@ -102,6 +143,9 @@ class EventsViewSetTest(APITestCase):
         self.assertEqual(Event.objects.count(), 3)
 
     def test_update_event(self):
+        """
+        Test the EventViewSet update event view.
+        """
         url = reverse('event-detail', args=[self.event.id])
         data = {
             "title": "Updated Event",
@@ -118,8 +162,10 @@ class EventsViewSetTest(APITestCase):
         self.assertEqual(self.event.title, "Updated Event")
 
     def test_delete_event(self):
+        """
+        Test the EventViewSet delete event view.
+        """
         url = reverse('event-detail', args=[self.event.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Event.objects.count(), 1)
-

@@ -8,6 +8,10 @@ from rest_framework.test import APITestCase
 from .models import Article
 
 class ArticleTests(APITestCase):
+    """
+    Test cases for the Article model and views.
+    """
+
     def setUp(self):
         """
         Set up a test article instance.
@@ -35,7 +39,8 @@ class ArticleTests(APITestCase):
         Test retrieving the list of articles.
         """
         response = self.client.get(reverse('article-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Expected status code 200 when retrieving articles")
         self.assertEqual(len(response.data), 1)  # Only the article created in setUp
 
     def test_update_article(self):
@@ -49,7 +54,8 @@ class ArticleTests(APITestCase):
             'description': 'This is an updated description.',
             'content': 'This is the updated content of the article.'
         }
-        response = self.client.put(reverse('article-detail', args=[self.article.id]), updated_data, format='json')
+        url = reverse('article-detail', args=[self.article.id])
+        response = self.client.put(url, updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.article.refresh_from_db()
         self.assertEqual(self.article.title, 'Updated Article')

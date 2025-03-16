@@ -1,9 +1,14 @@
+"""
+This module contains unit tests for the 'companyinformation' app.
+It tests the views and serializers to ensure they work as expected.
+"""
+
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import CompanyInformation
-from .serializers import CompanyInformationSerializer
+from .views import create_default_company
 
 class CompanyInformationModelTest(TestCase):
     """
@@ -126,8 +131,6 @@ class CreateDefaultCompanyTest(TestCase):
         """
         Test that the default company is created when no company exists.
         """
-        from .views import create_default_company
-
         # Ensure no company exists initially
         self.assertEqual(CompanyInformation.objects.count(), 0)
 
@@ -143,8 +146,6 @@ class CreateDefaultCompanyTest(TestCase):
         """
         Test that the default company is not created if a company already exists.
         """
-        from .views import create_default_company
-
         # Create a company manually
         CompanyInformation.objects.create(
             name="Existing Company",

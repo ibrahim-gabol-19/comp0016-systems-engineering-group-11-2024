@@ -10,7 +10,6 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import UserSerializer, UserLoginSerializer
-from .views import SignUpView, LoginView, GetUserView
 
 User = get_user_model()
 

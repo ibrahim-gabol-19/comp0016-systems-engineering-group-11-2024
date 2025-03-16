@@ -1,31 +1,40 @@
-from django.test import TestCase, SimpleTestCase, Client
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from django.conf import settings
+"""
+This module contains unit tests for the 'api' app.
+It tests the views and serializers to ensure they work as expected.
+"""
+
 import os
-from datetime import datetime
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
+from django.test import SimpleTestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase, APIClient
+
 from .models import Item
 from .views import (
-    extract_event_data,
-    extract_article_data,
-    extract_event_data_ics,
-    normalise_date,
-    normalise_time,
-    extract_unstructured_title,
-    extract_unstructured_date,
-    extract_unstructured_time,
-    extract_unstructured_location,
-    extract_unstructured_description,
-    extract_unstructured_author,
+    extract_event_data, extract_article_data, extract_event_data_ics,
+    normalise_date, normalise_time, extract_unstructured_title,
+    extract_unstructured_date, extract_unstructured_time,
+    extract_unstructured_location, extract_unstructured_description,
+    extract_unstructured_author
 )
 
-class ApiTests(TestCase):
+class ApiTests(APITestCase):
+    """
+    Test cases for the API views.
+    """
+
     def setUp(self):
-        self.client = Client()
+        """
+        Set up the test client and create a test item.
+        """
+        self.client = APIClient()
         self.item = Item.objects.create(
             name="Test Item",
             description="This is a test item",
-            location="Test Location",
+            location="Test Location"
         )
 
     def test_item_model(self):
@@ -39,7 +48,7 @@ class ApiTests(TestCase):
         Test the ItemViewSet list view.
         """
         response = self.client.get(reverse('item-list'))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Sample Item")
 
     def test_upload_pdf_and_extract_data_event(self):
@@ -52,7 +61,8 @@ class ApiTests(TestCase):
                 reverse('upload_pdf_and_extract_data', args=['event']),
                 {'pdf_file': SimpleUploadedFile(pdf_file.name, pdf_file.read())},
             )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Expected status code 200 for event PDF processing")
         self.assertIn('title', response.json())
         self.assertIn('date_of_event', response.json())
 
@@ -66,7 +76,8 @@ class ApiTests(TestCase):
                 reverse('upload_pdf_and_extract_data', args=['article']),
                 {'pdf_file': SimpleUploadedFile(pdf_file.name, pdf_file.read())},
             )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Expected status code 200 for article PDF processing")
         self.assertIn('title', response.json())
         self.assertIn('author', response.json())
 
@@ -78,14 +89,17 @@ class ApiTests(TestCase):
         with open(ics_path, 'rb') as ics_file:
             response = self.client.post(
                 reverse('upload_ics'),
-                {'ics_file': SimpleUploadedFile(ics_file.name, ics_file.read())},
+                {'ics_file': SimpleUploadedFile(ics_file.name, ics_file.read())}
             )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('title', response.json())
         self.assertIn('date_of_event', response.json())
 
+class UtilityFunctionTests(TestCase):
+    """
+    Test cases for utility functions in the API.
+    """
 
-class UtilityFunctionTests(SimpleTestCase):
     def test_normalise_date(self):
         """
         Test the normalise_date function.
@@ -138,7 +152,12 @@ class UtilityFunctionTests(SimpleTestCase):
         Test the extract_unstructured_description function.
         """
         text = "This is the first paragraph.\n\nThis is the second paragraph."
-        self.assertEqual(extract_unstructured_description(text), "This is the first paragraph.\n\nThis is the second paragraph.")
+        expected_output = (
+            "This is the first paragraph.\n\n"
+            "This is the second paragraph."
+        )
+
+        self.assertEqual(extract_unstructured_description(text), expected_output)
 
     def test_extract_unstructured_author(self):
         """
@@ -149,6 +168,10 @@ class UtilityFunctionTests(SimpleTestCase):
 
 
 class ExtractDataTests(SimpleTestCase):
+    """
+    Test cases for data extraction functions in the API.
+    """
+
     def test_extract_event_data(self):
         """
         Test the extract_event_data function.
@@ -181,6 +204,10 @@ class ExtractDataTests(SimpleTestCase):
 
 
 class EdgeCaseTests(SimpleTestCase):
+    """
+    Test cases for edge cases in the API.
+    """
+
     def test_normalise_date_invalid_format(self):
         """
         Test the normalise_date function with invalid date formats.
@@ -205,9 +232,9 @@ class EdgeCaseTests(SimpleTestCase):
 
     def test_extract_unstructured_location_no_keywords(self):
         """
-        Test the extract_unstructured_location function with text that doesn't contain location keywords.
+        Test the extract_unstructured_location function with text that doesn't 
+        contain location keywords.
         """
         text = "This is a sample text without any location keywords."
         sentences = text.split(". ")
         self.assertEqual(extract_unstructured_location(text, sentences), "")
-

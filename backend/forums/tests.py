@@ -1,20 +1,30 @@
+"""
+This module contains unit tests for the 'forums' app.
+It tests the views and serializers to ensure they work as expected.
+"""
+
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
-from .models import ForumPost
 from rest_framework.test import APIClient
+from .models import ForumPost
 
 User = get_user_model()
 
 class ForumPostTests(APITestCase):
+    """
+    Test cases for the ForumPost model and views.
+    """
+
     def setUp(self):
-        # Create a user for testing
+        """
+        Set up the test client and create a test forum post.
+        """
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)  # Force authentication
 
-        # Create a forum post for testing
         self.forum_post = ForumPost.objects.create(
             title='Test Post',
             content='This is a test post.',
@@ -25,7 +35,7 @@ class ForumPostTests(APITestCase):
         """
         Ensure we can create a new forum post.
         """
-        url = reverse('forumpost-list')  # Adjust the URL name as per your URL configuration
+        url = reverse('forumpost-list')
         data = {
             'title': 'New Test Post',
             'content': 'This is a new test post.',
@@ -54,7 +64,7 @@ class ForumPostTests(APITestCase):
         """
         Ensure we can retrieve a forum post.
         """
-        url = reverse('forumpost-detail', args=[self.forum_post.id])  # Adjust the URL name as per your URL configuration
+        url = reverse('forumpost-detail', args=[self.forum_post.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], self.forum_post.title)
@@ -63,7 +73,7 @@ class ForumPostTests(APITestCase):
         """
         Ensure we can update an existing forum post.
         """
-        url = reverse('forumpost-detail', args=[self.forum_post.id])  # Adjust the URL name as per your URL configuration
+        url = reverse('forumpost-detail', args=[self.forum_post.id])
         data = {
             'title': 'Updated Test Post',
             'content': 'This is an updated test post.',
@@ -77,7 +87,7 @@ class ForumPostTests(APITestCase):
         """
         Ensure we can delete a forum post.
         """
-        url = reverse('forumpost-detail', args=[self.forum_post.id])  # Adjust the URL name as per your URL configuration
+        url = reverse('forumpost-detail', args=[self.forum_post.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ForumPost.objects.count(), 0)  # Ensure the post is deleted
+        self.assertEqual(ForumPost.objects.count(), 0)
