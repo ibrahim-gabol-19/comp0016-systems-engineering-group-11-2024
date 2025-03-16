@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 
 // Editor is an uncontrolled React component
 const MainEditor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText }, ref) => {
+  ({ readOnly, defaultValue, onTextChange, placeholderText }, ref) => {
     const containerRef = useRef(null);
     const quillRef = useRef(null);
     const onTextChangeRef = useRef(onTextChange); // Ref to track the latest onTextChange

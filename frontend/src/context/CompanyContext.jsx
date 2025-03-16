@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;

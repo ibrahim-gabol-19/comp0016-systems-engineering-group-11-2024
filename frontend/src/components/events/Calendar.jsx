@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CompanyContext } from "../../context/CompanyContext";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 const Calendar = () => {
@@ -71,9 +71,7 @@ const Calendar = () => {
   };
 
   const handleEventClick = (id) => {
-    navigate(
-      `/events/${id}`
-    );
+    navigate(`/events/${id}`);
   };
 
   // Mobile view navigation
@@ -105,10 +103,9 @@ const Calendar = () => {
     );
   };
 
-
   return (
     <div className="max-w-6xxl mx-auto mt-10 flex flex-col items-center">
-      <p className="text-2xl font-bold mb-4">This Week's Events</p>
+      <p className="text-2xl font-bold mb-4">This Week&apos;s Events</p>
       {/* Navigation for Desktop */}
       <div className="hidden md:block w-[80%]">
         <div className="flex justify-center space-x-4 mb-4">
@@ -167,11 +164,19 @@ const Calendar = () => {
       {/* Mobile View */}
       <div className="md:hidden">
         <div className="flex justify-between items-center mb-4">
-          <button onClick={handlePrevDay} className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10">
+          <button
+            onClick={handlePrevDay}
+            className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10"
+          >
             &lt;
           </button>
-          <h2 className="text-lg font-bold">{currentDay.format("DD MMM YYYY")}</h2>
-          <button onClick={handleNextDay} className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10">
+          <h2 className="text-lg font-bold">
+            {currentDay.format("DD MMM YYYY")}
+          </h2>
+          <button
+            onClick={handleNextDay}
+            className="text-gray-600 text-2xl focus:outline-none font-bold scale-150 px-10"
+          >
             &gt;
           </button>
         </div>
@@ -180,54 +185,67 @@ const Calendar = () => {
         ) : (
           <div className="rounded-lg p-4 bg-gray-100">
             {(() => {
-                const dayKey = currentDay.format("YYYY-MM-DD");
-                let todayEvents = events[dayKey] || [];
+              const dayKey = currentDay.format("YYYY-MM-DD");
+              let todayEvents = events[dayKey] || [];
 
-                // Sort todayEvents by time
-                todayEvents.sort((a, b) => {
-                    const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
-                    const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
-                    return timeA.isBefore(timeB) ? -1 : timeA.isAfter(timeB) ? 1 : 0;
-                });
+              // Sort todayEvents by time
+              todayEvents.sort((a, b) => {
+                const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
+                const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
+                return timeA.isBefore(timeB)
+                  ? -1
+                  : timeA.isAfter(timeB)
+                  ? 1
+                  : 0;
+              });
 
-                return todayEvents.length > 0 ? (
-                    todayEvents.map((event, index) => (
-                <div
-                  key={index}
-                  className="p-2  rounded-lg  cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
-                  onClick={(e) => isMobileView ? handleEventClick(event.id) : openEventDetails(event, e)}
-                  style={{
-                    color: "black",
-                    backgroundColor: main_color, // Default background color
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = lightenColor(
-                      main_color,
-                      20
-                    ); // Lighter background on hover
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
-                  }}
-
-                  onMouseUp={(e) => {
-                    e.currentTarget.style.backgroundColor = lightenColor(
-                      main_color,
-                      20
-                    ); // Reset to hover state on mouse up
-                  }}
-
-                >
-                  <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center" title={event.title}>
-                    {event.title}
-                  </p>
-                  <p className="text-sm text-gray-600 text-center">{dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-400">No events</p>
-            );
-          })()}
+              return todayEvents.length > 0 ? (
+                todayEvents.map((event, index) => (
+                  <div
+                    key={index}
+                    className="p-2  rounded-lg  cursor-pointer w-2/3 mb-2 mx-auto min-h-[75px] flex flex-col justify-center"
+                    onClick={(e) =>
+                      isMobileView
+                        ? handleEventClick(event.id)
+                        : openEventDetails(event, e)
+                    }
+                    style={{
+                      color: "black",
+                      backgroundColor: main_color, // Default background color
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = lightenColor(
+                        main_color,
+                        20
+                      ); // Lighter background on hover
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.backgroundColor = lightenColor(
+                        main_color,
+                        20
+                      ); // Reset to hover state on mouse up
+                    }}
+                  >
+                    <p
+                      className="font-semibold text-md line-clamp-2 overflow-hidden text-center"
+                      title={event.title}
+                    >
+                      {event.title}
+                    </p>
+                    <p className="text-sm text-gray-600 text-center">
+                      {dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format(
+                        "h:mm A"
+                      )}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-400">No events</p>
+              );
+            })()}
           </div>
         )}
       </div>
@@ -236,17 +254,20 @@ const Calendar = () => {
       {loading ? (
         <p className="text-center text-gray-500">Loading events...</p>
       ) : (
-        <div className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400" style={{ height: "400px", minWidth: "80%", maxWidth: "80%" }}>
+        <div
+          className="hidden md:grid grid-cols-7 gap-2 bg-gray-100 rounded-lg p-6 md:minWidth-1400"
+          style={{ height: "400px", minWidth: "80%", maxWidth: "80%" }}
+        >
           {daysOfWeek.map((day) => {
             const dayKey = day.format("YYYY-MM-DD");
             const isToday = today.isSame(day, "day");
             const dayEvents = events[dayKey] || [];
 
-              // Sort dayEvents by time
-              dayEvents.sort((a, b) => {
-                const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
-                const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
-                return timeA.isBefore(timeB) ? -1 : timeA.isAfter(timeB) ? 1 : 0;
+            // Sort dayEvents by time
+            dayEvents.sort((a, b) => {
+              const timeA = dayjs(a.time, ["HH:mm:ss", "HH:mm"]);
+              const timeB = dayjs(b.time, ["HH:mm:ss", "HH:mm"]);
+              return timeA.isBefore(timeB) ? -1 : timeA.isAfter(timeB) ? 1 : 0;
             });
 
             return (
@@ -255,15 +276,24 @@ const Calendar = () => {
                 className="border rounded-lg shadow p-4 flex flex-col"
                 style={
                   isToday && highlightToday
-                    ? { backgroundColor: lightenColor(main_color, 40), height: "100%" }
+                    ? {
+                        backgroundColor: lightenColor(main_color, 40),
+                        height: "100%",
+                      }
                     : { backgroundColor: "white" }
                 }
               >
+                <h3 className="font-bold text-center text-lg">
+                  {day.format("ddd")}
+                </h3>
+                <p className="font-bold text-sm text-center text-gray-500">
+                  {day.format("DD MMM")}
+                </p>
 
-                <h3 className="font-bold text-center text-lg">{day.format("ddd")}</h3>
-                <p className="font-bold text-sm text-center text-gray-500">{day.format("DD MMM")}</p>
-
-                <div className="flex-grow mt-4 space-y-2 overflow-y-auto" style={{ maxHeight: "300px" }}>
+                <div
+                  className="flex-grow mt-4 space-y-2 overflow-y-auto"
+                  style={{ maxHeight: "300px" }}
+                >
                   {dayEvents.length > 0 ? (
                     dayEvents.map((event, index) => (
                       <div
@@ -283,16 +313,21 @@ const Calendar = () => {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = main_color; // Reset background on mouse leave
                         }}
-
                         onMouseUp={(e) => {
                           e.currentTarget.style.backgroundColor = main_color;
                         }}
-
                       >
-                        <p className="font-semibold text-md line-clamp-2 overflow-hidden text-center break-words" title={event.title}>
+                        <p
+                          className="font-semibold text-md line-clamp-2 overflow-hidden text-center break-words"
+                          title={event.title}
+                        >
                           {event.title}
                         </p>
-                        <p className="text-sm text-gray-600 text-center">{dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
+                        <p className="text-sm text-gray-600 text-center">
+                          {dayjs(event.time, ["HH:mm:ss", "HH:mm"]).format(
+                            "h:mm A"
+                          )}
+                        </p>
                       </div>
                     ))
                   ) : (
@@ -325,9 +360,17 @@ const Calendar = () => {
 
           {/* Event Details */}
           <div className="text-center">
-            <h3 className="text-lg font-bold mb-2 overflow-hidden break-words mt-4">{selectedEvent.title}</h3>
-            <p className="text-sm text-gray-500 mb-4">{dayjs(selectedEvent.time, ["HH:mm:ss", "HH:mm"]).format("h:mm A")}</p>
-            <p className="text-gray-700 mb-6 overflow-hidden break-words line-clamp-3">{selectedEvent.description}</p>
+            <h3 className="text-lg font-bold mb-2 overflow-hidden break-words mt-4">
+              {selectedEvent.title}
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              {dayjs(selectedEvent.time, ["HH:mm:ss", "HH:mm"]).format(
+                "h:mm A"
+              )}
+            </p>
+            <p className="text-gray-700 mb-6 overflow-hidden break-words line-clamp-3">
+              {selectedEvent.description}
+            </p>
           </div>
 
           {/* More Info Button */}

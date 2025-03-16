@@ -222,7 +222,7 @@ const ContentManagementSystem = () => {
   const handleSelectAll = () => {
     const allCards = (
       selectedCategory === "Articles" ? articles : sampleData[selectedCategory]
-    )?.map((_, index) => _);
+    )?.map((_) => _);
     setSelectedCards(allCards);
   };
 

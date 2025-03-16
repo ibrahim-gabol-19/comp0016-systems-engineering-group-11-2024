@@ -14,7 +14,6 @@ const SidebarReport = ({
   onSidebarClose,
   viewingAISummary,
   setViewingAISummary,
-  modelReply,
   setModelReply,
   lastSummaryID,
   setLastSummaryID,
@@ -116,7 +115,6 @@ const SidebarReport = ({
       }
     } catch (err) {
       console.log(err.message);
-    } finally {
     }
   };
 

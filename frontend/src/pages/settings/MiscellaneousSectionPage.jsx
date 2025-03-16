@@ -66,7 +66,7 @@ const MiscellaneousSection = () => {
       setCompanyLogo(data.logo);
       setFont(data.font || "Arial");
       setBounds(newBounds);  // Update bounds here
-    } catch (err) {
+    } catch {
       setFeedback({ message: "Failed to fetch company information.", color: "red" });
     }
   };
@@ -95,7 +95,7 @@ const MiscellaneousSection = () => {
         },
       });
       setFeedback({ message: "Company information saved successfully!", color: "green" });
-    } catch (err) {
+    } catch {
       setFeedback({ message: "Error saving company information.", color: "red" });
     }
   };

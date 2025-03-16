@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 
 const TitleEditor = forwardRef(
   (
-    { readOnly, defaultValue, onTextChange, onSelectionChange, placeholderText, fontSize },
+    { readOnly, defaultValue, onTextChange,  placeholderText, fontSize },
     ref
   ) => {
     const containerRef = useRef(null);
