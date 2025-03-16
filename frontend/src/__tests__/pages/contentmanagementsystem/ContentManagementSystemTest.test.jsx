@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import ContentManagementSystem from '../../../pages/contentmanagementsystem/ContentManagementSystem';
 import { CompanyContext } from '../../../context/CompanyContext';
 import { useAuth } from '../../../context/AuthContext';

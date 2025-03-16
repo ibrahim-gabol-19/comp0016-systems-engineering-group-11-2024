@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router, useNavigate } from "react-router-dom";
-import axios from "axios";
 import SearchBar from "../../../components/home/SearchBar";
 import { CompanyContext } from "../../../context/CompanyContext";
 import { AIContext } from "../../../context/AIContext";

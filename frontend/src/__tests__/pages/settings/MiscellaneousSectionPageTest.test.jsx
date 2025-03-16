@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MiscellaneousSection from '../../../pages/settings/MiscellaneousSectionPage';
 import { CompanyContext } from '../../../context/CompanyContext';
 import { useAuth } from '../../../context/AuthContext';

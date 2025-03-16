@@ -3,7 +3,6 @@ import React from "react";
 const SelectTopBar = ({
   selectedCards,
   onDelete,
-  onStar,
   onSelectAll,
   onCancel,
 }) => {
