@@ -37,7 +37,7 @@
 ## Tests
 
 ### Unit Tests
-- *(To be implemented)*
+- `npm run test`
 ### Coverage Report
 - `npm run coverage`
 - Check coverage folder for index.html to view coverage
