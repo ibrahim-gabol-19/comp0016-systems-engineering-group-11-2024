@@ -110,15 +110,26 @@ const MapComponent = ({
         map.flyTo(e.latlng, map.getZoom());
       },
     });
-
+  
+    
+    const handleDragEnd = (e) => {
+      const newLatLng = e.target.getLatLng(); 
+      setPosition(newLatLng); 
+      onNewMarkerSelected({ latlng: newLatLng }); 
+      };
+  
     return newMarker === null ? null : (
       <Marker
         position={position || newMarker.latlng}
         draggable={true}
         icon={SelectedIcon}
+        eventHandlers={{
+          dragend: handleDragEnd, // Listen for dragend event
+        }}
       ></Marker>
     );
   }
+  
 
   const filteredReports = reports.filter((item) =>
     activeFilters.includes(item.status)
