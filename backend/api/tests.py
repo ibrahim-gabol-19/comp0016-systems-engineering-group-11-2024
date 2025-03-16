@@ -178,3 +178,36 @@ class ExtractDataTests(SimpleTestCase):
         self.assertIn('title', data)
         self.assertIn('date_of_event', data)
         self.assertIn('location', data)
+
+
+class EdgeCaseTests(SimpleTestCase):
+    def test_normalise_date_invalid_format(self):
+        """
+        Test the normalise_date function with invalid date formats.
+        """
+        self.assertEqual(normalise_date("Invalid Date"), "")
+        self.assertEqual(normalise_date(""), "")
+        self.assertEqual(normalise_date("32/13/2023"), "")
+
+    def test_normalise_time_invalid_format(self):
+        """
+        Test the normalise_time function with invalid time formats.
+        """
+        self.assertEqual(normalise_time("Invalid Time"), "")
+        self.assertEqual(normalise_time(""), "")
+        self.assertEqual(normalise_time("25:70"), "")
+
+    def test_extract_unstructured_title_empty_list(self):
+        """
+        Test the extract_unstructured_title function with an empty list.
+        """
+        self.assertEqual(extract_unstructured_title([]), "")
+
+    def test_extract_unstructured_location_no_keywords(self):
+        """
+        Test the extract_unstructured_location function with text that doesn't contain location keywords.
+        """
+        text = "This is a sample text without any location keywords."
+        sentences = text.split(". ")
+        self.assertEqual(extract_unstructured_location(text, sentences), "")
+
