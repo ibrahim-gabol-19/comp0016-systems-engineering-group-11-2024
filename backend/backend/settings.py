@@ -18,8 +18,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
+# Logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -34,18 +33,15 @@ LOGGING = {
     },
 }
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "aodajodoaij onion[hna]hdnanndn"
 
-DEBUG = False
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True  # Set to True for local development
 
-ALLOWED_HOSTS = ["sysengbackendazuregroup11-e3c8a6dtexeqh3am.ukwest-01.azurewebsites.net", "*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]  # Allow localhost and 127.0.0.1
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,10 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework', 
-    'rest_framework_simplejwt', 
+    'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    'api',  
+    'api',
     'corsheaders',
     'reports',
     'reportdiscussion',
@@ -68,7 +64,7 @@ INSTALLED_APPS = [
     'comments',
     'companyinformation',
     'storages',
-    'likes'
+    'likes',
 ]
 
 MIDDLEWARE = [
@@ -104,16 +100,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',    }
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
+# REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -122,7 +119,6 @@ REST_FRAMEWORK = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -138,6 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# JWT configuration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -152,70 +149,25 @@ SIMPLE_JWT = {
     'JWK_URL': None,
 }
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# settings.py
-AZURE_ACCOUNT_NAME = 'storagesysengblob'
-AZURE_ACCOUNT_KEY = 'Rh5HvgVgGZiGG/DggJ0RBD1/mTDAqmN+P5uwwWQH+ZEFTzmfGyjcTXXvRGedomyX + \
-                    "4ZuGccfM3833+AStk3lzfw=='
-AZURE_CONTAINER = 'media'
-MEDIA_URL = f'https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/'
-
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For collecting static files
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.azure_storage.AzureStorage",
-        "OPTIONS": {
-            "azure_container": AZURE_CONTAINER,
-            "account_name": AZURE_ACCOUNT_NAME,
-            "account_key": AZURE_ACCOUNT_KEY,
-            "connection_string": (
-                "DefaultEndpointsProtocol=https;AccountName=storagesysengblob;"
-                "AccountKey=Rh5HvgVgGZiGG/DggJ0RBD1/mTDAqmN+P5uwwWQH+ZEFTzmfGyjcTXXvRGedomyX4ZuG"
-                "ccfM3833+"
-                "AStk3lzfw==;EndpointSuffix=core.windows.net"
-            ),
-        },
-    },
-    "staticfiles": {
-        "BACKEND": "storages.backends.azure_storage.AzureStorage",
-        "OPTIONS": {
-            "azure_container": AZURE_CONTAINER,
-            "account_name": AZURE_ACCOUNT_NAME,
-            "account_key": AZURE_ACCOUNT_KEY,
-            "connection_string": (
-                "DefaultEndpointsProtocol=https;AccountName=storagesysengblob;"
-                "AccountKey=Rh5HvgVgGZiGG/DggJ0RBD1/mTDAqmN+P5uwwWQH+ZEFTzmfGyjcTXXvRGed"
-                "omyX4ZuGccfM"
-                "3833+"
-                "AStk3lzfw==;EndpointSuffix=core.windows.net"
-            ),
-        }
-    }
-}
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory where media files are stored
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS configuration
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for local development
