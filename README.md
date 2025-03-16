@@ -18,7 +18,7 @@
 ### Coverage Report
 - `coverage run manage.py test`
 - `coverage html --omit="*/test*"  -i`
-
+- - Check htmlcov folder for index.html to view coverage
 ### Linting
 - `pylint --load-plugins pylint_django **/*.py`
 
@@ -40,5 +40,6 @@
 - *(To be implemented)*
 ### Coverage Report
 - `npm run coverage`
+- Check coverage folder for index.html to view coverage
 ### Linting
-- `npm run lint`
+- `npx eslint src --max-warnings=0`
