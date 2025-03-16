@@ -49,32 +49,6 @@ const MapComponent = ({
     [ne_lat, ne_lon],
   ];
 
-  function RecenterMap({ selectedMarker }) {
-    const map = useMap();
-
-    useEffect(() => {
-      if (viewingAISummary) {
-        return;
-      }
-      if (
-        selectedMarker &&
-        selectedMarker.latitude !== undefined &&
-        selectedMarker.longitude !== undefined
-      ) {
-        map.flyTo(
-          [selectedMarker.latitude, selectedMarker.longitude],
-          map.getZoom()
-        );
-      }
-      if (newMarker && newMarker.latlng) {
-        map.flyTo(newMarker.latlng, map.getZoom());
-      }
-      // eslint-disable-next-line
-    }, [selectedMarker, newMarker, map]);
-
-    return null;
-  }
-
   function RecenterMapNoMarker({isSidebarOpen}) {
     const map = useMap();
 
@@ -173,7 +147,6 @@ const MapComponent = ({
           />
         ))}
         <NewReport />
-        <RecenterMap selectedMarker={selectedMarker} />
         <RecenterMapNoMarker isSidebarOpen={isSidebarOpen}/>
       </MapContainer>
     </div>
