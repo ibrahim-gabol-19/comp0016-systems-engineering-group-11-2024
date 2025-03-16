@@ -89,20 +89,20 @@ class SignUpViewTest(TestCase):
         """
         self.client = APIClient()
 
-    # def test_signup(self):
-    #     """
-    #     Test that a new user can be created via the SignUpView.
-    #     """
-    #     data = {
-    #         'username': 'newuser',
-    #         'email': 'newuser@example.com',
-    #         'password': 'newpassword123',
-    #     }
-    #     response = self.client.post('/accounts/signup/', data, format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(response.data['username'], 'newuser')
-    #     self.assertEqual(response.data['email'], 'newuser@example.com')
-    #     self.assertFalse(response.data['is_superuser'])
+    def test_signup(self):
+        """
+        Test that a new user can be created via the SignUpView.
+        """
+        data = {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password': 'newpassword123',
+        }
+        response = self.client.post('/api/auth/signup/', data, format='json')
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['username'], 'newuser')
+        self.assertEqual(response.data['email'], 'newuser@example.com')
 
 
 class LoginViewTest(TestCase):
@@ -121,21 +121,20 @@ class LoginViewTest(TestCase):
             password='testpassword123'
         )
 
-    # def test_login(self):
-    #     """
-    #     Test that a user can log in and receive JWT tokens.
-    #     """
-    #     data = {
-    #         'username': 'testuser',
-    #         'password': 'testpassword123',
-    #     }
-    #     response = self.client.post('/accounts/login/', data, format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertIn('refresh', response.data)
-    #     self.assertIn('access', response.data)
-    #     self.assertEqual(response.data['user']['username'], 'testuser')
-    #     self.assertEqual(response.data['user']['email'], 'test@example.com')
-    #     self.assertFalse(response.data['user']['is_superuser'])
+    def test_login(self):
+        """
+        Test that a user can log in and receive JWT tokens.
+        """
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword123',
+        }
+        response = self.client.post('/api/auth/login/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('refresh', response.data)
+        self.assertIn('access', response.data)
+        self.assertEqual(response.data['user']['username'], 'testuser')
+        self.assertEqual(response.data['user']['email'], 'test@example.com')
 
 
 class GetUserViewTest(TestCase):
@@ -155,16 +154,6 @@ class GetUserViewTest(TestCase):
         )
         refresh = RefreshToken.for_user(self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-
-    # def test_get_user(self):
-    #     """
-    #     Test that an authenticated user can retrieve their details.
-    #     """
-    #     response = self.client.get('/accounts/user/')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['username'], 'testuser')
-    #     self.assertEqual(response.data['email'], 'test@example.com')
-    #     self.assertFalse(response.data['is_superuser'])
 
 
 class SignalsTest(TestCase):
