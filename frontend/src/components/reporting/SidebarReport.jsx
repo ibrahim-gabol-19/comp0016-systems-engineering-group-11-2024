@@ -30,6 +30,8 @@ const SidebarReport = ({
   const { name, main_color } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+  const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
 
   const author = auth.user.username;
 
@@ -171,6 +173,24 @@ const SidebarReport = ({
   const handleSubmitNewForm = async (e) => {
     e.preventDefault();
 
+    // Check if title or description is empty
+    if (!title.trim()) {
+      setIsTitleEmpty(true);
+    } else {
+      setIsTitleEmpty(false);
+    }
+
+    if (!description.trim()) {
+      setIsDescriptionEmpty(true);
+    } else {
+      setIsDescriptionEmpty(false);
+    }
+
+    // If either title or description is empty, stop the submission
+    if (!title.trim() || !description.trim()) {
+      return;
+    }
+
     // Create the data object to send
     const token = localStorage.getItem("token");
     const formData = new FormData();
@@ -202,7 +222,7 @@ const SidebarReport = ({
       setDescription("");
       setSelectedTag("environmental"); // Reset the tag after submission
     } catch (err) {
-      console.log("Error creating report:", err.message, " to", API_URL );
+      console.log("Error creating report:", err.message, " to", API_URL);
     }
   };
 
@@ -233,70 +253,79 @@ const SidebarReport = ({
           <p className="text-3xl font-bold text-gray-800">New Report</p>
         </div>
         <div className="w-full">
-          <form onSubmit={handleSubmitNewForm} className="space-y-6">
-            {/* Title Input */}
-            <div>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                className="w-full p-3 text-xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-            </div>
-            {/* Image Input */}
-            <div>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-            </div>
-            {/* Description Input */}
-            <div>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter description"
-                className="w-full p-3 border border-gray-300 rounded-md h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-            </div>
-            {/* Tags Select */}
-            <div>
-              <label
-                htmlFor="tags"
-                className="block text-lg font-medium mb-2 text-gray-700"
-              >
-                Select Tag
-              </label>
-              <select
-                id="tags"
-                value={selectedTag}
-                onChange={(e) => setSelectedTag(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-              >
-                {tags.map((tag) => (
-                  <option key={tag} value={tag}>
-                    {tag.charAt(0).toUpperCase() +
-                      tag.slice(1).replace("_", " ")}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-300"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
+        <form onSubmit={handleSubmitNewForm} className="space-y-6">
+      {/* Title Input */}
+      <div>
+        <input
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          className={`w-full p-3 text-xl border ${
+            isTitleEmpty ? "border-red-500" : "border-gray-300"
+          } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
+        />
+        {isTitleEmpty && (
+          <p className="text-red-500 text-sm mt-1">Title is required</p>
+        )}
+      </div>
+      {/* Image Input */}
+      <div>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
+      </div>
+      {/* Description Input */}
+      <div>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Enter description"
+          className={`w-full p-3 border ${
+            isDescriptionEmpty ? "border-red-500" : "border-gray-300"
+          } rounded-md h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300`}
+        />
+        {isDescriptionEmpty && (
+          <p className="text-red-500 text-sm mt-1">Description is required</p>
+        )}
+      </div>
+      {/* Tags Select */}
+      <div>
+        <label
+          htmlFor="tags"
+          className="block text-lg font-medium mb-2 text-gray-700"
+        >
+          Select Tag
+        </label>
+        <select
+          id="tags"
+          value={selectedTag}
+          onChange={(e) => setSelectedTag(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+        >
+          {tags.map((tag) => (
+            <option key={tag} value={tag}>
+              {tag.charAt(0).toUpperCase() + tag.slice(1).replace("_", " ")}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Submit Button */}
+      <div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-300"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
         </div>
       </div>
     );
@@ -343,10 +372,11 @@ const SidebarReport = ({
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex p-3 mb-3 border border-gray-200 rounded-lg ${discussion.author === "Business"
-                  ? "bg-yellow-100"
-                  : "bg-gray-50"
-                  }`}
+                className={`flex p-3 mb-3 border border-gray-200 rounded-lg ${
+                  discussion.author === "Business"
+                    ? "bg-yellow-100"
+                    : "bg-gray-50"
+                }`}
               >
                 {/* Profile Icon */}
                 <div className="w-1/6 flex justify-center items-center">
