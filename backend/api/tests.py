@@ -1,0 +1,180 @@
+from django.test import TestCase, SimpleTestCase, Client
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
+from django.conf import settings
+import os
+from datetime import datetime
+from .models import Item
+from .views import (
+    extract_event_data,
+    extract_article_data,
+    extract_event_data_ics,
+    normalise_date,
+    normalise_time,
+    extract_unstructured_title,
+    extract_unstructured_date,
+    extract_unstructured_time,
+    extract_unstructured_location,
+    extract_unstructured_description,
+    extract_unstructured_author,
+)
+
+class ApiTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.item = Item.objects.create(
+            name="Test Item",
+            description="This is a test item",
+            location="Test Location",
+        )
+
+    def test_item_model(self):
+        """
+        Test the Item model's string representation.
+        """
+        self.assertEqual(str(self.item), "Test Item")
+
+    def test_item_list_view(self):
+        """
+        Test the ItemViewSet list view.
+        """
+        response = self.client.get(reverse('item-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Sample Item")
+
+    def test_upload_pdf_and_extract_data_event(self):
+        """
+        Test the upload_pdf_and_extract_data view for event PDFs.
+        """
+        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_event.pdf')
+        with open(pdf_path, 'rb') as pdf_file:
+            response = self.client.post(
+                reverse('upload_pdf_and_extract_data', args=['event']),
+                {'pdf_file': SimpleUploadedFile(pdf_file.name, pdf_file.read())},
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('title', response.json())
+        self.assertIn('date_of_event', response.json())
+
+    def test_upload_pdf_and_extract_data_article(self):
+        """
+        Test the upload_pdf_and_extract_data view for article PDFs.
+        """
+        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_article.pdf')
+        with open(pdf_path, 'rb') as pdf_file:
+            response = self.client.post(
+                reverse('upload_pdf_and_extract_data', args=['article']),
+                {'pdf_file': SimpleUploadedFile(pdf_file.name, pdf_file.read())},
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('title', response.json())
+        self.assertIn('author', response.json())
+
+    def test_upload_ics_and_extract_event_data(self):
+        """
+        Test the upload_ics_and_extract_event_data view.
+        """
+        ics_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_event.ics')
+        with open(ics_path, 'rb') as ics_file:
+            response = self.client.post(
+                reverse('upload_ics'),
+                {'ics_file': SimpleUploadedFile(ics_file.name, ics_file.read())},
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('title', response.json())
+        self.assertIn('date_of_event', response.json())
+
+
+class UtilityFunctionTests(SimpleTestCase):
+    def test_normalise_date(self):
+        """
+        Test the normalise_date function.
+        """
+        self.assertEqual(normalise_date("25 December 2023"), "25/12/2023")
+        self.assertEqual(normalise_date("25th December 2023"), "25/12/2023")
+        self.assertEqual(normalise_date("25/12/2023"), "25/12/2023")
+        self.assertEqual(normalise_date("Invalid Date"), "")
+
+    def test_normalise_time(self):
+        """
+        Test the normalise_time function.
+        """
+        self.assertEqual(normalise_time("10:30 AM"), "10:30")
+        self.assertEqual(normalise_time("10:30 PM"), "22:30")
+        self.assertEqual(normalise_time("10:30"), "10:30")
+        self.assertEqual(normalise_time("Invalid Time"), "")
+
+    def test_extract_unstructured_title(self):
+        """
+        Test the extract_unstructured_title function.
+        """
+        sentences = ["This is the first line.", "This is the second line."]
+        self.assertEqual(extract_unstructured_title(sentences), "This is the first line.")
+
+    def test_extract_unstructured_date(self):
+        """
+        Test the extract_unstructured_date function.
+        """
+        text = "The event will take place on 25 December 2023."
+        self.assertEqual(extract_unstructured_date(text), "25/12/2023")
+
+    def test_extract_unstructured_time(self):
+        """
+        Test the extract_unstructured_time function.
+        """
+        text = "The event starts at 10:30 AM."
+        self.assertEqual(extract_unstructured_time(text), "10:30")
+
+    def test_extract_unstructured_location(self):
+        """
+        Test the extract_unstructured_location function.
+        """
+        text = "The event will be held at the Grand Hall, New York."
+        sentences = text.split(". ")
+        self.assertIn("Grand Hall", extract_unstructured_location(text, sentences))
+
+    def test_extract_unstructured_description(self):
+        """
+        Test the extract_unstructured_description function.
+        """
+        text = "This is the first paragraph.\n\nThis is the second paragraph."
+        self.assertEqual(extract_unstructured_description(text), "This is the first paragraph.\n\nThis is the second paragraph.")
+
+    def test_extract_unstructured_author(self):
+        """
+        Test the extract_unstructured_author function.
+        """
+        text = "By John Doe"
+        self.assertEqual(extract_unstructured_author(text), "John Doe")
+
+
+class ExtractDataTests(SimpleTestCase):
+    def test_extract_event_data(self):
+        """
+        Test the extract_event_data function.
+        """
+        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_event.pdf')
+        data = extract_event_data(pdf_path)
+        self.assertIn('title', data)
+        self.assertIn('date_of_event', data)
+        self.assertIn('location', data)
+
+    def test_extract_article_data(self):
+        """
+        Test the extract_article_data function.
+        """
+        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_article.pdf')
+        data = extract_article_data(pdf_path)
+        self.assertIn('title', data)
+        self.assertIn('author', data)
+        self.assertIn('main_content', data)
+
+    def test_extract_event_data_ics(self):
+        """
+        Test the extract_event_data_ics function.
+        """
+        ics_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'test_event.ics')
+        data = extract_event_data_ics(ics_path)
+        self.assertIn('title', data)
+        self.assertIn('date_of_event', data)
+        self.assertIn('location', data)
