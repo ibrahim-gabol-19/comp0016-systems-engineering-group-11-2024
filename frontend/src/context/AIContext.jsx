@@ -10,6 +10,7 @@ export const AIProvider = ({ children }) => {
   const [engine, setEngine] = useState(null);
   const modelToUse = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
   const [progressModelLoaded, setProgressModelLoaded] = useState(null);
+  const [modelDisabled, setModelDisabled] = useState(false);
 
   useEffect(() => {
     const initProgressCallback = (progress) => {
@@ -77,7 +78,7 @@ export const AIProvider = ({ children }) => {
   };
 
   return (
-    <AIContext.Provider value={{getReply, engine, progressModelLoaded}}>
+    <AIContext.Provider value={{getReply, engine, progressModelLoaded, modelDisabled}}>
       {children}
     </AIContext.Provider>
   );
