@@ -1231,7 +1231,7 @@ def create_article(token, title, content, author, description, image_path):
 def main():
     # Flush the database before populating it
     try:
-        # subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
+        subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
 
         print("Database flushed successfully.")
     except subprocess.CalledProcessError as e:

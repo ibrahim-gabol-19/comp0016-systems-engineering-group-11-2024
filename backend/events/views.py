@@ -143,7 +143,7 @@ class EventsViewSet(viewsets.ModelViewSet):
             {
                 "id": event["id"],
                 "title": event["title"],
-                "openTimes": event["opening_times"] or "N/A",
+                "openTimes": event["opening_times"],
                 "description": event["description"],
                 "main_image": (
                     request.build_absolute_uri(settings.MEDIA_URL + event['main_image'])
