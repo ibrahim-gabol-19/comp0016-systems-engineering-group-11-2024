@@ -32,8 +32,7 @@ class EventsViewSet(viewsets.ModelViewSet):
             # Generate the full media URL dynamically
             main_image_url = (
                 request.build_absolute_uri(settings.MEDIA_URL + event['main_image'])
-                if event["main_image"]
-                else "https://picsum.photos/550"
+                if event['main_image'] else None
             )
 
             event_data = {
@@ -110,8 +109,7 @@ class EventsViewSet(viewsets.ModelViewSet):
             # Generate the full media URL dynamically
             main_image_url = (
                 request.build_absolute_uri(settings.MEDIA_URL + poi['main_image'])
-                if poi["main_image"]
-                else "https://picsum.photos/550"
+                if poi['main_image'] else None
             )
 
             category = poi["poi_type"] or "Other"
@@ -143,12 +141,11 @@ class EventsViewSet(viewsets.ModelViewSet):
             {
                 "id": event["id"],
                 "title": event["title"],
-                "openTimes": event["opening_times"] or "N/A",
+                "openTimes": event["opening_times"],
                 "description": event["description"],
                 "main_image": (
                     request.build_absolute_uri(settings.MEDIA_URL + event['main_image'])
-                    if event["main_image"]
-                    else "https://picsum.photos/550"
+                    if event['main_image'] else None
                 ),
                 "eventType": event["event_type"],
                 "location": event["location"],
