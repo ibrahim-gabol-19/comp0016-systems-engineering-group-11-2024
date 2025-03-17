@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { CompanyContext } from "../context/CompanyContext";
-import { AIContext } from "../context/AIContext";
 
 const navList = [
   {

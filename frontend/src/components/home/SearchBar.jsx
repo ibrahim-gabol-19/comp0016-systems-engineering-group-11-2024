@@ -90,7 +90,6 @@ const SearchBar = () => {
 
 
   useEffect(() => {
-    // if (!progressModelLoaded) return;
 
     if (progressModelLoaded?.progress === 1) {
       setToolTipText("AI Model Ready!");
