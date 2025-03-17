@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
-import { useAuth } from "../context/AuthContext"; 
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { CompanyContext } from "../context/CompanyContext";
 
 const navList = [
@@ -24,19 +24,21 @@ const navList = [
 const Header = () => {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const { main_color, logo, name } = useContext(CompanyContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    logout(); // Log the user out
-    navigate("/login"); // Redirect to login page
-    setIsMenuOpen(false); // Close the mobile menu if open
+    logout();
+    navigate("/login");
+    setIsMenuOpen(false);
   };
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  const isActive = (path) => location.pathname === path; // Check if the current path matches
+  const isActive = (path) => location.pathname === path;
+
+
 
   return (
     <header className="fixed w-full flex justify-between items-center p-4 z-50 bg-gray-100">
@@ -94,12 +96,12 @@ const Header = () => {
               <Link
                 to="/miscellaneous"
                 style={{
-                  color: "black", // Keep the color of Miscellaneous unchanged
+                  color: "black",
                   transition: "color 0.3s, transform 0.3s",
                 }}
                 className="ml-8 text-lg hover:scale-110 duration-500"
-                onMouseEnter={(e) => (e.target.style.color = main_color)} 
-                onMouseLeave={(e) => (e.target.style.color = "black")} 
+                onMouseEnter={(e) => (e.target.style.color = main_color)}
+                onMouseLeave={(e) => (e.target.style.color = "black")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +215,7 @@ const Header = () => {
               <Link
                 to="/miscellaneous"
                 style={{
-                  color: "black", // Keep the color of Miscellaneous unchanged
+                  color: "black",
                   transition: "color 0.3s, transform 0.3s",
                 }}
                 className="my-2 text-lg hover:scale-110 duration-500"
