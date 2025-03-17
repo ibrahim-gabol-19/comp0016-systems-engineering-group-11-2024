@@ -113,7 +113,7 @@ const DetailedEventPageView = () => {
                   })}
                 </p>)
               }
-              {event_type === "point_of_interest" && (
+              {event_type === "point_of_interest" && opening_times && (
                 <p className="text-lg mt-4 text-gray-900 text-center">
                 <b>Open Time:</b> {opening_times}
                 </p>)
