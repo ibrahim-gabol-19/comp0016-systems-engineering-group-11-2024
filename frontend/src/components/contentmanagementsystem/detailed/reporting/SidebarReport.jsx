@@ -7,11 +7,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 const SidebarReport = ({ selectedMarker, fetchReports }) => {
   const [viewingDiscussion, setViewingDiscussion] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isDiscussionEmpty, setIsDiscussionEmpty] = useState(false);
 
   const { auth } = useAuth();
 
   const { main_color } = useContext(CompanyContext);
-  const author =auth.user.username;
+  const author = auth.user.username;
 
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
@@ -102,38 +103,53 @@ const SidebarReport = ({ selectedMarker, fetchReports }) => {
   };
 
   const handleSubmitNewDiscussionMessage = async () => {
-    if (message.trim()) {
-      try {
-        const discussionMessage = {
-          author: author,
-          message: message,
-          report: selectedMarker.id,
-        };
+    try {
 
-        const response = await axios.post(
-          API_URL + "reportdiscussion/",
-          discussionMessage,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+      if (message.trim()) {
+        try {
+          const discussionMessage = {
+            author: author,
+            message: message,
+            report: selectedMarker.id,
+          };
+          const token = localStorage.getItem("token");
+
+          if (!token) {
+            alert("Authentication required. Please log in.");
+            return;
           }
-        );
 
-        if (response.status === 201) {
-          setMessage("");
-          fetchReports();
+          const response = await axios.post(
+            API_URL + "reportdiscussion/",
+            discussionMessage,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (response.status === 201) {
+            setMessage("");
+            fetchReports();
+            setIsDiscussionEmpty(false);
+
+          }
+        } catch (err) {
+          console.log("Error creating discussion:", err.message);
+          setIsDiscussionEmpty(true);
         }
-      } catch (err) {
-        console.log("Error creating discussion:", err.message);
-        alert("Failed to submit your message. Please try again.");
+      } else {
+        setIsDiscussionEmpty(true);
       }
-    } else {
-      alert("Please enter a message!");
+    }
+    catch {
+      setIsDiscussionEmpty(true);
     }
   };
 
-if (selectedMarker) {
+  if (selectedMarker) {
     /*Existing Report Discussion*/
     if (viewingDiscussion) {
       return (
@@ -141,16 +157,16 @@ if (selectedMarker) {
           <div className="w-full h-1/6 px-3 ">
             {/*Title*/}
             <div className="w-full h-3/4 ">
-                <div className="w-full h-3/4 text-center justify-center">
-                  <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
-                </div>
-                <div className="w-full h-1/4 flex flex-col text-center justify-center">
-                  <p className="text-gray-500 text-m mb-4">
-                    Date Reported: {new Date(
-                      selectedMarker.published_date
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
+              <div className="w-full h-3/4 text-center justify-center">
+                <p class="font-semibold text-4xl mb-4 mr-8 line-clamp-2">{selectedMarker.title}</p>
+              </div>
+              <div className="w-full h-1/4 flex flex-col text-center justify-center">
+                <p className="text-gray-500 text-m mb-4">
+                  Date Reported: {new Date(
+                    selectedMarker.published_date
+                  ).toLocaleDateString()}
+                </p>
+              </div>
             </div>
             {/* Status + Tags */}
             <div className="w-full flex justify-center items-center">
@@ -210,9 +226,8 @@ if (selectedMarker) {
             {selectedMarker.discussions.map((discussion, index) => (
               <div
                 key={index}
-                className={`flex px-4 h-auto w-full min-h-16 border border-gray-200 ${
-                  discussion.author === "Business" ? "bg-yellow-200" : ""
-                }`}
+                className={`flex px-4 h-auto w-full min-h-16 border border-gray-200 ${discussion.author === "Business" ? "bg-yellow-200" : ""
+                  }`}
               >
                 {/* Profile Picture (SVG Icon) */}
                 <div className="w-1/6 flex justify-center items-center">
@@ -236,13 +251,13 @@ if (selectedMarker) {
                   <p className="">{discussion.message}</p>
                   <p className="text-gray-500 text-sm">
                     {new Date(discussion.created_at).toLocaleString(undefined, {
-                        year: 'numeric',
-                        month: 'numeric',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true,
-                      })}
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}
                   </p>
                 </div>
 
@@ -276,8 +291,8 @@ if (selectedMarker) {
             <div className="w-full h-2/4 py-2 ">
               {/* Text Input Form */}
               <textarea
-                className="w-full h-full p-2 border rounded-lg resize-none"
-                placeholder="Type your anouncement message here..."
+                className={`w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 ${isDiscussionEmpty ? 'border-red-500' : 'border-gray-300'
+                  }`} placeholder="Type your anouncement message here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               ></textarea>
