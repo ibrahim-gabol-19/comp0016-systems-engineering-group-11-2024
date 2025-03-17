@@ -90,18 +90,17 @@ const SearchBar = () => {
 
 
   useEffect(() => {
-    if (!progressModelLoaded) return;
+    // if (!progressModelLoaded) return;
 
-    if (progressModelLoaded.progress === 1) {
+    if (progressModelLoaded?.progress === 1) {
       setToolTipText("AI Model Ready!");
     } else if (modelDisabled) {
-      // No tooltip for model disabled case
+      setToolTipText("AI Model is disabled due to device limitations")
       return;
     } else {
-      setToolTipText(`AI Model is loading: ${progressModelLoaded.text}`);
+      setToolTipText(`AI Model is loading: ${progressModelLoaded?.text}`);
     }
 
-    console.log(progressModelLoaded);
   }, [progressModelLoaded, modelDisabled]);
 
 

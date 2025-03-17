@@ -12,10 +12,23 @@ export const AIProvider = ({ children }) => {
   const [progressModelLoaded, setProgressModelLoaded] = useState(null);
   const [modelDisabled, setModelDisabled] = useState(false);
 
-  useEffect(() => {
-    const initProgressCallback = (progress) => {
-      setProgressModelLoaded(progress)
+  // Function to check if the device is mobile
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      window.navigator.userAgent
+    );
   };
+
+  useEffect(() => {
+    if (isMobileDevice()) {
+      setModelDisabled(true);
+      return; // Exit early if on mobile
+    }
+
+    const initProgressCallback = (progress) => {
+      setProgressModelLoaded(progress);
+    };
+
     const initModel = async () => {
       try {
         const createdEngine = await CreateWebWorkerMLCEngine(
@@ -23,7 +36,7 @@ export const AIProvider = ({ children }) => {
             type: "module",
           }),
           modelToUse,
-          {initProgressCallback}
+          { initProgressCallback }
         );
         setEngine(createdEngine);
       } catch (error) {
@@ -40,7 +53,7 @@ export const AIProvider = ({ children }) => {
     setModelReply,
     setStreaming
   ) => {
-    if (userQuery === "") {
+    if (userQuery === "" || modelDisabled) {
       return;
     }
 
@@ -74,11 +87,12 @@ export const AIProvider = ({ children }) => {
       console.error("Error during chat completion:", error);
     }
     return;
-
   };
 
   return (
-    <AIContext.Provider value={{getReply, engine, progressModelLoaded, modelDisabled}}>
+    <AIContext.Provider
+      value={{ getReply, engine, progressModelLoaded, modelDisabled }}
+    >
       {children}
     </AIContext.Provider>
   );
