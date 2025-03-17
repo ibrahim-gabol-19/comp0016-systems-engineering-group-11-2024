@@ -182,6 +182,8 @@ const ReportsPage = () => {
             activeFilters={getActiveFilters()}
             selectedMarker={selectedMarker}
             mapRef={mapRef}
+            viewingAISummary={viewingAISummary}
+            isSidebarOpen={isSidebarOpen}
           ></MapComponent>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10 mb-10">
             <button

@@ -27,32 +27,46 @@ let SelectedIcon = L.icon({
   iconAnchor: [17, 57], // Adjusted anchor
 });
 
-
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarker, activeFilters, selectedMarker, mapRef }) => {
+const MapComponent = ({
+  onMarkerSelected,
+  onNewMarkerSelected,
+  reports,
+  newMarker,
+  activeFilters,
+  selectedMarker,
+  mapRef,
+  viewingAISummary,
+  isSidebarOpen,
+}) => {
   const zoomLevel = 13;
   const { sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
   const [position, setPosition] = useState(null);
-
 
   const bounds = [
     [sw_lat, sw_lon],
     [ne_lat, ne_lon],
   ];
 
-  function RecenterMap({ selectedMarker }) {
+  function RecenterMapNoMarker({isSidebarOpen}) {
     const map = useMap();
 
     useEffect(() => {
-      if (selectedMarker && selectedMarker.latitude !== undefined && selectedMarker.longitude !== undefined) {
-        map.flyTo([selectedMarker.latitude, selectedMarker.longitude], map.getZoom());
+      if (viewingAISummary) {
+        return;
       }
-      if (newMarker && newMarker.latlng) {
-        map.flyTo(newMarker.latlng, map.getZoom());
+      if (!isSidebarOpen) {
+        map.flyTo(
+          [
+            (parseFloat(sw_lat) + parseFloat(ne_lat)) / 2, // Midpoint latitude
+            (parseFloat(sw_lon) + parseFloat(ne_lon)) / 2, // Midpoint longitude
+          ],
+          map.getZoom()
+        );
       }
       // eslint-disable-next-line
-    }, [selectedMarker, newMarker, map]);
+    }, [isSidebarOpen]);
 
     return null;
   }
@@ -70,18 +84,40 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
         map.flyTo(e.latlng, map.getZoom());
       },
     });
-
+  
+    
+    const handleDragEnd = (e) => {
+      const newLatLng = e.target.getLatLng(); 
+      setPosition(newLatLng); 
+      onNewMarkerSelected({ latlng: newLatLng }); 
+      };
+  
     return newMarker === null ? null : (
-      <Marker position={position || newMarker.latlng} draggable={true} icon={SelectedIcon}></Marker>
+      <Marker
+        position={position || newMarker.latlng}
+        draggable={true}
+        icon={SelectedIcon}
+        eventHandlers={{
+          dragend: handleDragEnd, // Listen for dragend event
+        }}
+      ></Marker>
     );
   }
+  
 
-  const filteredReports = reports.filter((item) => activeFilters.includes(item.status));
+  const filteredReports = reports.filter((item) =>
+    activeFilters.includes(item.status)
+  );
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}>
+    <div
+      style={{ position: "relative", width: "100%", height: "100%", zIndex: 0 }}
+    >
       <MapContainer
-        center={[0, 0]}
+        center={[
+          (parseFloat(sw_lat) + parseFloat(ne_lat)) / 2, // Midpoint latitude
+          (parseFloat(sw_lon) + parseFloat(ne_lon)) / 2, // Midpoint longitude
+        ]}
         zoom={zoomLevel}
         style={{ width: "100%", minHeight: "100%", height: "100%" }}
         maxBounds={bounds}
@@ -98,7 +134,11 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
           <Marker
             key={item.id}
             position={[item.latitude, item.longitude]}
-            icon={selectedMarker && selectedMarker.id === item.id ? SelectedIcon : DefaultIcon}
+            icon={
+              selectedMarker && selectedMarker.id === item.id
+                ? SelectedIcon
+                : DefaultIcon
+            }
             eventHandlers={{
               click: () => {
                 onMarkerSelected(item);
@@ -107,7 +147,7 @@ const MapComponent = ({ onMarkerSelected, onNewMarkerSelected, reports, newMarke
           />
         ))}
         <NewReport />
-        <RecenterMap selectedMarker={selectedMarker} />
+        <RecenterMapNoMarker isSidebarOpen={isSidebarOpen}/>
       </MapContainer>
     </div>
   );

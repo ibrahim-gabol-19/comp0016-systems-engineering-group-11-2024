@@ -30,6 +30,9 @@ const SidebarReport = ({
   const { name, main_color } = useContext(CompanyContext);
   const { getReply, engine } = useContext(AIContext);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+  const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
+  const [isDiscussionEmpty, setIsDiscussionEmpty] = useState(false);
 
   const author = auth.user.username;
 
@@ -130,46 +133,72 @@ const SidebarReport = ({
   };
 
   const handleSubmitNewDiscussionMessage = async () => {
-    if (message.trim()) {
-      try {
-        const discussionMessage = {
-          author: author,
-          message: message,
-          report: selectedMarker.id,
-        };
-        const token = localStorage.getItem("token");
+    try {
 
-        if (!token) {
-          alert("Authentication required. Please log in.");
-          return;
-        }
+      if (message.trim()) {
+        try {
+          const discussionMessage = {
+            author: author,
+            message: message,
+            report: selectedMarker.id,
+          };
+          const token = localStorage.getItem("token");
 
-        const response = await axios.post(
-          API_URL + "reportdiscussion/",
-          discussionMessage,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+          if (!token) {
+            alert("Authentication required. Please log in.");
+            return;
           }
-        );
 
-        if (response.status === 201) {
-          setMessage("");
-          fetchReports();
+          const response = await axios.post(
+            API_URL + "reportdiscussion/",
+            discussionMessage,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (response.status === 201) {
+            setMessage("");
+            fetchReports();
+            setIsDiscussionEmpty(false);
+
+          }
+        } catch (err) {
+          console.log("Error creating discussion:", err.message);
+          setIsDiscussionEmpty(true);
         }
-      } catch (err) {
-        console.log("Error creating discussion:", err.message);
-        alert("Failed to submit your message. Please try again.");
+      } else {
+        setIsDiscussionEmpty(true);
       }
-    } else {
-      alert("Please enter a message!");
+    }
+    catch {
+      setIsDiscussionEmpty(true);
     }
   };
 
   const handleSubmitNewForm = async (e) => {
     e.preventDefault();
+
+    // Check if title or description is empty
+    if (!title.trim()) {
+      setIsTitleEmpty(true);
+    } else {
+      setIsTitleEmpty(false);
+    }
+
+    if (!description.trim()) {
+      setIsDescriptionEmpty(true);
+    } else {
+      setIsDescriptionEmpty(false);
+    }
+
+    // If either title or description is empty, stop the submission
+    if (!title.trim() || !description.trim()) {
+      return;
+    }
 
     // Create the data object to send
     const token = localStorage.getItem("token");
@@ -202,7 +231,7 @@ const SidebarReport = ({
       setDescription("");
       setSelectedTag("environmental"); // Reset the tag after submission
     } catch (err) {
-      console.log("Error creating report:", err.message, " to", API_URL );
+      console.log("Error creating report:", err.message, " to", API_URL);
     }
   };
 
@@ -242,8 +271,12 @@ const SidebarReport = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title"
-                className="w-full p-3 text-xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className={`w-full p-3 text-xl border ${isTitleEmpty ? "border-red-500" : "border-gray-300"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
               />
+              {isTitleEmpty && (
+                <p className="text-red-500 text-sm mt-1">Title is required</p>
+              )}
             </div>
             {/* Image Input */}
             <div>
@@ -262,8 +295,12 @@ const SidebarReport = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter description"
-                className="w-full p-3 border border-gray-300 rounded-md h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className={`w-full p-3 border ${isDescriptionEmpty ? "border-red-500" : "border-gray-300"
+                  } rounded-md h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300`}
               />
+              {isDescriptionEmpty && (
+                <p className="text-red-500 text-sm mt-1">Description is required</p>
+              )}
             </div>
             {/* Tags Select */}
             <div>
@@ -281,8 +318,7 @@ const SidebarReport = ({
               >
                 {tags.map((tag) => (
                   <option key={tag} value={tag}>
-                    {tag.charAt(0).toUpperCase() +
-                      tag.slice(1).replace("_", " ")}
+                    {tag.charAt(0).toUpperCase() + tag.slice(1).replace("_", " ")}
                   </option>
                 ))}
               </select>
@@ -388,11 +424,13 @@ const SidebarReport = ({
           {selectedMarker.status === "open" ? (
             <div className="p-4 border-t border-gray-200">
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className={`w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 ${isDiscussionEmpty ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 placeholder="Type your message here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               ></textarea>
+
               <button
                 className="w-full py-2 mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors duration-300"
                 onClick={handleSubmitNewDiscussionMessage}
