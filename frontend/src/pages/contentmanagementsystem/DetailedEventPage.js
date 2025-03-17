@@ -405,6 +405,10 @@ const DetailedEventPage = () => {
     setIsLoadingDescription(false);
   };
 
+  function isImageFile(file) {
+    return file && file.type && file.type.startsWith('image/');
+  }
+
   return (
     <div>
       <Header />
@@ -805,19 +809,22 @@ const DetailedEventPage = () => {
             {/* Images */}
             <div className="mt-6 flex justify-center flex-wrap gap-6">
               {uploadedFiles.length > 1 &&
-                uploadedFiles.slice(1).map((file, index) => (
-                  <div
-                    key={index}
-                    className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
-                  >
-                    <p className="text-sm text-gray-700">{file.name}</p>
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt="Uploaded File"
-                      className="w-full h-48 object-cover rounded-md mt-2"
-                    />
-                  </div>
-                ))}
+                uploadedFiles
+                  .slice(1)
+                  .filter(isImageFile) // Filter for image files
+                  .map((file, index) => (
+                    <div
+                      key={index}
+                      className="text-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
+                    >
+                      <p className="text-sm text-gray-700">{file.name}</p>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Uploaded File"
+                        className="w-full h-48 object-cover rounded-md mt-2"
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
         </div>
