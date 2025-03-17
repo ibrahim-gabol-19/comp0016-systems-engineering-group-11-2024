@@ -21,9 +21,10 @@ const SearchBar = () => {
   const [messages, setMessages] = useState([]);
   const [fadeIn, setFadeIn] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const { name , sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
-  const { getReply, engine } = useContext(AIContext);
-
+  const { name, sw_lat, sw_lon, ne_lat, ne_lon } = useContext(CompanyContext);
+  const { getReply, engine, progressModelLoaded, modelDisabled } = useContext(AIContext);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [toolTipText, setToolTipText] = useState("AI Model is loading");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,7 +69,7 @@ const SearchBar = () => {
       navigate(`/articles/${item.id}`);
     } else if (item === "generatedReport") {
       const generatedReportWithLocation = createGeneratedReportWithLocation(generatedReport);
-      navigate(`/reporting`, { state: { newIssue: generatedReportWithLocation}});
+      navigate(`/reporting`, { state: { newIssue: generatedReportWithLocation } });
     }
     else {
       console.log("Did not match any source");
@@ -86,6 +87,23 @@ const SearchBar = () => {
       setTimeout(() => setFadeIn(true), 10);
     }
   }, [searchResult, generatedReport]);
+
+
+  useEffect(() => {
+    if (!progressModelLoaded) return;
+
+    if (progressModelLoaded.progress === 1) {
+      setToolTipText("AI Model Ready!");
+    } else if (modelDisabled) {
+      // No tooltip for model disabled case
+      return;
+    } else {
+      setToolTipText(`AI Model is loading: ${progressModelLoaded.text}`);
+    }
+
+    console.log(progressModelLoaded);
+  }, [progressModelLoaded, modelDisabled]);
+
 
   const extractEventDetails = (responseData) => {
     return responseData.map((event) => ({
@@ -146,13 +164,13 @@ const SearchBar = () => {
     try {
       const reportJSON = JSON.parse(await getReply(userQuery, systemPrompt, () => { }, setIsStreaming));
       setGeneratedReport(reportJSON);
-  
+
     }
     catch (error) {
       console.error("Error:", error);
       setModelReply("Sorry, please try again or try a different request");
     }
-    
+
   };
 
   const getSearchResult = async (userQuery) => {
@@ -211,18 +229,39 @@ const SearchBar = () => {
   return (
     <div className="flex flex-col items-center w-full mt-8">
       {/* Header with AI Logo and Title */}
-      <div className="flex items-center justify-center mb-6">
-        <img
-          src={aiLogo}
-          alt="AI Logo"
-          className="w-12 h-12 mr-3 drop-shadow-md animate-[spin_5s_linear_infinite] motion-safe:animate-[bounceSpin_3s_ease-in-out_infinite]"
-          style={{
-            animation:
-              "spin 5s linear infinite, bounceSpin 3s ease-in-out infinite",
-          }}
-        />
-        <h1 className="text-4xl font-extrabold text-gray-900">Ask AI</h1>
-      </div>
+      <div className="flex items-center justify-center mb-8 relative group">
+  {/* Logo with enhanced animations */}
+  <img
+    src={aiLogo}
+    alt="AI Logo"
+    className="w-14 h-14 mr-4 drop-shadow-lg animate-[spin_8s_linear_infinite] hover:animate-[bounceSpin_3s_ease-in-out_infinite] transition-all duration-500"
+    style={{
+      animation: "spin 8s linear infinite",
+    }}
+    onMouseEnter={() => setShowTooltip(true)}
+    onMouseLeave={() => setShowTooltip(false)}
+  />
+
+  {/* Heading with gradient text */}
+  <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    Ask AI
+  </h1>
+
+  {/* Tooltip with wider width */}
+  <div
+    className={`absolute top-full mt-2 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-gray-700/90 text-white text-sm rounded-lg shadow-xl transition-opacity duration-300 ease-in-out ${
+      showTooltip ? 'opacity-100 visible' : 'opacity-0 invisible'
+    }`}
+    style={{
+      width: '300px', // Set a specific width for the tooltip
+      maxWidth: '90vw', // Ensure it doesn't exceed the viewport width
+      whiteSpace: 'pre-wrap', // Allow text to wrap
+      wordBreak: 'break-word', // Break long words if necessary
+    }}
+  >
+    {toolTipText}
+  </div>
+</div>
 
       {/* Chat Box */}
       {fullUserQuery && (

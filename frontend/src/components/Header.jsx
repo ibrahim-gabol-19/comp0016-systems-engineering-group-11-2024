@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { CompanyContext } from "../context/CompanyContext";
 import { AIContext } from "../context/AIContext";
-import { tooltip } from "leaflet";
 
 const navList = [
   {
@@ -29,9 +28,6 @@ const Header = () => {
   const location = useLocation();
   const { main_color, logo, name } = useContext(CompanyContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { progressModelLoaded, modelDisabled } = useContext(AIContext);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [toolTipText, setToolTipText] = useState("AI Model is loading");
 
   const handleLogout = () => {
     logout();
@@ -43,22 +39,7 @@ const Header = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  useEffect(() => {
-    if (!progressModelLoaded) return;  // Early return to handle undefined or null progressModelLoaded
-  
-    if (progressModelLoaded.progress === 1) {
-      setToolTipText("AI Model Ready!");
-    } else if (modelDisabled) {
-      // No tooltip for model disabled case
-      return;
-    } else {
-      setToolTipText(`AI Model is loading: ${progressModelLoaded.text}`);
-    }
-  
-    console.log(progressModelLoaded);
-  }, [progressModelLoaded, modelDisabled]);
-  
-  
+
 
   return (
     <header className="fixed w-full flex justify-between items-center p-4 z-50 bg-gray-100">
@@ -75,35 +56,6 @@ const Header = () => {
         <span>{name}</span>
       </a>
       <div className="flex items-center">
-        {/* AI Model Progress Button */}
-        <div
-          className="relative ml-4"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
-          <button className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition duration-300">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"
-              />
-            </svg>
-          </button>
-          {showTooltip && (
-            <div className="absolute top-full right-0 mt-2 p-2 bg-black text-white text-sm rounded-md shadow-lg">
-              {toolTipText}
-            </div>
-          )}
-        </div>
-
         {/* Desktop Navigation */}
         <nav className="hidden md:flex">
           {navList.map((item) => (
