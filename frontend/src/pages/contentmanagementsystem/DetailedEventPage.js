@@ -405,7 +405,7 @@ const DetailedEventPage = () => {
     setIsLoadingDescription(false);
   };
 
-  // New Function: Summarise Event Description while retaining date, time and location info
+  // Summarise Event Description while retaining date, time and location info
   const handleSummariseDescription = async () => {
     if (!description) {
       alert("Please enter a description first.");
