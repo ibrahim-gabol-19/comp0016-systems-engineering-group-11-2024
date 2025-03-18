@@ -1,8 +1,11 @@
-# comp0016-systems-engineering-group-11-2024
+# Community Impact Report Portal In Partnership with NTTDATA
+![logo](logo.png)
+comp0016-systems-engineering-group-11-2024
 
 # Backend
-- Make sure your python version is 3.10 or 3.11 
+
 ## Run Development
+- Make sure your python version is 3.10 or 3.11 
 - `cd backend`
 - `python -m venv venv`
 - **Activate the Virtual Environment**
