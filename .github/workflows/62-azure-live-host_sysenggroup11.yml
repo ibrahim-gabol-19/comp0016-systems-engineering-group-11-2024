@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - 62-azure-live-host
-      - main
+      # (Add main to make it deploy on a PR)
+      #- main 
 
 jobs:
   build:
