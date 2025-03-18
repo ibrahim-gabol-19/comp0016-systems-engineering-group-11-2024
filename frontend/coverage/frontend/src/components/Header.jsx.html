@@ -329,7 +329,8 @@
 <a name='L264'></a><a href='#L264'>264</a>
 <a name='L265'></a><a href='#L265'>265</a>
 <a name='L266'></a><a href='#L266'>266</a>
-<a name='L267'></a><a href='#L267'>267</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -368,6 +369,8 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -594,10 +597,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useContext, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
-import { useAuth } from "../context/AuthContext"; 
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useContext, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { CompanyContext } from "../context/CompanyContext";
 &nbsp;
 const navList = [
@@ -621,19 +623,21 @@ const navList = [
 const Header = () =&gt; {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const { main_color, logo, name } = useContext(CompanyContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 &nbsp;
   const handleLogout = () =&gt; {
-    logout(); // Log the user out
-    navigate("/login"); // Redirect to login page
-    setIsMenuOpen(false); // Close the mobile menu if open
+    logout();
+    navigate("/login");
+    setIsMenuOpen(false);
   };
 &nbsp;
   const closeMenu = <span class="fstat-no" title="function not covered" >() =&gt; setIsMenuOpen(false);</span>
 &nbsp;
-  const isActive = (path) =&gt; location.pathname === path; // Check if the current path matches
+  const isActive = (path) =&gt; location.pathname === path;
+&nbsp;
+&nbsp;
 &nbsp;
   return (
     &lt;header className="fixed w-full flex justify-between items-center p-4 z-50 bg-gray-100"&gt;
@@ -691,12 +695,12 @@ const Header = () =&gt; {
               &lt;Link
                 to="/miscellaneous"
                 style={{
-                  color: "black", // Keep the color of Miscellaneous unchanged
+                  color: "black",
                   transition: "color 0.3s, transform 0.3s",
                 }}
                 className="ml-8 text-lg hover:scale-110 duration-500"
-                onMouseEnter={<span class="fstat-no" title="function not covered" >(e) =&gt; (e.target.style.color = main_color)} </span>
-                onMouseLeave={<span class="fstat-no" title="function not covered" >(e) =&gt; (e.target.style.color = "black")} </span>
+                onMouseEnter={<span class="fstat-no" title="function not covered" >(e) =&gt; (e.target.style.color = main_color)}</span>
+                onMouseLeave={<span class="fstat-no" title="function not covered" >(e) =&gt; (e.target.style.color = "black")}</span>
               &gt;
                 &lt;svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -810,7 +814,7 @@ const Header = () =&gt; {
 <span class="cstat-no" title="statement not covered" >              &lt;Link</span>
 <span class="cstat-no" title="statement not covered" >                to="/miscellaneous"</span>
 <span class="cstat-no" title="statement not covered" >                style={{</span>
-<span class="cstat-no" title="statement not covered" >                  color: "black", // Keep the color of Miscellaneous unchanged</span>
+<span class="cstat-no" title="statement not covered" >                  color: "black",</span>
 <span class="cstat-no" title="statement not covered" >                  transition: "color 0.3s, transform 0.3s",</span>
 <span class="cstat-no" title="statement not covered" >                }}</span>
 <span class="cstat-no" title="statement not covered" >                className="my-2 text-lg hover:scale-110 duration-500"</span>
@@ -860,15 +864,14 @@ const Header = () =&gt; {
   );
 };
 &nbsp;
-export default Header;
-&nbsp;</pre></td></tr></table></pre>
+export default Header;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-16T12:31:39.555Z
+                at 2025-03-18T21:55:05.488Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
