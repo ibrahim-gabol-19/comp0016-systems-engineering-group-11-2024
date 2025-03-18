@@ -28,7 +28,7 @@
 
 ## Documentation
 - Available at pdocs/index.html
-- To rebuild: `pdoc  accounts/ backend/ articles/ events/ api/ comments/ companyinformation/ exampledata/ forums/ likes/ reportdiscussion/ reports/ search/  --output-dir pdocs`
+- To rebuild (from the backend folder run): `pdoc backend/ accounts/ articles/ events/ api/ comments/ companyinformation/ exampledata/ forums/ likes/ reportdiscussion/ reports/ search/  --output-dir pdocs`
 - Any further created apps should also be included in the pdoc command (e.g: following on from `search/`)
 # Frontend
 
