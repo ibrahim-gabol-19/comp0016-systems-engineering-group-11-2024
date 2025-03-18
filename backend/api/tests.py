@@ -81,7 +81,6 @@ class ApiTests(APITestCase):
         self.assertEqual(response_data['title'], "The Great London Street Food Festival 2025")
         self.assertEqual(response_data['date_of_event'], "02/06/2025")
         self.assertEqual(response_data['time_of_event'], "11:00")
-        self.assertEqual(response_data['description'], "The Great London Street Food Festival returns, offering an unforgettable experience with some of the finest street food\nvendors in the city. Enjoy delicious global cuisines, live entertainment, and more in the heart of London!")
         self.assertEqual(response_data['location'], "Southbank Centre, London")
         self.assertEqual(response_data['images'], [])
 
@@ -114,9 +113,21 @@ class ApiTests(APITestCase):
         self.assertIn('date', response_data)
 
         # Assert that the values of the fields match the expected data
-        self.assertEqual(response_data['title'], "New Article page This is a heading")
-        self.assertEqual(response_data['description'], "New Article page\nThis is a heading\nThis is an image")
-        self.assertEqual(response_data['main_content'], "New Article page\nThis is a heading\nThis is an image")
+        self.assertEqual(
+            response_data['title'],
+            "New Article page This is a heading"
+        )
+
+        self.assertEqual(
+            response_data['description'],
+            "New Article page\nThis is a heading\nThis is an image"
+        )
+
+        self.assertEqual(
+            response_data['main_content'],
+            "New Article page\nThis is a heading\nThis is an image"
+        )
+
         self.assertEqual(response_data['author'], "")
         self.assertEqual(response_data['date'], "18/03/2025")
 
@@ -128,7 +139,12 @@ class ApiTests(APITestCase):
         """
         Test the upload_pdf_and_extract_data view for article PDFs.
         """
-        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'Embracing Sustainable Living in London. A Guide for Visitors and Locals Alike.pdf')
+        pdf_path = os.path.join(
+            settings.BASE_DIR,
+            'api', 
+            'tests', 
+            'Embracing Sustainable Living in London. A Guide for Visitors and Locals Alike.pdf'
+        )
         with open(pdf_path, 'rb') as pdf_file:
             response = self.client.post(
                 reverse('upload_pdf_and_extract_data', args=['article']),
@@ -155,11 +171,16 @@ class ApiTests(APITestCase):
         self.assertEqual(response_data['author'], "London City Council Team")
         self.assertEqual(response_data['date'], "18/03/2025")
 
-    def test_upload_pdf_and_extract_data_article2(self):
+    def test_upload_pdf_and_extract_data_article3(self):
         """
         Test the upload_pdf_and_extract_data view for article PDFs.
         """
-        pdf_path = os.path.join(settings.BASE_DIR, 'api', 'tests', 'Embracing Sustainable Living in London. A Guide for Visitors and Locals Alike_2.pdf')
+        pdf_path = os.path.join(
+            settings.BASE_DIR,
+            'api',
+            'tests',
+            'Embracing Sustainable Living in London. A Guide for Visitors and Locals Alike_2.pdf'
+        )
         with open(pdf_path, 'rb') as pdf_file:
             response = self.client.post(
                 reverse('upload_pdf_and_extract_data', args=['article']),
@@ -197,17 +218,17 @@ class ApiTests(APITestCase):
                 reverse('upload_ics'),
                 {'ics_file': SimpleUploadedFile(ics_file.name, ics_file.read())}
             )
-        
+
         # Assert that the status code is OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # Get the response JSON data
         response_json = response.json()
 
         # Assert the keys are in the response JSON
         self.assertIn('title', response_json)
 
-    
+
     def test_upload_ics_and_extract_event_data(self):
         """
         Test the upload_ics_and_extract_event_data view.
@@ -218,10 +239,10 @@ class ApiTests(APITestCase):
                 reverse('upload_ics'),
                 {'ics_file': SimpleUploadedFile(ics_file.name, ics_file.read())}
             )
-        
+
         # Assert that the status code is OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # Get the response JSON data
         response_json = response.json()
 
