@@ -13,7 +13,9 @@
     - (Linux/Mac) `source venv/bin/activate`
     - (Windows Powershell) `.\venv\Scripts\Activate`
     - (Windows Command Prompt) `venv\Scripts\activate`
-- `pip install -r requirements.txt`
+- `pip install -r requirements.txt` 
+    - These are our Python dependencies/libraries
+    - Licences in ThirdPartyNotices.txt
 - `python manage.py makemigrations`
 - `python manage.py migrate`
 - `python manage.py runserver`
@@ -54,6 +56,8 @@
 - Duplicate `.env.example` in `frontend/` and rename it to `.env`
 - `cd frontend`
 - `npm install`
+    - `package.json` is our libraries/dependencies for our React frontend
+    - Licences in ThirdPartyNotices.txt
 - `npm run dev`
 
 
