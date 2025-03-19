@@ -228,14 +228,11 @@ const SearchBar = () => {
     <div className="flex flex-col items-center w-full mt-8">
       {/* Header with AI Logo and Title */}
       <div className="flex items-center justify-center mb-8 relative group">
-  {/* Logo with enhanced animations */}
+  {/* Logo */}
   <img
     src={aiLogo}
     alt="AI Logo"
-    className="w-14 h-14 mr-4 drop-shadow-lg animate-[spin_8s_linear_infinite] hover:animate-[bounceSpin_3s_ease-in-out_infinite] transition-all duration-500"
-    style={{
-      animation: "spin 8s linear infinite",
-    }}
+    className="w-14 h-14 mr-4 drop-shadow-lg transition-all duration-500"
     onMouseEnter={() => setShowTooltip(true)}
     onMouseLeave={() => setShowTooltip(false)}
   />
