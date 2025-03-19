@@ -1,15 +1,36 @@
-# comp0016-systems-engineering-group-11-2024
+# Community Impact Report Portal In Partnership with NTTDATA
+
+![logo](logo.png)
+
 
 # Backend
-- Make sure your python version is 3.10 or 3.11 
+
 ## Run Development
+- Make sure your [python](https://www.python.org/) version is 3.10 or 3.11 
 - `cd backend`
 - `python -m venv venv`
-- `pip install -r requirements.txt`
+- **Activate the Virtual Environment**
+    - (Linux/Mac) `source venv/bin/activate`
+    - (Windows Powershell) `.\venv\Scripts\Activate`
+    - (Windows Command Prompt) `venv\Scripts\activate`
+- `pip install -r requirements.txt` 
+    - These are our Python dependencies/libraries
+    - Licences in ThirdPartyNotices.txt
 - `python manage.py makemigrations`
 - `python manage.py migrate`
 - `python manage.py runserver`
-- Backend should be up at the `127.0.0.1:8000`
+- Backend should be up at the [127.0.0.1:8000](http://127.0.0.1:8000)
+
+## Example Data
+- From the backend folder:
+- `cd exampledata/`
+- `python automatic_example_data.py`
+- NOTE: If its not working, look at lines 1231-1237 (the section that flushes the database in main()). Things to try:
+
+    - Change "py" to "python"
+    - Change "-3.11" to whatever version of python you are running.
+    - or alternatively just delete the database manually and comment out that part of the script.
+
 
 ## Tests
 
@@ -18,24 +39,26 @@
 ### Coverage Report
 - `coverage run manage.py test`
 - `coverage html --omit="*/test*"  -i`
-- - Check htmlcov folder for index.html to view coverage
+- Open `backend/htmlcov/index.html` to view coverage
 ### Linting
 - `pylint --load-plugins pylint_django **/*.py`
 
 ## Documentation
 - Available at pdocs/index.html
-- To rebuild: `pdoc  accounts/ backend/ articles/ events/ api/ comments/ companyinformation/ exampledata/ forums/ likes/ reportdiscussion/ reports/ search/  --output-dir pdocs`
+- To rebuild (from the backend folder run): `pdoc backend/ accounts/ articles/ events/ api/ comments/ companyinformation/ exampledata/ forums/ likes/ reportdiscussion/ reports/ search/  --output-dir pdocs`
 - Any further created apps should also be included in the pdoc command (e.g: following on from `search/`)
+
+
 # Frontend
 
 ## Run Development
-- Make sure you have nodejs install (whatever OS you are using)
+- Make sure you have  [nodejs.org](https://nodejs.org/) installed.
 - Duplicate `.env.example` in `frontend/` and rename it to `.env`
 - `cd frontend`
-- `npm install tailwindcss`
-- `npm install tailwind`
 - `npm install`
-- `npm start`
+    - `package.json` is our libraries/dependencies for our React frontend
+    - Licences in ThirdPartyNotices.txt
+- `npm run dev`
 
 
 ## Tests
@@ -47,3 +70,5 @@
 - Check coverage folder for index.html to view coverage
 ### Linting
 - `npx eslint src --max-warnings=0`
+
+*comp0016-systems-engineering-group-11-2024*
