@@ -1,0 +1,209 @@
+NOTICES
+
+This repository incorporates material as listed below or described in the code.
+
+PYTHON LICENCES
+---------------------------------------------------------
+django
+---------------------------------------------------------
+djangorestframework
+---------------------------------------------------------
+django-cors-headers
+---------------------------------------------------------
+pylint
+---------------------------------------------------------
+pylint_django
+---------------------------------------------------------
+sentence-transformers
+---------------------------------------------------------
+djangorestframework-simplejwt
+---------------------------------------------------------
+spacy
+---------------------------------------------------------
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+---------------------------------------------------------
+ics
+
+
+NPM LICENCES
+---------------------------------------------------------
+
+"@mlc-ai/web-llm": "^0.2.78",
+
+---------------------------------------------------------
+"@tailwindcss/vite": "^4.0.9",
+---------------------------------------------------------
+"axios": "^1.7.9",
+---------------------------------------------------------
+"dayjs": "^1.11.13",
+---------------------------------------------------------
+"leaflet": "^1.9.4",
+---------------------------------------------------------
+"quill": "^2.0.3",
+---------------------------------------------------------
+---------------------------------------------------------
+"quilljs": "^0.18.1",
+---------------------------------------------------------
+"react": "^18.3.1",
+---------------------------------------------------------
+"react-dom": "^18.3.1",
+---------------------------------------------------------
+"react-dropzone": "^14.3.8",
+---------------------------------------------------------
+"react-icons": "^5.5.0",
+---------------------------------------------------------
+"react-leaflet": "^4.2.1",
+---------------------------------------------------------
+"react-markdown": "^9.1.0",
+---------------------------------------------------------
+"react-router-dom": "^7.2.0",
+---------------------------------------------------------
+"tailwind": "^4.0.0",
+---------------------------------------------------------
+"web-vitals": "^2.1.4"
+
+---------------------------------------------------------
+"@babel/preset-env": "^7.26.9",
+---------------------------------------------------------
+"@babel/preset-react": "^7.26.3",
+---------------------------------------------------------
+"@eslint/js": "^9.21.0",
+---------------------------------------------------------
+"@testing-library/jest-dom": "^6.6.3",
+---------------------------------------------------------
+"@testing-library/react": "^16.2.0",
+---------------------------------------------------------
+"@testing-library/user-event": "^14.6.1",
+---------------------------------------------------------
+"@types/react": "^19.0.10",
+---------------------------------------------------------
+"@types/react-dom": "^19.0.4",
+---------------------------------------------------------
+"@vitejs/plugin-react": "^4.3.4",
+---------------------------------------------------------
+"@vitest/coverage-v8": "^3.0.7",
+---------------------------------------------------------
+"autoprefixer": "^10.4.21",
+---------------------------------------------------------
+"babel-jest": "^29.7.0",
+---------------------------------------------------------
+"eslint": "^9.21.0",
+---------------------------------------------------------
+"eslint-plugin-react": "^7.37.4",
+---------------------------------------------------------
+"eslint-plugin-react-hooks": "^5.0.0",
+---------------------------------------------------------
+"eslint-plugin-react-refresh": "^0.4.19",
+---------------------------------------------------------
+"globals": "^15.15.0",
+---------------------------------------------------------
+"jest": "^29.7.0",
+
+---------------------------------------------------------
+"jest-environment-jsdom": "^29.7.0",
+---------------------------------------------------------
+
+"jest-fixed-jsdom": "^0.0.9",
+---------------------------------------------------------
+
+"jsdom": "^26.0.0",
+
+---------------------------------------------------------
+
+"postcss": "^8.5.3",
+The MIT License (MIT)
+
+Copyright 2013 Andrey Sitnik <andrey@sitnik.ru>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---------------------------------------------------------
+
+"tailwindcss": "^3.4.17",
+MIT License
+
+Copyright (c) Tailwind Labs, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---------------------------------------------------------
+
+"vite": "^6.2.0",
+MIT License
+
+Copyright (c) 2019-present, VoidZero Inc. and Vite contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---------------------------------------------------------
+"vitest": "^3.0.7"
+MIT License
+
+Copyright (c) 2019-present, VoidZero Inc. and Vite contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
