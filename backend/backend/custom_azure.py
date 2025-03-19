@@ -10,8 +10,7 @@ class AzureMediaStorage(AzureStorage): # pylint: disable=W0223
     """
     account_name = 'storagesysengblob'
     account_key = (
-        'Rh5HvgVgGZiGG/DggJ0RBD1/mTDAqmN+P5uwwWQH+ZEFTzmfGyjcTXXvRGedomyX4ZuGccfM3833+'
-        'AStk3lzfw=='
+        'account key here'
     )
     azure_container = 'media'
     expiration_secs = None
