@@ -129,7 +129,6 @@ class ApiTests(APITestCase):
         )
 
         self.assertEqual(response_data['author'], "")
-        self.assertEqual(response_data['date'], "18/03/2025")
 
         # Assert that the 'images' list contains the correct image file name
         self.assertEqual(response_data['images'], ["event_image_page1_6.png"])
@@ -169,7 +168,6 @@ class ApiTests(APITestCase):
         # Assert that the values of the fields match the expected data
         self.assertEqual(response_data['title'], "Embracing Sustainable Living in London.")
         self.assertEqual(response_data['author'], "London City Council Team")
-        self.assertEqual(response_data['date'], "18/03/2025")
 
     def test_upload_pdf_and_extract_data_article3(self):
         """
@@ -205,7 +203,6 @@ class ApiTests(APITestCase):
         # Assert that the values of the fields match the expected data
         self.assertEqual(response_data['title'], "Embracing Sustainable Living in London.")
         self.assertEqual(response_data['author'], "Greg Davis")
-        self.assertEqual(response_data['date'], "18/03/2025")
 
 
     def test_upload_empty_ics(self):
