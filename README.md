@@ -28,6 +28,10 @@
     - `cd exampledata/`
     - `python automatic_example_data.py`
 
+After running this script, as well as the frontend and backend, you'll be able to login with the following details:
+- Username: ExampleBusiness
+- Password: 1ExampleBusiness*
+
 ## Tests
 
 ### Unit Tests
