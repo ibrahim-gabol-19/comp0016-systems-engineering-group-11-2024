@@ -1229,14 +1229,6 @@ def create_article(token, title, content, author, description, image_path):
 
 # Main execution flow
 def main():
-    # Flush the database before populating it
-    try:
-        subprocess.run(["py", "-3.11", "../manage.py", "flush"], check=True)
-
-        print("Database flushed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error flushing database: {e}")
-        return  # Stop execution if flushing fails
     signup()
     token = login()
     if token:
