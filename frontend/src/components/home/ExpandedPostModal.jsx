@@ -1,9 +1,14 @@
 import React from "react";
 import { FaTimes, FaComment } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+
 
 const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
+  
+  const navigate = useNavigate();
   if (!post) return null;
-
+  
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -12,6 +17,17 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  const handleRedirect = (item) => {
+    if (item.type === "report") {
+      navigate("/reporting", { state: { selectedIssue: item } });
+    } else if (item.type === "event") {
+      navigate(`/events/${item.id}`);
+    } else { (item.type === "article") 
+      navigate(`/articles/${item.id}`);
+    }
+  };
+  
 
   const formatTime = (timeString) => {
     if (!timeString) return "";
@@ -69,18 +85,32 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
               <p className="text-gray-500 italic mb-4">Tags: {post.tags}</p>
             )
           )}
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => {
+                handleRedirect(post);
+                console.log("Source id is",post.id);
+                console.log("Source is",post.type);
+                // Handle view details click
+              }}
+              className="text-blue-500 hover:text-blue-600"
+            >
+              View details
+            </button>
+          
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onOpenComments(post.id, post.type, e);
               }}
-              className="flex items-center gap-2 text-blue-500 hover:text-blue-600"
+              className="flex items-center gap-1 text-blue-500 hover:text-blue-600"
             >
               <FaComment className="text-xl" />
               <span>Comments ({post.commentCount || 0})</span>
             </button>
           </div>
+          
+          
         </div>
       </div>
     </div>
