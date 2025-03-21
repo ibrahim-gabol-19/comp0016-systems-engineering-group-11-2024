@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 
 const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
-  if (!post) return null;
+  
   const navigate = useNavigate();
+  if (!post) return null;
+  
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
