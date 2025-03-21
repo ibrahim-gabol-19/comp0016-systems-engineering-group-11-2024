@@ -22,16 +22,15 @@
 - Backend should be up at the [127.0.0.1:8000](http://127.0.0.1:8000)
 
 ## Example Data
-- Make sure the backend is running (`python manage.py runserver`)
+- Flush the current database (`python manage.py flush`) when the backend is not running.
+- Run the backend (`python manage.py runserver`)
 - From the backend folder:
     - `cd exampledata/`
     - `python automatic_example_data.py`
-    - NOTE: If its not working, look at lines 1231-1237 (the section that flushes the database in main()). Things to try:
 
-        - Change "py" to "python"
-        - Change "-3.11" to whatever version of python you are running.
-        - or alternatively just delete the database manually and comment out that part of the script.
-
+After running this script, as well as the frontend and backend, you'll be able to login with the following details:
+- Username: ExampleBusiness
+- Password: 1ExampleBusiness*
 
 ## Tests
 
