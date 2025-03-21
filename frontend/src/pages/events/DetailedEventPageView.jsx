@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom"; // For dynamic routin
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import Header from "../../components/Header";
+
 
 const DetailedEventPageView = () => {
     const { eventId } = useParams();
@@ -49,6 +51,9 @@ const DetailedEventPageView = () => {
     const handleBack = () => { navigate(-1); };
 
   return (
+    <div>
+    <Header />
+    <div className="pt-20"></div>
     <div className="w-screen h-full flex justify-center items-start overflow-auto p-6 bg-gray-100 rounded-lg">
         <div className="max-w-7xl w-full bg-white p-6 rounded-lg shadow-md">
             {/* Back Button */}
@@ -140,6 +145,8 @@ const DetailedEventPageView = () => {
         </p>
         </div>
     </div>
+    </div>
+
 )};
 
 export default DetailedEventPageView;
