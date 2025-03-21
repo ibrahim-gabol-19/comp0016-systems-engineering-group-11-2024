@@ -22,8 +22,8 @@
 - Backend should be up at the [127.0.0.1:8000](http://127.0.0.1:8000)
 
 ## Example Data
-- Make sure the backend is running (`python manage.py runserver`)
-- Flush the current database (`python manage.py flush`)
+- Flush the current database (`python manage.py flush`) when the backend is not running.
+- Run the backend (`python manage.py runserver`)
 - From the backend folder:
     - `cd exampledata/`
     - `python automatic_example_data.py`
