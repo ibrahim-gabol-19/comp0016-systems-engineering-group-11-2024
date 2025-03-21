@@ -2,7 +2,7 @@
 
 import requests
 import random
-import subprocess
+from datetime import datetime, timedelta
 
 # API URL and endpoints
 # BASE_URL = "https://sysenggroup11-ehbrckafd4c6b9cv.uksouth-01.azurewebsites.net"
@@ -359,7 +359,7 @@ scheduled_events = [
         "bring your own gardening gloves.",
         "location": "Regent's Park",
         "date": "2025-03-03",
-        "time": "10:00",
+        "time": "13:00",
         "theme": "Sustainability",
         "latitude": 51.5304,
         "longitude": -0.1520,
@@ -843,10 +843,67 @@ articles_data = [
     }
 ]
 
+# Spread events between last week, this week, and next week
+from datetime import datetime, timedelta
+import random
+
+def distribute_event_dates(events):
+    today = datetime.today()
+    
+    # Find the most recent Monday (start of this week)
+    start_of_week = today - timedelta(days=today.weekday())  
+
+    # Define event distribution for this week
+    this_week_days = {
+        0: 1,  # Monday - 1 event
+        1: 1,  # Tuesday - 1 event
+        2: 2,  # Wednesday - 2 events
+        3: 1,  # Thursday - 1 event
+        4: 2,  # Friday - 2 events
+        5: 1,  # Saturday - 1 event
+        6: 1   # Sunday - 1 event
+    }
+
+    # Shuffle events to prevent patterns
+    random.shuffle(events)
+
+    this_week_events = []
+    remaining_events = events.copy()
+
+    # Assign events to this week based on the predefined schedule
+    for day, count in this_week_days.items():
+        for _ in range(count):
+            if remaining_events:
+                event = remaining_events.pop(0)
+                event["date"] = (start_of_week + timedelta(days=day)).strftime("%Y-%m-%d")
+                this_week_events.append(event)
+
+    # Remaining events split evenly between last and next week
+    num_remaining = len(remaining_events)
+    last_week_events = remaining_events[:num_remaining // 2]
+    next_week_events = remaining_events[num_remaining // 2:]
+
+    # Start of last and next week
+    start_last_week = start_of_week - timedelta(days=7)
+    start_next_week = start_of_week + timedelta(days=7)
+
+    # Assign dates for last week
+    for i, event in enumerate(last_week_events):
+        event["date"] = (start_last_week + timedelta(days=i % 7)).strftime("%Y-%m-%d")
+
+    # Assign dates for next week
+    for i, event in enumerate(next_week_events):
+        event["date"] = (start_next_week + timedelta(days=i % 7)).strftime("%Y-%m-%d")
+
+    return events
+
+
+
 # Function to create events with dynamic titles and descriptions
 def create_event(token, title, description, location, date, time, latitude, longitude, 
                  is_featured, image_path):
     headers = {"Authorization": f"Bearer {token}"}
+
     with open(image_path, "rb") as img_file:
         files = {"main_image": img_file}
         data = {
@@ -854,7 +911,7 @@ def create_event(token, title, description, location, date, time, latitude, long
             "description": description,
             "location": location,
             "event_type": "scheduled",
-            "date": date,  # Format date to YYYY-MM-DD
+            "date": date,  # Date assigned dynamically
             "time": time,
             "latitude": latitude, 
             "longitude": longitude,  
@@ -866,6 +923,7 @@ def create_event(token, title, description, location, date, time, latitude, long
         print(f"Event '{title}' created successfully on {date}.")
     else:
         print(f"Error creating event '{title}':", response.text)
+
 
 def create_poi(token, title, description, location, opening_times, poi_type, latitude,
                 longitude, is_featured, image_path):
@@ -1233,6 +1291,9 @@ def main():
     token = login()
     if token:
         createComponyInformation(token)
+
+        global scheduled_events
+        scheduled_events = distribute_event_dates(scheduled_events)
 
         # Create events
         for i in range(len(scheduled_events)):
