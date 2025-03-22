@@ -13,3 +13,5 @@ django-storages
 azure-storage-blob
 coverage
 pdoc
+datetime
+requests
