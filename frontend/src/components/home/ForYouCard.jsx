@@ -212,7 +212,6 @@ const ForYouCard = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = res.data;
-        console.log("✅ User fetched:", user); // Debug log
         setCurrentUser(user);
         await fetchAllPosts(user);
       } catch (err) {
