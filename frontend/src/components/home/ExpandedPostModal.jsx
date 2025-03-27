@@ -2,13 +2,10 @@ import React from "react";
 import { FaTimes, FaComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-
-
 const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
-  
   const navigate = useNavigate();
   if (!post) return null;
-  
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -18,20 +15,19 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
     return `${day}/${month}/${year}`;
   };
 
+  const formatTime = (timeString) => {
+    if (!timeString) return "";
+    return timeString.slice(0, 5);
+  };
+
   const handleRedirect = (item) => {
     if (item.type === "report") {
       navigate("/reporting", { state: { selectedIssue: item } });
     } else if (item.type === "event") {
       navigate(`/events/${item.id}`);
-    } else { (item.type === "article") 
+    } else {
       navigate(`/articles/${item.id}`);
     }
-  };
-  
-
-  const formatTime = (timeString) => {
-    if (!timeString) return "";
-    return timeString.slice(0, 5);
   };
 
   return (
@@ -85,19 +81,22 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
               <p className="text-gray-500 italic mb-4">Tags: {post.tags}</p>
             )
           )}
-          <div className="flex items-center justify-between gap-2">
-            <button
-              onClick={() => {
-                handleRedirect(post);
-                console.log("Source id is",post.id);
-                console.log("Source is",post.type);
-                // Handle view details click
-              }}
-              className="text-blue-500 hover:text-blue-600"
-            >
-              View details
-            </button>
-          
+
+          {/* Footer buttons - align right */}
+          <div className="flex justify-end items-center gap-4 mt-6">
+            {/* Hide View Details for forum posts */}
+            {post.type !== "forum" && (
+              <button
+                onClick={() => {
+                  handleRedirect(post);
+                  console.log("Source id is", post.id);
+                  console.log("Source is", post.type);
+                }}
+                className="text-blue-500 hover:text-blue-600"
+              >
+                View details
+              </button>
+            )}
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -109,8 +108,6 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
               <span>Comments ({post.commentCount || 0})</span>
             </button>
           </div>
-          
-          
         </div>
       </div>
     </div>
@@ -118,3 +115,4 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
 };
 
 export default ExpandedPostModal;
+
