@@ -48,4 +48,3 @@ class LikeAPITests(APITestCase):
         self.assertEqual(Like.objects.count(), 1)
         self.assertEqual(Like.objects.get().user.username, 'testuser')
         self.assertEqual(Like.objects.get().content_object, self.article)
-
