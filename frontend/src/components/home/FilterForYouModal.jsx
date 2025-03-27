@@ -9,7 +9,7 @@ const FilterForYouModal = ({
   initialSortOrder,
 }) => {
   const [filters, setFilters] = useState(
-    initialFilters || { forum: true, article: true, event: true }
+    initialFilters || { forum: true, article: true, event: true, likedOnly: false }
   );
   const [sortOrder, setSortOrder] = useState(initialSortOrder || "newest");
 
@@ -35,9 +35,10 @@ const FilterForYouModal = ({
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <FaFilter /> Filter Posts
         </h2>
+
         <div className="mb-4">
           <p className="font-medium mb-2">Select Post Types:</p>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 flex-wrap">
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -70,8 +71,22 @@ const FilterForYouModal = ({
             </label>
           </div>
         </div>
+
         <div className="mb-4">
-          <p className="font-medium mb-2">Sort by Date:</p>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="likedOnly"
+              checked={filters.likedOnly}
+              onChange={handleCheckboxChange}
+              className="mr-2"
+            />
+            Show only liked posts
+          </label>
+        </div>
+
+        <div className="mb-4">
+          <p className="font-medium mb-2">Sort By:</p>
           <select
             value={sortOrder}
             onChange={handleSortChange}
@@ -79,8 +94,11 @@ const FilterForYouModal = ({
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
+            <option value="most_liked">Most Liked</option>
+            <option value="most_commented">Most Commented</option>
           </select>
         </div>
+
         <div className="flex justify-end">
           <button
             type="button"

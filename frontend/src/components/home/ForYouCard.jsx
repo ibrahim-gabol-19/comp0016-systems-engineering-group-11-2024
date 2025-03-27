@@ -92,32 +92,17 @@ const ForYouCard = () => {
     forum: true,
     article: true,
     event: true,
+    likedOnly: false,
   });
   const [sortOrder, setSortOrder] = useState("newest");
 
-  // Fetch current user.
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get(`${API_URL}accounts/user/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setCurrentUser(res.data))
-        .catch((err) => console.error("Error fetching current user:", err));
-    }
-  }, []);
-
-  // Fetch all posts.
-  const fetchAllPosts = useCallback(async () => {
+  const fetchAllPosts = useCallback(async (user) => {
     try {
       const token = localStorage.getItem("token");
       const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
-      // Forum posts.
-      const forumRes = await axios.get(`${API_URL}forums/`, {
-        headers: authHeader,
-      });
+      // Forums
+      const forumRes = await axios.get(`${API_URL}forums/`, { headers: authHeader });
       const forumPostsRaw = forumRes.data;
       const forumPosts = await Promise.all(
         forumPostsRaw.map(async (post) => {
@@ -130,78 +115,116 @@ const ForYouCard = () => {
               ...post,
               commentCount: commentRes.data.length,
             });
-          } catch (error) {
-            console.error(
-              "Error fetching comments for forum post",
-              post.id,
-              error
-            );
+          } catch {
             return transformForumPost({ ...post, commentCount: 0 });
           }
         })
       );
 
-      // Articles.
-      const articlesRes = await axios.get(`${API_URL}articles/`, {
-        headers: authHeader,
-      });
-      const articles = articlesRes.data.map((article) =>
-        transformArticle(article)
+      // Articles
+      const articlesRes = await axios.get(`${API_URL}articles/`, { headers: authHeader });
+      const articlesRaw = articlesRes.data;
+      const articles = await Promise.all(
+        articlesRaw.map(async (article) => {
+          try {
+            const commentRes = await axios.get(`${API_URL}comments/`, {
+              params: { content_type: "articles.article", object_id: article.id },
+              headers: authHeader,
+            });
+            return {
+              ...transformArticle(article),
+              commentCount: commentRes.data.length,
+            };
+          } catch {
+            return transformArticle(article);
+          }
+        })
       );
 
-      // Events.
-      const eventsRes = await axios.get(`${API_URL}events/`, {
-        headers: authHeader,
-      });
-      const events = eventsRes.data.map((event) => transformEvent(event));
+      // Events
+      const eventsRes = await axios.get(`${API_URL}events/`, { headers: authHeader });
+      const eventsRaw = eventsRes.data;
+      const events = await Promise.all(
+        eventsRaw.map(async (event) => {
+          try {
+            const commentRes = await axios.get(`${API_URL}comments/`, {
+              params: { content_type: "events.event", object_id: event.id },
+              headers: authHeader,
+            });
+            return {
+              ...transformEvent(event),
+              commentCount: commentRes.data.length,
+            };
+          } catch {
+            return transformEvent(event);
+          }
+        })
+      );
 
-      // Merge posts.
-      let allPosts = [...forumPosts, ...articles, ...events];
-
-      // Initial sort: newest first.
-      allPosts.sort((a, b) => {
+      // Combine
+      let allPosts = [...forumPosts, ...articles, ...events].sort((a, b) => {
         if (!a.created_at) return 1;
         if (!b.created_at) return -1;
         return new Date(b.created_at) - new Date(a.created_at);
       });
 
-      // Update like status.
-      if (token && currentUser && currentUser.id) {
+      // Likes
+      if (token && user?.id) {
         const updatedPosts = await Promise.all(
           allPosts.map(async (card) => {
             try {
-              const res = await axios.get(`${API_URL}likes/`, {
+              const likeRes = await axios.get(`${API_URL}likes/`, {
                 params: {
                   content_type: getLikeContentType(card.type),
                   object_id: card.id,
                 },
-                headers: { Authorization: `Bearer ${token}` },
+                headers: authHeader,
               });
-              const likes = res.data;
+              const likes = likeRes.data;
               return {
                 ...card,
                 likeCount: likes.length,
                 liked: likes.some(
-                  (like) => Number(like.user.id) === Number(currentUser.id)
+                  (like) => Number(like.user.id) === Number(user.id)
                 ),
               };
-            } catch (err) {
-              console.error("Error fetching likes for card", card.id, err);
-              return card;
+            } catch (error) {
+              console.error("Error fetching likes for", card.uniqueId, error);
+              return { ...card, liked: false };
             }
           })
         );
         allPosts = updatedPosts;
       }
+
       setCards(allPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
-    fetchAllPosts();
+    const fetchUserThenPosts = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await axios.get(`${API_URL}accounts/user/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const user = res.data;
+        setCurrentUser(user);
+        await fetchAllPosts(user);
+      } catch (err) {
+        console.error("Error fetching current user:", err);
+      }
+    };
+    fetchUserThenPosts();
   }, [fetchAllPosts]);
+
+  
+
+
+
 
   const handleCreatePost = async (postData) => {
     try {
@@ -219,7 +242,7 @@ const ForYouCard = () => {
         },
       });
 
-      fetchAllPosts();
+      fetchAllPosts(currentUser);
     } catch (error) {
       console.error("Error creating forum post:", error);
     }
@@ -255,6 +278,17 @@ const ForYouCard = () => {
     );
   };
 
+  const handleCommentDeleted = () => {
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === selectedPostId
+          ? { ...card, commentCount: Math.max((card.commentCount || 1) - 1, 0) }
+          : card
+      )
+    );
+  };
+  
+
   const handleToggleLike = async (postId, postType, e) => {
     if (e) e.stopPropagation();
     const token = localStorage.getItem("token");
@@ -262,7 +296,9 @@ const ForYouCard = () => {
     const uniqueId = `${postType}-${postId}`;
     const card = cards.find((c) => c.uniqueId === uniqueId);
     if (!card) return;
+  
     if (!card.liked) {
+      // LIKE
       try {
         await axios.post(
           `${API_URL}likes/`,
@@ -280,43 +316,53 @@ const ForYouCard = () => {
         console.error("Error liking post:", error);
       }
     } else {
+      // UNLIKE
       try {
-        const res = await axios.get(`${API_URL}likes/`, {
-          params: { content_type: contentType, object_id: postId },
+        await axios.delete(`${API_URL}likes/unlike/`, {
+          params: {
+            content_type: contentType,
+            object_id: postId,
+          },
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.data.length > 0) {
-          const likeInstance = res.data.find(
-            (like) => Number(like.user.id) === Number(currentUser.id)
-          );
-          if (likeInstance) {
-            await axios.delete(`${API_URL}likes/${likeInstance.id}/`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            setCards((prevCards) =>
-              prevCards.map((c) =>
-                c.uniqueId === uniqueId
-                  ? { ...c, liked: false, likeCount: (c.likeCount || 0) - 1 }
-                  : c
-              )
-            );
-          }
-        }
+        setCards((prevCards) =>
+          prevCards.map((c) =>
+            c.uniqueId === uniqueId
+              ? { ...c, liked: false, likeCount: Math.max((c.likeCount || 1) - 1, 0) }
+              : c
+          )
+        );
       } catch (error) {
         console.error("Error unliking post:", error);
       }
     }
   };
+  
 
-  // Apply filtering and sorting.
-  const filteredCards = cards.filter((card) => filterOptions[card.type]);
-  const sortedCards = [...filteredCards].sort((a, b) => {
-    if (!a.created_at) return 1;
-    if (!b.created_at) return -1;
-    return sortOrder === "newest"
-      ? new Date(b.created_at) - new Date(a.created_at)
-      : new Date(a.created_at) - new Date(b.created_at);
-  });
+// Apply filtering and sorting.
+const filteredCards = cards.filter((card) => {
+  // Filter by post type (forum/article/event)
+  if (!filterOptions[card.type]) return false;
+
+  // Filter by liked posts only if enabled
+  if (filterOptions.likedOnly && !card.liked) return false;
+
+  return true;
+});
+
+const sortedCards = [...filteredCards].sort((a, b) => {
+  if (sortOrder === "newest") {
+    return new Date(b.created_at) - new Date(a.created_at);
+  } else if (sortOrder === "oldest") {
+    return new Date(a.created_at) - new Date(b.created_at);
+  } else if (sortOrder === "most_liked") {
+    return (b.likeCount || 0) - (a.likeCount || 0);
+  } else if (sortOrder === "most_commented") {
+    return (b.commentCount || 0) - (a.commentCount || 0);
+  }
+  return 0;
+});
+
 
   return (
     <div className="p-6 font-sans">
@@ -445,6 +491,7 @@ const ForYouCard = () => {
           }
           onClose={handleCloseComments}
           onCommentAdded={handleCommentAdded}
+          onCommentDeleted={handleCommentDeleted}
         />
       )}
 
