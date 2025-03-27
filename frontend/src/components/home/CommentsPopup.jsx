@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FaThumbsUp } from "react-icons/fa";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -65,16 +64,16 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
       const token = localStorage.getItem("token");
       const payload = {
         content: newComment,
-        content_type: contentType, // Use the passed contentType prop
-        object_id: postId,         // The post ID
-        reply_to: replyTo,         // Parent comment ID (if replying)
+        content_type: contentType,
+        object_id: postId,
+        reply_to: replyTo,
       };
       await axios.post(`${API_URL}comments/`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNewComment(""); // Clear input
-      setReplyTo(null);  // Reset reply target
-      fetchComments();   // Refresh comments
+      setNewComment("");
+      setReplyTo(null);
+      fetchComments();
       if (onCommentAdded) onCommentAdded();
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -82,21 +81,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
         console.error("Backend response data:", error.response.data);
         console.error("Backend response status:", error.response.status);
       }
-    }
-  };
-
-  // Handle liking a comment
-  const handleLikeComment = async (commentId) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_URL}comments/${commentId}/like/`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchComments(); // Refresh after like
-    } catch (error) {
-      console.error("Error liking comment:", error);
     }
   };
 
@@ -132,13 +116,11 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     }
   };
 
-  // Cancel editing
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditingCommentContent("");
   };
 
-  // Toggle the visibility of replies for a given main comment
   const toggleReplies = (commentId) => {
     setVisibleReplies((prev) => ({
       ...prev,
@@ -146,7 +128,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     }));
   };
 
-  // Flatten nested replies into a single array
   const flattenReplies = (replies) => {
     let result = [];
     replies.forEach((reply) => {
@@ -158,7 +139,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     return result;
   };
 
-  // Render a single comment (or reply) with edit and delete options always visible
   const renderCommentComponent = (comment, indentClass = "") => {
     return (
       <div className={`${indentClass} mb-2`} key={comment.id}>
@@ -206,13 +186,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
             Reply
           </button>
           <button
-            onClick={() => handleLikeComment(comment.id)}
-            className="text-gray-600 hover:text-gray-700 transform transition-all duration-300 hover:scale-110 p-1 rounded-full"
-          >
-            <FaThumbsUp className="text-xl" />
-          </button>
-          {/* Always show Edit and Delete buttons for demonstration */}
-          <button
             onClick={() => {
               setEditingCommentId(comment.id);
               setEditingCommentContent(comment.content);
@@ -232,8 +205,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     );
   };
 
-  // Render a top-level comment along with a toggle to show/hide its replies.
-  // Replies are flattened and rendered at a fixed indent level (depth = 1).
   const renderTopLevelComment = (comment) => {
     const replies = comment.replies ? flattenReplies(comment.replies) : [];
     return (

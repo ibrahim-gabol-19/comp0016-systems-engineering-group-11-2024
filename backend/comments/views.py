@@ -2,7 +2,6 @@
 
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.contenttypes.models import ContentType
 from .models import Comment
@@ -48,12 +47,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()  # Uses our custom create() in the serializer
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
-    def like(self, request, _pk=None):
-        """Add a like from the current user to the comment."""
-        comment = self.get_object()
-        user = request.user
-        comment.likes.add(user)
-        return Response({'status': 'liked', 'like_count': comment.like_count()})
-

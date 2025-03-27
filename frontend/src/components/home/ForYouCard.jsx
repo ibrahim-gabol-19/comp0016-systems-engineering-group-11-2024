@@ -122,11 +122,43 @@ const ForYouCard = () => {
 
       // Articles
       const articlesRes = await axios.get(`${API_URL}articles/`, { headers: authHeader });
-      const articles = articlesRes.data.map(transformArticle);
+      const articlesRaw = articlesRes.data;
+      const articles = await Promise.all(
+        articlesRaw.map(async (article) => {
+          try {
+            const commentRes = await axios.get(`${API_URL}comments/`, {
+              params: { content_type: "articles.article", object_id: article.id },
+              headers: authHeader,
+            });
+            return {
+              ...transformArticle(article),
+              commentCount: commentRes.data.length,
+            };
+          } catch {
+            return transformArticle(article);
+          }
+        })
+      );
 
       // Events
       const eventsRes = await axios.get(`${API_URL}events/`, { headers: authHeader });
-      const events = eventsRes.data.map(transformEvent);
+      const eventsRaw = eventsRes.data;
+      const events = await Promise.all(
+        eventsRaw.map(async (event) => {
+          try {
+            const commentRes = await axios.get(`${API_URL}comments/`, {
+              params: { content_type: "events.event", object_id: event.id },
+              headers: authHeader,
+            });
+            return {
+              ...transformEvent(event),
+              commentCount: commentRes.data.length,
+            };
+          } catch {
+            return transformEvent(event);
+          }
+        })
+      );
 
       // Combine
       let allPosts = [...forumPosts, ...articles, ...events].sort((a, b) => {

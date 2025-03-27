@@ -7,7 +7,6 @@ from .models import Comment
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for the Comment model."""
     author = serializers.ReadOnlyField(source='author.username')
-    like_count = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
     # Accept generic fields from the frontend
     content_type = serializers.CharField(write_only=True)
@@ -24,15 +23,9 @@ class CommentSerializer(serializers.ModelSerializer):
             'parent_comment',
             'created_at',
             'updated_at',
-            'likes',
-            'like_count',
             'replies'
         ]
-        read_only_fields = ['author', 'created_at', 'updated_at', 'likes']
-
-    def get_like_count(self, obj):
-        """Return the like count for the comment."""
-        return obj.like_count()
+        read_only_fields = ['author', 'created_at', 'updated_at']
 
     def get_replies(self, obj):
         """Return serialized replies for the comment."""
@@ -62,4 +55,3 @@ class CommentSerializer(serializers.ModelSerializer):
             validated_data['parent_comment_id'] = reply_to
 
         return Comment.objects.create(**validated_data)
-
