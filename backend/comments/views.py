@@ -61,4 +61,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         if comment.author != request.user:
             raise PermissionDenied("You can only delete your own comment.")
         return super().destroy(request, *args, **kwargs)
-
