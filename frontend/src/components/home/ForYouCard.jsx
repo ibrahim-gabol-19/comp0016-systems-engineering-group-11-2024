@@ -92,6 +92,7 @@ const ForYouCard = () => {
     forum: true,
     article: true,
     event: true,
+    likedOnly: false,
   });
   const [sortOrder, setSortOrder] = useState("newest");
 
@@ -328,15 +329,30 @@ const ForYouCard = () => {
   };
   
 
-  // Apply filtering and sorting.
-  const filteredCards = cards.filter((card) => filterOptions[card.type]);
-  const sortedCards = [...filteredCards].sort((a, b) => {
-    if (!a.created_at) return 1;
-    if (!b.created_at) return -1;
-    return sortOrder === "newest"
-      ? new Date(b.created_at) - new Date(a.created_at)
-      : new Date(a.created_at) - new Date(b.created_at);
-  });
+// Apply filtering and sorting.
+const filteredCards = cards.filter((card) => {
+  // Filter by post type (forum/article/event)
+  if (!filterOptions[card.type]) return false;
+
+  // Filter by liked posts only if enabled
+  if (filterOptions.likedOnly && !card.liked) return false;
+
+  return true;
+});
+
+const sortedCards = [...filteredCards].sort((a, b) => {
+  if (sortOrder === "newest") {
+    return new Date(b.created_at) - new Date(a.created_at);
+  } else if (sortOrder === "oldest") {
+    return new Date(a.created_at) - new Date(b.created_at);
+  } else if (sortOrder === "most_liked") {
+    return (b.likeCount || 0) - (a.likeCount || 0);
+  } else if (sortOrder === "most_commented") {
+    return (b.commentCount || 0) - (a.commentCount || 0);
+  }
+  return 0;
+});
+
 
   return (
     <div className="p-6 font-sans">
