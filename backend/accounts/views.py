@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import UserSerializer, UserLoginSerializer
 
@@ -74,5 +75,17 @@ class GetUserView(APIView):
         Handle GET requests to retrieve the authenticated user's details.
         """
         user = request.user
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response({
+            "id": user.id,  
+            "username": user.username,
+            "email": user.email,
+            "is_superuser": user.is_superuser
+        })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    return Response({
+        "id": request.user.id, 
+        "username": request.user.username
+    })

@@ -4,7 +4,6 @@ from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 from .models import Comment
 
-
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for the Comment model."""
     author = serializers.ReadOnlyField(source='author.username')
@@ -63,3 +62,4 @@ class CommentSerializer(serializers.ModelSerializer):
             validated_data['parent_comment_id'] = reply_to
 
         return Comment.objects.create(**validated_data)
+

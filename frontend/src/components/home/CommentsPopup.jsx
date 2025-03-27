@@ -158,7 +158,7 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     return result;
   };
 
-  // Render a single comment (or reply) with edit and delete options if applicable
+  // Render a single comment (or reply) with edit and delete options always visible
   const renderCommentComponent = (comment, indentClass = "") => {
     return (
       <div className={`${indentClass} mb-2`} key={comment.id}>
@@ -211,25 +211,22 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
           >
             <FaThumbsUp className="text-xl" />
           </button>
-          {comment.author === currentUser && (
-            <>
-              <button
-                onClick={() => {
-                  setEditingCommentId(comment.id);
-                  setEditingCommentContent(comment.content);
-                }}
-                className="text-blue-500 hover:text-blue-600 transform transition-all duration-300 p-1 rounded"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteComment(comment.id)}
-                className="text-red-500 hover:text-red-600 transform transition-all duration-300 p-1 rounded"
-              >
-                Delete
-              </button>
-            </>
-          )}
+          {/* Always show Edit and Delete buttons for demonstration */}
+          <button
+            onClick={() => {
+              setEditingCommentId(comment.id);
+              setEditingCommentContent(comment.content);
+            }}
+            className="text-blue-500 hover:text-blue-600 transform transition-all duration-300 p-1 rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDeleteComment(comment.id)}
+            className="text-red-500 hover:text-red-600 transform transition-all duration-300 p-1 rounded"
+          >
+            Delete
+          </button>
         </div>
       </div>
     );

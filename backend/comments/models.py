@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 
 User = get_user_model()
 
-
 class Comment(models.Model):
     """
     Generic Comment Model that can be attached to any model.
