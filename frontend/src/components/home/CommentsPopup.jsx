@@ -10,7 +10,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   const [visibleReplies, setVisibleReplies] = useState({}); // Tracks which main comment's replies are visible
   const [editingCommentId, setEditingCommentId] = useState(null); // ID of comment being edited
   const [editingCommentContent, setEditingCommentContent] = useState(""); // Edited text
-  const [currentUser, setCurrentUser] = useState(""); // Current user's username
 
   // Fetch current user details from the accounts endpoint
   useEffect(() => {

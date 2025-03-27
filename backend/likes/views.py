@@ -3,13 +3,42 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.contrib.contenttypes.models import ContentType
 from likes.models import Like
 from likes.serializers import LikeSerializer
-from rest_framework.decorators import action
-from rest_framework.views import APIView
+
 
 class LikeViewSet(viewsets.ModelViewSet):
+    """
+    LikeViewSet is a ModelViewSet that provides CRUD operations for the Like model.
+
+    Methods:
+        get_queryset(self):
+            Retrieves a filtered queryset of Like objects based on the 'content_type' 
+            and 'object_id' query parameters. If these parameters are invalid or missing, 
+            it returns an empty queryset.
+
+        create(self, request, *args, **kwargs):
+            Handles the creation of a Like object. Validates the 'content_type' and 
+            'object_id' fields in the request data, ensuring they are provided and 
+            correctly formatted. Returns a 400 response if validation fails, or a 
+            201 response with the created Like object if successful.
+
+        unlike(self, request):
+            Custom action to delete a Like object based on the 'content_type' and 
+            'object_id' query parameters. If the Like object is not found or the 
+            parameters are invalid, it returns a 404 or 400 response respectively. 
+            Returns a 204 response upon successful deletion.
+
+    Attributes:
+        queryset:
+            The default queryset for retrieving all Like objects.
+        serializer_class:
+            The serializer class used for serializing and deserializing Like objects.
+        permission_classes:
+            Specifies that only authenticated users can access this viewset.
+    """
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
