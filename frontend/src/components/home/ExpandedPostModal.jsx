@@ -82,10 +82,9 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
             )
           )}
 
-          {/* Footer buttons - align right */}
-          <div className="flex justify-end items-center gap-4 mt-6">
-            {/* Hide View Details for forum posts */}
-            {post.type !== "forum" && (
+          {/* Footer buttons - View Details left, Comments right */}
+          <div className="flex justify-between items-center mt-6">
+            {post.type !== "forum" ? (
               <button
                 onClick={() => {
                   handleRedirect(post);
@@ -96,7 +95,8 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
               >
                 View details
               </button>
-            )}
+            ) : <div />}
+
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -115,4 +115,5 @@ const ExpandedPostModal = ({ post, onClose, onOpenComments }) => {
 };
 
 export default ExpandedPostModal;
+
 

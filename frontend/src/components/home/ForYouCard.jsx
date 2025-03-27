@@ -279,6 +279,17 @@ const ForYouCard = () => {
     );
   };
 
+  const handleCommentDeleted = () => {
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === selectedPostId
+          ? { ...card, commentCount: Math.max((card.commentCount || 1) - 1, 0) }
+          : card
+      )
+    );
+  };
+  
+
   const handleToggleLike = async (postId, postType, e) => {
     if (e) e.stopPropagation();
     const token = localStorage.getItem("token");
@@ -481,6 +492,7 @@ const sortedCards = [...filteredCards].sort((a, b) => {
           }
           onClose={handleCloseComments}
           onCommentAdded={handleCommentAdded}
+          onCommentDeleted={handleCommentDeleted}
         />
       )}
 

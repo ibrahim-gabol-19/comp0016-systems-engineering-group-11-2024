@@ -3,14 +3,14 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
+const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded, onCommentDeleted }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [visibleReplies, setVisibleReplies] = useState({});
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
-  const [currentUser, setCurrentUser] = useState(null); // 🔥 New
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -69,7 +69,7 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
       setNewComment("");
       setReplyTo(null);
       fetchComments();
-      if (onCommentAdded) onCommentAdded();
+      if (onCommentAdded) onCommentAdded(); 
     } catch (error) {
       console.error("Error submitting comment:", error);
     }
@@ -82,11 +82,12 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchComments();
-      if (onCommentAdded) onCommentAdded();
+      if (onCommentDeleted) onCommentDeleted(); 
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
+  
 
   const handleSaveEdit = async (commentId) => {
     try {
@@ -98,8 +99,7 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
       );
       setEditingCommentId(null);
       setEditingCommentContent("");
-      fetchComments();
-      if (onCommentAdded) onCommentAdded();
+      fetchComments(); 
     } catch (error) {
       console.error("Error updating comment:", error);
     }
@@ -176,7 +176,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
           >
             Reply
           </button>
-
           {isAuthor && (
             <>
               <button
@@ -261,4 +260,3 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
 };
 
 export default CommentsPopup;
-
