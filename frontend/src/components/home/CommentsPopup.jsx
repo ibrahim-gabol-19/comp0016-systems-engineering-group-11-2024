@@ -11,20 +11,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   const [editingCommentId, setEditingCommentId] = useState(null); // ID of comment being edited
   const [editingCommentContent, setEditingCommentContent] = useState(""); // Edited text
 
-  // Fetch current user details from the accounts endpoint
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get(`${API_URL}accounts/user/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setCurrentUser(res.data.username))
-        .catch((err) =>
-          console.error("Error fetching current user:", err)
-        );
-    }
-  }, []);
 
   // Format date as dd/mm/yyyy
   const formatDate = (dateString) => {
