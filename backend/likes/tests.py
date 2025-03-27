@@ -2,7 +2,7 @@
 This module contains unit tests for the 'likes' app.
 It tests the views and serializers to ensure they work as expected.
 """
-
+# pylint: disable=R0801
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
