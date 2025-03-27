@@ -3,6 +3,7 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from .models import Comment
 from .serializers import CommentSerializer
@@ -18,7 +19,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         Return filtered queryset based on content_type and object_id query parameters.
         If a primary key is provided (for detail view), return all comments.
         """
-        # For detail/update/delete actions, ignore filtering.
         if self.kwargs.get("pk"):
             return Comment.objects.all()
         queryset = Comment.objects.all()
@@ -47,3 +47,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()  # Uses our custom create() in the serializer
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        """Allow only the comment author to update."""
+        comment = self.get_object()
+        if comment.author != request.user:
+            raise PermissionDenied("You can only edit your own comment.")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """Allow only the comment author to delete."""
+        comment = self.get_object()
+        if comment.author != request.user:
+            raise PermissionDenied("You can only delete your own comment.")
+        return super().destroy(request, *args, **kwargs)
+

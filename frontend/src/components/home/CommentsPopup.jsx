@@ -4,15 +4,30 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
-  const [comments, setComments] = useState([]); // All comments for this post
-  const [newComment, setNewComment] = useState(""); // New comment text
-  const [replyTo, setReplyTo] = useState(null); // Which comment is being replied to
-  const [visibleReplies, setVisibleReplies] = useState({}); // Tracks which main comment's replies are visible
-  const [editingCommentId, setEditingCommentId] = useState(null); // ID of comment being edited
-  const [editingCommentContent, setEditingCommentContent] = useState(""); // Edited text
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [replyTo, setReplyTo] = useState(null);
+  const [visibleReplies, setVisibleReplies] = useState({});
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingCommentContent, setEditingCommentContent] = useState("");
+  const [currentUser, setCurrentUser] = useState(null); // 🔥 New
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await axios.get(`${API_URL}accounts/user/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCurrentUser(res.data.username);
+      } catch (err) {
+        console.error("Error fetching current user:", err);
+      }
+    };
+    fetchUser();
+  }, []);
 
-  // Format date as dd/mm/yyyy
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -21,18 +36,14 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Fetch comments using the passed contentType prop
   const fetchComments = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}comments/`, {
-        params: {
-          content_type: contentType,
-          object_id: postId,
-        },
+        params: { content_type: contentType, object_id: postId },
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      setComments(response.data); // API returns nested replies in each comment's "replies" field
+      setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -42,7 +53,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     fetchComments();
   }, [fetchComments]);
 
-  // Handle submitting a new comment or reply
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     try {
@@ -62,14 +72,9 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
       if (onCommentAdded) onCommentAdded();
     } catch (error) {
       console.error("Error submitting comment:", error);
-      if (error.response) {
-        console.error("Backend response data:", error.response.data);
-        console.error("Backend response status:", error.response.status);
-      }
     }
   };
 
-  // Handle deleting a comment (or reply)
   const handleDeleteComment = async (commentId) => {
     try {
       const token = localStorage.getItem("token");
@@ -83,7 +88,6 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
     }
   };
 
-  // Handle saving an edited comment
   const handleSaveEdit = async (commentId) => {
     try {
       const token = localStorage.getItem("token");
@@ -125,6 +129,8 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
   };
 
   const renderCommentComponent = (comment, indentClass = "") => {
+    const isAuthor = currentUser === comment.author;
+
     return (
       <div className={`${indentClass} mb-2`} key={comment.id}>
         <div className="flex items-center">
@@ -170,21 +176,26 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
           >
             Reply
           </button>
-          <button
-            onClick={() => {
-              setEditingCommentId(comment.id);
-              setEditingCommentContent(comment.content);
-            }}
-            className="text-blue-500 hover:text-blue-600 transform transition-all duration-300 p-1 rounded"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDeleteComment(comment.id)}
-            className="text-red-500 hover:text-red-600 transform transition-all duration-300 p-1 rounded"
-          >
-            Delete
-          </button>
+
+          {isAuthor && (
+            <>
+              <button
+                onClick={() => {
+                  setEditingCommentId(comment.id);
+                  setEditingCommentContent(comment.content);
+                }}
+                className="text-blue-500 hover:text-blue-600 transform transition-all duration-300 p-1 rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                className="text-red-500 hover:text-red-600 transform transition-all duration-300 p-1 rounded"
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     );
@@ -250,3 +261,4 @@ const CommentsPopup = ({ postId, contentType, onClose, onCommentAdded }) => {
 };
 
 export default CommentsPopup;
+
